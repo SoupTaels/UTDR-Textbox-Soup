@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"GMLiveAPI",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"GMLiveAPI",
+  "parent":{
+    "name":"GMLive",
+    "path":"folders/Extensions/GMLive.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

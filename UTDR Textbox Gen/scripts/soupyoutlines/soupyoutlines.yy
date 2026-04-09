@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"soupyoutlines",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"soupyoutlines",
+  "parent":{
+    "name":"Outlines",
+    "path":"folders/Extensions/Outlines.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,2 +1,18 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+*.yy                text diff=json eol=lf
+*.yyp               text diff=json eol=lf
+*.resource_order    text eol=lf
+
+*.gml               text diff=gml
+*.md                text
+
+*.png               binary
+
+# GameMaker
+*.yy linguist-language=Game Maker Language
+*.yy linguist-detectable=false
+*.yyp linguist-detectable=false
+*.vsh linguist-detectable=false
+*.fsh linguist-detectable=false

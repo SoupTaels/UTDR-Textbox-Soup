@@ -1,0 +1,1 @@
+msgbox "GMLive is missing, a fallback script has been imported. This compile/launch may fail, but the next one should work fine"
