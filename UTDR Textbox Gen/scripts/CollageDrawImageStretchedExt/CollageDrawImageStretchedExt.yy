@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"CollageDrawImageStretchedExt",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"CollageDrawImageStretchedExt",
+  "parent":{
+    "name":"Rendering",
+    "path":"folders/Extensions/Collage/Rendering.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

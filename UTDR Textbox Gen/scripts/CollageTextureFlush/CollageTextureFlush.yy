@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"CollageTextureFlush",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"CollageTextureFlush",
+  "parent":{
+    "name":"General",
+    "path":"folders/Extensions/Collage/General.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

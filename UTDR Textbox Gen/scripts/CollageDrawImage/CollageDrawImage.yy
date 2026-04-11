@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"CollageDrawImage",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"CollageDrawImage",
+  "parent":{
+    "name":"Rendering",
+    "path":"folders/Extensions/Collage/Rendering.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

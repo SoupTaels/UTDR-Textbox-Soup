@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"__CollageStaticGroupClass",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"__CollageStaticGroupClass",
+  "parent":{
+    "name":"Classes",
+    "path":"folders/Extensions/Collage/System/Classes.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,6 +1,5 @@
 ///@desc Debug
-instance_destroy();
-instance_create_depth(0, 0, 0, object_index);
+room_restart();
 /*
 if ( game_is_compiled() ) { //If we're not running the game from the IDE
 	var params = "";

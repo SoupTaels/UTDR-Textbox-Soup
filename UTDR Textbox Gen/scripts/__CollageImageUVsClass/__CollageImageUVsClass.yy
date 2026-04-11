@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"__CollageImageUVsClass",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"__CollageImageUVsClass",
+  "parent":{
+    "name":"Classes",
+    "path":"folders/Extensions/Collage/System/Classes.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

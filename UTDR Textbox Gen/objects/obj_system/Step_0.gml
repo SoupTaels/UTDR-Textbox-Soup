@@ -1,5 +1,5 @@
 ///@desc Dialogue Systems
-live_auto_call_nr
+//live_auto_call_nr
 if ( bord_out ) { outlinesoup_step(640, 480); }
 
 #region BG

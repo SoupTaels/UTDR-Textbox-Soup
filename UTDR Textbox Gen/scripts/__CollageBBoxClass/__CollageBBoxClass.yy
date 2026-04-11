@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"__CollageBBoxClass",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"__CollageBBoxClass",
+  "parent":{
+    "name":"Classes",
+    "path":"folders/Extensions/Collage/System/Classes.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

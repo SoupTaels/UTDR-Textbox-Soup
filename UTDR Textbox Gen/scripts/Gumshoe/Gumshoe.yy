@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"Gumshoe",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"Gumshoe",
+  "parent":{
+    "name":"Gumshoe",
+    "path":"folders/Extensions/Gumshoe.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

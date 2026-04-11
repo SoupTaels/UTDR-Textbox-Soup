@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"__CollageVBufferClass",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"__CollageVBufferClass",
+  "parent":{
+    "name":"Classes",
+    "path":"folders/Extensions/Collage/System/Classes.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

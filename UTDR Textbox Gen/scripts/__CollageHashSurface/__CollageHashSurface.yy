@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"__CollageHashSurface",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"__CollageHashSurface",
+  "parent":{
+    "name":"System",
+    "path":"folders/Extensions/Collage/System.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

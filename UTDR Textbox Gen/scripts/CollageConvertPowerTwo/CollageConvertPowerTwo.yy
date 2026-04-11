@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"CollageConvertPowerTwo",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"CollageConvertPowerTwo",
+  "parent":{
+    "name":"General",
+    "path":"folders/Extensions/Collage/General.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

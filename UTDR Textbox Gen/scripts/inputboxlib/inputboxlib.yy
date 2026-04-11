@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"inputboxlib",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"inputboxlib",
+  "parent":{
+    "name":"InputBox",
+    "path":"folders/Extensions/InputBox.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

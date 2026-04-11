@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"__CollageExtractTiling",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"__CollageExtractTiling",
+  "parent":{
+    "name":"System",
+    "path":"folders/Extensions/Collage/System.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
