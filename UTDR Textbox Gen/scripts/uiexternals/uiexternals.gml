@@ -66,7 +66,7 @@
 		}
 		
 		/*
-			Icons will be stripped of its "spr_" and "_strip#.png" label, so to get the icons, just reference its name (ex: "soupicons", "custom_icons", etc.)
+			Icons will be stripped of its "spr_" and "_strip#.png" label, so to get the icons, just reference its name (ex: "soupicons", "customicons", etc.)
 		*/
 		var result_i = gumshoe("icons", ".png");
 		for ( var i = 0, count = array_length(result_i), _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/"; i < count; i++; ) { //Loop through folders

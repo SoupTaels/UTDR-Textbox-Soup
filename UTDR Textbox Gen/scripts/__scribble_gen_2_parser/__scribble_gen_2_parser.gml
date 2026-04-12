@@ -520,7 +520,7 @@ function __scribble_gen_2_parser()
                             else
                             {
                                 __SCRIBBLE_PARSER_PUSH_SCALE;
-                                _state_scale = _pre_scale*real(_tag_parameters[1]);
+                                _state_scale = string_digits(_tag_parameters[1]) != "" ? ( _pre_scale * real(string_replace_all(_tag_parameters[1], " ", "")) ) : _pre_scale;
                             }
                         break;
                     
@@ -1166,13 +1166,13 @@ function __scribble_gen_2_parser()
                                             break;
                                                          
                                             case 2:
-                                                _image_index = _tag_parameters[1] != "" ? real(string_trim(_tag_parameters[1])) : 0;
+                                                _image_index = string_digits(_tag_parameters[1]) != "" ? real(string_digits(_tag_parameters[1])) : 0;
                                                 _image_speed = 0;
                                             break;
                                                      
                                             default:
-                                                _image_index = _tag_parameters[1] != "" ? real(string_trim(_tag_parameters[1])) : 0;
-                                                _image_speed = _tag_parameters[2] != "" ? real(string_trim(_tag_parameters[2])) : 0;
+                                                _image_index = string_digits(_tag_parameters[1]) != "" ? real(string_digits(_tag_parameters[1])) : 0;
+                                                _image_speed = string_digits(_tag_parameters[2]) != "" ? real(string_digits(_tag_parameters[2])) : 0;
                                             break;
                                         }
                                 

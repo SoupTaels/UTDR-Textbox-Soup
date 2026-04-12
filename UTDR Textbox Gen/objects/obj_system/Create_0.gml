@@ -12,18 +12,25 @@
 	dial_text = $"Test dialogue text 1, 2, 3.....{chr(GMIB.CHR_ENTER)}Test dialogue text 4, 5, 6.....{chr(GMIB.CHR_ENTER)}Test dialogue text 7, 8, 9....."; //Dialogue Text
 	dial_font = "DEFAULT"; //Dialogue Font
 	dial_text_scale = 2; //Text Scale
+	dial_text_gif = false; //Whether to enable typewriting
 	dial_updatet = 1; //Dialogue update timer
 	
 	dial_point_auto = true; //Whether to automatically add points
 	dial_point_chr = "*"; //Dialogue Point Character
 	dial_point_clr = c_white; //Dialogue Point Clr
 	dial_auto_wrap = true; //Whether to automatically wrap dialogue to new lines
+	dial_wrap_count = 1; //Current wrapped line
 	
 	if ( !scribble_font_exists("DEFAULT") ) { scribble_font_bake_outline_and_shadow("fnt_determination", "DEFAULT", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 1, false); }
 	scribble_font_set_default("DEFAULT"); //Use the normal dialogue font by default when using Scribble
 	
 	typist = scribble_typist();
 	typist.in(0.4, 0);
+	typist.function_per_char(function(_element, _position, _typist) {
+		var mychr = chr(_element.get_glyph_data(_position-1).unicode); //Get the currently revealed character
+		//show_debug_message(mychr);
+		if ( mychr == chr(10) ) { dial_wrap_count++; } //Newline
+	});
 #endregion
 
 #region Dialogue Shadow
@@ -87,5 +94,4 @@
 		}
 		inputbox.update_style(style);
 	#endregion
-	
 #endregion

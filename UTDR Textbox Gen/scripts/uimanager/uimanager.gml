@@ -86,7 +86,7 @@ function ui_manage() {
 		} break;
 		
 		case 1: { //Style
-			var txt_ = scribble("Style Tab")
+			var txt_ = scribble($"Style Tab")
 							.align(fa_center, fa_middle)
 							.scale(3)
 							.draw(320, 220);
@@ -105,8 +105,8 @@ function ui_manage() {
 							.scale(3)
 							.draw(320, 220);
 							
-			var bord_ = asset_get_index("border_custom_example");
-			if ( bord_ != -1 ) { draw_nineslice(bord_, 230, 112, mouse_x_gui, mouse_y_gui); }
+			/*var bord_ = asset_get_index("border_custom_example");
+			if ( bord_ != -1 ) { draw_nineslice(bord_, 230, 112, mouse_x_gui, mouse_y_gui); }*/
 		} break;
 		
 		case 4: { //About

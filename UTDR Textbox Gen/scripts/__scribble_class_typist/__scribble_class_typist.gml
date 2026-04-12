@@ -523,7 +523,7 @@ function __scribble_class_typist(_per_line) constructor
                 case "delay":
                     if (!__skip && !__ignore_delay && !__sync_started)
                     {
-                        var _duration = (array_length(_event_data) >= 1)? real(_event_data[0]) : SCRIBBLE_DEFAULT_DELAY_DURATION;
+                        var _duration = ( array_length(_event_data) >= 1 && string_digits(_event_data[0]) != "" ) ? real(string_digits(_event_data[0])) : SCRIBBLE_DEFAULT_DELAY_DURATION;
                         __delay_paused = true;
                         __delay_end    = current_time + _duration;
                         
@@ -543,7 +543,7 @@ function __scribble_class_typist(_per_line) constructor
                 
                 //In-line speed setting
                 case "speed":
-                    if (array_length(_event_data) >= 1) __inline_speed = real(_event_data[0]);
+                    if ( array_length(_event_data) >= 1 && string_digits(_event_data[0]) != "" ) __inline_speed = real(string_digits(_event_data[0]));
                 break;
                 
                 case "/speed":
