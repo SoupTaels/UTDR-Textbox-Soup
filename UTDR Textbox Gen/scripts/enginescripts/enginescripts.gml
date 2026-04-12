@@ -10,7 +10,9 @@ randomize();
 	#macro mouse_check device_mouse_check_button(0, mb_left)
 	#macro mouse_pressed device_mouse_check_button_pressed(0, mb_left)
 	#macro mouse_released device_mouse_check_button_released(0, mb_left)
-#endregion ( also check __scribble_config_colours() )
+	// flip this value to 0 to disable GMLive!
+	#macro live_enabled 0
+#endregion
 
 ///@desc Shorthand function for make_color_rgb,
 function rgb(r_ = 255, g_ = 255, b_ = 255) { return make_color_rgb(r_, g_, b_); }
@@ -173,95 +175,6 @@ function string_search(str_ = "", substr_ = "", casesense_ = false) {
 	return ( string_pos(substr_, !casesense_ ? string_lower(str_) : str_) > 0 );
 }
 
-enum DIRSCAN_DATA_TYPE {
-	FULL_PATH,
-	NAME_ONLY,
-	FULL_INFO,
-}
-/// @desc Reads all files in a directory and subdirectories. Returns different types of data.
-/// @param {string} pathSource The directory path.
-/// @param {array} contentsArray The array to fill with contents.
-/// @param {string} extension The file extension to search. Example: "*.png". Use *.* for every extension.
-/// @param {bool} searchFiles Enable file search.
-/// @param {bool} searchFolders Enable folder search.
-/// @param {bool} searchSubdir Enable sub directory search.
-/// @param {real} dataType Determines the type of date to be returned. Example: DIRSCAN_DATA_TYPE.NAME_ONLY.
-/// @param {bool} getSize Get file sizes while scanning.
-/// @param {bool} debug View debug messages.
-/// @param {string} returnext The file extension to only return. Example: "*.png". Use *.* for every extension.
-/// @returns {array} Array with contents.
-function directory_get_contents(_pathSource, _contentsArray, _extension="*", _searchFiles=true, _searchFolders=true, _searchSubdir=true, _dataType=DIRSCAN_DATA_TYPE.FULL_PATH, _getSize=false, _debug=true, _returnext = -1) {
-	// based on https://yal.cc/gamemaker-recursive-folder-copying/
-	if (!directory_exists(_pathSource)) {
-		return undefined;
-	}
-	// scan contents (folders and files)
-	var _contents = [];
-	var _file = file_find_first(_pathSource + "\\" + _extension, fa_directory | fa_archive | fa_readonly);
-	var _filesCount = 0;
-	while(_file != "") {
-		if (_file == ".") continue;
-		if (_file == "..") continue;
-		array_push(_contents, _file);
-		_file = file_find_next();
-		_filesCount++;
-	}
-	file_find_close();
-	// process found contents:
-	var _i = 0;
-	repeat(_filesCount) {
-		var _fileName = _contents[_i];
-		var _path = _pathSource + "\\" + _fileName; // the path of the content (folder or file)
-		var _dirName = filename_dir_name(_path);
-		var _data = undefined;
-		var _progress = (_i / _filesCount); // ready-only
-		if (_debug) show_debug_message($"Scanning: [{_progress * 100}%] {_dirName} | {_fileName}");
-		if (directory_exists(_path)) {
-			// recursively search directories
-			if (_searchSubdir) directory_get_contents(_path, _contentsArray, _extension, _searchFiles, _searchFolders, _searchSubdir, _dataType, _getSize);
-			if (_searchFolders) {
-			switch(_dataType) {
-				case DIRSCAN_DATA_TYPE.FULL_INFO:
-					_data = {
-						name : _fileName,
-						type : 0,
-						ext : "",
-						path : _path,
-						rootFolder : _dirName,
-						size : -1,
-					};
-					break;
-				case DIRSCAN_DATA_TYPE.NAME_ONLY: _data = _fileName; break;
-				case DIRSCAN_DATA_TYPE.FULL_PATH: _data = _path; break;
-				}
-			}
-		} else {
-			if (_searchFiles) {
-				switch(_dataType) {
-					case DIRSCAN_DATA_TYPE.FULL_INFO:
-						_data = {
-							name : filename_name_noext(_fileName),
-							type : 1,
-							ext : filename_ext(_fileName),
-							path : _path,
-							rootFolder : _dirName,
-							size : _getSize ? bytes_get_size(file_get_size(_path)) : -1,
-						};
-						break;
-					case DIRSCAN_DATA_TYPE.NAME_ONLY: _data = _fileName; break;
-					case DIRSCAN_DATA_TYPE.FULL_PATH: _data = _path; break;
-				}
-			}
-		}
-		if (_data != undefined ) {
-			if ( _returnext == -1 ) { array_push(_contentsArray, _data); }
-			else { if ( filename_ext(_data) == _returnext ) { array_push(_contentsArray, _data); } }
-		}
-		++_i;
-	}
-    return _contents;
-}
-
 /// @desc Get directory name from a file.
 /// @param {string} file File path.
 /// @returns {string} 
@@ -270,8 +183,8 @@ function filename_dir_name(_file) {
 	var _dir = filename_dir(_file), _dirName = "";
 	var isize = string_length(_dir), i = isize;
 	repeat(isize) {
-		var _char = string_char_at(_dir, i);
-		if (_char == "\\") {
+		var _char = string_char_at(_dir, i), _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
+		if ( _char == _path_separator ) {
 		_dirName = string_copy(_dir, i + 1, string_length(_dir) - i);
 		break;
 	}
@@ -280,36 +193,61 @@ function filename_dir_name(_file) {
 	return _dirName;
 }
 
-/// @desc Get file name, without extension.
-/// @param {string} file File path.
-/// @returns {string} 
-function filename_name_noext(_path) {
-	return filename_name(filename_change_ext(_path, ""));
-}
-
-/// @desc Load a file and get the size in bytes.
-/// @param {string} file File path.
-/// @returns {real} 
-function file_get_size(_file) {
-	var _buff = buffer_load(_file);
-	if (_buff <= 0) return 0;
-	var _size = buffer_get_size(_buff);
-	buffer_delete(_buff);
-	return _size;
-}
-
-/// @desc Convert bytes to KB, MB, GB, etc.
-/// @param {real} bytes File bytes amount.
-/// @returns {string} 
-function bytes_get_size(_bytes) {
-	static _sizes = ["B", "KB", "MB", "GB", "TB", "PB"]; // you can add more
-	if (_bytes <= 0) return "0 B";
-	var i = floor(log2(_bytes) / log2(1024));
-	return string(round(_bytes / power(1024, i))) + " " + _sizes[i];
-}
-
 ///@desc Same as draw_sprite_ext(), but will make sure if the sprite exists. Otherwise, draw nothing. Useful for external sprites
 function draw_sprite_ensure(sprite, subimg = 0, xx = x, yy = y, xscale = 1, yscale = 1, rot = 0, color = c_white, alpha = 1) {
 	var spr_ = is_string(sprite) ? asset_get_index(sprite) : sprite;
 	if ( spr_ != -1 ) { draw_sprite_ext(spr_, subimg, xx, yy, xscale, yscale, rot, color, alpha); } else { show_debug_message($"\"{sprite}\" doesn't exist!"); }
+}
+
+function draw_nineslice(sprite_, x1, y1, x2, y2, color = c_white, alpha = 1) {
+	var left = x1;
+	var top = y1;
+	var right = x2;
+	var bottom = y2;
+	var sprite = sprite_;
+	var tint = color;
+	var opacity = alpha;
+
+	if (!sprite_exists(sprite)) return false;
+
+	// Vett Sprite
+
+	var sprite_size = sprite_get_height(sprite);
+
+	if (sprite_get_width(sprite) != sprite_size)
+	{
+	    show_debug_message(sprite_get_name(sprite) + " cannot be NINEBOXed because it is not a perfect square.");
+	    return false;
+	}
+	if not (sprite_size mod 3 == 0)
+	{
+	    show_debug_message(sprite_get_name(sprite) + " cannot be NINEBOXed because its pixel size is not divisible by three.");
+	    return false;
+	}
+	var slice_size = sprite_size / 3;
+
+	// Draw Fill
+
+	var scale_x = ((right - slice_size) - (left + slice_size)) / slice_size;
+	var scale_y = ((bottom - slice_size) - (top + slice_size)) / slice_size;
+	draw_sprite_part_ext(sprite, 0, slice_size, slice_size, slice_size, slice_size, left + slice_size, top + slice_size, scale_x, scale_y, tint, opacity);
+
+	// Draw Vertical Edges
+
+	draw_sprite_part_ext(sprite, 0, 0, slice_size, slice_size, slice_size, left, top + slice_size, 1, scale_y, tint, opacity);
+	draw_sprite_part_ext(sprite, 0, slice_size * 2, slice_size, slice_size, slice_size, right - slice_size, top + slice_size, 1, scale_y, tint, opacity);
+
+	// Draw Horizontal Edges
+
+	draw_sprite_part_ext(sprite, 0, slice_size, 0, slice_size, slice_size, left + slice_size, top, scale_x, 1, tint, opacity);
+	draw_sprite_part_ext(sprite, 0, slice_size, slice_size * 2, slice_size, slice_size, left + slice_size, bottom - slice_size, scale_x, 1, tint, opacity);
+
+	// Draw the Corners
+
+	draw_sprite_part_ext(sprite, 0, 0, 0, slice_size, slice_size, left, top, 1, 1, tint, opacity);
+	draw_sprite_part_ext(sprite, 0, slice_size * 2, 0, slice_size, slice_size, right - slice_size, top, 1, 1, tint, opacity);
+	draw_sprite_part_ext(sprite, 0, 0, slice_size * 2, slice_size, slice_size, left, bottom - slice_size, 1, 1, tint, opacity);
+	draw_sprite_part_ext(sprite, 0, slice_size * 2, slice_size * 2, slice_size, slice_size, right - slice_size, bottom - slice_size, 1, 1, tint, opacity);
+
+	return slice_size;
 }

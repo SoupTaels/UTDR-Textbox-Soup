@@ -625,7 +625,7 @@ function gmib(style_struct=undefined) constructor {
 		draw_set_valign(2);
 		if style.min_chw == 0 {
 			draw_set_halign(0);
-			for(var i = 0, s = ds_list_size(l_lines); i < s; i++) {
+			for ( var i = 0, s = ds_list_size(l_lines); i < s; i++; ) {
 				draw_text_transformed(pad_atx, pad_aty + i * style.lh + style.lh, l_lines[| i][3], style.textscalex * style.textscalefactor, style.textscaley * style.textscalefactor, 0);
 			}
 		}

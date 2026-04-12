@@ -35,7 +35,7 @@
 		scrib_dial.scale(dial_text_scale);
 		scrib_dial.allow_line_data_getter();
 		scrib_dial.wrap(dial_auto_wrap ? 580 - xx_ : -1);
-		scrib_dial.draw(dial_point_auto ? xx_ + 28 : xx_, yy_);
+		scrib_dial.draw(dial_point_auto ? xx_ + 28 : xx_, yy_, typist);
 	#endregion
 
 	#region Dialogue Auto Point
@@ -82,6 +82,7 @@ if  ( bord_out ) { outlinesoup_end(); }
 #endregion
 
 mouse_debug();
+
 /*draw_sprite_ensure("toriel_happy", current_time/300);
 draw_sprite_ensure("sans_wink", current_time/300, 15 + 50, 15);
 draw_sprite_ensure("undyne_officerbaffled", current_time/300, 15 + 100, 15);

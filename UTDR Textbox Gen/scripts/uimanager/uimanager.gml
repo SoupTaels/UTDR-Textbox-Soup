@@ -8,31 +8,37 @@
 	}
 #endregion
 
-#region Add External Faces
-	soupTex = new Collage("Externals"); //Create a texture page for these sprites
-	soupTex.StartBatch();
-		var result = [], folders_ = directory_get_contents("faces", result,,,,,,,, ".png"); //Folders to look through
+///@desc Create a GUI button. Accepts { x, y, text, padd_(x1, y1, x2, y2, multi), sprite, index, scale, font, color, color_butt, halign, and valign, and functions for on_enter(runs once), on_hover, on_leave(once), on_click(once), on_held, on_released(once) }
+///@param {struct} datastruct_ Data struct for button functionality.
+function Button(datastruct_ = undefined) constructor {
+	data = datastruct_; button = undefined; on_enter = false; on_leave = false;
+	data[$ "text"] = undefined ? "Button Text" : data.text;
+	data[$ "text_static"] = data.text;
 
-		for ( var i = 0, count = array_length(folders_); i < count; i++; ) { //Loop through folders
-				var folds_ = folders_[i]; //Get Folders
-				//show_debug_message($"Folder: {folds_}");
-				for ( var f_ = 0, count_ = array_length(result); f_ < count_; f_++; ) { //Loop through folders
-					var files_ = result[f_], foldname_ = $"faces\\{folds_}\\"; //Get Files, Folder Name
-					if ( string_search(files_, foldname_, true) ) {
-						//show_debug_message(files_);
-						var newname_ = string_replace_all(files_, foldname_, ""); //First, remove "Face/(folder name)/"
-						var newname_ = string_replace_all(newname_, "spr_", ""), isstrip_ = string_search(newname_, "_strip"); //Then remove "spr_". Check if the string contains "_strip"
-						var newname_ = string_letters(newname_); //Then remove anything that isn't the alphabet
-						var newname_ = string_replace_all(newname_, isstrip_ ? "strippng" : "png", ""); //Then remove "strippng" or "png"
-						var newname_ = string_replace_all(newname_, folds_, $"{folds_}_"); //Finally, add back the underscore. Finished! Now we can call for their sprites using this identifier, rather than having to search through an array.
-						//show_debug_message(newname_);
-						soupTex.AddFileStrip(files_, newname_, , , CollageOrigin.CENTER, CollageOrigin.CENTER);
-					}
-				}
+	static update = function() {
+		var paddmulti = data[$ "padd_multi"] ?? 0;
+		button = scribble(data.text)
+						.align(data[$ "halign"] ?? fa_center, data[$ "valign"] ?? fa_middle)
+						.starting_format(data[$ "font"] ?? "fnt_determination", data[$ "color"] ?? c_white)
+						.scale(data[$ "scale"] ?? 1)
+						.padding(data[$ "padd_x1"] ?? 0 + paddmulti, data[$ "padd_y1"] ?? 0 + paddmulti, data[$ "padd_x2"] ?? 0 + paddmulti, data[$ "padd_y2"] ?? 0 + paddmulti);
+			
+		var x_ = data[$ "x"] ?? 0, y_ = data[$ "y"] ?? 0, bbox = button.get_bbox(x_, y_), leeway = 5;
+		draw_sprite_stretched_ext(data[$ "sprite"] ?? spr_pixel, data[$ "index"] ?? 0, bbox.left, bbox.top, bbox.width, bbox.height, data[$ "color_butt"] ?? c_white, 1); //Draw nine-slice sprite
+		button.draw(x_, y_); //Draw Scribble text
+			
+		if ( ( range_within(mouse_x_gui, bbox.left - leeway, bbox.right + leeway) && range_within(mouse_y_gui, bbox.top - leeway, bbox.bottom + leeway) ) && window_has_focus() ) { //If the mouse has enter within the bounding box
+			if ( !on_enter ) { on_enter = true; on_leave = false; if ( !is_undefined(data[$ "on_enter"]) ) { data[$ "on_enter"](); } } //Mouse Entered Function
+			if ( !is_undefined(data[$ "on_hover"]) ) { data[$ "on_hover"](); } //Mouse Hovering Function
+			if ( mouse_pressed ) { if ( !is_undefined(data[$ "on_click"]) ) { data[$ "on_click"](); exit; } } //Mouse Pressed Function
+			if ( mouse_check ) { if ( !is_undefined(data[$ "on_held"]) ) { data[$ "on_held"](); } } //Mouse Held Function
+			if ( mouse_released ) { if ( !is_undefined(data[$ "on_released"]) ) { data[$ "on_released"](); } } //Mouse Released Function
 		}
-	soupTex.FinishBatch();
-	soupTex = soupTex.ToStatic(true, true); //Send these sprites to one big texture page, rather than what GM does by default and sends every sprite, every frame, to separate texture pages(not great for performance)
-#endregion
+		else { //If the mouse just left the bounding box
+			if ( on_enter ) { if ( !on_leave ) { on_leave = true; on_enter = false; if ( !is_undefined(data[$ "on_leave"]) ) { data[$ "on_leave"](); } } } //Mouse Leave Function
+		}
+	}
+}
 
 function ui_manage() {
 	live_auto_call 
@@ -48,10 +54,11 @@ function ui_manage() {
 								case vk_enter: { snd_ = snd_equip2; } break;
 								case vk_shift: case vk_lcontrol: case vk_rcontrol: { snd_ = snd_enc1; } break;
 								case vk_up: case vk_down: case vk_left: case vk_right: { snd_ = snd_txttype; } break;
-								default: { snd_ = snd_txttype; dial_updatet = 31; } //We add a delay to updating the text so that it doesn't put too much of a strain on Scribble. It's doing the heavy lifting here!
+								default: { snd_ = snd_txttype; } //We add a delay to updating the text so that it doesn't put too much of a strain on Scribble. It's doing the heavy lifting here!
 							}
 							audio_play_sound(snd_, 0, false);
 						}
+						if ( keyboard_check(vk_anykey) ) { dial_updatet = 31; }
 					}
 				#endregion
 			
@@ -74,10 +81,11 @@ function ui_manage() {
 			draw_format(, , fnt_speech);
 			draw_text(30, 100, "Raw Text: (Type below!)");
 			inputbox.draw(30, 120); //Input Box Text
+			//draw_sprite_ensure(get_face("undyne", "officerpissed"), 0, 320, 240);
 			draw_sprite_stretched(spr_border_textbox, 0, inputbox.pad_atx - inputbox.style.padding.left * 2, inputbox.pad_aty - inputbox.style.padding.top * 2, inputbox.style.w + inputbox.style.padding.right * 2, inputbox.style.h + inputbox.style.padding.bottom * 2); //Inputbox Border
 		} break;
 		
-		case 1: { //Border
+		case 1: { //Style
 			var txt_ = scribble("Style Tab")
 							.align(fa_center, fa_middle)
 							.scale(3)
@@ -96,6 +104,9 @@ function ui_manage() {
 							.align(fa_center, fa_middle)
 							.scale(3)
 							.draw(320, 220);
+							
+			var bord_ = asset_get_index("border_custom_example");
+			if ( bord_ != -1 ) { draw_nineslice(bord_, 230, 112, mouse_x_gui, mouse_y_gui); }
 		} break;
 		
 		case 4: { //About

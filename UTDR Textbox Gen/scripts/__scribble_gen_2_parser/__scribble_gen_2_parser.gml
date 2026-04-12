@@ -1166,13 +1166,13 @@ function __scribble_gen_2_parser()
                                             break;
                                                          
                                             case 2:
-                                                _image_index = real(_tag_parameters[1]);
+                                                _image_index = _tag_parameters[1] != "" ? real(string_trim(_tag_parameters[1])) : 0;
                                                 _image_speed = 0;
                                             break;
                                                      
                                             default:
-                                                _image_index = real(_tag_parameters[1]);
-                                                _image_speed = real(_tag_parameters[2]);
+                                                _image_index = _tag_parameters[1] != "" ? real(string_trim(_tag_parameters[1])) : 0;
+                                                _image_speed = _tag_parameters[2] != "" ? real(string_trim(_tag_parameters[2])) : 0;
                                             break;
                                         }
                                 
