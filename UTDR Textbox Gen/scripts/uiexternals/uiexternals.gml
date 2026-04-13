@@ -56,13 +56,14 @@
 	soupTex_IB = new Collage("Externals IB"); //Create a texture page for these sprites
 	soupTex_IB.StartBatch();
 		/*
-			Borders will be stripped of its "spr_" and "_strip#.png" label, so to get the border, just reference its name (ex: "custom_border_example", "custom_border_example_two", etc.)
+			Borders will be stripped of its "spr_" and "_strip#.png" label, so to get the border, just reference its name (ex: "border_custom_example", "border_custom_example_two", etc.)
 		*/
 		var result_b = gumshoe("borders", ".png");
 		for ( var i = 0, count = array_length(result_b), _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/"; i < count; i++; ) { //Loop through folders
 			var bords_ = result_b[i];
 			var name_ = string_replace_all(string_replace_all(string_replace_all(bords_, $"borders{_path_separator}", ""), ".png", ""), "spr_", "");
 			soupTex_IB.AddFileStrip(bords_, name_, , , CollageOrigin.CENTER, CollageOrigin.CENTER); //Add sprite to texture pack
+			show_debug_message(name_);
 		}
 		
 		/*

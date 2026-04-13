@@ -1,4 +1,5 @@
 ///@desc 
+live_auto_call 
 //screenshot = true; //Take single screenshot
 
 record.enabled = true; //Record till dialogue ends

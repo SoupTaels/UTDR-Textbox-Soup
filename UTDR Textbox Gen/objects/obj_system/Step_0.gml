@@ -2,6 +2,8 @@
 //live_auto_call_nr
 if ( bord_out ) { outlinesoup_step(640, 480); }
 
+if ( dial_text_gif && dial_face_auto && typist.get_delay_paused() ) { dial_face_index = 0; } //Stop the face from animating if the dialogue is being delayed
+
 #region BG
 	var bg = layer_exists("bg3d") ? layer_get_id("bg3d") : layer_create(99, "bg3d"), _fx = layer_get_fx("bg3d"), _params; //Doesn't exist? Create it! Else, get the id.
 	if ( _fx == -1 ) { //Doesn't exist? Create it with default values

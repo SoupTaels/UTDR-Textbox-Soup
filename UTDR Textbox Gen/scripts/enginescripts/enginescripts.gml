@@ -251,3 +251,22 @@ function draw_nineslice(sprite_, x1, y1, x2, y2, color = c_white, alpha = 1) {
 
 	return slice_size;
 }
+
+///@desc Uses a pretty cheap and ineffecient way to give sprites an outline.
+function draw_sprite_outline(sprite_ = sprite_index, index_ = image_index, x_ = x, y_ = y, thickness_ = 1, xscale_ = image_xscale, yscale_ = image_yscale, angle_ = image_angle, color_ = c_black, blend_ = c_white, alpha_ = image_alpha, self_ = true) {
+	if ( sprite_exists(sprite_) ) {
+		gpu_set_fog(true, color_, 0, 0); //Draw solid color of sprite
+		draw_sprite_ext(sprite_, index_, x_ + thickness_, y_, xscale_, yscale_, angle_, c_white, alpha_); //up
+		draw_sprite_ext(sprite_, index_, x_ - thickness_, y_, xscale_, yscale_, angle_, c_white, alpha_); //down
+		draw_sprite_ext(sprite_, index_, x_ , y_ + thickness_, xscale_, yscale_, angle_, c_white, alpha_); //left
+		draw_sprite_ext(sprite_, index_, x_ , y_ - thickness_, xscale_, yscale_, angle_, c_white, alpha_); //right
+
+		draw_sprite_ext(sprite_, index_, x_ + thickness_, y_ + thickness_, xscale_, yscale_, angle_, c_white, alpha_); //downright
+		draw_sprite_ext(sprite_, index_, x_ - thickness_, y_ + thickness_, xscale_, yscale_, angle_, c_white, alpha_); //downleft
+		draw_sprite_ext(sprite_, index_, x_ + thickness_, y_ - thickness_, xscale_, yscale_, angle_, c_white, alpha_); //upright
+		draw_sprite_ext(sprite_, index_, x_ - thickness_, y_ - thickness_, xscale_, yscale_, angle_, c_white, alpha_); //upleft
+		gpu_set_fog(false, c_white, 0, 0); //Reset effect
+	}
+	
+	if ( self_ ) { draw_sprite_ext(sprite_, index_, x_, y_, xscale_, yscale_, angle_, blend_, alpha_); }
+}

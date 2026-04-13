@@ -1,5 +1,5 @@
 ///@desc Draw Dialogue Things
-//live_auto_call_nr
+live_auto_call_nr
 
 //draw_format("center", "center");
 
@@ -14,10 +14,13 @@
 #endregion
 	if ( bord_out ) { outlinesoup_start(); }
 	#region Dialogue Box
-		var xx_ = dial_face == -1 ? 60 : 176, yy_ = 340; //Text X Y
 		var dltrn = spr_bord == spr_border_deltarune; //Check if our border is Deltarune
-		draw_sprite_stretched_ext(spr_bord, 0, dltrn ? 24 : 32, dltrn ? 312 : 320, dltrn ? 593 : 578, dltrn ? 167 : 152, bord_clr, 1); //Dialogue Box
-		if ( dial_face != -1 ) { draw_sprite_ext(dial_face, dial_face_index, 106, 396, 2, 2, 0, dial_face_clr, 1); } //Dialogue Face
+		var offset_ = dltrn ? 8 : 0, offset_w = dltrn ? 15 : 0, offset_h = dltrn ? 16 : 0, bordx = 32 - offset_, bordy = 315 - offset_, bordw = 578 + offset_w, bordh = 152 + offset_w; //Border coords
+		var xx_ = ( bordx + ( dial_face != -1 ? 143 : 28 ) ) + offset_, yy_ = ( bordy + 20 ) + offset_; //Text X Y
+
+		var ninesl_ = sprite_get_nineslice(spr_bord ); 
+		if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, 0, bordx, bordy, bordw, bordh, bord_clr, 1); } else { draw_nineslice(spr_bord, bordx, bordy, bordx + bordw, bordy + bordh, bord_clr, 1); } //Dialogue Box
+		if ( dial_face != -1 ) { draw_sprite_ensure(dial_face, dial_face_index, bordx + ( 74 + offset_ ), bordy + ( 76 + offset_ ), 2, 2, 0, dial_face_clr, 1); } //Dialogue Face
 	#endregion
 
 	#region Dialogue Text

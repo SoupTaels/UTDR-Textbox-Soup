@@ -6,6 +6,7 @@
 	bord_clr = c_white; //Border Color
 	bord_out = true; //Whether border should have an outline
 	bord_small = false; //Whether to render everything out in a small box
+	bord_prev = spr_bord; //Previous border
 #endregion
 
 #region Dialogue Text
@@ -26,11 +27,55 @@
 	
 	typist = scribble_typist();
 	typist.in(0.4, 0);
-	typist.function_per_char(function(_element, _position, _typist) {
+	typist.function_per_char(function(_element, _position, _typist) { //Function to run per character
 		var mychr = chr(_element.get_glyph_data(_position-1).unicode); //Get the currently revealed character
 		//show_debug_message(mychr);
 		if ( mychr == chr(10) ) { dial_wrap_count++; } //Newline
+		
+		if ( dial_face_auto ) { //Animate the face while dialogue is typing out
+			static anim_timer = 0; anim_timer++;
+			if ( anim_timer > 2 ) { anim_timer = 0; dial_face_index++; }
+		}
 	});
+	
+	typist.function_on_complete(function() { //Function to run once the dialogue is complete
+		dial_face_index = 0;
+		dial_face = dial_face_original; //Switch back to the original face
+	});
+	
+	#region Typist Events
+		scribble_typists_add_event("face", function(element, param) { //Switch to a new portrait sprite
+			DIAL_GIF
+			dial_face_prev = dial_face; //Get the previous face
+			dial_face = param[0]; //Switch to new face
+		});
+	
+		scribble_typists_add_event("face_original", function(element, param) { //Change the original previous face to a new 
+			DIAL_GIF
+			dial_face_original = param[0];
+		});
+	
+		scribble_typists_add_event("face_prev", function(element, param) { //Change the face back to the previous face
+			DIAL_GIF
+			dial_face = dial_face_prev;
+		});
+	
+		scribble_typists_add_event("face_auto", function(element, param) { //Switch the automatically animation of the face
+			DIAL_GIF
+			dial_face_auto = bool(string_letters(param[0]));
+		});
+
+		scribble_typists_add_event("face_index", function(element, param) { //Change the index of the face(if dial_face_auto is off), for sprites with more sprites and expressions
+			DIAL_GIF
+			dial_face_index = real(string_digits(param[0]));
+		});
+	
+		scribble_typists_add_event("border", function(element, param) { //Switch to a new border sprite
+			DIAL_GIF
+			var bord_ = asset_get_index(param[0]);
+			spr_bord = bord_ != -1 ? bord_ : spr_border_undertale;
+		});
+	#endregion
 #endregion
 
 #region Dialogue Shadow
@@ -42,6 +87,9 @@
 #region Dialogue Face
 	dial_face = -1; //Dialogue Face
 	dial_face_index = 0; //Dialogue Face Frame
+	dial_face_prev = -1; //Previous Dial Face
+	dial_face_original = -1; //Original Dial Face
+	dial_face_auto = true; //Whether to automatically animate the sprite when dialogue is typing
 	dial_face_clr = c_white; //Dialogue Face Clr
 #endregion
 

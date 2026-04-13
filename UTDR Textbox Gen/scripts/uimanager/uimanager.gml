@@ -8,6 +8,8 @@
 	}
 #endregion
 
+#macro DIAL_GIF if ( !dial_text_gif ) { exit; } //Only run if GIFs are enabled
+
 ///@desc Create a GUI button. Accepts { x, y, text, padd_(x1, y1, x2, y2, multi), sprite, index, scale, font, color, color_butt, halign, and valign, and functions for on_enter(runs once), on_hover, on_leave(once), on_click(once), on_held, on_released(once) }
 ///@param {struct} datastruct_ Data struct for button functionality.
 function Button(datastruct_ = undefined) constructor {
