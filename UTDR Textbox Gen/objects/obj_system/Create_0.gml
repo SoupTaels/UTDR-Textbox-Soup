@@ -16,7 +16,7 @@
 	dial_text_gif = false; //Whether to enable typewriting
 	dial_updatet = 1; //Dialogue update timer
 	
-	dial_point_auto = true; //Whether to automatically add points
+	dial_point_auto = false; //Whether to automatically add points
 	dial_point_chr = "*"; //Dialogue Point Character
 	dial_point_clr = c_white; //Dialogue Point Clr
 	dial_auto_wrap = true; //Whether to automatically wrap dialogue to new lines
@@ -44,37 +44,35 @@
 	});
 	
 	#region Typist Events
-		scribble_typists_add_event("face", function(element, param) { //Switch to a new portrait sprite
+		scribble_typists_add_event("face", function(_, param) { //Switch to a new portrait sprite
 			DIAL_GIF
 			dial_face_prev = dial_face; //Get the previous face
 			dial_face = param[0]; //Switch to new face
 		});
-	
-		scribble_typists_add_event("face_original", function(element, param) { //Change the original previous face to a new 
+		scribble_typists_add_event("face_original", function(_, param) { //Change the original previous face to a new 
 			DIAL_GIF
 			dial_face_original = param[0];
 		});
-	
-		scribble_typists_add_event("face_prev", function(element, param) { //Change the face back to the previous face
+		scribble_typists_add_event("face_prev", function(_, param) { //Change the face back to the previous face
 			DIAL_GIF
 			dial_face = dial_face_prev;
 		});
-	
-		scribble_typists_add_event("face_auto", function(element, param) { //Switch the automatically animation of the face
+		scribble_typists_add_event("face_auto", function(_, param) { //Switch the automatically animation of the face
 			DIAL_GIF
 			dial_face_auto = bool(string_letters(param[0]));
 		});
-
-		scribble_typists_add_event("face_index", function(element, param) { //Change the index of the face(if dial_face_auto is off), for sprites with more sprites and expressions
+		scribble_typists_add_event("face_index", function(_, param) { //Change the index of the face(if dial_face_auto is off), for sprites with more sprites and expressions
 			DIAL_GIF
 			dial_face_index = real(string_digits(param[0]));
 		});
-	
-		scribble_typists_add_event("border", function(element, param) { //Switch to a new border sprite
+		scribble_typists_add_event("border", function(_, param) { //Switch to a new border sprite
 			DIAL_GIF
 			var bord_ = asset_get_index(param[0]);
 			spr_bord = bord_ != -1 ? bord_ : spr_border_undertale;
 		});
+		
+		scribble_add_macro("newline", function(){ return "[offsetPop]\n    [offset,-4]"; }); //Newline with no asterisk
+		scribble_add_macro("newline_new", function(){ return "[offsetPop]\n* "; }); //Newline with asterisk
 	#endregion
 #endregion
 

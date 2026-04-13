@@ -1172,7 +1172,7 @@ function __scribble_gen_2_parser()
                                                      
                                             default:
                                                 _image_index = string_digits(_tag_parameters[1]) != "" ? real(string_digits(_tag_parameters[1])) : 0;
-                                                _image_speed = string_digits(_tag_parameters[2]) != "" ? real(string_digits(_tag_parameters[2])) : 0;
+                                                _image_speed = _tag_parameters[2] != "" ? real(_tag_parameters[2]) : 0;
                                             break;
                                         }
                                 

@@ -17,7 +17,7 @@ live_auto_call_nr
 		var dltrn = spr_bord == spr_border_deltarune; //Check if our border is Deltarune
 		var offset_ = dltrn ? 8 : 0, offset_w = dltrn ? 15 : 0, offset_h = dltrn ? 16 : 0, bordx = 32 - offset_, bordy = 315 - offset_, bordw = 578 + offset_w, bordh = 152 + offset_w; //Border coords
 		var xx_ = ( bordx + ( dial_face != -1 ? 143 : 28 ) ) + offset_, yy_ = ( bordy + 20 ) + offset_; //Text X Y
-
+		
 		var ninesl_ = sprite_get_nineslice(spr_bord ); 
 		if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, 0, bordx, bordy, bordw, bordh, bord_clr, 1); } else { draw_nineslice(spr_bord, bordx, bordy, bordx + bordw, bordy + bordh, bord_clr, 1); } //Dialogue Box
 		if ( dial_face != -1 ) { draw_sprite_ensure(dial_face, dial_face_index, bordx + ( 74 + offset_ ), bordy + ( 76 + offset_ ), 2, 2, 0, dial_face_clr, 1); } //Dialogue Face
@@ -89,7 +89,6 @@ if  ( bord_out ) { outlinesoup_end(); }
 #endregion
 
 mouse_debug();
-
-/*draw_sprite_ensure("toriel_happy", current_time/300);
-draw_sprite_ensure("sans_wink", current_time/300, 15 + 50, 15);
-draw_sprite_ensure("undyne_officerbaffled", current_time/300, 15 + 100, 15);
+//draw_sprite_ensure(get_face("sck", "capn"), current_time/300, 320, 240);
+//draw_sprite_ensure(get_face("undyne", "pissed"), current_time/300, 320 + 40, 240);
+//draw_sprite_ensure(get_face("sans", "funny"), current_time/300, 320 + 80, 240);
