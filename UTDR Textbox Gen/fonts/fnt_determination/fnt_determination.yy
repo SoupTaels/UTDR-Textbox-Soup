@@ -10,7 +10,7 @@
   "charset":0,
   "first":0,
   "fontName":"8bitoperator JVE",
-  "glyphOperations":0,
+  "glyphOperations":1,
   "glyphs":{
     "32":{"character":32,"h":16,"offset":0,"shift":3,"w":3,"x":2,"y":2,},
     "33":{"character":33,"h":16,"offset":1,"shift":6,"w":4,"x":18,"y":38,},
@@ -107,7 +107,7 @@
     "124":{"character":124,"h":16,"offset":0,"shift":3,"w":2,"x":198,"y":2,},
     "125":{"character":125,"h":16,"offset":0,"shift":6,"w":5,"x":191,"y":2,},
     "126":{"character":126,"h":16,"offset":0,"shift":8,"w":7,"x":217,"y":38,},
-    "9647":{"character":9647,"h":16,"offset":3,"shift":16,"w":9,"x":226,"y":38,},
+    "9647":{"character":9647,"h":16,"offset":3,"shift":15,"w":9,"x":226,"y":38,},
   },
   "hinting":0,
   "includeTTF":false,

@@ -3,7 +3,6 @@ live_auto_call_nr
 
 //draw_format("center", "center");
 
-//draw_sprite_ext(spr_reference, 0, 0, 0, 1, 1, 0, c_yellow, 1);
 #region UI Borders
 	outlinesoup_start();
 		draw_sprite_stretched_ext(spr_border_octagon, 0, 10, 20, room_width - 20, room_height - 90, c_white, 0.6); //Back opacity
@@ -16,13 +15,13 @@ live_auto_call_nr
 	#region Dialogue Box
 		var dltrn = spr_bord == spr_border_deltarune; //Check if our border is Deltarune
 		var offset_ = dltrn ? 8 : 0, offset_w = dltrn ? 15 : 0, offset_h = dltrn ? 16 : 0, bordx = 32 - offset_, bordy = 315 - offset_, bordw = 578 + offset_w, bordh = 152 + offset_w; //Border coords
-		var xx_ = ( bordx + ( dial_face != -1 ? 143 : 28 ) ) + offset_, yy_ = ( bordy + 20 ) + offset_; //Text X Y
-		
+		var xx_ = ( bordx + ( ( dial_face != -1 ? 144 : 28 ) + ( dial_point_auto ? 4 : 0 ) ) ) + ( offset_ + dltrn ? 6 : 0 ), yy_ = ( bordy + 29 ) + offset_; //Text X Y
+
 		var ninesl_ = sprite_get_nineslice(spr_bord ); 
 		if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, 0, bordx, bordy, bordw, bordh, bord_clr, 1); } else { draw_nineslice(spr_bord, bordx, bordy, bordx + bordw, bordy + bordh, bord_clr, 1); } //Dialogue Box
 		if ( dial_face != -1 ) { draw_sprite_ensure(dial_face, dial_face_index, bordx + ( 74 + offset_ ), bordy + ( 76 + offset_ ), 2, 2, 0, dial_face_clr, 1); } //Dialogue Face
 	#endregion
-
+//(spr_reference, 0, 0, 0, 1, 1, 0, c_yellow, 1);
 	#region Dialogue Text
 		if ( dial_text != "" ) { //No need to draw blank text
 			if ( dial_text_shdw ) { //Dialogue Text Shadow
@@ -39,7 +38,8 @@ live_auto_call_nr
 			scrib_dial.blend(c_white, 1)
 			scrib_dial.scale(dial_text_scale);
 			scrib_dial.allow_line_data_getter();
-			scrib_dial.allow_glyph_data_getter()
+			scrib_dial.allow_glyph_data_getter();
+			scrib_dial.line_spacing("120%");
 			scrib_dial.wrap(dial_auto_wrap ? 580 - xx_ : -1);
 			scrib_dial.draw(dial_point_auto ? xx_ + 28 : xx_, yy_, dial_text_gif ? typist : undefined);
 
@@ -53,7 +53,7 @@ live_auto_call_nr
 								var scrib_point = scribble(dial_point_chr); //Dialogue Point
 								scrib_point.starting_format(dial_font, dial_text_shdw_clr);
 								scrib_point.scale(dial_text_scale);
-								scrib_point.draw(xx_ + dial_text_shdw_thick, ( yy_ + lined.y ) + dial_text_shdw_thick);
+								scrib_point.draw(( xx_ + dial_text_shdw_thick ) - 4, ( yy_ + lined.y ) + dial_text_shdw_thick);
 							}
 						i++; }
 					}
@@ -65,7 +65,7 @@ live_auto_call_nr
 							scrib_point.starting_format(dial_font, dial_point_clr);
 							scrib_point.scale(dial_text_scale);
 							scrib_point.allow_line_data_getter();
-							scrib_point.draw(xx_, yy_ + lined.y);
+							scrib_point.draw(xx_ - 4, yy_ + lined.y);
 						}
 					i++; }
 				}

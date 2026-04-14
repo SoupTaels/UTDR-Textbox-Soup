@@ -31,7 +31,7 @@
 
 //Controls if spaces and tabs have a fixed, unchanging size. Setting this to <false> will ensure
 //that spaces are always the same size, which is useful for monospaced fonts.
-#macro SCRIBBLE_FLEXIBLE_WHITESPACE_WIDTH  true
+#macro SCRIBBLE_FLEXIBLE_WHITESPACE_WIDTH  false
 
 //Sets whether pin alignments use the size of the page for positioning, or the size of the text
 //element (the bounding box across all pages).

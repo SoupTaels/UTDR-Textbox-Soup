@@ -11,7 +11,7 @@
 
 #region Dialogue Text
 	dial_text = $"Test dialogue text 1, 2, 3.....{chr(GMIB.CHR_ENTER)}Test dialogue text 4, 5, 6.....{chr(GMIB.CHR_ENTER)}Test dialogue text 7, 8, 9....."; //Dialogue Text
-	dial_font = "DEFAULT"; //Dialogue Font
+	dial_font = "fnt_monospaced"; //Dialogue Font
 	dial_text_scale = 2; //Text Scale
 	dial_text_gif = false; //Whether to enable typewriting
 	dial_updatet = 1; //Dialogue update timer
@@ -22,8 +22,9 @@
 	dial_auto_wrap = true; //Whether to automatically wrap dialogue to new lines
 	dial_wrap_count = 1; //Current wrapped line
 	
-	if ( !scribble_font_exists("DEFAULT") ) { scribble_font_bake_outline_and_shadow("fnt_determination", "DEFAULT", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 1, false); }
-	scribble_font_set_default("DEFAULT"); //Use the normal dialogue font by default when using Scribble
+	if ( !scribble_font_exists("fnt_default") ) { scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_default", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 1, false); }
+	if ( !scribble_font_exists("fnt_monospaced") ) { scribble_font_bake_outline_and_shadow("fnt_determination_mono", "fnt_monospaced", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 0, false); }
+	scribble_font_set_default("fnt_default"); //Use the normal dialogue font by default when using Scribble
 	
 	typist = scribble_typist();
 	typist.in(0.4, 0);
@@ -92,7 +93,7 @@
 #endregion
 
 #region UI
-	fader = 1; TweenFire("$20", "fader>", 0); //Black overlay
+	fader = 1; TweenFire("$10", "+10", "fader>", 0); //Black overlay
 	ui_tab = 0; //Current Tab (0 - Dialogue, 1 - Face, 2 - Border, 3 - About)
 	screenshot = false; //Screenshot task
 	screenshot_surf = -1; //Screenshot surface
