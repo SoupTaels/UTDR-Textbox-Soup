@@ -1,0 +1,1 @@
+inner_stack.cleanup();

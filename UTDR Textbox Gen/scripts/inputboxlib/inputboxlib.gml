@@ -1,5 +1,5 @@
 global.GMIB_DATA = { active: undefined, switch_tick: 0 }
-enum GMIB { DEFAULT=0, TO_LOWER=1, TO_UPPER=2, CHR_END=28, CHR_ENTER=29, CHR_NL=30 }
+enum GMIB { DEFAULT=0, TO_LOWER=1, TO_UPPER=2, CHR_END=28, CHR_ENTER=29, CHR_NL=30, CHR_DOWN=10 }
 
 function gmib(style_struct=undefined) constructor {
 	
@@ -622,15 +622,15 @@ function gmib(style_struct=undefined) constructor {
 		draw_set_color(has_focus ? style.c_text_focused.c : style.c_text_unfocused.c);
 		draw_set_alpha(has_focus ? style.c_text_focused.a : style.c_text_unfocused.a);
 		
-		draw_set_valign(2);
+		draw_set_valign(fa_bottom);
 		if style.min_chw == 0 {
-			draw_set_halign(0);
+			draw_set_halign(fa_left);
 			for ( var i = 0, s = ds_list_size(l_lines); i < s; i++; ) {
 				draw_text_transformed(pad_atx, pad_aty + i * style.lh + style.lh, l_lines[| i][3], style.textscalex * style.textscalefactor, style.textscaley * style.textscalefactor, 0);
 			}
 		}
 		else {
-			draw_set_halign(1);
+			draw_set_halign(fa_center);
 			var wid = 0;
 			for(var i = 0, s = ds_list_size(l_lines); i < s; i++) {
 				var line = l_lines[| i];
@@ -643,8 +643,8 @@ function gmib(style_struct=undefined) constructor {
 				wid = 0;
 			}
 		}
-		draw_set_valign(0);
-		draw_set_halign(0);
+		draw_set_valign(fa_top);
+		draw_set_halign(fa_left);
 		
 		if ( has_focus && cursor_visible ) { var cursor_alpha = abs(sin(current_time/style.cursor_spd)); draw_sprite_ext(spr_pixel, 0, pad_atx + cursor1.cx * style.textscalefactor, pad_aty + cursor1.cy, 2, style.lh, 0, c_white, style.cursor_blinks ? 1 : cursor_alpha); }
 		

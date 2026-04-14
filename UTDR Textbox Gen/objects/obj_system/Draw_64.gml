@@ -4,13 +4,16 @@ live_auto_call_nr
 //draw_format("center", "center");
 
 #region UI Borders
-	outlinesoup_start();
-		draw_sprite_stretched_ext(spr_border_octagon, 0, 10, 20, room_width - 20, room_height - 90, c_white, 0.6); //Back opacity
-		draw_sprite_stretched_ext(spr_border_tabs, 2, 10, 280, room_width - 20, room_height - 350, merge_color(c_orange, c_white, 0.5), 1); //Fading Part
-		draw_sprite_stretched_ext(spr_border_tabs, 2, 10, 300, room_width - 20, room_height - 370, c_white, 1); //Bottom
-		draw_sprite_stretched_ext(spr_border_tabs, 1, 10, 20, room_width - 20, room_height - 220, c_orange, 1); //Top
-	outlinesoup_end();
+	if ( ui_visible ) {
+		outlinesoup_start();
+			draw_sprite_stretched_ext(spr_border_octagon, 0, 10, 20, room_width - 20, room_height - 90, c_white, 0.6); //Back opacity
+			draw_sprite_stretched_ext(spr_border_tabs, 2, 10, 280, room_width - 20, room_height - 350, merge_color(c_orange, c_white, 0.5), 1); //Fading Part
+			draw_sprite_stretched_ext(spr_border_tabs, 2, 10, 300, room_width - 20, room_height - 370, c_white, 1); //Bottom
+			draw_sprite_stretched_ext(spr_border_tabs, 1, 10, 20, room_width - 20, room_height - 220, c_orange, 1); //Top
+		outlinesoup_end();
+	}
 #endregion
+	//draw_sprite_ensure(global.refimg, , 0, 0);
 	if ( bord_out ) { outlinesoup_start(); }
 	#region Dialogue Box
 		var dltrn = spr_bord == spr_border_deltarune; //Check if our border is Deltarune
@@ -21,7 +24,7 @@ live_auto_call_nr
 		if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, 0, bordx, bordy, bordw, bordh, bord_clr, 1); } else { draw_nineslice(spr_bord, bordx, bordy, bordx + bordw, bordy + bordh, bord_clr, 1); } //Dialogue Box
 		if ( dial_face != -1 ) { draw_sprite_ensure(dial_face, dial_face_index, bordx + ( 74 + offset_ ), bordy + ( 76 + offset_ ), 2, 2, 0, dial_face_clr, 1); } //Dialogue Face
 	#endregion
-//(spr_reference, 0, 0, 0, 1, 1, 0, c_yellow, 1);
+
 	#region Dialogue Text
 		if ( dial_text != "" ) { //No need to draw blank text
 			if ( dial_text_shdw ) { //Dialogue Text Shadow
@@ -74,14 +77,16 @@ live_auto_call_nr
 	#endregion
 if  ( bord_out ) { outlinesoup_end(); }
 #region UI
-	var i = 0, count_ = array_length(butt);
-	repeat ( count_ ) { 
-		butt[i].update();
+	if ( ui_visible ) {
+		var i = 0, count_ = array_length(butt);
+		repeat ( count_ ) { 
+			butt[i].update();
 	
-		 var result = butt[i].button.get_bbox(butt[i].data.x, butt[i].data.ystart);
-		 var calc_x = centerizer(result.width, count_, 320, 12);
-		butt[i].data.x = calc_x[i];
-	i++; }
+			 var result = butt[i].button.get_bbox(butt[i].data.x, butt[i].data.ystart);
+			 var calc_x = centerizer(result.width, count_, 320, 12);
+			butt[i].data.x = calc_x[i];
+		i++; }
+	}
 	
 	ui_manage();
 	

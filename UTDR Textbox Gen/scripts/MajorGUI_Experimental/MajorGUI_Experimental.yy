@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"MajorGUI_Experimental",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"MajorGUI_Experimental",
+  "parent":{
+    "name":"MajorGUI",
+    "path":"folders/Extensions/MajorGUI.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

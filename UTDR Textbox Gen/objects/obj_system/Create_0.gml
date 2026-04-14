@@ -10,17 +10,18 @@
 #endregion
 
 #region Dialogue Text
-	dial_text = $"Test dialogue text 1, 2, 3.....{chr(GMIB.CHR_ENTER)}Test dialogue text 4, 5, 6.....{chr(GMIB.CHR_ENTER)}Test dialogue text 7, 8, 9....."; //Dialogue Text
+	dial_text = $"Test dialogue text 1, 2, 3.....{chr(GMIB.CHR_DOWN)}Test dialogue text 4, 5, 6.....{chr(GMIB.CHR_DOWN)}Test dialogue text 7, 8, 9....."; //Dialogue Text
 	dial_font = "fnt_monospaced"; //Dialogue Font
 	dial_text_scale = 2; //Text Scale
 	dial_text_gif = false; //Whether to enable typewriting
 	dial_updatet = 1; //Dialogue update timer
+	undo_stack = [];
 	
 	dial_point_auto = false; //Whether to automatically add points
 	dial_point_chr = "*"; //Dialogue Point Character
 	dial_point_clr = c_white; //Dialogue Point Clr
 	dial_auto_wrap = true; //Whether to automatically wrap dialogue to new lines
-	dial_wrap_count = 1; //Current wrapped line
+	dial_wrap_count = 0; //Current wrapped line
 	
 	if ( !scribble_font_exists("fnt_default") ) { scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_default", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 1, false); }
 	if ( !scribble_font_exists("fnt_monospaced") ) { scribble_font_bake_outline_and_shadow("fnt_determination_mono", "fnt_monospaced", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 0, false); }
@@ -31,7 +32,7 @@
 	typist.function_per_char(function(_element, _position, _typist) { //Function to run per character
 		var mychr = chr(_element.get_glyph_data(_position-1).unicode); //Get the currently revealed character
 		//show_debug_message(mychr);
-		if ( mychr == chr(10) ) { dial_wrap_count++; } //Newline
+		if ( mychr == chr(GMIB.CHR_DOWN) ) { dial_wrap_count++; } //Newline
 		
 		if ( dial_face_auto ) { //Animate the face while dialogue is typing out
 			static anim_timer = 0; anim_timer++;
@@ -48,32 +49,32 @@
 		scribble_typists_add_event("face", function(_, param) { //Switch to a new portrait sprite
 			DIAL_GIF
 			dial_face_prev = dial_face; //Get the previous face
-			dial_face = param[0]; //Switch to new face
+			dial_face = get_face(param[0], array_length(param) > 1 ? param[1] : -1);
 		});
-		scribble_typists_add_event("face_original", function(_, param) { //Change the original previous face to a new 
-			DIAL_GIF
-			dial_face_original = param[0];
-		});
-		scribble_typists_add_event("face_prev", function(_, param) { //Change the face back to the previous face
-			DIAL_GIF
-			dial_face = dial_face_prev;
-		});
-		scribble_typists_add_event("face_auto", function(_, param) { //Switch the automatically animation of the face
-			DIAL_GIF
-			dial_face_auto = bool(string_letters(param[0]));
-		});
-		scribble_typists_add_event("face_index", function(_, param) { //Change the index of the face(if dial_face_auto is off), for sprites with more sprites and expressions
-			DIAL_GIF
-			dial_face_index = real(string_digits(param[0]));
-		});
+		scribble_typists_add_event("face_orig", function(_, param) { DIAL_GIF dial_face_original = get_face(param[0], array_length(param) > 1 ? param[1] : -1); }); //Change the original previous face to a new 
+		scribble_typists_add_event("face_prev", function(_, param) { DIAL_GIF dial_face = dial_face_prev; }); //Change the face back to the previous face
+		scribble_typists_add_event("face_auto", function(_, param) { DIAL_GIF dial_face_auto = bool(string_letters(param[0])); }); //Switch the automatically animation of the face
+		scribble_typists_add_event("face_index", function(_, param) { DIAL_GIF dial_face_index = real(string_digits(param[0])); }); //Change the index of the face(if dial_face_auto is off), for sprites with more sprites and expressions
 		scribble_typists_add_event("border", function(_, param) { //Switch to a new border sprite
 			DIAL_GIF
-			var bord_ = asset_get_index(param[0]);
+			var bord_ = get_border(param[0]);
 			spr_bord = bord_ != -1 ? bord_ : spr_border_undertale;
 		});
 		
-		scribble_add_macro("newline", function(){ return "[offsetPop]\n    [offset,-4]"; }); //Newline with no asterisk
-		scribble_add_macro("newline_new", function(){ return "[offsetPop]\n* "; }); //Newline with asterisk
+		scribble_add_macro("newl", function(){ return "\n  "; }); //Newline with no asterisk
+		scribble_add_macro("newl_a", function(){ return "\n* "; }); //Newline with asterisk
+		
+		var newsprite = function(face, index_ = 0, speed_ = 0) { //Insert external sprite
+			show_debug_message(face);
+			var getface = get_face(face);
+			if ( getface != -1 ) { return $"[{getface},{real(string_digits(index_ != "" ? index_ : 0))},{real(speed_ != "" ? speed_ : 0)}]"; }
+			else {
+				var geticon = get_icon(face);
+				if ( geticon != -1 ) { return $"[{geticon},{real(string_digits(index_ != "" ? index_ : 0))},{real(speed_ != "" ? speed_ : 0)}]"; }
+			}
+			return "";
+		}
+		scribble_add_macro("sprite", newsprite); scribble_add_macro("image", newsprite); scribble_add_macro("icon", newsprite); scribble_add_macro("spr", newsprite); scribble_add_macro("img", newsprite);
 	#endregion
 #endregion
 
@@ -98,6 +99,7 @@
 	screenshot = false; //Screenshot task
 	screenshot_surf = -1; //Screenshot surface
 	record = { enabled: false, type: 0, frames: 0, framesmax: 0, id_: -1, }; //Whether to record, the type of recording(0 - static, 1 - wait for dialogue to finish), and how long to record for
+	ui_visible = true; //Whether the UI should be visible
 	
 	#region Main Menu Buttons
 		var i = 0, spr_ = spr_border_octagon, y_ = 12, clr_ = c_orange, padd_ = 14;
@@ -142,3 +144,5 @@
 		inputbox.update_style(style);
 	#endregion
 #endregion
+
+undo_stack_create()

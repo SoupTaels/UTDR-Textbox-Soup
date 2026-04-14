@@ -50,20 +50,24 @@ function ui_manage() {
 			#region Update Text
 				#region Sounds and Timer
 					if ( inputbox.has_focus ) { //If the input box is in focus
+						var keycur = keyboard_key, upd_ = false;
 						if ( keyboard_check_pressed(vk_anykey) ) { 
-							var keycur = keyboard_key, snd_ = -1;
+							var snd_ = -1;
 							switch ( keycur ) { 
 								case vk_enter: { snd_ = snd_equip2; } break;
 								case vk_shift: case vk_lcontrol: case vk_rcontrol: { snd_ = snd_enc1; } break;
 								case vk_up: case vk_down: case vk_left: case vk_right: { snd_ = snd_txttype; } break;
-								default: { snd_ = snd_txttype; } //We add a delay to updating the text so that it doesn't put too much of a strain on Scribble. It's doing the heavy lifting here!
+								default: { snd_ = snd_txttype; upd_ = true; } //We add a delay to updating the text so that it doesn't put too much of a strain on Scribble. It's doing the heavy lifting here!
 							}
 							audio_play_sound(snd_, 0, false);
 						}
-						if ( keyboard_check(vk_anykey) ) { dial_updatet = 31; }
+						if ( ( keyboard_check(vk_anykey) && upd_ ) || keyboard_check(vk_backspace) ) { dial_updatet = 31; }
 					}
 				#endregion
-			
+			if (keyboard_check(vk_control) && keyboard_check_pressed(ord("Z"))) {
+				dial_updatet = 0;
+				if ( !keyboard_check(vk_shift) ) { undo_stack_undo(); } else { undo_stack_redo(); }
+			}
 				#region Text Update 
 					if ( dial_updatet > 1 ) { 
 						dial_updatet--; 
@@ -76,7 +80,7 @@ function ui_manage() {
 						draw_format(fa_center, fa_middle, fnt_speech, c_yellow);
 						draw_text(textx, 90, "Updating text...!");
 					}
-					else { if ( dial_updatet == 1 ) { dial_updatet = 0; dial_text = inputbox.get_text(); } } //Update the text
+					else { if ( dial_updatet == 1 ) { dial_updatet = 0; undo_stack_begin_move(); var txt = new TextChange(inputbox.get_text()); undo_stack_apply_change(txt); undo_stack_complete_move(); } } //Update the text
 				#endregion
 			#endregion
 							
