@@ -1,7 +1,7 @@
 #region Default functions for the menu buttons
-	function on_enter_() { if ( obj_system.ui_tab != id_ ) { audio_play_sound(snd_sel_switch, 0, false); TweenFire("~ocirc", "$15", "y>", "ystart+5"); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } }
+	function on_enter_() { if ( obj_system.ui_tab != id_ ) { sfx_play(snd_sel_switch); TweenFire("~ocirc", "$15", "y>", "ystart+5"); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } }
 	function on_leave_() { if ( obj_system.ui_tab != id_ ) { TweenFire("~ocirc", "$15", "y>", "ystart"); text = text_static; color_butt = c_orange; } }
-	function on_click_() { if ( obj_system.ui_tab != id_ ) { audio_play_sound(snd_select, 0, false); obj_system.ui_tab = id_; on_reset_(); } else { audio_play_sound(snd_bump, 0, false); } }
+	function on_click_() { if ( obj_system.ui_tab != id_ ) { sfx_play(snd_select); obj_system.ui_tab = id_; on_reset_(); } else { sfx_play(snd_bump, , , random_range(0.8, 1.2)); } }
 	function on_reset_() { 
 		var i = 0;
 		repeat ( array_length(obj_system.butt) ) { with ( obj_system.butt[i].data ) { if ( obj_system.ui_tab != id_ ) { TweenFire("~ocirc", "$15", "y>", "ystart"); text = text_static; color_butt = c_orange; } else { TweenFire("~ocirc", "$15", "y>", "ystart+5"); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } } i++; }
@@ -9,6 +9,15 @@
 #endregion
 
 #macro DIAL_GIF if ( !dial_text_gif ) { exit; } //Only run if GIFs are enabled
+
+function TextChange(txt) : UndoableChange() constructor { //Handle undo/ redoing changes
+	prev_txt = obj_system.dial_text;
+	mytxt = txt;
+	
+	static apply = function() { obj_system.dial_text = mytxt; sfx_play(snd_equip);  }
+
+    static undo = function() { with ( obj_system ) { dial_text = other.prev_txt; sfx_play(snd_cancel); } }
+}
 
 ///@desc Create a GUI button. Accepts { x, y, text, padd_(x1, y1, x2, y2, multi), sprite, index, scale, font, color, color_butt, halign, and valign, and functions for on_enter(runs once), on_hover, on_leave(once), on_click(once), on_held, on_released(once) }
 ///@param {struct} datastruct_ Data struct for button functionality.
@@ -49,27 +58,25 @@ function ui_manage() {
 		case 0: { //Dialogue
 			#region Update Text
 				#region Sounds and Timer
-					if ( inputbox.has_focus ) { //If the input box is in focus
-						var keycur = keyboard_key, upd_ = false;
+					//if ( inputbox.has_focus ) { //If the input box is in focus
+						var keycur = keyboard_key;
 						if ( keyboard_check_pressed(vk_anykey) ) { 
 							var snd_ = -1;
 							switch ( keycur ) { 
 								case vk_enter: { snd_ = snd_equip2; } break;
 								case vk_shift: case vk_lcontrol: case vk_rcontrol: { snd_ = snd_enc1; } break;
-								case vk_up: case vk_down: case vk_left: case vk_right: { snd_ = snd_txttype; } break;
-								default: { snd_ = snd_txttype; upd_ = true; } //We add a delay to updating the text so that it doesn't put too much of a strain on Scribble. It's doing the heavy lifting here!
+								default: { snd_ = snd_txttype; } //We add a delay to updating the text so that it doesn't put too much of a strain on Scribble. It's doing the heavy lifting here!
 							}
 							audio_play_sound(snd_, 0, false);
 						}
-						if ( ( keyboard_check(vk_anykey) && upd_ ) || keyboard_check(vk_backspace) ) { dial_updatet = 31; }
-					}
+						if ( keyboard_check(vk_anykey) ) { dial_updatet = 31; }
+					//}
 				#endregion
-			if (keyboard_check(vk_control) && keyboard_check_pressed(ord("Z"))) {
-				dial_updatet = 0;
-				if ( !keyboard_check(vk_shift) ) { undo_stack_undo(); } else { undo_stack_redo(); }
-			}
+				
 				#region Text Update 
-					if ( dial_updatet > 1 ) { 
+					if ( keyboard_check(vk_control) && keyboard_check_pressed(ord("Z")) ) { dial_updatet = 0; if ( !keyboard_check(vk_shift) ) { undo_stack_undo(); } else { undo_stack_redo(); } }
+					
+					if ( dial_updatet > 1 ) { //Notification for updating text
 						dial_updatet--; 
 				
 						var ringcalc = map_value(dial_updatet, 0, 30, 0, 360), textx = 320; //Turn the values of a timer into a range of degrees
@@ -80,15 +87,19 @@ function ui_manage() {
 						draw_format(fa_center, fa_middle, fnt_speech, c_yellow);
 						draw_text(textx, 90, "Updating text...!");
 					}
-					else { if ( dial_updatet == 1 ) { dial_updatet = 0; undo_stack_begin_move(); var txt = new TextChange(inputbox.get_text()); undo_stack_apply_change(txt); undo_stack_complete_move(); } } //Update the text
+					else { if ( dial_updatet == 1 ) { //Update the text
+						dial_updatet = 0; 
+						undo_stack_begin_move(); 
+							var txt = new TextChange(dial_text);  undo_stack_apply_change(txt); 
+						undo_stack_complete_move();
+					} } 
 				#endregion
 			#endregion
 							
 			draw_format(, , fnt_speech);
 			draw_text(30, 100, "Raw Text: (Type below!)");
-			inputbox.draw(30, 120); //Input Box Text
 			//draw_sprite_ensure(get_face("undyne", "officerpissed"), 0, 320, 240);
-			draw_sprite_stretched(spr_border_textbox, 0, inputbox.pad_atx - inputbox.style.padding.left * 2, inputbox.pad_aty - inputbox.style.padding.top * 2, inputbox.style.w + inputbox.style.padding.right * 2, inputbox.style.h + inputbox.style.padding.bottom * 2); //Inputbox Border
+			//draw_sprite_stretched(spr_border_textbox, 0, inputbox.pad_atx - inputbox.style.padding.left * 2, inputbox.pad_aty - inputbox.style.padding.top * 2, inputbox.style.w + inputbox.style.padding.right * 2, inputbox.style.h + inputbox.style.padding.bottom * 2); //Inputbox Border
 		} break;
 		
 		case 1: { //Style

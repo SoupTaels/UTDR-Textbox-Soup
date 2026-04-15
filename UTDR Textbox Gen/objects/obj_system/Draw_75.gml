@@ -62,7 +62,7 @@ if ( screenshot || record.enabled ) {
 		
 		if ( !gif_ ) { file_delete(fpath); }
 		show_debug_message($"{fname} saved at {fpath_final}!");
-		audio_play_sound(snd_dumbvictory, 0, false);
+		sfx_play(snd_dumbvictory);
 		surface_free(screenshot_surf);
 		screenshot_surf = -1;
 		record.frames = 0;

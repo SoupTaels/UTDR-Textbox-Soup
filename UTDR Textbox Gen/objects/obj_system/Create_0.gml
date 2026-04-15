@@ -10,21 +10,23 @@
 #endregion
 
 #region Dialogue Text
-	dial_text = $"Test dialogue text 1, 2, 3.....{chr(GMIB.CHR_DOWN)}Test dialogue text 4, 5, 6.....{chr(GMIB.CHR_DOWN)}Test dialogue text 7, 8, 9....."; //Dialogue Text
+	dial_text = $"Test dialogue text 1, 2, 3.....\nTest dialogue text 4, 5, 6.....\nTest dialogue text 7, 8, 9....."; //Dialogue Text
 	dial_font = "fnt_monospaced"; //Dialogue Font
 	dial_text_scale = 2; //Text Scale
 	dial_text_gif = false; //Whether to enable typewriting
 	dial_updatet = 1; //Dialogue update timer
-	undo_stack = [];
 	
-	dial_point_auto = false; //Whether to automatically add points
+	undo_stack_create();
+	undo_stack = []; //History of undo changes
+	
+	dial_point_auto = true; //Whether to automatically add points
 	dial_point_chr = "*"; //Dialogue Point Character
 	dial_point_clr = c_white; //Dialogue Point Clr
 	dial_auto_wrap = true; //Whether to automatically wrap dialogue to new lines
 	dial_wrap_count = 0; //Current wrapped line
 	
-	if ( !scribble_font_exists("fnt_default") ) { scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_default", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 1, false); }
-	if ( !scribble_font_exists("fnt_monospaced") ) { scribble_font_bake_outline_and_shadow("fnt_determination_mono", "fnt_monospaced", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 0, false); }
+	if ( !scribble_font_exists("fnt_default") ) { scribble_font_bake_outline_and_shadow("fnt_determination_nomono", "fnt_default", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 1, false); }
+	if ( !scribble_font_exists("fnt_monospaced") ) { scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_monospaced", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 0, false); }
 	scribble_font_set_default("fnt_default"); //Use the normal dialogue font by default when using Scribble
 	
 	typist = scribble_typist();
@@ -131,18 +133,4 @@
 		call_later(1, time_source_units_frames, on_reset_); //Reset all buttons on start
 	#endregion
 	
-	#region Input Box
-		inputbox = new gmib({ w: 580, h: 180, font: fnt_speech, textscalefactor: 1, text: dial_text, cursor_blinks: false, cursor_spd: 300, }); //Create new input box and set the style of it
-		inputbox.focus(); //Make the input box immediately stay focused
-		var style = { //Set more styles
-			c_bkg_focused: { c: #292138, a: 1, },
-			c_bkg_unfocused: { c: #524271, a: 1, },
-			c_text_unfocused: { c: #9c8cbb, a: 1, },
-			c_text_focused: { c: c_white, a: 1, },
-			c_selection: { c: c_blue, a: 1, },
-		}
-		inputbox.update_style(style);
-	#endregion
 #endregion
-
-undo_stack_create()

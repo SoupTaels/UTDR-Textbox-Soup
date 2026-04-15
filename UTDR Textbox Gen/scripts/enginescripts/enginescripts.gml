@@ -30,7 +30,7 @@ function mouse_debug()
 		if ( doublepress == 0 ) { doublepress = 15; }
 		else { doublepress = 0; clipboard_set_text(!keyboard_check(ord("Q")) ? $"{mouse_x_gui}, {mouse_y_gui}" : $"{mouse_x}, {mouse_y}"); }
 	}
-	draw_format();
+	//draw_format();
 }
 
 ///@desc Sets up default drawing parameters
@@ -270,3 +270,6 @@ function draw_sprite_outline(sprite_ = sprite_index, index_ = image_index, x_ = 
 	
 	if ( self_ ) { draw_sprite_ext(sprite_, index_, x_, y_, xscale_, yscale_, angle_, blend_, alpha_); }
 }
+
+///@desc Shorthand for audio_play_sound()
+function sfx_play(snd, loop = false, gain = 1, pitch = 1) { return audio_play_sound(snd, 0, loop, gain, , pitch); }

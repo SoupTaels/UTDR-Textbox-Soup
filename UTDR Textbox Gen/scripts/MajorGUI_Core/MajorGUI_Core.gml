@@ -142,20 +142,20 @@ function Mix(fm_a, fm_b, fm_x) {
 };
 
 /// @function Vector2(fm_x : number, fm_y : number) -> Vector2
-function Vector2(fm_x, fm_y) constructor {
+function Vector2(fm_x = 0, fm_y = 0) constructor {
 	x = fm_x;
 	y = fm_y;
 };
 
 /// @function Vector3(fm_x : number, fm_y : number, fm_z : number) -> Vector3
-function Vector3(fm_x, fm_y, fm_z) constructor {
+function Vector3(fm_x = 0, fm_y = 0, fm_z = 0) constructor {
 	x = fm_x;
 	y = fm_y;
 	z = fm_z;
 };
 
 /// @function Vector4(fm_x : number, fm_y : number, fm_z : number, fm_w : number) -> Vector4
-function Vector4(fm_x, fm_y, fm_z, fm_w) constructor {
+function Vector4(fm_x = 0, fm_y = 0, fm_z = 0, fm_w = 0) constructor {
 	x = fm_x;
 	y = fm_y;
 	z = fm_z;
@@ -163,7 +163,7 @@ function Vector4(fm_x, fm_y, fm_z, fm_w) constructor {
 };
 
 /// @function Align(fm_horizontal : ALIGN, fm_vertical : ALIGN) -> Alignbject
-function Align(fm_horizontal, fm_vertical) constructor {
+function Align(fm_horizontal = ALIGN.LEFT, fm_vertical = ALIGN.TOP) constructor {
 	horizontal = fm_horizontal;
 	vertical = fm_vertical;
 };
@@ -2970,6 +2970,7 @@ function MajorGUI() constructor {
 		draw_set_color(make_color_rgb(color.x, color.y, color.z));
 		draw_set_alpha(color.w / 255);
 		draw_rectangle(0, 0, CanvasGetSize(fm_canvas).x, CanvasGetSize(fm_canvas).y, false);
+		draw_set_font(draw_get_font());
 		draw_set_alpha(1);
 		draw_set_color(c_white);
 	
@@ -3563,8 +3564,24 @@ function MajorGUI() constructor {
 				};
 			};
 			
+			#region Double & Triple Click
+				static doubleTimer = 0
+				if ( doubleTimer > 0 ) { 
+					doubleTimer--;
+					if ( mouse_pressed ) { 
+						doubleTimer = 0;
+						mouse_clear(mb_left)
+						var text = ElementGetProperty(fm_textbox, "text");
+						fm_textbox[? "point1"] = 0;
+						fm_textbox[? "point"] = string_length(text);
+					} //Double Clicked!
+				} else { doubleTimer = 0; }
+			
+				if ( mouse_pressed ) { doubleTimer = 15; }
+			#endregion
+			
 			// Keyboard Events
-			if (keyboard_lastkey != vk_nokey && keyboard_lastchar != vk_nokey) {
+			if ( ( keyboard_lastkey != vk_nokey && keyboard_lastkey != 20 ) && keyboard_lastchar != vk_nokey ) {
 				var text = ElementGetProperty(fm_textbox, "text");
 				
 				// char limit check-point
@@ -3722,27 +3739,31 @@ function MajorGUI() constructor {
 					//fm_textbox[? "point1"] = fm_textbox[? "point"];
 				} break;
 				case vk_backspace: {
-					if (fm_textbox[? "point"] == fm_textbox[? "point1"]) {
-						text = string_delete(text, fm_textbox[? "point"], 1);
-						fm_textbox[? "point"]--;
-						fm_textbox[? "point1"] = fm_textbox[? "point"];
+					if ( text != "" ) {
+						if (fm_textbox[? "point"] == fm_textbox[? "point1"]) {
+							text = string_delete(text, fm_textbox[? "point"], 1);
+							fm_textbox[? "point"]--;
+							fm_textbox[? "point1"] = fm_textbox[? "point"];
+						}
+						else {
+							text = string_delete(text, ps + 1, pe - ps);
+							fm_textbox[? "point"] = ps;
+							fm_textbox[? "point1"] = ps;
+						};
 					}
-					else {
-						text = string_delete(text, ps + 1, pe - ps);
-						fm_textbox[? "point"] = ps;
-						fm_textbox[? "point1"] = ps;
-					};
 				} break;
 				case vk_delete: {
-					if (fm_textbox[? "point"] == fm_textbox[? "point1"]) {
-						text = string_delete(text, fm_textbox[? "point"] + 1, 1);
-						fm_textbox[? "point1"] = fm_textbox[? "point"];
+					if ( text != "" ) {
+						if (fm_textbox[? "point"] == fm_textbox[? "point1"]) {
+							text = string_delete(text, fm_textbox[? "point"] + 1, 1);
+							fm_textbox[? "point1"] = fm_textbox[? "point"];
+						}
+						else {
+							text = string_delete(text, ps + 1, pe - ps);
+							fm_textbox[? "point"] = ps;
+							fm_textbox[? "point1"] = ps;
+						};
 					}
-					else {
-						text = string_delete(text, ps + 1, pe - ps);
-						fm_textbox[? "point"] = ps;
-						fm_textbox[? "point1"] = ps;
-					};
 				} break;
 				case vk_enter: {
 					if (!ElementGetProperty(fm_textbox, "isMultiline")) { break; };
@@ -4985,18 +5006,7 @@ function MajorGUI() constructor {
 	};
 	
 	/// @function ButtonCreate(pos : Vector3, text : string, parent = noone : ds_map, onClick = noone : function, size = new Vector2(82, 24) : Vector2, onUpdateBefore = STYLER_BUTTON_UPDATE_BEFORE : function, onUpdateAfter = STYLER_BUTTON_UPDATE_AFTER : function, onDrawBefore = STYLER_BUTTON_DRAW_BEFORE : function, onDrawAfter = STYLER_BUTTON_DRAW_AFTER : function) -> ds_map
-	ButtonCreate = function
-	(
-		fm_pos, fm_text, 
-		fm_parent = noone, 
-		fm_onClick = noone, 
-		fm_size = new Vector2(82, 24), 
-		fm_onUpdateBefore = STYLER_BUTTON_UPDATE_BEFORE, 
-		fm_onUpdateAfter = STYLER_BUTTON_UPDATE_AFTER, 
-		fm_onDrawBefore = STYLER_BUTTON_DRAW_BEFORE, 
-		fm_onDrawAfter = STYLER_BUTTON_DRAW_AFTER
-	) 
-	{
+	ButtonCreate = function (fm_pos, fm_text, fm_parent = noone, fm_onClick = noone, fm_size = new Vector2(82, 24), fm_onUpdateBefore = STYLER_BUTTON_UPDATE_BEFORE, fm_onUpdateAfter = STYLER_BUTTON_UPDATE_AFTER, fm_onDrawBefore = STYLER_BUTTON_DRAW_BEFORE, fm_onDrawAfter = STYLER_BUTTON_DRAW_AFTER) {
 		var button = CanvasCreate(fm_pos, fm_size, new Vector4(0, 0, 0, 0), fm_parent);
 		
 		button[? "state"] = CLICKABLE_STATE.IDLE;
