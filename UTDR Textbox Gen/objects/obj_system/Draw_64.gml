@@ -1,5 +1,5 @@
 ///@desc Draw Dialogue Things
-live_auto_call_nr
+//live_auto_call_nr
 
 //draw_format("center", "center");
 
@@ -76,6 +76,7 @@ live_auto_call_nr
 		}
 	#endregion
 if  ( bord_out ) { outlinesoup_end(); }
+
 #region UI
 	if ( ui_visible ) {
 		var i = 0, count_ = array_length(butt);
@@ -92,7 +93,6 @@ if  ( bord_out ) { outlinesoup_end(); }
 	
 	draw_sprite_ext(spr_pixel, 0, 0, 0, 640, 480, 0, c_black, fader);
 #endregion
-
 mouse_debug();
 //draw_sprite_ensure(get_face("sck", "capn"), current_time/300, 320, 240);
 //draw_sprite_ensure(get_face("undyne", "pissed"), current_time/300, 320 + 40, 240);

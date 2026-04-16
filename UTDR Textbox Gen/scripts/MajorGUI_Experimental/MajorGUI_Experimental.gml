@@ -111,7 +111,16 @@ function MajorGUIBuilder() constructor {
         }
     };
 	
-	/// @function BuildPanel(config, parent, position, size) -> container/panel
+	/// @function BuildCanvas(config, parent, position, size, bCol) -> canvas
+	function BuildCanvas(config, parent, position, size, bCol) {
+		var canvas = MajorGUI.CanvasCreate(position, size, bCol, parent);
+		
+		__ProcessCanvasConfig(canvas, config);
+		
+		return canvas;
+	};
+	
+	/// @function BuildPanel(config, parent, position, size, scrollbarWidth = 12) -> container/panel
 	function BuildPanel(config, parent, position, size, scrollbarWidth = 12) {
 		if (scrollbarWidth < 0) {
 	        var panel = MajorGUI.PanelCreate(
@@ -207,6 +216,13 @@ function MajorGUIBuilder() constructor {
         }
 	};
 	
+	function __ProcessCanvasConfig(canvas, config) {
+        for (var i = 0; i < array_length(config); i++) {
+            var item = config[i];
+            __ProcessCanvasElement(canvas, item);
+        }
+	};
+	
 	function __ProcessRow(panel, row, title = undefined, placement = undefined, autoFit = true) {
         MajorGUI.PanelPush(panel, title, placement, autoFit);
         for (var j = 0; j < array_length(row); j++) {
@@ -223,6 +239,10 @@ function MajorGUIBuilder() constructor {
             __CreateElement(panel, element);
 			MajorGUI.PanelPop(panel);
         }
+	};
+	
+	function __ProcessCanvasElement(canvas, element) {
+        __CreateElement(canvas, element);
 	};
 	
 	function __ProcessSection(panel, section) {
@@ -253,12 +273,13 @@ function MajorGUIBuilder() constructor {
         var autoFit = variable_struct_exists(config, "autoFit") ? variable_struct_get(config, "autoFit") : true;
         var align = variable_struct_exists(config, "align") ? variable_struct_get(config, "align") : new Align(ALIGN.LEFT, ALIGN.MIDDLE);
         var element_id = variable_struct_exists(config, "id") ? variable_struct_get(config, "id") : "";
+		var position = variable_struct_exists(config, "position") ? variable_struct_get(config, "position") : new Vector3(0, 0, 0);
         
         // LABEL
         if (variable_struct_exists(config, "label")) {
             var font = variable_struct_exists(config, "font") ? variable_struct_get(config, "font") : -1;
             element = MajorGUI.LabelCreate(
-                undefined,
+                position,
                 variable_struct_get(config, "label"),
                 panel,
                 variable_struct_exists(config, "width") ? variable_struct_get(config, "width") : 200,
@@ -276,7 +297,7 @@ function MajorGUIBuilder() constructor {
             var btnSize = variable_struct_exists(config, "size") ? variable_struct_get(config, "size") : new Vector2(100, 30);
             
             element = MajorGUI.ButtonCreate(
-                undefined,
+                position,
                 btnText,
                 panel,
                 btnAction,
@@ -291,7 +312,7 @@ function MajorGUIBuilder() constructor {
             var cbAction = variable_struct_exists(cbConfig, "action") ? variable_struct_get(cbConfig, "action") : function(cb) { };
             
             element = MajorGUI.CheckboxCreate(
-                undefined,
+                position,
                 panel,
                 cbSize,
                 cbAction
@@ -309,7 +330,7 @@ function MajorGUIBuilder() constructor {
             var radioAction = variable_struct_exists(radioConfig, "action") ? variable_struct_get(radioConfig, "action") : function(radio) { };
             
             element = MajorGUI.RadioboxCreate(
-                undefined,
+                position,
                 panel,
                 radioSize,
                 radioAction
@@ -325,7 +346,7 @@ function MajorGUIBuilder() constructor {
             var percentage = (value - _min) / (_max - _min);
             
             element = MajorGUI.SlidebarCreate(
-                undefined,
+                position,
                 panel,
                 _min, _max,
                 percentage,
@@ -343,7 +364,7 @@ function MajorGUIBuilder() constructor {
             var percentage = (value - _min) / (_max - _min);
             
             element = MajorGUI.SliderCreate(
-                undefined,
+                position,
                 panel,
                 _min, _max,
                 percentage,
@@ -357,7 +378,7 @@ function MajorGUIBuilder() constructor {
         else if (variable_struct_exists(config, "textbox")) {
             var tbConfig = variable_struct_get(config, "textbox");
             element = MajorGUI.TextboxCreate(
-                undefined,
+                position,
                 new Vector2(variable_struct_exists(tbConfig, "width") ? variable_struct_get(tbConfig, "width") : 200, 28),
                 panel
             );
@@ -380,7 +401,7 @@ function MajorGUIBuilder() constructor {
         else if (variable_struct_exists(config, "combobox")) {
             var comboConfig = variable_struct_get(config, "combobox");
             element = MajorGUI.ComboboxCreate(
-                undefined,
+                position,
                 variable_struct_exists(comboConfig, "placeholder") ? variable_struct_get(comboConfig, "placeholder") : "Select",
                 panel,
                 variable_struct_exists(comboConfig, "size") ? variable_struct_get(comboConfig, "size") : new Vector2(124, 24)
@@ -398,7 +419,7 @@ function MajorGUIBuilder() constructor {
         else if (variable_struct_exists(config, "comboswitch")) {
             var switchConfig = variable_struct_get(config, "comboswitch");
             element = MajorGUI.ComboswitchCreate(
-                undefined,
+                position,
                 panel,
                 variable_struct_exists(switchConfig, "action") ? variable_struct_get(switchConfig, "action") : function(state) { },
                 variable_struct_exists(switchConfig, "width") ? variable_struct_get(switchConfig, "width") : 250,
@@ -417,7 +438,7 @@ function MajorGUIBuilder() constructor {
         else if (variable_struct_exists(config, "selectable")) {
             var selConfig = variable_struct_get(config, "selectable");
             element = MajorGUI.SelectableCreate(
-                undefined,
+                position,
                 variable_struct_exists(selConfig, "name") ? variable_struct_get(selConfig, "name") : "Selectable",
                 panel,
                 variable_struct_exists(selConfig, "size") ? variable_struct_get(selConfig, "size") : new Vector2(200, 30),
@@ -433,7 +454,7 @@ function MajorGUIBuilder() constructor {
         else if (variable_struct_exists(config, "sprite")) {
             var spriteConfig = variable_struct_get(config, "sprite");
             element = MajorGUI.SpriteCreate(
-                undefined,
+                position,
                 variable_struct_exists(spriteConfig, "sprite") ? variable_struct_get(spriteConfig, "sprite") : -1,
                 variable_struct_exists(spriteConfig, "frame") ? variable_struct_get(spriteConfig, "frame") : 0,
                 variable_struct_exists(spriteConfig, "speed") ? variable_struct_get(spriteConfig, "speed") : 0,
@@ -446,7 +467,7 @@ function MajorGUIBuilder() constructor {
         else if (variable_struct_exists(config, "table")) {
             var tableConfig = variable_struct_get(config, "table");
             element = MajorGUI.TableChartCreate(
-                undefined,
+                position,
                 variable_struct_exists(tableConfig, "size") ? variable_struct_get(tableConfig, "size") : new Vector2(400, 200),
                 variable_struct_exists(tableConfig, "headers") ? variable_struct_get(tableConfig, "headers") : [["Header", 1]],
                 variable_struct_exists(tableConfig, "data") ? variable_struct_get(tableConfig, "data") : [["Data", "Value"]],
@@ -458,7 +479,7 @@ function MajorGUIBuilder() constructor {
         else if (variable_struct_exists(config, "treeview")) {
             var treeConfig = variable_struct_get(config, "treeview");
             element = MajorGUI.TreeViewCreate(
-                undefined,
+                position,
                 variable_struct_exists(treeConfig, "size") ? variable_struct_get(treeConfig, "size") : new Vector2(256, 300),
                 panel
             );
@@ -472,7 +493,7 @@ function MajorGUIBuilder() constructor {
         else if (variable_struct_exists(config, "canvas")) {
             var canvasConfig = variable_struct_get(config, "canvas");
             element = MajorGUI.CanvasCreate(
-                undefined,
+                position,
                 variable_struct_exists(canvasConfig, "size") ? variable_struct_get(canvasConfig, "size") : new Vector2(100, 100),
                 variable_struct_exists(canvasConfig, "color") ? variable_struct_get(canvasConfig, "color") : new Vector4(255, 255, 255, 255),
                 panel
@@ -491,13 +512,15 @@ function MajorGUIBuilder() constructor {
 		    element = BuildPanel(
 		        panelConfig,
 		        panel,
-		        undefined,
+		        position,
 		        panelSize
 		    );
 		}
         
         if (element != noone) {
-            MajorGUI.PanelElementCreate(panel, element, placement, autoFit, align);
+			if (ds_map_exists(panel, "pushWidth")) {
+				MajorGUI.PanelElementCreate(panel, element, placement, autoFit, align);
+			};
             
             __RegisterElement(element, element_id);
         }
@@ -626,4 +649,3 @@ function MajorGUIBuilder() constructor {
         ds_map_destroy(animation);
     };
 };
-

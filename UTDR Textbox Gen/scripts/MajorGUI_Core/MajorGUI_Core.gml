@@ -2021,7 +2021,7 @@ function MajorGUI() constructor {
 			color = new Vector4(12, 12, 12, 255);
 		} break;
 		case CLICKABLE_STATE.IDLE: {
-			color = new Vector4(60, 60, 60, 255);
+			color = new Vector4(80, 63, 110, 255);
 		} break;
 		case CLICKABLE_STATE.HOVER: {
 			color = new Vector4(60, 60, 60, 255);
@@ -2126,13 +2126,13 @@ function MajorGUI() constructor {
 			color = new Vector4(100, 100, 100, 255);
 		} break;
 		case CLICKABLE_STATE.IDLE: {
-			color = new Vector4(200, 200, 200, 255);
+			color = new Vector4(154, 137, 184, 255);
 		} break;
 		case CLICKABLE_STATE.HOVER: {
-			color = new Vector4(240, 240, 240, 255);
+			color = new Vector4(218, 183, 230, 255);
 		} break;
 		case CLICKABLE_STATE.HOT: {
-			color = new Vector4(170, 170, 170, 255);
+			color = new Vector4(154, 137, 184, 235);
 		} break;
 		};
 	
@@ -3452,7 +3452,7 @@ function MajorGUI() constructor {
 			if (ButtonGetState(fm_textbox) == CLICKABLE_STATE.IDLE) {
 				ButtonSetState(fm_textbox, CLICKABLE_STATE.HOVER);
 			};
-			window_set_cursor(cr_beam);
+			//window_set_cursor(cr_beam);
 			
 			// Scroll
 			var scrollbarWidth = TextboxGetScrollbarWidth(fm_textbox);
@@ -3836,13 +3836,13 @@ function MajorGUI() constructor {
 		fm_textbox[? "highestPointOnY"] = textHeight + borderGap.y * 2 + (string_length(text) > 0 ? (string_char_at(text, string_length(text)) == "\n" ? lineHeight : 0) : 0);
 	};
 	STYLER_TEXTBOX_DRAW_BFEORE = function(fm_textbox) {
-		var color = new Vector4(31, 31, 31, 255);
+		var focus = ButtonGetState(fm_textbox) == CLICKABLE_STATE.HOT;
+		var color = focus ? new Vector4(39, 31, 54, 255) : new Vector4(80, 63, 110, 255);
 		
 		draw_set_color(make_color_rgb(color.x, color.y, color.z));
 		draw_set_alpha(color.w / 255);
 		
 		draw_rectangle(0, 0, CanvasGetSize(fm_textbox).x, CanvasGetSize(fm_textbox).y, false);
-		
 		draw_set_alpha(1);
 		draw_set_color(c_white);
 		
@@ -3885,10 +3885,11 @@ function MajorGUI() constructor {
 			var height = fontSize + 7 - 1;
 			var yStart = borderGapY + (lineHeight * lineIndex);
 			
-			draw_set_color(make_color_rgb(255, 255, 255));
+			draw_set_color(c_white);
 			draw_set_alpha(0.22);
 			
 			draw_rectangle(0, tpy + yStart, CanvasGetSize(fm_textbox).x, tpy + yStart + height, false);
+			draw_set_alpha(1);
 		};
 		
 		if (string_length(text) == 0 && (ButtonGetState(fm_textbox) != CLICKABLE_STATE.HOT || ButtonGetState(fm_textbox) == CLICKABLE_STATE.DISABLED)) {
@@ -3900,6 +3901,7 @@ function MajorGUI() constructor {
 			draw_set_alpha(c.w / 255);
 			
 			draw_text(tpx + borderGapX, tpy + borderGapY, ghostText);
+			draw_set_alpha(1);
 		}
 		else {
 			draw_set_halign(fa_left);
@@ -3919,6 +3921,7 @@ function MajorGUI() constructor {
 				var strToDraw = ElementGetProperty(fm_textbox, "isPassword") ? string_repeat(ElementGetProperty(fm_textbox, "passwordChar"), string_length(lines[i])) : lines[i];
 				draw_text(tpx + borderGapX, tpy + borderGapY + i * (fontSize + lineGap), strToDraw);
 			};
+			draw_set_alpha(1);
 		};
 		
 		if (cChar != cChar1) {
@@ -3946,6 +3949,7 @@ function MajorGUI() constructor {
 				draw_set_alpha(0.5);
 				
 				draw_rectangle(tpx + xStart, tpy + yStart, tpx + xEnd, tpy + yStart + height, false);
+				draw_set_alpha(1);
 			}
 			else {
 				{
@@ -3961,6 +3965,7 @@ function MajorGUI() constructor {
 					draw_set_alpha(0.5);
 					
 					draw_rectangle(tpx + xStart, tpy + yStart, tpx + xEnd, tpy + yStart + height, false);
+					draw_set_alpha(1);
 				}
 				for (var i = indexOfStart + 1; i <= indexOfEnd - 1; i++) {
 					var lineIndex = i;
@@ -3975,6 +3980,7 @@ function MajorGUI() constructor {
 					draw_set_alpha(0.5);
 					
 					draw_rectangle(tpx + xStart, tpy + yStart, tpx + xEnd, tpy + yStart + height, false);
+					draw_set_alpha(1);
 				};
 				{
 					var lineIndex = indexOfEnd;
@@ -3989,6 +3995,7 @@ function MajorGUI() constructor {
 					draw_set_alpha(0.5);
 					
 					draw_rectangle(tpx + xStart, tpy + yStart, tpx + xEnd, tpy + yStart + height, false);
+					draw_set_alpha(1);
 				}
 			};
 		};
@@ -4365,7 +4372,9 @@ function MajorGUI() constructor {
 		};
 	};
 	STYLER_SPRITE_DRAW_BEFORE = function(fm_sprite) {
-		draw_sprite(ElementGetProperty(fm_sprite, "mSprite"), ElementGetProperty(fm_sprite, "mIndex"), 0, 0);
+		//draw_sprite(ElementGetProperty(fm_sprite, "mSprite"), ElementGetProperty(fm_sprite, "mIndex"), 0, 0);
+		var spr = ElementGetProperty(fm_sprite, "mSprite"), xs = ElementGetProperty(fm_sprite, "mXscale"), ys = ElementGetProperty(fm_sprite, "mYscale")
+		draw_sprite_ext(spr, ElementGetProperty(fm_sprite, "mIndex"), sprite_get_xoffset(spr) * xs, sprite_get_yoffset(spr) * ys, xs, ys, 0, ElementGetProperty(fm_sprite, "mColor"), ElementGetProperty(fm_sprite, "mAlpha"));
 	};
 	STYLER_SPRITE_DRAW_AFTER = function(fm_sprite) {
 	};
@@ -7322,7 +7331,11 @@ function MajorGUI() constructor {
 		fm_pos, 
 		fm_sprite, 
 		fm_index = 0, 
-		fm_speed = 1, 
+		fm_speed = 1,
+		fm_xscale = 1,
+		fm_yscale = 1,
+		fm_blend = c_white,
+		fm_alpha = 1,
 		fm_parent = noone, 
 		fm_onClick = noone, 
 		fm_onUpdateBefore	=	STYLER_SPRITE_UPDATE_BEFORE, 
@@ -7331,7 +7344,7 @@ function MajorGUI() constructor {
 		fm_onDrawAfter		=	STYLER_SPRITE_DRAW_AFTER
 	) 
 	{
-		var sprite = CanvasCreate(fm_pos, new Vector2(sprite_get_width(fm_sprite), sprite_get_height(fm_sprite)), new Vector4(0, 0, 0, 0), fm_parent);
+		var sprite = CanvasCreate(fm_pos, new Vector2(sprite_get_width(fm_sprite) * fm_xscale, sprite_get_height(fm_sprite) * fm_yscale), new Vector4(0, 0, 0, 0), fm_parent);
 		
 		CanvasSetBeforeUpdate(sprite, fm_onUpdateBefore);
 		CanvasSetAfterUpdate(sprite, fm_onUpdateAfter);
@@ -7341,6 +7354,10 @@ function MajorGUI() constructor {
 		ElementSetProperty(sprite, fm_sprite, "mSprite");
 		ElementSetProperty(sprite, fm_index, "mIndex");
 		ElementSetProperty(sprite, fm_speed, "mSpeed");
+		ElementSetProperty(sprite, fm_xscale, "mXscale");
+		ElementSetProperty(sprite, fm_yscale, "mYscale");
+		ElementSetProperty(sprite, fm_blend, "mColor");
+		ElementSetProperty(sprite, fm_alpha, "mAlpha");
 		ButtonSetState(sprite, CLICKABLE_STATE.IDLE);
 		ButtonSetOnClick(sprite, fm_onClick);
 		

@@ -1,5 +1,7 @@
 ///@desc Destroy Everything
 outlinesoup_cleanup();
+soupGUI.Free();
+delete soupGUI;
 
 #region Destroy Faces
 	var i = 0, getfaces = struct_get_names(global.faces_dict), getamt = array_length(getfaces);

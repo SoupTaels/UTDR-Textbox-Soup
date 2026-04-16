@@ -10,11 +10,12 @@
 #endregion
 
 #region Dialogue Text
-	dial_text = $"Test dialogue text 1, 2, 3.....\nTest dialogue text 4, 5, 6.....\nTest dialogue text 7, 8, 9....."; //Dialogue Text
+	dial_text = $""; //Dialogue Text
+	//dial_text = $"Test dialogue text 1, 2, 3.....\nTest dialogue text 4, 5, 6.....\nTest dialogue text 7, 8, 9.....";
 	dial_font = "fnt_monospaced"; //Dialogue Font
 	dial_text_scale = 2; //Text Scale
 	dial_text_gif = false; //Whether to enable typewriting
-	dial_updatet = 1; //Dialogue update timer
+	dial_updatet = 0; //Dialogue update timer
 	
 	undo_stack_create();
 	undo_stack = []; //History of undo changes
@@ -131,6 +132,20 @@
 		} i++;
 			
 		call_later(1, time_source_units_frames, on_reset_); //Reset all buttons on start
+	#endregion
+	
+	#region MajorGUI
+		soupGUI = new MajorGUI();
+		soupGUI.Setup(new Vector2(640, 480));
+		
+		textbox_data = { x: 30, y: 130, w: 580, h: 170 };
+		textBox = soupGUI.TextboxCreate(new Vector3(textbox_data.x, textbox_data.y), new Vector2(textbox_data.w, textbox_data.h), , 10, , 10);
+		soupGUI.TextboxSetFont(textBox, fnt_speech);
+		soupGUI.TextboxSetMultiline(textBox, true);
+		soupGUI.TextboxSetGhostText(textBox, "(Click here to start typing!)\n(Your raw text input lives here. Processed output is below.)\n(Click on the quick buttons above to quickly insert text colors\n and effects. Try highlighting portions of texts!)\n \n   (Happy generating and make sure to eat some good soup!!)");
+		soupGUI.TextboxSetGhostTextColor(textBox, new Vector4(157, 140, 187, 255));
+		soupGUI.TextboxSetText(textBox, dial_text);
+		TweenScript(id, 0, 10, function() { sfx_play(snd_sparkle); window_mouse_set(320, 240); });
 	#endregion
 	
 #endregion
