@@ -533,7 +533,8 @@ function __scribble_gen_2_parser()
                             else
                             {
                                 __SCRIBBLE_PARSER_PUSH_SCALE;
-                                _state_scale *= real(_tag_parameters[1]);
+                                var digitsonly = string_digits(_tag_parameters[1]);
+								_state_scale *= real( digitsonly == "" ? 0 : digitsonly );
                             }
                         break;
                     
@@ -543,8 +544,9 @@ function __scribble_gen_2_parser()
                     
                         // [offset,dX,dY]
                         case 38:
-                            var _offset_dx = (_tag_parameter_count > 1)? real(_tag_parameters[1]) : 0;
-                            var _offset_dy = (_tag_parameter_count > 2)? real(_tag_parameters[2]) : 0;
+                            var digitsonly = string_digits(_tag_parameters[1]), digitsonly2 = string_digits(_tag_parameters[2]);
+							var _offset_dx = (_tag_parameter_count > 1)? real( digitsonly == "" ? 0 : digitsonly ) : 0;
+                            var _offset_dy = (_tag_parameter_count > 2)? real( digitsonly2 == "" ? 0 : digitsonly2 ) : 0;
                         
                             array_push(_offset_data_array, _glyph_count, _offset_dx, _offset_dy);
                         break;
@@ -566,7 +568,7 @@ function __scribble_gen_2_parser()
                     
                         // [alpha]
                         case 10:
-                            _state_colour = (floor(255*clamp(real(_tag_parameters[1]), 0, 1)) << 24) | (_state_colour & 0x00FFFFFF);
+							_state_colour = (floor(255*clamp(real(_tag_parameters[1] == "" ? 1 : _tag_parameters[1]), 0, 1)) << 24) | (_state_colour & 0x00FFFFFF);
                         
                             //Add a colour control
                             _control_grid[# _control_count, __SCRIBBLE_GEN_CONTROL.__TYPE] = __SCRIBBLE_GEN_CONTROL_TYPE.__COLOUR;

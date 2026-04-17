@@ -1090,7 +1090,7 @@ function MajorGUI() constructor {
 	//		(my > pPos.y + gap && my < pPos.y + pSize.y - gap)
 	//	) 
 	//	{
-	//		window_set_cursor(cr_size_we);
+	//		//window_set_cursor(cr_size_we);
 	//	};
 	//	
 	//	// Middle Right
@@ -1104,7 +1104,7 @@ function MajorGUI() constructor {
 	//	) 
 	//	{
 	//		if (IsHoverCanvasOptimized(fm_panel)) {
-	//			window_set_cursor(cr_size_we);
+	//			//window_set_cursor(cr_size_we);
 	//			
 	//			if (mouse_check_button_pressed(mb_left)) {
 	//				// enable dragging
@@ -1165,49 +1165,49 @@ function MajorGUI() constructor {
 	//	// Check resize edges
 	//	// Left edge
 	//	if (ElementGetProperty(fm_panel, "resizeMiddleLeft") && mx > pPos.x - gap && mx < pPos.x + gap && my > pPos.y + gap && my < pPos.y + pSize.y - gap) {
-	//		window_set_cursor(cr_size_we);
+	//		//window_set_cursor(cr_size_we);
 	//		isResizing = true;
 	//		resizeEdge = 1;
 	//	}
 	//	// Right edge
 	//	else if (ElementGetProperty(fm_panel, "resizeMiddleRight") && mx > pPos.x + pSize.x - gap && mx < pPos.x + pSize.x + gap && my > pPos.y + gap && my < pPos.y + pSize.y - gap) {
-	//		window_set_cursor(cr_size_we);
+	//		//window_set_cursor(cr_size_we);
 	//		isResizing = true;
 	//		resizeEdge = 2;
 	//	}
 	//	// Top edge
 	//	else if (ElementGetProperty(fm_panel, "resizeTopCenter") && my > pPos.y - gap && my < pPos.y + gap && mx > pPos.x + gap && mx < pPos.x + pSize.x - gap) {
-	//		window_set_cursor(cr_size_ns);
+	//		//window_set_cursor(cr_size_ns);
 	//		isResizing = true;
 	//		resizeEdge = 3;
 	//	}
 	//	// Bottom edge
 	//	else if (ElementGetProperty(fm_panel, "resizeBottomCenter") && my > pPos.y + pSize.y - gap && my < pPos.y + pSize.y + gap && mx > pPos.x + gap && mx < pPos.x + pSize.x - gap) {
-	//		window_set_cursor(cr_size_ns);
+	//		//window_set_cursor(cr_size_ns);
 	//		isResizing = true;
 	//		resizeEdge = 4;
 	//	}
 	//	// Top-left corner
 	//	else if (ElementGetProperty(fm_panel, "resizeTopLeft") && mx > pPos.x - gap && mx < pPos.x + gap && my > pPos.y - gap && my < pPos.y + gap) {
-	//		window_set_cursor(cr_size_nwse);
+	//		//window_set_cursor(cr_size_nwse);
 	//		isResizing = true;
 	//		resizeEdge = 5;
 	//	}
 	//	// Top-right corner
 	//	else if (ElementGetProperty(fm_panel, "resizeTopRight") && mx > pPos.x + pSize.x - gap && mx < pPos.x + pSize.x + gap && my > pPos.y - gap && my < pPos.y + gap) {
-	//		window_set_cursor(cr_size_nesw);
+	//		//window_set_cursor(cr_size_nesw);
 	//		isResizing = true;
 	//		resizeEdge = 6;
 	//	}
 	//	// Bottom-left corner
 	//	else if (ElementGetProperty(fm_panel, "resizeBottomLeft") && mx > pPos.x - gap && mx < pPos.x + gap && my > pPos.y + pSize.y - gap && my < pPos.y + pSize.y + gap) {
-	//		window_set_cursor(cr_size_nesw);
+	//		//window_set_cursor(cr_size_nesw);
 	//		isResizing = true;
 	//		resizeEdge = 7;
 	//	}
 	//	// Bottom-right corner
 	//	else if (ElementGetProperty(fm_panel, "resizeBottomRight") && mx > pPos.x + pSize.x - gap && mx < pPos.x + pSize.x + gap && my > pPos.y + pSize.y - gap && my < pPos.y + pSize.y + gap) {
-	//		window_set_cursor(cr_size_nwse);
+	//		//window_set_cursor(cr_size_nwse);
 	//		isResizing = true;
 	//		resizeEdge = 8;
 	//	};
@@ -1446,49 +1446,49 @@ function MajorGUI() constructor {
 			// Check resize edges
 			// Left edge
 			if (ElementGetProperty(fm_panel, "resizeMiddleLeft") && mx > pPos.x - gap && mx < pPos.x + gap && my > pPos.y + gap && my < pPos.y + pSize.y - gap) {
-				window_set_cursor(cr_size_we);
+				////window_set_cursor(cr_size_we);
 				isResizing = true;
 				resizeEdge = 1;
 			}
 			// Right edge
 			else if (ElementGetProperty(fm_panel, "resizeMiddleRight") && mx > pPos.x + pSize.x - gap && mx < pPos.x + pSize.x + gap && my > pPos.y + gap && my < pPos.y + pSize.y - gap) {
-				window_set_cursor(cr_size_we);
+				////window_set_cursor(cr_size_we);
 				isResizing = true;
 				resizeEdge = 2;
 			}
 			// Top edge
 			else if (ElementGetProperty(fm_panel, "resizeTopCenter") && my > pPos.y - gap && my < pPos.y + gap && mx > pPos.x + gap && mx < pPos.x + pSize.x - gap) {
-				window_set_cursor(cr_size_ns);
+				////window_set_cursor(cr_size_ns);
 				isResizing = true;
 				resizeEdge = 3;
 			}
 			// Bottom edge
 			else if (ElementGetProperty(fm_panel, "resizeBottomCenter") && my > pPos.y + pSize.y - gap && my < pPos.y + pSize.y + gap && mx > pPos.x + gap && mx < pPos.x + pSize.x - gap) {
-				window_set_cursor(cr_size_ns);
+				//window_set_cursor(cr_size_ns);
 				isResizing = true;
 				resizeEdge = 4;
 			}
 			// Top-left corner
 			else if (ElementGetProperty(fm_panel, "resizeTopLeft") && mx > pPos.x - gap && mx < pPos.x + gap && my > pPos.y - gap && my < pPos.y + gap) {
-				window_set_cursor(cr_size_nwse);
+				//window_set_cursor(cr_size_nwse);
 				isResizing = true;
 				resizeEdge = 5;
 			}
 			// Top-right corner
 			else if (ElementGetProperty(fm_panel, "resizeTopRight") && mx > pPos.x + pSize.x - gap && mx < pPos.x + pSize.x + gap && my > pPos.y - gap && my < pPos.y + gap) {
-				window_set_cursor(cr_size_nesw);
+				//window_set_cursor(cr_size_nesw);
 				isResizing = true;
 				resizeEdge = 6;
 			}
 			// Bottom-left corner
 			else if (ElementGetProperty(fm_panel, "resizeBottomLeft") && mx > pPos.x - gap && mx < pPos.x + gap && my > pPos.y + pSize.y - gap && my < pPos.y + pSize.y + gap) {
-				window_set_cursor(cr_size_nesw);
+				//window_set_cursor(cr_size_nesw);
 				isResizing = true;
 				resizeEdge = 7;
 			}
 			// Bottom-right corner
 			else if (ElementGetProperty(fm_panel, "resizeBottomRight") && mx > pPos.x + pSize.x - gap && mx < pPos.x + pSize.x + gap && my > pPos.y + pSize.y - gap && my < pPos.y + pSize.y + gap) {
-				window_set_cursor(cr_size_nwse);
+				//window_set_cursor(cr_size_nwse);
 				isResizing = true;
 				resizeEdge = 8;
 			};
@@ -1510,10 +1510,10 @@ function MajorGUI() constructor {
 			// Set cursor based on current resize edge
 			var currentResizeEdge = ElementGetProperty(fm_panel, "resizeEdge");
 			switch (currentResizeEdge) {
-				case 1: case 2: window_set_cursor(cr_size_we); break;
-				case 3: case 4: window_set_cursor(cr_size_ns); break;
-				case 5: case 8: window_set_cursor(cr_size_nwse); break;
-				case 6: case 7: window_set_cursor(cr_size_nesw); break;
+				case 1: case 2: //window_set_cursor(cr_size_we); break;
+				case 3: case 4: //window_set_cursor(cr_size_ns); break;
+				case 5: case 8: //window_set_cursor(cr_size_nwse); break;
+				case 6: case 7: //window_set_cursor(cr_size_nesw); break;
 			};
 		
 			var startX = ElementGetProperty(fm_panel, "resizeStartX");
@@ -2210,7 +2210,7 @@ function MajorGUI() constructor {
 		fm_container[? "point"][? "timer"]++;
 		var fm_mainCanvas = global.MAJORGUI_MAIN_CANVAS;
 		if (IsHoverCanvasOptimized(fm_container)) {
-			window_set_cursor(cr_beam);
+			//window_set_cursor(cr_beam);
 			if (fm_container[? "state"] != CLICKABLE_STATE.HOT) {
 				fm_container[? "state"] = CLICKABLE_STATE.HOVER;
 			};
@@ -3452,7 +3452,7 @@ function MajorGUI() constructor {
 			if (ButtonGetState(fm_textbox) == CLICKABLE_STATE.IDLE) {
 				ButtonSetState(fm_textbox, CLICKABLE_STATE.HOVER);
 			};
-			//window_set_cursor(cr_beam);
+			////window_set_cursor(cr_beam);
 			
 			// Scroll
 			var scrollbarWidth = TextboxGetScrollbarWidth(fm_textbox);
@@ -3581,7 +3581,7 @@ function MajorGUI() constructor {
 			#endregion
 			
 			// Keyboard Events
-			if ( ( keyboard_lastkey != vk_nokey && keyboard_lastkey != 20 ) && keyboard_lastchar != vk_nokey ) {
+			if ( ( keyboard_lastkey != vk_nokey && keyboard_lastkey != 20 ) ) {
 				var text = ElementGetProperty(fm_textbox, "text");
 				
 				// char limit check-point
@@ -3767,6 +3767,7 @@ function MajorGUI() constructor {
 				} break;
 				case vk_enter: {
 					if (!ElementGetProperty(fm_textbox, "isMultiline")) { break; };
+					if ( string_count("\n", text) >= ElementGetProperty(fm_textbox, "lineLimit") ) { break; }
 					if (fm_textbox[? "point"] != fm_textbox[? "point1"]) {
 						text = string_delete(text, ps + 1, pe - ps);
 						fm_textbox[? "point"] = ps;
@@ -6840,7 +6841,8 @@ function MajorGUI() constructor {
 		fm_parent = noone, 
 		fm_scrollbarWidth = 4, 
 		fm_scrollbarGap = 2, 
-		fm_scrollbarGapSide = 2
+		fm_scrollbarGapSide = 2,
+		fm_lineLimit = 8,
 	) 
 	{
 		if (fm_pos == undefined) { fm_pos = new Vector3(0, 0, 0); };
@@ -6874,6 +6876,7 @@ function MajorGUI() constructor {
 		ElementSetProperty(textbox, fm_scrollbarGap, "scrollbarGap");
 		ElementSetProperty(textbox, fm_scrollbarGapSide, "scrollbarGapSide");
 		ElementSetProperty(textbox, -1, "charLimit");
+		ElementSetProperty(textbox, fm_lineLimit, "lineLimit");
 		
 		return textbox;
 	};
@@ -7513,7 +7516,7 @@ function MajorGUI() constructor {
 		self.m_canvasHover = GetHoverCanvas(global.MAJORGUI_MAIN_CANVAS, device_mouse_x_to_gui(0), device_mouse_y_to_gui(0), true);
 		if (mouse_check_button_pressed(mb_left)) { m_canvasLastClicked = self.m_canvasHover; };
 
-		window_set_cursor(cr_arrow);
+		//window_set_cursor(cr_arrow);
 		
 		CanvasUpdate(global.MAJORGUI_MAIN_CANVAS);
 	};

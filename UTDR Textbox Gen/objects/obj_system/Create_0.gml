@@ -16,9 +16,9 @@
 	dial_text_scale = 2; //Text Scale
 	dial_text_gif = false; //Whether to enable typewriting
 	dial_updatet = 0; //Dialogue update timer
+	dial_updatet_max = 30; //Dialogue update timer delay
 	
-	undo_stack_create();
-	undo_stack = []; //History of undo changes
+	undo_stack_create(); //History of undo changes
 	
 	dial_point_auto = true; //Whether to automatically add points
 	dial_point_chr = "*"; //Dialogue Point Character
@@ -103,30 +103,31 @@
 	screenshot_surf = -1; //Screenshot surface
 	record = { enabled: false, type: 0, frames: 0, framesmax: 0, id_: -1, }; //Whether to record, the type of recording(0 - static, 1 - wait for dialogue to finish), and how long to record for
 	ui_visible = true; //Whether the UI should be visible
+	ui_effoff = 0; //Effects array offset 
 	
 	#region Main Menu Buttons
 		var i = 0, spr_ = spr_border_octagon, y_ = 12, clr_ = c_orange, padd_ = 14;
-		butt[i] = new Button({ id_: i, text: "Dialogue [spr_gui_icons,0]", x: 320, y: y_, ystart: y_, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_enter: undefined, on_leave: undefined, on_click: undefined });
+		butt[i] = new Button({ id_: i, text: "Dialogue [spr_gui_icons,0]", x: 320, y: y_, ystart: y_, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
 		with ( butt[i].data ) {
 			on_click = function() { on_click_(); } on_enter = function() { on_enter_(); } on_leave = function() { on_leave_(); }
 		} i++;
 		
-		butt[i] = new Button({ id_: i, text: "Style        [spr_gui_icons,5]", x: 320, y: y_, ystart: y_, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_enter: undefined, on_leave: undefined, on_click: undefined });
+		butt[i] = new Button({ id_: i, text: "Style        [spr_gui_icons,5]", x: 320, y: y_, ystart: y_, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
 		with ( butt[i].data ) {
 			on_click = function() { on_click_(); } on_enter = function() { on_enter_(); } on_leave = function() { on_leave_(); }
 		} i++;
 	
-		butt[i] = new Button({ id_: i, text: "Portrait [spr_gui_icons,1]", x: 320, y: y_, ystart: y_, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_enter: undefined, on_leave: undefined, on_click: undefined });
+		butt[i] = new Button({ id_: i, text: "Portrait [spr_gui_icons,1]", x: 320, y: y_, ystart: y_, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
 		with ( butt[i].data ) {
 			on_click = function() { on_click_(); } on_enter = function() { on_enter_(); } on_leave = function() { on_leave_(); }
 		} i++;
 	
-		butt[i] = new Button({ id_: i, text: "Border      [spr_gui_icons,2]", x: 320, y: y_, ystart: y_, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_enter: undefined, on_leave: undefined, on_click: undefined });
+		butt[i] = new Button({ id_: i, text: "Border      [spr_gui_icons,2]", x: 320, y: y_, ystart: y_, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
 		with ( butt[i].data ) {
 			on_click = function() { on_click_(); } on_enter = function() { on_enter_(); } on_leave = function() { on_leave_(); }
 		} i++;
 	
-		butt[i] = new Button({ id_: i, text: "About        [spr_gui_icons,3]", x: 320, y: y_, ystart: y_, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_enter: undefined, on_leave: undefined, on_click: undefined});
+		butt[i] = new Button({ id_: i, text: "About        [spr_gui_icons,3]", x: 320, y: y_, ystart: y_, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined});
 		with ( butt[i].data ) {
 			on_click = function() { on_click_(); } on_enter = function() { on_enter_(); } on_leave = function() { on_leave_(); }
 		} i++;
@@ -139,13 +140,13 @@
 		soupGUI.Setup(new Vector2(640, 480));
 		
 		textbox_data = { x: 30, y: 130, w: 580, h: 170 };
-		textBox = soupGUI.TextboxCreate(new Vector3(textbox_data.x, textbox_data.y), new Vector2(textbox_data.w, textbox_data.h), , 10, , 10);
+		textBox = soupGUI.TextboxCreate(new Vector3(textbox_data.x, textbox_data.y), new Vector2(textbox_data.w, textbox_data.h), , 10, , 10, 7);
 		soupGUI.TextboxSetFont(textBox, fnt_speech);
 		soupGUI.TextboxSetMultiline(textBox, true);
 		soupGUI.TextboxSetGhostText(textBox, "(Click here to start typing!)\n(Your raw text input lives here. Processed output is below.)\n(Click on the quick buttons above to quickly insert text colors\n and effects. Try highlighting portions of texts!)\n \n   (Happy generating and make sure to eat some good soup!!)");
 		soupGUI.TextboxSetGhostTextColor(textBox, new Vector4(157, 140, 187, 255));
 		soupGUI.TextboxSetText(textBox, dial_text);
-		TweenScript(id, 0, 10, function() { sfx_play(snd_sparkle); window_mouse_set(320, 240); });
+		TweenScript(id, 0, 10, function() { sfx_play(snd_sparkle); window_mouse_set(320, 240); }); //Everything's loaded!
 	#endregion
 	
 #endregion

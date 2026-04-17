@@ -78,7 +78,7 @@
 
 //Default pulse scale offset. A value of 0 will cause no visible scaling changes for a glyph, a
 //value of 1 will cause a glyph to double in size.
-#macro SCRIBBLE_DEFAULT_PULSE_SCALE  0.4
+#macro SCRIBBLE_DEFAULT_PULSE_SCALE  0.6
 
 //Default pulse speed. Larger values cause glyph scales to pulse faster.
 #macro SCRIBBLE_DEFAULT_PULSE_SPEED  0.1
