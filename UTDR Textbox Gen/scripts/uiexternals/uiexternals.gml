@@ -19,6 +19,7 @@
 				self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External face \"{name}\" was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
 				sprite_set_offset(sprite, sprite_get_width(sprite)/ 2, sprite_get_height(sprite)/ 2); //Center sprite
 			}
+			show_debug_message($"Added \"{self[$ faces_emote].expression}\" from {self[$ faces_emote].name}!");
 		}
 		faces_i++;
 	}
@@ -67,6 +68,7 @@
 				self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External icon \"{fname}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
 				sprite_set_offset(sprite, sprite_get_width(sprite)/ 2, sprite_get_height(sprite)/ 2); //Center sprite
 			}
+			show_debug_message($"Added \"{icons_dict[$ temp_].name}\" from {icons_dict[$ temp_].fname}!");
 		icons_i++; }
 		
 		///@desc Returns a sprite index from an externally added icon sprite.
@@ -95,6 +97,7 @@
 				self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External border \"{fname}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
 				sprite_set_offset(sprite, sprite_get_width(sprite)/ 2, sprite_get_height(sprite)/ 2); //Center sprite
 			}
+			show_debug_message($"Added \"{bords_dict[$ temp_].name}\" from {bords_dict[$ temp_].fname}!");
 		bords_i++; }
 		
 		///@desc Returns a sprite index from an externally added border sprite.
@@ -107,7 +110,7 @@
 	#endregion
 	
 	#region Reference Image
-		var _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/", fname = $"reference{_path_separator}reference_image.png";
-		global.refimg = -1; if ( file_exists(fname) ) { global.refimg = sprite_add_ext(fname, 1, 0, 0, true); }
+		var _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/", fname = $"reference{_path_separator}reference_image.png", fnamedebug = string_replace(fname, $"reference{_path_separator}", "");
+		global.refimg = -1; if ( file_exists(fname) ) { global.refimg = sprite_add_ext(fname, 1, 0, 0, true); show_debug_message($"Added \"{fnamedebug}\" from {fname}!"); }
 	#endregion
 #endregion

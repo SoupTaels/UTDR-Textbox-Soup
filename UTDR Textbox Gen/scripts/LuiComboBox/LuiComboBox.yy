@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"LuiComboBox",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"LuiComboBox",
+  "parent":{
+    "name":"Components",
+    "path":"folders/Extensions/Limekys/LimeUI/Components.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

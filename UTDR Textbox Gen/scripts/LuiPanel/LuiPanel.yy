@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"LuiPanel",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"LuiPanel",
+  "parent":{
+    "name":"Components",
+    "path":"folders/Extensions/Limekys/LimeUI/Components.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

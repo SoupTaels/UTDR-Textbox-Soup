@@ -9,7 +9,7 @@ if ( screenshot || record.enabled ) {
 	var smallbox = bord_small ? 2 : 1;
 	screenshot_surf = surface_create(640/ smallbox, 480/ smallbox);
 	surface_set_target(screenshot_surf);
-		draw_clear_alpha(c_lime, 1); //For borders that aren't perfect rectangles
+		if ( !record.enabled ) { draw_clear_alpha(c_black, 0); } else { draw_clear_alpha(c_lime, 1); }//For borders that aren't perfect rectangles
 		
 		#region Dialogue Box Outline
 			var out_thick = 2, offset_ = dltrn ? 8 : 0, offset_w = dltrn ? 15 : 0, offset_h = dltrn ? 16 : 0, bordx = 32 - offset_, bordy = 315 - offset_, bordw = 578 + offset_w, bordh = 152 + offset_w; //Border coords

@@ -1,11 +1,11 @@
 #region Default functions for the menu buttons
-	function on_enter_() { if ( obj_system.ui_tab != id_ ) { sfx_play(snd_sel_switch); TweenFire("~ocirc", "$15", "y>", "ystart+5"); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } }
-	function on_leave_() { if ( obj_system.ui_tab != id_ ) { TweenFire("~ocirc", "$15", "y>", "ystart"); text = text_static; color_butt = c_orange; } window_set_cursor(cr_default); }
+	function on_enter_() { if ( obj_system.ui_tab != id_ ) { sfx_play(snd_sel_switch); TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } }
+	function on_leave_() { if ( obj_system.ui_tab != id_ ) { TweenFire("~ocirc", "$15", "yoff>", 0); text = text_static; color_butt = c_orange; } window_set_cursor(cr_default); }
 	function on_click_() { if ( obj_system.ui_tab != id_ ) { sfx_play(snd_select); obj_system.ui_tab = id_; on_reset_(); } else { sfx_play(snd_bump, , , random_range(0.8, 1.2)); } }
 	function on_hover_() { window_set_cursor(cr_drag); }
 	function on_reset_() { 
 		var i = 0;
-		repeat ( array_length(obj_system.butt) ) { with ( obj_system.butt[i].data ) { if ( obj_system.ui_tab != id_ ) { TweenFire("~ocirc", "$15", "y>", "ystart"); text = text_static; color_butt = c_orange; } else { TweenFire("~ocirc", "$15", "y>", "ystart+5"); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } } i++; }
+		repeat ( array_length(obj_system.butt) ) { with ( obj_system.butt[i].data ) { if ( obj_system.ui_tab != id_ ) { TweenFire("~ocirc", "$15", "yoff>", 0); text = text_static; color_butt = c_orange; } else { TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } } i++; }
 	}
 #endregion
 
@@ -28,22 +28,23 @@ function Button(datastruct_ = undefined) constructor {
 	data[$ "text_static"] = data.text;
 
 	static update = function() {
-		var paddmulti = data[$ "padd_multi"] ?? 0, hastext = data.text != "";
+		var y2pd = data[$ "padd_y2"] ?? 0, x2pd = data[$ "padd_x2"] ?? 0, y1pd = data[$ "padd_y1"] ?? 0, x1pd = data[$ "padd_x1"] ?? 0, paddmulti = data[$ "padd_multi"] ?? 0, hastext = data.text != "";
 		if ( hastext ) {
 		button = scribble(data.text)
 						.align(data[$ "halign"] ?? fa_center, data[$ "valign"] ?? fa_middle)
 						.starting_format(data[$ "font"] ?? "fnt_determination_nomono", data[$ "color"] ?? c_white)
 						.scale(data[$ "scale"] ?? 1)
-						.padding(data[$ "padd_x1"] ?? 0 + paddmulti, data[$ "padd_y1"] ?? 0 + paddmulti, data[$ "padd_x2"] ?? 0 + paddmulti, data[$ "padd_y2"] ?? 0 + paddmulti);
+						.padding(x1pd + paddmulti, y1pd + paddmulti, x2pd + paddmulti, y2pd + paddmulti);
 		}
 			
-		var x_ = data[$ "x"] ?? 0, y_ = data[$ "y"] ?? 0, x2_ = data[$ "x2"] ?? 0, y2_ = data[$ "y2"] ?? 0, bbox = hastext ? button.get_bbox(x_, y_) : ({ left: x_, top: y_, right: x2_, bottom: y2_, width: x2_ - x_, height: y2_ - y_ }), leeway = 5;
+		var spr_ = data[$ "sprite"] ?? spr_pixel, index = data[$ "index"] ?? 0, clrbutt = data[$ "color_butt"] ?? c_white, clrbutthovered = data[$ "color_butt_hover"] ?? data.color_butt, angle = data[$ "angle"] ?? 1, xscale = data[$ "xscale"] ?? 1, yscale = data[$ "yscale"] ?? 1, scalemulti = data[$ "scale"] ?? 1, x_ = data[$ "x"] ?? 0, y_ = data[$ "y"] ?? 0, x2_ = data[$ "x2"] ?? 0, y2_ = data[$ "y2"] ?? 0, xoff = data[$ "xoff"] ?? 0, yoff = data[$ "yoff"] ?? 0, bbox = hastext ? button.get_bbox(x_, y_) : ({ left: x_, top: y_, right: x2_, bottom: y2_, width: x2_ - x_, height: y2_ - y_ }), leeway = 5;
 		var visible_ = data[$ "draw_nine"] ?? true;
-		if ( visible_ ) { draw_sprite_stretched_ext(data[$ "sprite"] ?? spr_pixel, data[$ "index"] ?? 0, bbox.left, bbox.top, bbox.width, bbox.height, data[$ "color_butt"] ?? c_white, 1); } //Draw nine-slice sprite
-		else { draw_sprite_ext(data[$ "sprite"] ?? spr_pixel, data[$ "index"] ?? 0, bbox.left, bbox.top, ( data[$ "xscale"] ?? 1 ) * ( data[$ "scale"] ?? 1 ), ( data[$ "yscale"] ?? 1 ) * ( data[$ "scale"] ?? 1 ), data[$ "angle"] ?? 1, data[$ "color_butt"] ?? c_white, 1); } //Draw normal sprite
-		if ( hastext ) { button.draw(x_, y_); } //Draw Scribble text
+		var hovered = range_within(mouse_x_gui, bbox.left - leeway, bbox.right + leeway) && range_within(mouse_y_gui, bbox.top - leeway, bbox.bottom + leeway);
+		if ( visible_ ) { draw_sprite_stretched_ext(spr_, index, bbox.left + xoff, bbox.top + yoff, bbox.width, bbox.height, !hovered ? clrbutt : clrbutthovered, 1); } //Draw nine-slice sprite
+		else { draw_sprite_ext(spr_, index, bbox.left + xoff, bbox.top + yoff, xscale * scalemulti, yscale * scalemulti, angle, !hovered ? clrbutt : clrbutthovered, 1); } //Draw normal sprite
+		if ( hastext ) { button.draw(x_ + xoff, y_ + yoff); } //Draw Scribble text
 			
-		if ( ( range_within(mouse_x_gui, bbox.left - leeway, bbox.right + leeway) && range_within(mouse_y_gui, bbox.top - leeway, bbox.bottom + leeway) ) && window_has_focus() ) { //If the mouse has enter within the bounding box
+		if ( hovered && window_has_focus() ) { //If the mouse has enter within the bounding box
 			if ( !on_enter ) { on_enter = true; on_leave = false; if ( !is_undefined(data[$ "on_enter"]) ) { data[$ "on_enter"](); } } //Mouse Entered Function
 			if ( !is_undefined(data[$ "on_hover"]) ) { data[$ "on_hover"](); } //Mouse Hovering Function
 			if ( mouse_pressed ) { if ( !is_undefined(data[$ "on_click"]) ) { data[$ "on_click"](); exit; } } //Mouse Pressed Function
@@ -58,7 +59,7 @@ function Button(datastruct_ = undefined) constructor {
 
 function ui_manage() {
 	live_auto_call 
-
+	
 	switch ( ui_tab ) {
 		case 0: { //Dialogue
 			#region Update Text
@@ -91,9 +92,9 @@ function ui_manage() {
 						}
 					}
 					if ( keyboard_check(vk_control) && keyboard_check_pressed(ord("Z")) ) { //Undo/ redo
+						dial_updatet = 0;
 						if ( !keyboard_check(vk_shift) ) { undo_stack_undo(); } else { undo_stack_redo(); } 
 					}
-					if ( keyboard_check(vk_control) ) { dial_updatet = 0; }
 				}
 			#endregion
 							
@@ -143,7 +144,7 @@ function ui_manage() {
 				var colors_ = ["c_red", "c_yellow", "c_blue", "c_lime", "c_aqua", "c_cyan", "c_purple", "c_orange", "c_maroon", "c_fuchsia", "c_gold", "c_white", "c_ltgray", "c_gray", "c_dkgray", "c_black"], colors_get = __scribble_config_colours(), colors_i = 0, colors_len = array_length(colors_); //Available colors
 				repeat ( colors_len ) {
 					var colors_cur = colors_[colors_i]; //Current color
-					var butt_data = { x: 160 + ( 27 * colors_i ), y: 70, sprite: spr_pixel, color_butt: colors_get[$ colors_cur], on_click: method({ butt_func, colors_cur }, function () { butt_func(colors_cur); }) } 
+					var butt_data = { x: 160 + ( 27 * colors_i ), y: 70, sprite: spr_pixel, color_butt: colors_get[$ colors_cur], color_butt_hover: merge_color(colors_get[$ colors_cur], color_get_value(colors_get[$ colors_cur]) > 150 ? c_black : c_white, 0.3), on_click: method({ butt_func, colors_cur }, function () { butt_func(colors_cur); }) } 
 					butt_data[$ "x2"] = butt_data.x + 20; butt_data[$ "y2"] = butt_data.y + 10; 
 				
 					draw_sprite_stretched_ext(spr_border_undertale, 0, butt_data.x - 3, butt_data.y - 3, ( butt_data.x2 - butt_data.x ) + 6, ( butt_data.y2 - butt_data.y ) + 6, c_white, 1); //Button Outline 3
@@ -158,7 +159,7 @@ function ui_manage() {
 				repeat ( effects_len ) {
 					if ( effects_i > 5 ) { continue; }
 					var effects_cur = effects_[effects_i + ui_effoff]; //Current effect
-					var butt_data = { x: 180 + ( 75 * effects_i ), y: 95, color_butt: c_orange, color: c_black, text: $"{effects_cur} [spr_effects_icons,{effects_i + ui_effoff}]", padd_multi: 4, on_hover: undefined, on_click: method({ butt_func, effects_cur }, function () { butt_func(string_letters(string_lower(effects_cur))); }) } 
+					var butt_data = { x: 180 + ( 75 * effects_i ), y: 95, color_butt: c_orange, color_butt_hover: c_yellow, color: c_black, text: $"{effects_cur} [spr_effects_icons,{effects_i + ui_effoff}]", padd_multi: 4, on_hover: undefined, on_click: method({ butt_func, effects_cur }, function () { butt_func(string_letters(string_lower(effects_cur))); }) } 
 					var butt_ = new Button(butt_data); butt_.update(); //Create button
 				effects_i++; }
 				
@@ -181,7 +182,7 @@ function ui_manage() {
 						var x_ = 130, y_ = 98, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 5) && range_within(mouse_y_gui, y_ - 5, y_ + 5);
 						if ( within_ ) {
 							if ( !within_hover2 ) { within_hover2 = true; sfx_play(snd_sel_switch); } //Hover
-							if ( mouse_pressed ) { sfx_play(snd_sel_switch, 0, , 1.3); ui_effoff = approach(ui_effoff, 0, 1); yscale_2 = 0.5; } //Pressed
+							if ( mouse_pressed ) { sfx_play(snd_sel_switch, 0, , 0.7); ui_effoff = approach(ui_effoff, 0, 1); yscale_2 = 0.5; } //Pressed
 						}
 						else { within_hover2 = false; }
 						draw_sprite_ensure(spr_effects_icons, 12, x_ - ( abs(sin(current_time/300) * 5) ), y_, , yscale_2, , within_ ? c_white : c_yellow); //Left Arrow
@@ -192,16 +193,17 @@ function ui_manage() {
 
 			#region Text Update
 				if ( dial_updatet > 1 ) { //Notification for updating text
-					dial_updatet--; 
-					
-					var ringcalc = map_value(dial_updatet, 0, dial_updatet_max, 0, 360), textx = 300; //Turn the values of a timer into a range of degrees
-					draw_sprite_stretched(spr_border_textbox, 0, textx - 115, 270, 255, 38);
-					var updatering = CleanRing(textx + 115, 290, 5, 10, 360, ringcalc) //Update text ring
+					dial_updatet--;
+					var ringcalc = map_value(dial_updatet, 0, dial_updatet_max, 0, 360), textx = 300, texty = 395; //Turn the values of a timer into a range of degrees
+					draw_sprite_stretched(spr_border_undertale, 0, textx - 110, texty - 20, 250, 40);
+					var updatering = CleanRing(textx + 115, texty, 5, 10, 360, ringcalc) //Update text ring
 														.Blend(c_yellow, 1)
 														.Draw();
 													
 					draw_format(fa_center, fa_middle, fnt_speech, c_yellow);
-					draw_text(textx, 290, "Live-updating text...!");
+					draw_text(textx, texty, "Live-updating text...!");
+					
+					if ( mouse_pressed && ( range_within(mouse_x_gui, ( textx - 110 ) - 20, ( ( textx - 110 ) + 250 ) + 20) && range_within(mouse_y_gui, ( texty - 20 ) - 20, ( (texty - 20 ) + 40 ) + 20) ) ) { dial_updatet = 1; } //Early regeneration
 				}
 				else { if ( dial_updatet == 1 ) { dial_updatet = 0; update_text(); } } //Update the text
 			#endregion
@@ -246,4 +248,21 @@ function ui_manage() {
 			scribble_anim_wheel(SCRIBBLE_DEFAULT_WHEEL_SIZE, SCRIBBLE_DEFAULT_WHEEL_FREQUENCY, SCRIBBLE_DEFAULT_WHEEL_SPEED);
 		} break;
 	}
+	
+	#region Toggle Dialogue Box Visibility
+		static within_hover3 = false, yscale_3 = 1;
+		var x_ = 320, y_ = 473, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 20) && range_within(mouse_y_gui, y_ - 30, y_ + 5);
+		if ( within_ ) {
+			if ( !within_hover3 ) { within_hover3 = true; sfx_play(snd_sel_switch); } //Hover
+			if ( mouse_pressed ) { sfx_play(snd_enc1, 0, , bord_visible ? 0.7 : 1.3); bord_visible = !bord_visible; yscale_3 = 0.5; } //Pressed
+		}
+		else { within_hover3 = false; }
+		draw_sprite_ensure(spr_effects_icons, 12, x_, y_, , yscale_3, bord_visible ? 90 : 270, within_ ? c_white : c_yellow); //Left Arrow
+		yscale_3 = lerp(yscale_3, 1, 0.15);
+	#endregion
+	
+	#region Textbox Disable
+		var textboxstate = soupGUI.CanvasGetActive(textBox);
+		if ( ui_tab == 0 ) { if ( !textboxstate ) { soupGUI.CanvasActivate(textBox); } } else { if ( textboxstate ) { soupGUI.CanvasDeactivate(textBox); } }
+	#endregion
 }

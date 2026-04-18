@@ -2,11 +2,12 @@
 //live_auto_call_nr
 #region Dialogue Box
 	outlinesoup_init(, , , , 2);
-	spr_bord = spr_border_undertale; //Border Sprite
+	spr_bord = spr_border_deltarune; //Border Sprite
 	bord_clr = c_white; //Border Color
 	bord_out = true; //Whether border should have an outline
 	bord_small = false; //Whether to render everything out in a small box
 	bord_prev = spr_bord; //Previous border
+	bord_visible = true; //Whether the dialogue box is visible
 #endregion
 
 #region Dialogue Text
@@ -16,7 +17,7 @@
 	dial_text_scale = 2; //Text Scale
 	dial_text_gif = false; //Whether to enable typewriting
 	dial_updatet = 0; //Dialogue update timer
-	dial_updatet_max = 30; //Dialogue update timer delay
+	dial_updatet_max = 45; //Dialogue update timer delay
 	
 	undo_stack_create(); //History of undo changes
 	
@@ -24,7 +25,7 @@
 	dial_point_chr = "*"; //Dialogue Point Character
 	dial_point_clr = c_white; //Dialogue Point Clr
 	dial_auto_wrap = true; //Whether to automatically wrap dialogue to new lines
-	dial_wrap_count = 0; //Current wrapped line
+	dial_wrap_count = 1; //Current wrapped line
 	
 	if ( !scribble_font_exists("fnt_default") ) { scribble_font_bake_outline_and_shadow("fnt_determination_nomono", "fnt_default", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 1, false); }
 	if ( !scribble_font_exists("fnt_monospaced") ) { scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_monospaced", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 0, false); }
@@ -35,7 +36,7 @@
 	typist.function_per_char(function(_element, _position, _typist) { //Function to run per character
 		var mychr = chr(_element.get_glyph_data(_position-1).unicode); //Get the currently revealed character
 		//show_debug_message(mychr);
-		if ( mychr == chr(GMIB.CHR_DOWN) ) { dial_wrap_count++; } //Newline
+		if ( mychr == chr(10) ) { dial_wrap_count++; } //Newline
 		
 		if ( dial_face_auto ) { //Animate the face while dialogue is typing out
 			static anim_timer = 0; anim_timer++;
@@ -107,27 +108,27 @@
 	
 	#region Main Menu Buttons
 		var i = 0, spr_ = spr_border_octagon, y_ = 12, clr_ = c_orange, padd_ = 14;
-		butt[i] = new Button({ id_: i, text: "Dialogue [spr_gui_icons,0]", x: 320, y: y_, ystart: y_, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
+		butt[i] = new Button({ id_: i, text: "Dialogue [spr_gui_icons,0]", x: 320, y: y_, yoff: 0, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
 		with ( butt[i].data ) {
 			on_click = function() { on_click_(); } on_enter = function() { on_enter_(); } on_leave = function() { on_leave_(); }
 		} i++;
 		
-		butt[i] = new Button({ id_: i, text: "Style        [spr_gui_icons,5]", x: 320, y: y_, ystart: y_, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
+		butt[i] = new Button({ id_: i, text: "Style        [spr_gui_icons,5]", x: 320, y: y_, yoff: 0, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
 		with ( butt[i].data ) {
 			on_click = function() { on_click_(); } on_enter = function() { on_enter_(); } on_leave = function() { on_leave_(); }
 		} i++;
 	
-		butt[i] = new Button({ id_: i, text: "Portrait [spr_gui_icons,1]", x: 320, y: y_, ystart: y_, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
+		butt[i] = new Button({ id_: i, text: "Portrait [spr_gui_icons,1]", x: 320, y: y_, yoff: 0, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
 		with ( butt[i].data ) {
 			on_click = function() { on_click_(); } on_enter = function() { on_enter_(); } on_leave = function() { on_leave_(); }
 		} i++;
 	
-		butt[i] = new Button({ id_: i, text: "Border      [spr_gui_icons,2]", x: 320, y: y_, ystart: y_, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
+		butt[i] = new Button({ id_: i, text: "Border      [spr_gui_icons,2]", x: 320, y: y_, yoff: 0, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
 		with ( butt[i].data ) {
 			on_click = function() { on_click_(); } on_enter = function() { on_enter_(); } on_leave = function() { on_leave_(); }
 		} i++;
 	
-		butt[i] = new Button({ id_: i, text: "About        [spr_gui_icons,3]", x: 320, y: y_, ystart: y_, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined});
+		butt[i] = new Button({ id_: i, text: "Extras      [spr_gui_icons,3]", x: 320, y: y_, yoff: 0, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined});
 		with ( butt[i].data ) {
 			on_click = function() { on_click_(); } on_enter = function() { on_enter_(); } on_leave = function() { on_leave_(); }
 		} i++;
@@ -139,7 +140,7 @@
 		soupGUI = new MajorGUI();
 		soupGUI.Setup(new Vector2(640, 480));
 		
-		textbox_data = { x: 30, y: 130, w: 580, h: 170 };
+		textbox_data = { x: 30, y: 130, w: 580, h: 160 };
 		textBox = soupGUI.TextboxCreate(new Vector3(textbox_data.x, textbox_data.y), new Vector2(textbox_data.w, textbox_data.h), , 10, , 10, 7);
 		soupGUI.TextboxSetFont(textBox, fnt_speech);
 		soupGUI.TextboxSetMultiline(textBox, true);
