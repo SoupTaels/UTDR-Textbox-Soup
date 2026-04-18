@@ -11,13 +11,15 @@
 
 #macro DIAL_GIF if ( !dial_text_gif ) { exit; } //Only run if GIFs are enabled
 
-function TextChange(txt) : UndoableChange() constructor { //Handle undo/ redoing changes
+function TextChange(txt, point) : UndoableChange() constructor { //Handle undo/ redoing changes
 	prev_txt = obj_system.dial_text; //Store previous/ inital text
+	point_prev = obj_system.soupGUI.TextboxGetPoint(obj_system.textBox); //Get previous point
 	mytxt = txt; //Get our new text
+	point_ = point; //Get our new point
 	
 	static can_apply = function() { return ( obj_system.dial_text != mytxt ); } //Don't push the same unchanged text to the undo stack
-	static apply = function() { with ( obj_system ) { dial_text = other.mytxt; soupGUI.TextboxSetText(textBox, dial_text); } sfx_play(snd_updated); } //Apply recent changes
-    static undo = function() { with ( obj_system ) { dial_text = other.prev_txt; soupGUI.TextboxSetText(textBox, dial_text); soupGUI.TextboxSetPoint(textBox, string_length(dial_text)); soupGUI.TextboxSetPointSecondary(textBox, string_length(dial_text)); } sfx_play(snd_throw); }
+	static apply = function() { with ( obj_system ) { dial_text = other.mytxt; soupGUI.TextboxSetText(textBox, dial_text); soupGUI.TextboxSetPoint(textBox, other.point_);  soupGUI.TextboxSetPointSecondary(textBox, other.point_); } sfx_play(snd_updated); } //Apply recent changes
+    static undo = function() { with ( obj_system ) { dial_text = other.prev_txt; soupGUI.TextboxSetText(textBox, dial_text); soupGUI.TextboxSetPoint(textBox, other.point_prev); soupGUI.TextboxSetPointSecondary(textBox, other.point_prev); } sfx_play(snd_throw); }
 }
 
 ///@desc Create a GUI button. Accepts { x, y, text, padd_(x1, y1, x2, y2, multi), x2, y2, sprite, draw_nine, index, (x)(y)scale, angle, font, color, color_butt, halign, and valign, and functions for on_enter(runs once), on_hover, on_leave(once), on_click(once), on_held, on_released(once) }
@@ -65,8 +67,10 @@ function ui_manage() {
 			#region Update Text
 				var update_text = function() { //Update text function
 					undo_stack_begin_move(); 
-						var result = obj_system.soupGUI.TextboxGetText(obj_system.textBox);
-						var txt = new TextChange(result); undo_stack_apply_change(txt); 
+						with ( obj_system ) {
+							var txt = new TextChange(soupGUI.TextboxGetText(textBox), soupGUI.TextboxGetPoint(textBox));
+							undo_stack_apply_change(txt); 
+						}
 					undo_stack_complete_move();
 				}
 				
@@ -127,7 +131,7 @@ function ui_manage() {
 					if ( pos_2 == pos_ ) { //Not trying to highlight anything
 						var result = string_insert(txt_insert, txt_, pos_), finalpos = ( pos_ + string_length(txt_insert) ) - 1;
 						soupGUI.TextboxSetText(textBox, result);
-						soupGUI.TextboxSetPoint(textBox, finalpos); soupGUI.TextboxSetPointSecondary(textBox, finalpos);
+						//soupGUI.TextboxSetPoint(textBox, finalpos); soupGUI.TextboxSetPointSecondary(textBox, finalpos);
 					}
 					else { //Between highlighted text
 						var ending_ = pos_ > pos_2, pos_start = ending_ ? pos_2 : pos_, pos_end = ending_ ? pos_ : pos_2;

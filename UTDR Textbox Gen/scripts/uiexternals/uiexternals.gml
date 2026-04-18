@@ -1,3 +1,4 @@
+outputLog = "";
 #region Add External Faces
 	faces_dict = {};
 	
@@ -19,7 +20,15 @@
 				self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External face \"{name}\" was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
 				sprite_set_offset(sprite, sprite_get_width(sprite)/ 2, sprite_get_height(sprite)/ 2); //Center sprite
 			}
-			show_debug_message($"Added \"{self[$ faces_emote].expression}\" from {self[$ faces_emote].name}!");
+			var out_ = $"Added \"{self[$ faces_emote].expression}\" from {self[$ faces_emote].name}!";
+			scribble_external_sprite_add(self[$ faces_emote].sprite, $"{faces_dir}_{self[$ faces_emote].expression}");
+			
+			var temp_2 = string_replace(faces_cur, $"faces{_path_separator}{faces_dir}{_path_separator}", ""); //Remove faces/(folder name)/
+			temp_2 = string_replace(string_replace(temp_2, "_strip", ""), ".png", ""); //Remove .png and _strip.
+			temp_2 = string_exclude(temp_2, "0123456789");
+			if ( !scribble_external_sprite_exists(temp_2) ) { show_debug_message(temp_2); scribble_external_sprite_add(self[$ faces_emote].sprite, temp_2); } //alternative
+			
+			show_debug_message(out_); global.outputLog += $"{out_}\n";
 		}
 		faces_i++;
 	}
@@ -50,7 +59,7 @@
 	}
 #endregion
 
-#region Add Borders, Icons, and Rference Image
+#region Add Borders, Icons, and Reference Image
 	#region Icons
 		icons_dict = {};
 	
@@ -68,7 +77,14 @@
 				self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External icon \"{fname}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
 				sprite_set_offset(sprite, sprite_get_width(sprite)/ 2, sprite_get_height(sprite)/ 2); //Center sprite
 			}
-			show_debug_message($"Added \"{icons_dict[$ temp_].name}\" from {icons_dict[$ temp_].fname}!");
+			var out_ = $"Added \"{icons_dict[$ temp_].name}\" from {icons_dict[$ temp_].fname}!";
+			scribble_external_sprite_add(icons_dict[$ temp_].sprite, icons_dict[$ temp_].name);
+			
+			var temp_2 = string_replace(icons_cur, $"icons{_path_separator}", ""); 
+			temp_2 = string_replace(string_replace(temp_2, $"_strip", ""), $".png", "");
+			temp_2 = string_exclude(temp_2, "0123456789");
+			if ( !scribble_external_sprite_exists(temp_2) ) { scribble_external_sprite_add(icons_dict[$ temp_].sprite, temp_2); } //alternative
+			show_debug_message(out_); global.outputLog += $"{out_}\n";
 		icons_i++; }
 		
 		///@desc Returns a sprite index from an externally added icon sprite.
@@ -97,7 +113,8 @@
 				self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External border \"{fname}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
 				sprite_set_offset(sprite, sprite_get_width(sprite)/ 2, sprite_get_height(sprite)/ 2); //Center sprite
 			}
-			show_debug_message($"Added \"{bords_dict[$ temp_].name}\" from {bords_dict[$ temp_].fname}!");
+			var out_ = $"Added \"{bords_dict[$ temp_].name}\" from {bords_dict[$ temp_].fname}!";
+			show_debug_message(out_); global.outputLog += $"{out_}\n";
 		bords_i++; }
 		
 		///@desc Returns a sprite index from an externally added border sprite.
@@ -113,4 +130,9 @@
 		var _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/", fname = $"reference{_path_separator}reference_image.png", fnamedebug = string_replace(fname, $"reference{_path_separator}", "");
 		global.refimg = -1; if ( file_exists(fname) ) { global.refimg = sprite_add_ext(fname, 1, 0, 0, true); show_debug_message($"Added \"{fnamedebug}\" from {fname}!"); }
 	#endregion
+	
+	//var _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
+	//var oLog = file_text_open_write($"{program_directory}{_path_separator}external_database_log.txt");
+	//file_text_write_string(oLog, global.outputLog);
+	//file_text_close(oLog);
 #endregion

@@ -273,3 +273,52 @@ function draw_sprite_outline(sprite_ = sprite_index, index_ = image_index, x_ = 
 
 ///@desc Shorthand for audio_play_sound()
 function sfx_play(snd, loop = false, gain = 1, pitch = 1) { return audio_play_sound(snd, 0, loop, gain, , pitch); }
+
+///@desc Removes anything that isn't a number or decimal point
+function string_digits_ext(str){
+	var result  = ""; 
+	for ( var i = 1, len = string_length(str); i <= len; i++; ) {
+		var nextOrd = string_ord_at(str, i);
+		if ( ( nextOrd >= 48 && nextOrd <= 57 ) || nextOrd == 46 || nextOrd == 45 ) { result += chr(nextOrd); }
+	}
+    
+	return result;
+}
+
+///@desc Remove every other decimal points but the first.
+function first_decimal(string_) {
+	for ( var i = 1, len = string_length(string_); i < len; i++; ) {
+		var char = string_char_at(string_, i);
+		if ( char == "." ) {
+			for ( var j = i + 1; j < len; j++; ) { if ( string_char_at(string_, j) == "." ) { string_ = string_delete(string_, j, len); } } //An additional "." is found
+		}
+	}
+	
+	var decs = string_count(".", string_); //If there's still some decimals, trim them off
+	if ( decs > 1 ) { string_ = string_delete(string_, len, decs - 1); }
+	return string_;
+}
+
+///@desc Returns a valid real number with anything that isn't a number stripped out. This also keeps the first decimal point. If no numbers were found, this will return "" instead.
+function real_ext(string_) {
+	string_ = string_digits_ext(string_);
+	show_debug_message(string_);
+	string_ = first_decimal(string_);
+	show_debug_message(string_);
+	return string_ != "" ? real(string_) : "";
+}
+
+///@desc Makes a copy of a string, but excluding characters in a character exclusion string. Optionally can replace those characters with another character.
+///@param {string} string_ String
+///@param {string} exclude_ All characters to look for in a string.
+///@param {string} sub_ Substitute replaced characters with specified string
+function string_exclude(string_, exclude_, sub_ = "") {
+	for ( var i = 1, len = string_length(string_) + 1, str = string_; i < len; i++; ) {
+		var char_ = string_char_at(string_, i)
+		for ( var ex_i = 1, ex_len = string_length(exclude_) + 1, ex_char_ = ""; ex_i < ex_len; ex_i++; ) {
+			ex_char_ = string_char_at(exclude_, ex_i);
+			if ( char_ == ex_char_ ) { str = string_replace_all(str, ex_char_, sub_); }
+		}
+	}
+	return str;
+}

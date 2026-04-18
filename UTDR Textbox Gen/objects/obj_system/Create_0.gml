@@ -21,7 +21,7 @@
 	
 	undo_stack_create(); //History of undo changes
 	
-	dial_point_auto = true; //Whether to automatically add points
+	dial_point_auto = false; //Whether to automatically add points
 	dial_point_chr = "*"; //Dialogue Point Character
 	dial_point_clr = c_white; //Dialogue Point Clr
 	dial_auto_wrap = true; //Whether to automatically wrap dialogue to new lines
@@ -67,18 +67,6 @@
 		
 		scribble_add_macro("newl", function(){ return "\n  "; }); //Newline with no asterisk
 		scribble_add_macro("newl_a", function(){ return "\n* "; }); //Newline with asterisk
-		
-		var newsprite = function(face, index_ = 0, speed_ = 0) { //Insert external sprite
-			show_debug_message(face);
-			var getface = get_face(face);
-			if ( getface != -1 ) { return $"[{getface},{real(string_digits(index_ != "" ? index_ : 0))},{real(speed_ != "" ? speed_ : 0)}]"; }
-			else {
-				var geticon = get_icon(face);
-				if ( geticon != -1 ) { return $"[{geticon},{real(string_digits(index_ != "" ? index_ : 0))},{real(speed_ != "" ? speed_ : 0)}]"; }
-			}
-			return "";
-		}
-		scribble_add_macro("sprite", newsprite); scribble_add_macro("image", newsprite); scribble_add_macro("icon", newsprite); scribble_add_macro("spr", newsprite); scribble_add_macro("img", newsprite);
 	#endregion
 #endregion
 
