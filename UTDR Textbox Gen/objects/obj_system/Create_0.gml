@@ -12,6 +12,8 @@
 	bord_spd = 0; //Border image speed
 	bord_anim = 1; //Animation type ( 0 - Start over, 1 - Bounce back )
 	bord_anim_track = 0;
+	bord_scale = 1; //Border sprite scale
+	bord_stretch = true; //Whether the nineslice border should stretch or tile
 #endregion
 
 #region Dialogue Text

@@ -500,6 +500,7 @@
     {"id":{"name":"CleanTransformOriginSet","path":"scripts/CleanTransformOriginSet/CleanTransformOriginSet.yy",},},
     {"id":{"name":"CleanTransformReset","path":"scripts/CleanTransformReset/CleanTransformReset.yy",},},
     {"id":{"name":"CleanTriangle","path":"scripts/CleanTriangle/CleanTriangle.yy",},},
+    {"id":{"name":"draw_9slice","path":"scripts/draw_9slice/draw_9slice.yy",},},
     {"id":{"name":"draw_text_scribble_ext","path":"scripts/draw_text_scribble_ext/draw_text_scribble_ext.yy",},},
     {"id":{"name":"draw_text_scribble","path":"scripts/draw_text_scribble/draw_text_scribble.yy",},},
     {"id":{"name":"enginescripts","path":"scripts/enginescripts/enginescripts.yy",},},

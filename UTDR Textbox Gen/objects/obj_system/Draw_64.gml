@@ -22,7 +22,7 @@ if ( bord_visible ) {
 			var xx_ = ( bordx + ( ( dial_face != -1 ? 144 : 28 ) + ( dial_point_auto ? 4 : 0 ) ) ) + ( offset_ + dltrn ? 6 : 0 ), yy_ = ( bordy + 29 ) + offset_; //Text X Y
 
 			var ninesl_ = sprite_get_nineslice(spr_bord ); 
-			if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, 1); } else { draw_nineslice(spr_bord, bordx, bordy, bordx + bordw, bordy + bordh, bord_clr, 1, bord_index); } //Dialogue Box
+			if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, 1); } else { draw_9slice(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, bord_scale, bord_stretch); } //Dialogue Box
 			if ( dial_face != -1 ) { draw_sprite_ensure(dial_face, dial_face_index, bordx + ( 74 + offset_ ), bordy + ( 76 + offset_ ), 2, 2, 0, dial_face_clr, 1); } //Dialogue Face
 		#endregion
 
