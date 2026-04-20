@@ -40,8 +40,19 @@ if ( screenshot || record.enabled ) {
 			surface_save_part(screenshot_surf, fpath_final, x_/ smallbox, y_/ smallbox, w_/ smallbox, h_/ smallbox); //Save output actual
 		}
 		
+		var form = new FormData(); //Upload the result to a server (This is for the online folks. This is also why a second temp image is made)
+		#region tmpfiles.org (1hr) (Seems like the best fit) (Simple af)
+			//form.add_file("file", fpath);
+			//http("https://tmpfiles.org/api/v1/upload", "POST", form, , function(http_status, result) { //Sucess!
+			//	show_debug_message($"{http_status} {result}");
+			//	var result = json_stringify(result), getlink = result.data.url;
+			//	var finallink = string_replace(getlink, "http://tmpfiles.org/", "http://tmpfiles.org/dl/");
+			//	clipboard_set_text(finallink);
+			//}, 
+			//function(http_status, result) { show_debug_message($"{http_status} {result}"); }); //Failed
+		#endregion
+		
 		#region sxcu.net Host (24hr) (No sign-up)
-			//var form = new FormData(); //Upload the result to Litterbox for 1hr (This is for the online folks. This is also why a second temp image is made)
 			//form.add_data("self_destruct", true);
 			//form.add_file("file", fpath);
 			//http("https://sxcu.net/api/files/create", "POST", form, , function(http_status, result) { //Sucess!

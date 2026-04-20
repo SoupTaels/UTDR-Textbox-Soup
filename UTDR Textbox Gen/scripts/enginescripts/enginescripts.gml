@@ -325,3 +325,6 @@ function string_exclude(string_, exclude_, sub_ = "") {
 	}
 	return str;
 }
+	
+///@desc delta_time optimizer
+function deltaizer() { return delta_time * game_get_speed(gamespeed_fps) * 0.000001; }

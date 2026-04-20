@@ -27,7 +27,7 @@ outputLog = "";
 			var temp_2 = string_replace(faces_cur, $"faces{_path_separator}{faces_dir}{_path_separator}", ""); //Remove faces/(folder name)/
 			temp_2 = string_replace(string_replace(temp_2, "_strip", ""), ".png", ""); //Remove .png and _strip.
 			temp_2 = string_exclude(temp_2, "0123456789");
-			if ( !scribble_external_sprite_exists(temp_2) ) { show_debug_message(temp_2); scribble_external_sprite_add(self[$ faces_emote].sprite, temp_2); } //alternative
+			if ( !scribble_external_sprite_exists(temp_2) ) { scribble_external_sprite_add(self[$ faces_emote].sprite, temp_2); } //alternative
 			
 			global.faces_dict_alt[$ temp_2] = { sprite: self[$ faces_emote].sprite, name: temp_2 } //Add sprite index and expression name to the global face alt dictonary
 			show_debug_message(out_); global.outputLog += $"{out_}\n";

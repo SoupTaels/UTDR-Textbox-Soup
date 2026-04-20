@@ -3581,7 +3581,7 @@ function MajorGUI() constructor {
 			#endregion
 			
 			// Keyboard Events
-			if ( ( keyboard_lastkey != vk_nokey && keyboard_lastkey != 20 ) ) {
+			if ( ( keyboard_lastkey != vk_nokey && keyboard_lastkey != 20 && keyboard_lastkey != vk_shift && keyboard_lastkey != vk_lshift && keyboard_lastkey != vk_rshift ) ) {
 				var text = ElementGetProperty(fm_textbox, "text");
 				
 				// char limit check-point
