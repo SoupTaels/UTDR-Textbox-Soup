@@ -52,6 +52,9 @@ function Button(datastruct_ = undefined) constructor {
 			if ( mouse_pressed ) { if ( !is_undefined(data[$ "on_click"]) ) { data[$ "on_click"](); exit; } } //Mouse Pressed Function
 			if ( mouse_check ) { if ( !is_undefined(data[$ "on_held"]) ) { data[$ "on_held"](); } } //Mouse Held Function
 			if ( mouse_released ) { if ( !is_undefined(data[$ "on_released"]) ) { data[$ "on_released"](); } } //Mouse Released Function
+			if ( mouse_pressed_right ) { if ( !is_undefined(data[$ "on_click_right"]) ) { data[$ "on_click_right"](); exit; } } //Mouse Pressed Function
+			if ( mouse_check_right ) { if ( !is_undefined(data[$ "on_held_right"]) ) { data[$ "on_held_right"](); } } //Mouse Held Function
+			if ( mouse_released_right ) { if ( !is_undefined(data[$ "on_released_right"]) ) { data[$ "on_released_right"](); } } //Mouse Released Function
 		}
 		else { //If the mouse just left the bounding box
 			if ( on_enter ) { if ( !on_leave ) { on_leave = true; on_enter = false; if ( !is_undefined(data[$ "on_leave"]) ) { data[$ "on_leave"](); } } } //Mouse Leave Function
@@ -148,7 +151,7 @@ function ui_manage() {
 				var colors_ = ["c_red", "c_yellow", "c_blue", "c_lime", "c_aqua", "c_cyan", "c_purple", "c_orange", "c_maroon", "c_fuchsia", "c_gold", "c_white", "c_ltgray", "c_gray", "c_dkgray", "c_black"], colors_get = __scribble_config_colours(), colors_i = 0, colors_len = array_length(colors_); //Available colors
 				repeat ( colors_len ) {
 					var colors_cur = colors_[colors_i]; //Current color
-					var butt_data = { x: 160 + ( 27 * colors_i ), y: 70, sprite: spr_pixel, color_butt: colors_get[$ colors_cur], color_butt_hover: merge_color(colors_get[$ colors_cur], color_get_value(colors_get[$ colors_cur]) > 150 ? c_black : c_white, 0.3), on_click: method({ butt_func, colors_cur }, function () { butt_func(colors_cur); }) } 
+					var butt_data = { x: 160 + ( 27 * colors_i ), y: 70, sprite: spr_pixel, color_butt: colors_get[$ colors_cur], color_butt_hover: merge_color(colors_get[$ colors_cur], color_get_value(colors_get[$ colors_cur]) > 150 ? c_black : c_white, 0.3), on_click: method({ butt_func, colors_cur }, function () { butt_func(colors_cur); }), on_click_right: method({ butt_func, colors_cur }, function () { sfx_play(snd_equip2, , , 1.5); static clr = __scribble_config_colours(); obj_system.dial_text_outline = clr[$ colors_cur]; }) } 
 					butt_data[$ "x2"] = butt_data.x + 20; butt_data[$ "y2"] = butt_data.y + 10; 
 				
 					draw_sprite_stretched_ext(spr_border_undertale, 0, butt_data.x - 3, butt_data.y - 3, ( butt_data.x2 - butt_data.x ) + 6, ( butt_data.y2 - butt_data.y ) + 6, c_white, 1); //Button Outline 3

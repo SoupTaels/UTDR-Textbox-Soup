@@ -3,7 +3,7 @@ live_auto_call
 if ( screenshot || record.enabled ) { 
 	var dltrn = spr_bord == spr_border_deltarune; //Check if our border is Deltarune
 	var out_ = bord_out; //Whether to save with an outline
-	var folder = "UTDR-SoupGen-Export", fname = $"UTDR_SoupGen_0-{current_month}.{current_day}.{current_year}-_{current_hour};{current_minute};{current_second}.{current_time}-", _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
+	var folder = "UTDR-SoupGen-Export", fname = $"UTDR_SoupGen_-{current_month}.{current_day}.{current_year}-_{current_hour};{current_minute};{current_second}.{current_time}-", _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
 	var offset_ = dltrn ? 8 : 0, offset_w = dltrn ? 15 : 0, offset_h = dltrn ? 16 : 0, x_ = ( 32 - offset_ ) - 2, y_ = ( 315 - offset_ ) - 2, w_ = ( 578 + offset_w ) + 4, h_ = ( 152 + offset_w ) + 4; //Border coords
 
 	var smallbox = bord_small ? 2 : 1;
@@ -36,29 +36,33 @@ if ( screenshot || record.enabled ) {
 			fpath = fpath_final;
 		}
 		else {
-			surface_save_part(screenshot_surf, fpath, x_/ smallbox, y_/ smallbox, w_/ smallbox, h_/ smallbox); //Save output temp
+			surface_save_part(screenshot_surf, fpath, x_/ smallbox, y_/ smallbox, w_/ smallbox, h_/ smallbox); //Save output temp for uploading
 			surface_save_part(screenshot_surf, fpath_final, x_/ smallbox, y_/ smallbox, w_/ smallbox, h_/ smallbox); //Save output actual
 		}
-			
-		var form = new FormData(); //Upload the result to Litterbox for 1hr (This is for the online folks. This is also why a second temp image is made)
-		/*form.add_data("reqtype", "fileupload");
-		form.add_data("time", "1h");
-		form.add_file("fileToUpload", fpath);
-		http("https://litterbox.catbox.moe/resources/internals/api.php", "POST", form, , function(http_status, result) { //Sucess!
-			show_debug_message($"{http_status} {result}");
-			clipboard_set_text(result);
-		}, 
-		function(http_status, result) { show_debug_message($"{http_status} {result}"); }); //Failed*/
 		
-		//form.add_data("key", "c0a42a79bdff0058d6ee96b6e83b4143"); //ImgBB Host
-		//form.add_data("expiration", "1800");
-		//form.add_file("image", fpath);
-		//http("https://api.imgbb.com/1/upload", "POST", form, , function(http_status, result) {
-		//	show_debug_message($"{http_status} {result}");
-		//	var real_result = json_parse(result);
-		//	clipboard_set_text(real_result.data.url);
-		//}, 
-		//function(http_status, result) { show_debug_message($"{http_status} {result}"); }); //Failed
+		#region sxcu.net Host (24hr) (No sign-up)
+			//var form = new FormData(); //Upload the result to Litterbox for 1hr (This is for the online folks. This is also why a second temp image is made)
+			//form.add_data("self_destruct", true);
+			//form.add_file("file", fpath);
+			//http("https://sxcu.net/api/files/create", "POST", form, , function(http_status, result) { //Sucess!
+			//	var result = json_stringify(result);
+			//	show_debug_message($"{http_status} {result}");
+			//	clipboard_set_text(result.url);
+			//}, 
+			//function(http_status, result) { show_debug_message($"{http_status} {result}"); }); //Failed
+		#endregion
+		
+		#region ImgBB Host (1hr) (Requires sign-up) (UGH)
+			//form.add_data("key", "c0a42a79bdff0058d6ee96b6e83b4143");
+			//form.add_data("expiration", "1800");
+			//form.add_file("image", fpath);
+			//http("https://api.imgbb.com/1/upload", "POST", form, , function(http_status, result) {
+			//	show_debug_message($"{http_status} {result}");
+			//	var real_result = json_parse(result);
+			//	clipboard_set_text(real_result.data.url);
+			//}, 
+			//function(http_status, result) { show_debug_message($"{http_status} {result}"); }); //Failed
+		#endregion
 		
 		if ( !gif_ ) { file_delete(fpath); }
 		show_debug_message($"{fname} saved at {fpath_final}!");
@@ -72,7 +76,7 @@ if ( screenshot || record.enabled ) {
 		record.id_ = -1;
 		obj_system.dial_wrap_count = 1;
 		obj_system.spr_bord = obj_system.bord_prev;
-		execute_shell_simple(fpath_final, , , 6); //Open the image in the PC's default photo viewer (Windows only)
+		//execute_shell_simple(fpath_final, , , 6); //Open the image in the PC's default photo viewer (Windows only)
 		exit;
 	});
 	
@@ -81,7 +85,7 @@ if ( screenshot || record.enabled ) {
 		finish_func(false);
 	}
 	else if ( record.enabled ) {
-		var record_func = method({ record, screenshot_surf, x_, y_, w_, h_, smallbox, typist }, function(init_ = false) { if ( init_ ) { record.id_ = gif_open(w_/ smallbox, h_/ smallbox); typist.reset(); } else { var debug = gif_add_surface(record.id_, screenshot_surf, 2, x_/ smallbox, y_/ smallbox); } });
+		var record_func = method({ record, screenshot_surf, x_, y_, w_, h_, smallbox, typist }, function(init_ = false) { if ( init_ ) { record.id_ = gif_open(w_/ smallbox, h_/ smallbox); typist.reset(); } else { var debug = gif_add_surface(record.id_, screenshot_surf, 2, x_/ smallbox, y_/ smallbox, record.quant); } });
 		if ( record.type == 0 ) { //No typing animation
 			if ( record.frames == 0 ) { record_func(true); record.frames++; } //Enable GIF recording
 			else { 

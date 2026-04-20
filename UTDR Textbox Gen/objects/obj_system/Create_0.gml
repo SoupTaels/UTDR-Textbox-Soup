@@ -8,6 +8,10 @@
 	bord_small = false; //Whether to render everything out in a small box
 	bord_prev = spr_bord; //Previous border
 	bord_visible = true; //Whether the dialogue box is visible
+	bord_index = 0; //Border image index
+	bord_spd = 0; //Border image speed
+	bord_anim = 1; //Animation type ( 0 - Start over, 1 - Bounce back )
+	bord_anim_track = 0;
 #endregion
 
 #region Dialogue Text
@@ -18,6 +22,7 @@
 	dial_text_gif = false; //Whether to enable typewriting
 	dial_updatet = 0; //Dialogue update timer
 	dial_updatet_max = 45; //Dialogue update timer delay
+	dial_text_outline = c_red; //Dialogue Outline Color
 	
 	undo_stack_create(); //History of undo changes
 	
@@ -29,13 +34,15 @@
 	
 	if ( !scribble_font_exists("fnt_default") ) { scribble_font_bake_outline_and_shadow("fnt_determination_nomono", "fnt_default", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 1, false); }
 	if ( !scribble_font_exists("fnt_monospaced") ) { scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_monospaced", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 0, false); }
+	
+	if ( !scribble_font_exists("fnt_default_outline") ) { scribble_font_bake_outline_and_shadow("fnt_determination_nomono", "fnt_default_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 1, false); }
+	if ( !scribble_font_exists("fnt_monospaced_outline") ) { scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_monospaced_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); }
 	scribble_font_set_default("fnt_default"); //Use the normal dialogue font by default when using Scribble
 	
 	typist = scribble_typist();
 	typist.in(0.4, 0);
 	typist.function_per_char(function(_element, _position, _typist) { //Function to run per character
-		var mychr = chr(_element.get_glyph_data(_position-1).unicode); //Get the currently revealed character
-		//show_debug_message(mychr);
+		var mychr = chr(_element.get_glyph_data(_position - 1).unicode); //Get the currently revealed character
 		if ( mychr == chr(10) ) { dial_wrap_count++; } //Newline
 		
 		if ( dial_face_auto ) { //Animate the face while dialogue is typing out
@@ -54,6 +61,7 @@
 			DIAL_GIF
 			dial_face_prev = dial_face; //Get the previous face
 			dial_face = get_face(param[0], array_length(param) > 1 ? param[1] : -1);
+			if ( dial_face != -1 ) { dial_face_name = param[0]; }
 		});
 		scribble_typists_add_event("face_orig", function(_, param) { DIAL_GIF dial_face_original = get_face(param[0], array_length(param) > 1 ? param[1] : -1); }); //Change the original previous face to a new 
 		scribble_typists_add_event("face_prev", function(_, param) { DIAL_GIF dial_face = dial_face_prev; }); //Change the face back to the previous face
@@ -64,9 +72,10 @@
 			var bord_ = get_border(param[0]);
 			spr_bord = bord_ != -1 ? bord_ : spr_border_undertale;
 		});
+		scribble_typists_add_event("face_stick", function(_, param) { DIAL_GIF dial_face_original = get_face(dial_face_name); }); //Make the previous dialogue face stick
 		
-		scribble_add_macro("newl", function(){ return "\n  "; }); //Newline with no asterisk
-		scribble_add_macro("newl_a", function(){ return "\n* "; }); //Newline with asterisk
+		scribble_add_macro("newl", function() { return "\n  "; }); //Newline with no asterisk
+		scribble_add_macro("newl_a", function() { return "\n* "; }); //Newline with asterisk
 	#endregion
 #endregion
 
@@ -83,6 +92,7 @@
 	dial_face_original = -1; //Original Dial Face
 	dial_face_auto = true; //Whether to automatically animate the sprite when dialogue is typing
 	dial_face_clr = c_white; //Dialogue Face Clr
+	dial_face_name = -1; //Dialogue Portrait Internal Name
 #endregion
 
 #region UI
@@ -90,7 +100,7 @@
 	ui_tab = 0; //Current Tab (0 - Dialogue, 1 - Face, 2 - Border, 3 - About)
 	screenshot = false; //Screenshot task
 	screenshot_surf = -1; //Screenshot surface
-	record = { enabled: false, type: 0, frames: 0, framesmax: 0, id_: -1, }; //Whether to record, the type of recording(0 - static, 1 - wait for dialogue to finish), and how long to record for
+	record = { enabled: false, type: 0, frames: 0, framesmax: 0, id_: -1, quant: 1, }; //Whether to record, the type of recording(0 - static, 1 - wait for dialogue to finish), and how long to record for
 	ui_visible = true; //Whether the UI should be visible
 	ui_effoff = 0; //Effects array offset 
 	

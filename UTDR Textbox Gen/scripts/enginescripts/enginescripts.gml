@@ -10,6 +10,9 @@ randomize();
 	#macro mouse_check device_mouse_check_button(0, mb_left)
 	#macro mouse_pressed device_mouse_check_button_pressed(0, mb_left)
 	#macro mouse_released device_mouse_check_button_released(0, mb_left)
+	#macro mouse_check_right device_mouse_check_button(0, mb_right)
+	#macro mouse_pressed_right device_mouse_check_button_pressed(0, mb_right)
+	#macro mouse_released_right device_mouse_check_button_released(0, mb_right)
 	// flip this value to 0 to disable GMLive!
 	#macro live_enabled 1
 #endregion
@@ -199,7 +202,7 @@ function draw_sprite_ensure(sprite, subimg = 0, xx = x, yy = y, xscale = 1, ysca
 	if ( spr_ != -1 ) { draw_sprite_ext(spr_, subimg, xx, yy, xscale, yscale, rot, color, alpha); } else { show_debug_message($"\"{sprite}\" doesn't exist!"); }
 }
 
-function draw_nineslice(sprite_, x1, y1, x2, y2, color = c_white, alpha = 1) {
+function draw_nineslice(sprite_, x1, y1, x2, y2, color = c_white, alpha = 1, index = 0) {
 	var left = x1;
 	var top = y1;
 	var right = x2;
@@ -230,24 +233,24 @@ function draw_nineslice(sprite_, x1, y1, x2, y2, color = c_white, alpha = 1) {
 
 	var scale_x = ((right - slice_size) - (left + slice_size)) / slice_size;
 	var scale_y = ((bottom - slice_size) - (top + slice_size)) / slice_size;
-	draw_sprite_part_ext(sprite, 0, slice_size, slice_size, slice_size, slice_size, left + slice_size, top + slice_size, scale_x, scale_y, tint, opacity);
+	draw_sprite_part_ext(sprite, index, slice_size, slice_size, slice_size, slice_size, left + slice_size, top + slice_size, scale_x, scale_y, tint, opacity);
 
 	// Draw Vertical Edges
 
-	draw_sprite_part_ext(sprite, 0, 0, slice_size, slice_size, slice_size, left, top + slice_size, 1, scale_y, tint, opacity);
-	draw_sprite_part_ext(sprite, 0, slice_size * 2, slice_size, slice_size, slice_size, right - slice_size, top + slice_size, 1, scale_y, tint, opacity);
+	draw_sprite_part_ext(sprite, index, 0, slice_size, slice_size, slice_size, left, top + slice_size, 1, scale_y, tint, opacity);
+	draw_sprite_part_ext(sprite, index, slice_size * 2, slice_size, slice_size, slice_size, right - slice_size, top + slice_size, 1, scale_y, tint, opacity);
 
 	// Draw Horizontal Edges
 
-	draw_sprite_part_ext(sprite, 0, slice_size, 0, slice_size, slice_size, left + slice_size, top, scale_x, 1, tint, opacity);
-	draw_sprite_part_ext(sprite, 0, slice_size, slice_size * 2, slice_size, slice_size, left + slice_size, bottom - slice_size, scale_x, 1, tint, opacity);
+	draw_sprite_part_ext(sprite, index, slice_size, 0, slice_size, slice_size, left + slice_size, top, scale_x, 1, tint, opacity);
+	draw_sprite_part_ext(sprite, index, slice_size, slice_size * 2, slice_size, slice_size, left + slice_size, bottom - slice_size, scale_x, 1, tint, opacity);
 
 	// Draw the Corners
 
-	draw_sprite_part_ext(sprite, 0, 0, 0, slice_size, slice_size, left, top, 1, 1, tint, opacity);
-	draw_sprite_part_ext(sprite, 0, slice_size * 2, 0, slice_size, slice_size, right - slice_size, top, 1, 1, tint, opacity);
-	draw_sprite_part_ext(sprite, 0, 0, slice_size * 2, slice_size, slice_size, left, bottom - slice_size, 1, 1, tint, opacity);
-	draw_sprite_part_ext(sprite, 0, slice_size * 2, slice_size * 2, slice_size, slice_size, right - slice_size, bottom - slice_size, 1, 1, tint, opacity);
+	draw_sprite_part_ext(sprite, index, 0, 0, slice_size, slice_size, left, top, 1, 1, tint, opacity);
+	draw_sprite_part_ext(sprite, index, slice_size * 2, 0, slice_size, slice_size, right - slice_size, top, 1, 1, tint, opacity);
+	draw_sprite_part_ext(sprite, index, 0, slice_size * 2, slice_size, slice_size, left, bottom - slice_size, 1, 1, tint, opacity);
+	draw_sprite_part_ext(sprite, index, slice_size * 2, slice_size * 2, slice_size, slice_size, right - slice_size, bottom - slice_size, 1, 1, tint, opacity);
 
 	return slice_size;
 }

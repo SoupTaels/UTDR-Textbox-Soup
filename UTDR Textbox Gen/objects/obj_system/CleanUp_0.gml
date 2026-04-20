@@ -10,10 +10,12 @@ undo_stack_destroy();
 		with ( global.faces_dict[$ cur_] ) {
 			var getexp = struct_get_names(self), getamt_ = array_length(getexp), i_ = 0;
 			repeat ( getamt_ ) {
-				self[$ getexp[i_]].destroy();
+				var face = self[$ getexp[i_]];
+				face.destroy();
 			i_++; }
 		}
 	i++;	}
+	delete global.faces_dict_alt; global.faces_dict_alt = -1;
 #endregion
 
 #region Destroy Icons, Border, and Reference Image

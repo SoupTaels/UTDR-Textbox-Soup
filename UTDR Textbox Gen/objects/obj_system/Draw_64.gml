@@ -22,7 +22,7 @@ if ( bord_visible ) {
 			var xx_ = ( bordx + ( ( dial_face != -1 ? 144 : 28 ) + ( dial_point_auto ? 4 : 0 ) ) ) + ( offset_ + dltrn ? 6 : 0 ), yy_ = ( bordy + 29 ) + offset_; //Text X Y
 
 			var ninesl_ = sprite_get_nineslice(spr_bord ); 
-			if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, 0, bordx, bordy, bordw, bordh, bord_clr, 1); } else { draw_nineslice(spr_bord, bordx, bordy, bordx + bordw, bordy + bordh, bord_clr, 1); } //Dialogue Box
+			if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, 1); } else { draw_nineslice(spr_bord, bordx, bordy, bordx + bordw, bordy + bordh, bord_clr, 1, bord_index); } //Dialogue Box
 			if ( dial_face != -1 ) { draw_sprite_ensure(dial_face, dial_face_index, bordx + ( 74 + offset_ ), bordy + ( 76 + offset_ ), 2, 2, 0, dial_face_clr, 1); } //Dialogue Face
 		#endregion
 
@@ -44,6 +44,7 @@ if ( bord_visible ) {
 				scrib_dial.allow_line_data_getter();
 				scrib_dial.allow_glyph_data_getter();
 				scrib_dial.line_spacing("120%");
+				scrib_dial.outline(dial_text_outline);
 				scrib_dial.wrap(dial_auto_wrap ? 580 - xx_ : -1);
 				scrib_dial.draw(dial_point_auto ? xx_ + 28 : xx_, yy_, dial_text_gif ? typist : undefined);
 
@@ -69,6 +70,7 @@ if ( bord_visible ) {
 								scrib_point.starting_format(dial_font, dial_point_clr);
 								scrib_point.scale(dial_text_scale);
 								scrib_point.allow_line_data_getter();
+								scrib_point.outline(dial_text_outline);
 								scrib_point.draw(xx_ - 4, yy_ + lined.y);
 							}
 						i++; }

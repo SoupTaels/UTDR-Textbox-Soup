@@ -2,11 +2,23 @@
 //live_auto_call_nr
 if ( bord_out ) { outlinesoup_step(640, 480); }
 
-var textboxActive = soupGUI.TextboxGetFocus(textBox);
-if ( !textboxActive ) { soupGUI.TextboxSetTextColor(textBox, new Vector4(157, 140, 187, 255)); }
-else { soupGUI.TextboxSetTextColor(textBox, new Vector4(255, 255, 255, 255)); }
+#region Animation
+	if ( dial_text_gif && dial_face_auto && typist.get_delay_paused() ) { dial_face_index = 0; } //Stop the face from animating if the dialogue is being delayed
+	if ( bord_spd > 0 ) { //Animate the border
+		var amt = sprite_get_number(spr_bord);
+		if ( bord_anim == 0 ) { bord_index += bord_spd mod amt; }
+		else { 
+			if ( !bord_anim_track ) { bord_index += bord_spd mod amt; if ( round(bord_index) >= amt) { bord_anim_track = true; } }
+			else { bord_index -= bord_spd; if ( round(bord_index) <= 0) { bord_anim_track = false; } }
+		} 
+	};
+#endregion
 
-if ( dial_text_gif && dial_face_auto && typist.get_delay_paused() ) { dial_face_index = 0; } //Stop the face from animating if the dialogue is being delayed
+#region Textbox Theme
+	var textboxActive = soupGUI.TextboxGetFocus(textBox);
+	if ( !textboxActive ) { soupGUI.TextboxSetTextColor(textBox, new Vector4(157, 140, 187, 255)); }
+	else { soupGUI.TextboxSetTextColor(textBox, new Vector4(255, 255, 255, 255)); }
+#endregion
 
 #region BG
 	var bg = layer_exists("bg3d") ? layer_get_id("bg3d") : layer_create(99, "bg3d"), _fx = layer_get_fx("bg3d"), _params; //Doesn't exist? Create it! Else, get the id.

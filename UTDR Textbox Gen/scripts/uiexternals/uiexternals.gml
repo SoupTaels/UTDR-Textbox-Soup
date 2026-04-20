@@ -1,6 +1,7 @@
 outputLog = "";
 #region Add External Faces
 	faces_dict = {};
+	faces_dict_alt = {};
 	
 	var findfaces = gumshoe("faces", ".png"), faces_i = 0, faces_len = array_length(findfaces), _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
 	repeat ( faces_len ) {
@@ -28,6 +29,7 @@ outputLog = "";
 			temp_2 = string_exclude(temp_2, "0123456789");
 			if ( !scribble_external_sprite_exists(temp_2) ) { show_debug_message(temp_2); scribble_external_sprite_add(self[$ faces_emote].sprite, temp_2); } //alternative
 			
+			global.faces_dict_alt[$ temp_2] = { sprite: self[$ faces_emote].sprite, name: temp_2 } //Add sprite index and expression name to the global face alt dictonary
 			show_debug_message(out_); global.outputLog += $"{out_}\n";
 		}
 		faces_i++;
@@ -39,13 +41,21 @@ outputLog = "";
 	function get_face(name, expression = -1) {
 		var face = -1, has__ = string_search(name, "_", false);
 		if ( has__ ) { 
-			var sep = string_split(name, "_"); 
-			if ( !struct_exists(global.faces_dict, sep[0])) { face = -1; return face; } 
-			with ( global.faces_dict[$ sep[0]] ) { if ( !struct_exists(self, sep[1])) { face = -1; return face; }  face = self[$ sep[1]].sprite; } 
+			var count = string_count("_", name);
+			
+			if ( count == 1 ) {
+				var sep = string_split(name, "_"); 
+				if ( !struct_exists(global.faces_dict, sep[0])) { face = -1; return face; } 
+				with ( global.faces_dict[$ sep[0]] ) { if ( !struct_exists(self, sep[1])) { face = -1; return face; }  face = self[$ sep[1]].sprite; }
+			}
+			else {
+				if ( !struct_exists(global.faces_dict_alt, name)) { face = -1; return face; } 
+				with ( global.faces_dict_alt[$ name] ) { face = self.sprite; }
+			}
 		} 
-		else { 
+		else {
 			if ( !struct_exists(global.faces_dict, name)) { face = -1; return face; } 
-			with ( global.faces_dict[$ name] ) { if ( !struct_exists(self, expression)) { face = -1; return face; }  face = self[$ expression].sprite; } }
+			with ( global.faces_dict[$ name] ) { if ( !struct_exists(self, expression)) { face = -1; return face; } face = self[$ expression].sprite; } }
 		return face;
 	}
 	
@@ -62,6 +72,7 @@ outputLog = "";
 #region Add Borders, Icons, and Reference Image
 	#region Icons
 		icons_dict = {};
+		icons_dict_alt = {};
 	
 		var findicons = gumshoe("icons", ".png"), icons_i = 0, icons_len = array_length(findicons), _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
 		repeat ( icons_len ) {
@@ -83,21 +94,23 @@ outputLog = "";
 			var temp_2 = string_replace(icons_cur, $"icons{_path_separator}", ""); 
 			temp_2 = string_replace(string_replace(temp_2, $"_strip", ""), $".png", "");
 			temp_2 = string_exclude(temp_2, "0123456789");
-			if ( !scribble_external_sprite_exists(temp_2) ) { scribble_external_sprite_add(icons_dict[$ temp_].sprite, temp_2); } //alternative
+			if ( !scribble_external_sprite_exists(temp_2) ) { scribble_external_sprite_add(global.icons_dict[$ temp_].sprite, temp_2); } //alternative
+			global.icons_dict_alt[$ temp_2] = { sprite: global.icons_dict[$ temp_].sprite, name: temp_2 } //Add sprite index and expression name to the global icon alt dictonary
 			show_debug_message(out_); global.outputLog += $"{out_}\n";
 		icons_i++; }
 		
 		///@desc Returns a sprite index from an externally added icon sprite.
 		///@param {string} name Icon Sprite Name (ex: soupcan, battlebuttons, battlechars, etc.)
-		function get_icon(name) { return struct_exists(global.icons_dict, name) ? global.icons_dict[$ name].sprite : -1; }
+		function get_icon(name) { return struct_exists(global.icons_dict, name) ? global.icons_dict[$ name].sprite : ( struct_exists(global.icons_dict_alt, name) ? global.icons_dict_alt[$ name].sprite : -1 ); }
 		
 		///@desc Returns a struct from an externally added icon sprite.
 		///@param {string} name Icon Sprite Name (ex: soupcan, battlebuttons, battlechars, etc.)
-		function get_icon_data(name) { return struct_exists(global.icons_dict, name) ? global.icons_dict[$ name] : -1; }
+		function get_icon_data(name) { return struct_exists(global.icons_dict, name) ? global.icons_dict[$ name] : ( struct_exists(global.icons_dict_alt, name) ? global.icons_dict_alt[$ name] : -1 ); }
 	#endregion
 	
 	#region Borders
 		bords_dict = {};
+		bords_dict_alt = {};
 	
 		var findbords = gumshoe("borders", ".png"), bords_i = 0, bords_len = array_length(findbords), _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
 		repeat ( bords_len ) {
@@ -114,16 +127,22 @@ outputLog = "";
 				sprite_set_offset(sprite, sprite_get_width(sprite)/ 2, sprite_get_height(sprite)/ 2); //Center sprite
 			}
 			var out_ = $"Added \"{bords_dict[$ temp_].name}\" from {bords_dict[$ temp_].fname}!";
+			
+			var temp_2 = string_replace(bords_cur, $"borders{_path_separator}", ""); 
+			temp_2 = string_replace(string_replace(temp_2, $"_strip", ""), $".png", "");
+			temp_2 = string_exclude(temp_2, "0123456789");
+			if ( !scribble_external_sprite_exists(temp_2) ) { scribble_external_sprite_add(global.bords_dict[$ temp_].sprite, temp_2); } //alternative
+			global.bords_dict_alt[$ temp_2] = { sprite: global.bords_dict[$ temp_].sprite, name: temp_2 } //Add sprite index and expression name to the global icon alt dictonary
 			show_debug_message(out_); global.outputLog += $"{out_}\n";
 		bords_i++; }
 		
 		///@desc Returns a sprite index from an externally added border sprite.
 		///@param {string} name Border Sprite Name (ex: bordercustomexample, bordercustomexampletwo, etc.)
-		function get_border(name) { return struct_exists(global.bords_dict, name) ? global.bords_dict[$ name].sprite : -1; }
+		function get_border(name) { return struct_exists(global.bords_dict, name) ? global.bords_dict[$ name].sprite : ( struct_exists(global.bords_dict_alt, name) ? global.bords_dict_alt[$ name].sprite : -1 ); }
 		
 		///@desc Returns a struct from an externally added border sprite.
 		///@param {string} name Border Sprite Name (ex: bordercustomexample, bordercustomexampletwo, etc.)
-		function get_border_data(name) { return struct_exists(global.bords_dict, name) ? global.bords_dict[$ name] : -1; }
+		function get_border_data(name) { return struct_exists(global.bords_dict, name) ? global.bords_dict[$ name] : ( struct_exists(global.bords_dict_alt, name) ? global.bords_dict_alt[$ name] : -1 ); }
 	#endregion
 	
 	#region Reference Image

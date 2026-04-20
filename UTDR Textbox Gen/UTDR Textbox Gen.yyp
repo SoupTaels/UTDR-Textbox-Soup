@@ -68,6 +68,7 @@
   ],
   "ForcedPrefabProjectReferences":[],
   "IncludedFiles":[
+    {"$GMIncludedFile":"","%Name":"spr_border_custom_animated_strip4.png","CopyToMask":-1,"filePath":"datafiles/borders","name":"spr_border_custom_animated_strip4.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"spr_border_custom_example_two.png","CopyToMask":-1,"filePath":"datafiles/borders","name":"spr_border_custom_example_two.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"spr_border_custom_example.png","CopyToMask":-1,"filePath":"datafiles/borders","name":"spr_border_custom_example.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"spr_alphys_blush.png","CopyToMask":-1,"filePath":"datafiles/faces/alphys","name":"spr_alphys_blush.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
