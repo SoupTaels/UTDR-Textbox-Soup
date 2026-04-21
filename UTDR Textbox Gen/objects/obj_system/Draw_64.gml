@@ -14,6 +14,7 @@
 	}
 #endregion
 	//draw_sprite_ensure(global.refimg, , 0, 0);
+	soupy_lui.render();
 if ( bord_visible ) {
 	if ( bord_out ) { outlinesoup_start(); }
 		#region Dialogue Box
@@ -97,6 +98,7 @@ if ( bord_visible ) {
 	
 	draw_sprite_ext(spr_pixel, 0, 0, 0, 640, 480, 0, c_black, fader);
 #endregion
+
 mouse_debug();
 //draw_sprite_ensure(get_face("sck", "capn"), current_time/300, 320, 240);
 //draw_sprite_ensure(get_face("undyne", "pissed"), current_time/300, 320 + 40, 240);

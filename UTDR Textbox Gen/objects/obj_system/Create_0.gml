@@ -1,5 +1,5 @@
 ///@desc Init
-//live_auto_call_nr
+live_auto_call_nr
 #region Dialogue Box
 	outlinesoup_init(, , , , 2);
 	spr_bord = spr_border_deltarune; //Border Sprite
@@ -105,30 +105,31 @@
 	record = { enabled: false, type: 0, frames: 0, framesmax: 0, id_: -1, quant: 1, }; //Whether to record, the type of recording(0 - static, 1 - wait for dialogue to finish), and how long to record for
 	ui_visible = true; //Whether the UI should be visible
 	ui_effoff = 0; //Effects array offset 
+	debug_restart = false;
 	
 	#region Main Menu Buttons
-		var i = 0, spr_ = spr_border_octagon, y_ = 12, clr_ = c_orange, padd_ = 14;
-		butt[i] = new Button({ id_: i, text: "Dialogue [spr_gui_icons,0]", x: 320, y: y_, yoff: 0, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
+		var i = 0, spr_ = spr_border_octagon, x_ = 320, y_ = 12, clr_ = c_orange, padd_ = 14;
+		butt[i] = new Button({ id_: i, text: "Dialogue [spr_gui_icons,0]", x: x_, y: y_, yoff: 0, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
 		with ( butt[i].data ) {
 			on_click = function() { on_click_(); } on_enter = function() { on_enter_(); } on_leave = function() { on_leave_(); }
 		} i++;
 		
-		butt[i] = new Button({ id_: i, text: "Style        [spr_gui_icons,5]", x: 320, y: y_, yoff: 0, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
+		butt[i] = new Button({ id_: i, text: "Style        [spr_gui_icons,4]", x: x_, y: y_, yoff: 0, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
 		with ( butt[i].data ) {
 			on_click = function() { on_click_(); } on_enter = function() { on_enter_(); } on_leave = function() { on_leave_(); }
 		} i++;
 	
-		butt[i] = new Button({ id_: i, text: "Portrait [spr_gui_icons,1]", x: 320, y: y_, yoff: 0, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
+		butt[i] = new Button({ id_: i, text: "Portrait [spr_gui_icons,1]", x: x_, y: y_, yoff: 0, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
 		with ( butt[i].data ) {
 			on_click = function() { on_click_(); } on_enter = function() { on_enter_(); } on_leave = function() { on_leave_(); }
 		} i++;
 	
-		butt[i] = new Button({ id_: i, text: "Border      [spr_gui_icons,2]", x: 320, y: y_, yoff: 0, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
+		butt[i] = new Button({ id_: i, text: "Border      [spr_gui_icons,2]", x: x_, y: y_, yoff: 0, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined });
 		with ( butt[i].data ) {
 			on_click = function() { on_click_(); } on_enter = function() { on_enter_(); } on_leave = function() { on_leave_(); }
 		} i++;
 	
-		butt[i] = new Button({ id_: i, text: "Extras      [spr_gui_icons,3]", x: 320, y: y_, yoff: 0, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined});
+		butt[i] = new Button({ id_: i, text: "Extras      [spr_gui_icons,3]", x: x_, y: y_, yoff: 0, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: on_hover_, on_enter: undefined, on_leave: undefined, on_click: undefined});
 		with ( butt[i].data ) {
 			on_click = function() { on_click_(); } on_enter = function() { on_enter_(); } on_leave = function() { on_leave_(); }
 		} i++;
@@ -148,6 +149,47 @@
 		soupGUI.TextboxSetGhostTextColor(textBox, new Vector4(157, 140, 187, 255));
 		soupGUI.TextboxSetText(textBox, dial_text);
 		TweenScript(id, 0, 10, function() { sfx_play(snd_sparkle); window_mouse_set(320, 240); }); //Everything's loaded!
+	#endregion
+	
+	#region Menu Sections
+		#region Init Style
+			var soupy_style = new LuiStyle({ padding: 15, gap: 10, color_text: c_white, color_hover: c_yellow, sound_click: snd_select, sound_hover: snd_sel_switch, }) //Main Style
+				.setRenderRegionOffset([10, 10, 10, 10])
+				.setFonts(fnt_determination, fnt_determination, fnt_determination)
+				.setSprites(spr_border_undertale, spr_border_undertale)
+				.setColors(, c_orange, c_maroon)
+			soupy_lui = new LuiMain().setStyle(soupy_style);
+		#endregion
+		
+		#region Portrait Panel
+			var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
+			soupy_panel_portrait = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_,}) //Start containter
+			soupy_panel_portrait.scroll_pin_edge_offset = 10; 
+		
+				portrait_header_cur_panel = new LuiContainer().setPadding(0).addContent([
+					new LuiText({value: "Selected Face:"}),
+					new LuiText({value: "Selected Face:"}),
+					new LuiText({value: "Selected Face:"}),
+					new LuiText({value: "Selected Face:"}),
+					new LuiText({value: "Selected Face:"}),
+					new LuiText({value: "Selected Face:"}),
+				]);
+				portrait_header_set_panel = new LuiContainer().setPadding(0).addContent([
+					new LuiText({value: "Selected Face: 2"}),
+					new LuiText({value: "Selected Face: 2"}),
+					new LuiText({value: "Selected Face: 2"}),
+					new LuiText({value: "Selected Face: 2"}),
+					new LuiText({value: "Selected Face: 2"}),
+					new LuiText({value: "Selected Face: 2"}),
+				]);
+		
+				var portrait_header_cur = new LuiButton({ text: "Current Face", color: c_orange, sprite_button: spr_pixel, font: fnt_speech, text_color: c_black, }).setIcon(spr_gui_icons,,, c_black,, 1).addEvent(LUI_EV_CLICK, function() { portrait_header_cur_panel.toggleVisible(); });
+				var portrait_header_set = new LuiButton({ text: "Face Settings", color: c_orange, sprite_button: spr_pixel, font: fnt_speech, text_color: c_black, }).setIcon(spr_gui_icons,,, c_black,, 5).addEvent(LUI_EV_CLICK, function() { portrait_header_set_panel.toggleVisible(); });
+			soupy_panel_portrait.addContent([portrait_header_cur, portrait_header_cur_panel, portrait_header_set, portrait_header_set_panel]); //End container
+		#endregion
+
+		soupy_lui.addContent([soupy_panel_portrait, ]); //Add everything to the main ui
+		ui_reset();
 	#endregion
 	
 #endregion

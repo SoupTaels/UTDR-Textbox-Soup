@@ -71,4 +71,10 @@ function LuiCheckbox(_params = {}) : LuiBase(_params) constructor {
 			audio_play_sound(_element.style.sound_click, 1, false);
 		}
 	});
+	
+	self.addEvent(LUI_EV_MOUSE_ENTER, function(_element) {
+		if !is_undefined(_element.style.sound_hover) {
+			audio_play_sound(_element.style.sound_hover, 1, false);
+		}
+	});
 }

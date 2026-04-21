@@ -26,6 +26,7 @@ function LuiMain() : LuiBase() constructor {
 	// Init Flex size
 	flexpanel_node_style_set_width(self.flex_node, self.width, flexpanel_unit.point);
 	flexpanel_node_style_set_height(self.flex_node, self.height, flexpanel_unit.point);
+	if ( !instance_exists(oSteadyDeltaTime) ) { instance_create_depth(0, 0, 0, oSteadyDeltaTime); }
 	
 	// Init Screen grid
 	///@ignore

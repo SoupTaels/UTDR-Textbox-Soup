@@ -91,6 +91,10 @@ function LuiToggleSwitch(_params = {}) : LuiBase(_params) constructor {
 		if _element.style.sound_click != undefined audio_play_sound(_element.style.sound_click, 1, false);
 	});
 	
+	self.addEvent(LUI_EV_MOUSE_ENTER, function(_element) {
+		if _element.style.sound_hover != undefined audio_play_sound(_element.style.sound_hover, 1, false);
+	});
+	
 	self.addEvent(LUI_EV_POSITION_UPDATE, function(_element) {
 		_element._updateSlider();
 	});

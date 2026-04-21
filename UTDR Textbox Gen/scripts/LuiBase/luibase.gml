@@ -752,8 +752,10 @@ function LuiBase(_params = {}) constructor {
 	}
 	
 	///@desc Set element visibility (only visibility not flex display)
-	static setVisible = function(_visible) {
+	static setVisible = function(_visible = undefined) {
 		if self.visibility_switching {
+			if ( is_undefined(_visible) ) { self.visible = !self.visible; _visible = self.visible; }
+			
 			if self.visible != _visible {
 				// Change visible
 				self.visible = _visible;
@@ -773,6 +775,12 @@ function LuiBase(_params = {}) constructor {
 				self.updateMainUiSurface();
 			}
 		}
+		return self;
+	}
+	
+	///@desc Set element to switch between showing or hiding
+	static toggleVisible = function() {
+		if ( self.visible ) { self.hide(); } else { self.show(); }
 		return self;
 	}
 	
@@ -1071,7 +1079,7 @@ function LuiBase(_params = {}) constructor {
 	
 	///@desc Draw text fit to width
 	///@ignore
-	static _drawTruncatedText = function(_x, _y, _string, _width = infinity) {
+	static _drawTruncatedText = function(_x, _y, _string, _width = infinity, _xscale = 1, _yscale = 1) {
 		// Calculate initial text width
 		var _str_to_draw = _string;
 		var _str_width = string_width(_str_to_draw);
@@ -1108,7 +1116,7 @@ function LuiBase(_params = {}) constructor {
 		}
 		
 		// Draw the final text
-		draw_text(_x, _y, _str_to_draw);
+		draw_text_transformed(_x, _y, _str_to_draw, _xscale, _yscale, 0);
 	};
 	
 	///@ignore

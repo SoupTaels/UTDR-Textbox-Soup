@@ -61,6 +61,7 @@ function LuiStyle(_style = {}) constructor {
     color_shadow = _style[$ "color_shadow"] ?? c_black;
 	//Sounds
 	sound_click = _style[$ "sound_click"] ?? undefined;
+	sound_hover = _style[$ "sound_hover"] ?? undefined;
 	//Settings
 	min_width = _style[$ "min_width"] ?? 1;
 	min_height = _style[$ "min_height"] ?? 1;
@@ -70,7 +71,7 @@ function LuiStyle(_style = {}) constructor {
 	border = _style[$ "border"] ?? 0;
 	scroll_step = _style[$ "scroll_step"] ?? 32;
 	scroll_slider_width = _style[$ "scroll_slider_width"] ?? 16;
-	render_region_offset = _style[$ "render_region_offset"] ?? {left : 0, right : 0, top : 0, bottom : 0};
+	render_region_offset = _style[$ "render_region_offset"] ?? {left : padding, right : padding, top : padding, bottom : padding};
 	input_cursor = _style[$ "input_cursor"] ?? "|";
 	input_password = _style[$ "input_password"] ?? "•";
 	//Render functions
@@ -333,10 +334,12 @@ function LuiStyle(_style = {}) constructor {
 	
 	// SOUNDS FUNCTIONS
 	
-	///@desc Set sounds (_click)
+	///@desc Set sounds (_click, _hover)
 	///@arg {asset.GMSound} [_click]
-	static setSounds = function(_click = undefined) {
+	///@arg {asset.GMSound} [_hover]
+	static setSounds = function(_click = undefined, _hover = undefined) {
 		self.sound_click = _click;
+		self.sound_hover = _hover;
 		return self;
 	}
 	

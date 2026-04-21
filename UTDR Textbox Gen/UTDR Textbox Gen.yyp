@@ -934,6 +934,7 @@
     {"id":{"name":"spr_border_textbox","path":"sprites/spr_border_textbox/spr_border_textbox.yy",},},
     {"id":{"name":"spr_border_undertale","path":"sprites/spr_border_undertale/spr_border_undertale.yy",},},
     {"id":{"name":"spr_effects_icons","path":"sprites/spr_effects_icons/spr_effects_icons.yy",},},
+    {"id":{"name":"spr_face_blank","path":"sprites/spr_face_blank/spr_face_blank.yy",},},
     {"id":{"name":"spr_face_test","path":"sprites/spr_face_test/spr_face_test.yy",},},
     {"id":{"name":"spr_gui_icons","path":"sprites/spr_gui_icons/spr_gui_icons.yy",},},
     {"id":{"name":"spr_pixel","path":"sprites/spr_pixel/spr_pixel.yy",},},
