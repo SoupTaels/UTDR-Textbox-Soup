@@ -1,3 +1,2 @@
 ///@desc 
-//bord_stretch = !bord_stretch; //Whether the nineslice border should stretch or tile
-//bord_scale++; if ( bord_scale > 5 ) { bord_scale = 1; }
+customupload = get_string_async("Upload your custom sprite to an image hosting site(Imgur, catbox.moe, ImgBB, etc.), copy its image link, then paste it here:", "https://i.imgur.com/iOEFRF7.png");

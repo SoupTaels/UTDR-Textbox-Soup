@@ -1,6 +1,7 @@
 ///@desc Destroy Everything
 undo_stack_destroy();
 outlinesoup_cleanup();
+window_set_cursor(cr_default);
 soupGUI.Free(); 
 soupy_lui.destroy(); 
 
