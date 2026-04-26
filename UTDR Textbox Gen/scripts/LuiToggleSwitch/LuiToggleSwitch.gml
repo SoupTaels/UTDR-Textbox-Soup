@@ -88,11 +88,15 @@ function LuiToggleSwitch(_params = {}) : LuiBase(_params) constructor {
 	
 	self.addEvent(LUI_EV_CLICK, function(_element) {
 		_element.set(!_element.get());
-		if _element.style.sound_click != undefined audio_play_sound(_element.style.sound_click, 1, false);
+		if !is_undefined(_element.style.sound_click) {
+			sfx_play(self.params[$ "sound_click"] ?? _element.style.sound_click, , self.params[$ "sound_click_gain"] ?? 1, self.params[$ "sound_click_pitch"] ?? 1);
+		}
 	});
 	
 	self.addEvent(LUI_EV_MOUSE_ENTER, function(_element) {
-		if _element.style.sound_hover != undefined audio_play_sound(_element.style.sound_hover, 1, false);
+		if !is_undefined(_element.style.sound_hover) {
+			sfx_play(self.params[$ "sound_hover"] ?? _element.style.sound_hover, , self.params[$ "sound_hover_gain"] ?? 1, self.params[$ "sound_hover_pitch"] ?? 1);
+		}
 	});
 	
 	self.addEvent(LUI_EV_POSITION_UPDATE, function(_element) {

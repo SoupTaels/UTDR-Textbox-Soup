@@ -1,5 +1,5 @@
 ///@desc 
-//live_auto_call 
+//if ( live_call() ) { return live_result; } 
 //screenshot = true; //Take single screenshot
 
 record.enabled = true; //Record till dialogue ends

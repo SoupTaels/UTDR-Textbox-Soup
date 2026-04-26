@@ -5,6 +5,8 @@ enum LUI_ANIM {
 ///@desc Style for UI
 ///@arg {Struct} [_style]
 function LuiStyle(_style = {}) constructor {
+	if ( !instance_exists(oSteadyDeltaTime) ) { instance_create_depth(0, 0, 0, oSteadyDeltaTime); }
+	
 	//Fonts
 	font_default = _style[$ "font_default"] ?? undefined;
 	font_buttons = _style[$ "font_buttons"] ?? undefined;

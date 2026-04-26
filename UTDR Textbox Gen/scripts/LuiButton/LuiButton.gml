@@ -151,13 +151,13 @@ function LuiButton(_params = {}) : LuiBase(_params) constructor {
 	
 	self.addEvent(LUI_EV_CLICK, function(_element) {
 		if !is_undefined(_element.style.sound_click) {
-			audio_play_sound(_element.style.sound_click, 1, false);
+			sfx_play(self.params[$ "sound_click"] ?? _element.style.sound_click, , self.params[$ "sound_click_gain"] ?? 1, self.params[$ "sound_click_pitch"] ?? 1);
 		}
 	});
 	
 	self.addEvent(LUI_EV_MOUSE_ENTER, function(_element) {
 		if !is_undefined(_element.style.sound_hover) {
-			audio_play_sound(_element.style.sound_hover, 1, false);
+			sfx_play(self.params[$ "sound_hover"] ?? _element.style.sound_hover, , self.params[$ "sound_hover_gain"] ?? 1, self.params[$ "sound_hover_pitch"] ?? 1);
 		}
 	});
 	

@@ -1,5 +1,5 @@
 ///@desc Dialogue Systems
-//live_auto_call_nr
+if ( live_call() ) { return live_result; } 
 if ( bord_out ) { outlinesoup_step(640, 480); }
 soupy_lui.update();
 

@@ -1,5 +1,5 @@
 ///@desc Screenshot task
-live_auto_call 
+if ( live_call() ) { return live_result; } 
 if ( screenshot || record.enabled ) { 
 	var dltrn = spr_bord == spr_border_deltarune; //Check if our border is Deltarune
 	var out_ = bord_out; //Whether to save with an outline
@@ -41,38 +41,35 @@ if ( screenshot || record.enabled ) {
 		}
 		
 		var form = new FormData(); //Upload the result to a server (This is for the online folks. This is also why a second temp image is made)
-		#region tmpfiles.org (1hr) (Seems like the best fit) (Simple af)
+		#region uguu.se (3hr) (Open Source) (Seems like the best fit)
+			form.add_file("files[]", fpath);
+			http("https://uguu.se/upload.php?output=text", "POST", form, , function(http_status, result) { //Sucess!
+				show_debug_message($"{http_status} {result}");
+				clipboard_set_text(result); uploadstatus = true;
+			}, 
+			function(http_status, result) { uploadstatus = false; show_debug_message($"{http_status} {result}"); }); //Failed
+		#endregion
+		
+		#region tmpfiles.org (1hr)
 			//form.add_file("file", fpath);
 			//http("https://tmpfiles.org/api/v1/upload", "POST", form, , function(http_status, result) { //Sucess!
 			//	show_debug_message($"{http_status} {result}");
 			//	var result = json_stringify(result), getlink = result.data.url;
 			//	var finallink = string_replace(getlink, "http://tmpfiles.org/", "http://tmpfiles.org/dl/");
-			//	clipboard_set_text(finallink);
+			//	clipboard_set_text(finallink); uploadstatus = true;
 			//}, 
-			//function(http_status, result) { show_debug_message($"{http_status} {result}"); }); //Failed
+			//function(http_status, result) { uploadstatus = false; show_debug_message($"{http_status} {result}"); }); //Failed
 		#endregion
 		
-		#region sxcu.net Host (24hr) (No sign-up)
+		#region sxcu.net Host (24hr)
 			//form.add_data("self_destruct", true);
 			//form.add_file("file", fpath);
 			//http("https://sxcu.net/api/files/create", "POST", form, , function(http_status, result) { //Sucess!
 			//	var result = json_stringify(result);
 			//	show_debug_message($"{http_status} {result}");
-			//	clipboard_set_text(result.url);
+			//	clipboard_set_text(result.url); uploadstatus = true;
 			//}, 
-			//function(http_status, result) { show_debug_message($"{http_status} {result}"); }); //Failed
-		#endregion
-		
-		#region ImgBB Host (1hr) (Requires sign-up) (UGH)
-			//form.add_data("key", "c0a42a79bdff0058d6ee96b6e83b4143");
-			//form.add_data("expiration", "1800");
-			//form.add_file("image", fpath);
-			//http("https://api.imgbb.com/1/upload", "POST", form, , function(http_status, result) {
-			//	show_debug_message($"{http_status} {result}");
-			//	var real_result = json_parse(result);
-			//	clipboard_set_text(real_result.data.url);
-			//}, 
-			//function(http_status, result) { show_debug_message($"{http_status} {result}"); }); //Failed
+			//function(http_status, result) { uploadstatus = false; show_debug_message($"{http_status} {result}"); }); //Failed
 		#endregion
 		
 		if ( !gif_ ) { file_delete(fpath); }
@@ -87,7 +84,7 @@ if ( screenshot || record.enabled ) {
 		record.id_ = -1;
 		obj_system.dial_wrap_count = 1;
 		obj_system.spr_bord = obj_system.bord_prev;
-		//execute_shell_simple(fpath_final, , , 6); //Open the image in the PC's default photo viewer (Windows only)
+		execute_shell_simple(fpath_final, , , 6); //Open the image in the PC's default photo viewer (Windows only)
 		exit;
 	});
 	

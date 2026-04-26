@@ -752,7 +752,7 @@ function LuiBase(_params = {}) constructor {
 	}
 	
 	///@desc Set element visibility (only visibility not flex display)
-	static setVisible = function(_visible = undefined) {
+	static setVisible = function(_visible = false) {
 		if self.visibility_switching {
 			if ( is_undefined(_visible) ) { self.visible = !self.visible; _visible = self.visible; }
 			
@@ -780,7 +780,8 @@ function LuiBase(_params = {}) constructor {
 	
 	///@desc Set element to switch between showing or hiding
 	static toggleVisible = function() {
-		if ( self.visible ) { self.hide(); } else { self.show(); }
+		var _flex_node = self.flex_node;
+		if ( flexpanel_node_style_get_display(_flex_node) == flexpanel_display.flex ) { self.hide(); } else { self.show(); }
 		return self;
 	}
 	

@@ -14,7 +14,7 @@ randomize();
 	#macro mouse_pressed_right device_mouse_check_button_pressed(0, mb_right)
 	#macro mouse_released_right device_mouse_check_button_released(0, mb_right)
 	// flip this value to 0 to disable GMLive!
-	#macro live_enabled 0
+	#macro live_enabled 1
 #endregion
 
 ///@desc Shorthand function for make_color_rgb,

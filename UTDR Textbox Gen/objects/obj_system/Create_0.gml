@@ -1,8 +1,8 @@
 ///@desc Init
-live_auto_call_nr
+if ( live_call() ) { return live_result; } 
 #region Dialogue Box
 	outlinesoup_init(, , , , 2);
-	spr_bord = spr_border_deltarune; //Border Sprite
+	spr_bord = spr_border_undertale; //Border Sprite
 	bord_clr = c_white; //Border Color
 	bord_out = true; //Whether border should have an outline
 	bord_small = false; //Whether to render everything out in a small box
@@ -107,6 +107,7 @@ live_auto_call_nr
 	ui_effoff = 0; //Effects array offset 
 	debug_restart = false;
 	customupload = -1; //String Async ID for getting custom sprites
+	uploadstatus = -1; //Upload status(-1 - in progress, true - success, false - failed)
 	
 	#region Main Menu Buttons
 		var i = 0, spr_ = spr_border_octagon, x_ = 320, y_ = 12, clr_ = c_orange, padd_ = 14;
@@ -184,12 +185,31 @@ live_auto_call_nr
 					new LuiText({value: "Selected Face: 2"}),
 				]);
 		
-				var portrait_header_cur = new LuiButton({ text: "Current Face", color: c_orange, sprite_button: spr_pixel, font: fnt_speech, text_color: c_black, }).setIcon(spr_gui_icons,,, c_black,, 1).addEvent(LUI_EV_CLICK, function() { portrait_header_cur_panel.toggleVisible(); });
-				var portrait_header_set = new LuiButton({ text: "Face Settings", color: c_orange, sprite_button: spr_pixel, font: fnt_speech, text_color: c_black, }).setIcon(spr_gui_icons,,, c_black,, 5).addEvent(LUI_EV_CLICK, function() { portrait_header_set_panel.toggleVisible(); });
+				var portrait_header_base = { text: "", color: c_orange, sprite_button: spr_pixel, font: fnt_speech, text_color: c_black, sound_click: snd_enc1, sound_click_pitch: 1.3, };
+				var portrait_header_cur = new LuiButton(portrait_header_base).setIcon(spr_gui_icons,,, c_black,, 1).addEvent(LUI_EV_CLICK, function() { portrait_header_cur_panel.toggleVisible(); }); portrait_header_cur.text = "Current Face";
+				var portrait_header_set = new LuiButton(portrait_header_base).setIcon(spr_gui_icons,,, c_black,, 5).addEvent(LUI_EV_CLICK, function() { portrait_header_set_panel.toggleVisible(); }); portrait_header_set.text = "Face Settings";
 			soupy_panel_portrait.addContent([portrait_header_cur, portrait_header_cur_panel, portrait_header_set, portrait_header_set_panel]); //End container
 		#endregion
 
 		soupy_lui.addContent([soupy_panel_portrait, ]); //Add everything to the main ui
+		
+		#region Functions
+			///@desc Show/ hide Lui on appropiate screens.
+			ui_reset = function() {
+				if ( soupy_panel_portrait.visible ) { soupy_panel_portrait.setVisible(false); }
+		
+				var fx = true;
+				switch ( ui_tab ) {
+					case 0: { fx = false; } break;
+					case 1: {  } break;
+					case 2: { soupy_panel_portrait.setVisible(true); } break;
+					case 3: {  } break;
+					case 4: {  } break;
+				}
+				if ( fx && bord_visible ) { sfx_play(snd_enc1, 0, , 0.7); bord_visible = false; }
+				else if ( !fx && !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; }
+			}
+		#endregion
 		ui_reset();
 	#endregion
 	

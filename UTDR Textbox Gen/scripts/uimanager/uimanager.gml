@@ -4,29 +4,12 @@
 	function on_click_() { if ( obj_system.ui_tab != id_ ) { sfx_play(snd_select); obj_system.ui_tab = id_; on_reset_(); } else { sfx_play(snd_bump, , , random_range(0.8, 1.2)); } }
 	function on_hover_() { window_set_cursor(cr_drag); }
 	function on_reset_() { 
-		ui_reset();
+		obj_system.ui_reset();
 		
 		var i = 0;
 		repeat ( array_length(obj_system.butt) ) { with ( obj_system.butt[i].data ) { if ( obj_system.ui_tab != id_ ) { TweenFire("~ocirc", "$15", "yoff>", 0); text = text_static; color_butt = c_orange; } else { TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } } i++; }
 	}
 #endregion
-
-///@desc Show/ hide Lui on appropiate screens.
-function ui_reset() {
-	with ( obj_system ) {
-		soupy_panel_portrait.setVisible(false);
-		
-		var fx = true;
-		switch ( ui_tab ) {
-			case 0: { fx = false; } break;
-			case 1: {  } break;
-			case 2: { soupy_panel_portrait.setVisible(true); } break;
-			case 3: {  } break;
-			case 4: {  } break;
-		}
-		if ( fx && bord_visible ) { sfx_play(snd_enc1, 0, , 0.7); bord_visible = false; }
-	}
-}
 
 #macro DIAL_GIF if ( !dial_text_gif ) { exit; } //Only run if GIFs are enabled
 

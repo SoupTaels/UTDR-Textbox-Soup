@@ -1,6 +1,5 @@
 ///@desc Draw Dialogue Things
-//live_auto_call_nr
-
+//if ( live_call() ) { return live_result; } 
 //draw_format("center", "center");
 
 #region UI Borders
