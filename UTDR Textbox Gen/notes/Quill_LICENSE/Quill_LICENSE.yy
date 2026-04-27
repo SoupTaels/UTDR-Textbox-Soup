@@ -1,0 +1,11 @@
+{
+  "$GMNotes":"v1",
+  "%Name":"Quill_LICENSE",
+  "name":"Quill_LICENSE",
+  "parent":{
+    "name":"Quill",
+    "path":"folders/Extensions/RefresherTowelGames/Quill.yy",
+  },
+  "resourceType":"GMNotes",
+  "resourceVersion":"2.0",
+}

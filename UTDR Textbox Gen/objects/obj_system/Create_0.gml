@@ -159,30 +159,30 @@ if ( live_call() ) { return live_result; }
 				.setRenderRegionOffset([10, 10, 10, 10])
 				.setFonts(fnt_determination, fnt_determination, fnt_determination)
 				.setSprites(spr_border_undertale, spr_border_undertale)
-				.setColors(, c_orange, c_maroon)
+				.setColors(, c_orange, #962525)
 			soupy_lui = new LuiMain().setStyle(soupy_style);
 		#endregion
 		
 		#region Portrait Panel
 			var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
-			soupy_panel_portrait = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_,}) //Start containter
-			soupy_panel_portrait.scroll_pin_edge_offset = 10; 
+			soupy_panel_portrait = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_ }); //Start containter
+			soupy_panel_portrait.scroll_pin_edge_offset = 10; soupy_panel_portrait.sprite_panel = false;
 		
 				portrait_header_cur_panel = new LuiContainer().setPadding(0).addContent([
-					new LuiText({value: "Selected Face:"}),
-					new LuiText({value: "Selected Face:"}),
-					new LuiText({value: "Selected Face:"}),
-					new LuiText({value: "Selected Face:"}),
-					new LuiText({value: "Selected Face:"}),
-					new LuiText({value: "Selected Face:"}),
+					new LuiText({ value: "Selected Face:" }),
+					new LuiText({ value: "Selected Face:" }),
+					new LuiText({ value: "Selected Face:" }),
+					new LuiText({ value: "Selected Face:" }),
+					new LuiText({ value: "Selected Face:" }),
+					new LuiText({ value: "Selected Face:" }),
 				]);
 				portrait_header_set_panel = new LuiContainer().setPadding(0).addContent([
-					new LuiText({value: "Selected Face: 2"}),
-					new LuiText({value: "Selected Face: 2"}),
-					new LuiText({value: "Selected Face: 2"}),
-					new LuiText({value: "Selected Face: 2"}),
-					new LuiText({value: "Selected Face: 2"}),
-					new LuiText({value: "Selected Face: 2"}),
+					new LuiText({ value: "Selected Face: 2" }),
+					new LuiText({ value: "Selected Face: 2" }),
+					new LuiText({ value: "Selected Face: 2" }),
+					new LuiText({ value: "Selected Face: 2" }),
+					new LuiText({ value: "Selected Face: 2" }),
+					new LuiText({ value: "Selected Face: 2" }),
 				]);
 		
 				var portrait_header_base = { text: "", color: c_orange, sprite_button: spr_pixel, font: fnt_speech, text_color: c_black, sound_click: snd_enc1, sound_click_pitch: 1.3, };

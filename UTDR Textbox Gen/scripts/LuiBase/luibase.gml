@@ -33,8 +33,8 @@ function LuiBase(_params = {}) constructor {
 	self.height = LUI_AUTO;								//Actual real calculated height of element
 	self.prev_w = -1;									//Previous width
 	self.prev_h = -1;									//Previous height
-	self.min_width = LUI_AUTO;
-	self.min_height = LUI_AUTO;
+	self.min_width = self.width;
+	self.min_height = self.height;
 	self.max_width = 3200;
 	self.max_height = 3200;
 	self.auto_x = false;
@@ -102,10 +102,12 @@ function LuiBase(_params = {}) constructor {
 		self.y = _params[$ "y"] ?? LUI_AUTO;
 		self.r = _params[$ "r"] ?? LUI_AUTO;
 		self.b = _params[$ "b"] ?? LUI_AUTO;
-		self.min_width = _params[$ "min_width"] ?? LUI_AUTO;
-		self.min_height = _params[$ "min_height"] ?? LUI_AUTO;
 		self.width = _params[$ "width"] ?? _params[$ "w"] ?? LUI_AUTO;
 		self.height = _params[$ "height"] ?? _params[$ "h"] ??  LUI_AUTO;
+		self.min_width = _params[$ "min_width"] ?? self.width;
+		self.min_height = _params[$ "min_height"] ?? self.height;
+		self.auto_width = _params[$ "auto_width"] ?? true;
+		self.auto_height = _params[$ "auto_height"] ?? true;
 		self.name = _params[$ "name"] ?? LUI_AUTO_NAME;
 	} else {
 		_luiPrintError($"A structure with parameters was expected, but a {typeof(_params)} was received!");

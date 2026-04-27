@@ -116,7 +116,7 @@ function ui_manage() {
 			
 			draw_format("left", "center", fnt_abaddon);
 			draw_text_ext(20, 90, "Quick Colors:\n \nQuick Effects:", 12, -1);
-			soupGUI.Update();
+			
 			
 			#region Color and Effects Function
 				var butt_func = method({soupGUI, textBox, update_text}, function (data_) { //Button data
@@ -151,15 +151,14 @@ function ui_manage() {
 			#endregion
 			
 			#region Color Buttons
-				var colors_ = ["c_red", "c_yellow", "c_blue", "c_lime", "c_aqua", "c_cyan", "c_purple", "c_orange", "c_maroon", "c_fuchsia", "c_gold", "c_white", "c_ltgray", "c_gray", "c_dkgray", "c_black"], colors_get = __scribble_config_colours(), colors_i = 0, colors_len = array_length(colors_); //Available colors
+				if ( variable_instance_get(obj_system, "colors_get") == undefined ) { variable_instance_set(obj_system, "colors_get", __scribble_config_colours()); }
+				draw_sprite_ext(spr_pixel, 0, 158 - 2, 68 - 2, 429 + 4, 14 + 4, 0, c_white, 1); //Palette Outline White
+				draw_sprite_ext(spr_pixel, 0, 158, 68, 429, 14, 0, rgb(39, 31, 54), 1); //Palette Back
+				var colors_ = ["c_red", "c_yellow", "c_blue", "c_lime", "c_aqua", "c_cyan", "c_purple", "c_orange", "c_maroon", "c_fuchsia", "c_gold", "c_white", "c_ltgray", "c_gray", "c_dkgray", "c_black"], colors_i = 0, colors_len = array_length(colors_); //Available colors
 				repeat ( colors_len ) {
 					var colors_cur = colors_[colors_i]; //Current color
-					var butt_data = { x: 160 + ( 27 * colors_i ), y: 70, sprite: spr_pixel, color_butt: colors_get[$ colors_cur], color_butt_hover: merge_color(colors_get[$ colors_cur], color_get_value(colors_get[$ colors_cur]) > 150 ? c_black : c_white, 0.3), on_click: method({ butt_func, colors_cur }, function () { butt_func(colors_cur); }), on_click_right: method({ butt_func, colors_cur }, function () { sfx_play(snd_equip2, , , 1.5); static clr = __scribble_config_colours(); obj_system.dial_text_outline = clr[$ colors_cur]; }) } 
+					var butt_data = { x: 160 + ( 27 * colors_i ), y: 70, sprite: spr_pixel, color_butt: obj_system.colors_get[$ colors_cur], color_butt_hover: merge_color(obj_system.colors_get[$ colors_cur], color_get_value(obj_system.colors_get[$ colors_cur]) > 150 ? c_black : c_white, 0.3), on_click: method({ butt_func, colors_cur }, function () { butt_func(colors_cur); }), on_click_right: method({ butt_func, colors_cur }, function () { sfx_play(snd_equip2, , , 1.5); obj_system.dial_text_outline = obj_system.colors_get[$ colors_cur]; }) } 
 					butt_data[$ "x2"] = butt_data.x + 20; butt_data[$ "y2"] = butt_data.y + 10; 
-				
-					draw_sprite_stretched_ext(spr_border_undertale, 0, butt_data.x - 3, butt_data.y - 3, ( butt_data.x2 - butt_data.x ) + 6, ( butt_data.y2 - butt_data.y ) + 6, c_white, 1); //Button Outline 3
-					draw_sprite_stretched_ext(spr_border_undertale, 0, butt_data.x - 2, butt_data.y - 2, ( butt_data.x2 - butt_data.x ) + 4, ( butt_data.y2 - butt_data.y ) + 4, c_black, 1); //Button Outline 2
-					draw_sprite_stretched_ext(spr_border_undertale, 0, butt_data.x - 1, butt_data.y - 1, ( butt_data.x2 - butt_data.x ) + 2, ( butt_data.y2 - butt_data.y ) + 2, c_white, 1); //Button Outline
 					var butt_ = new Button(butt_data); butt_.update(); //Create button
 				colors_i++; }
 			#endregion
@@ -174,30 +173,32 @@ function ui_manage() {
 				effects_i++; }
 				
 				#region Right Button
-					static within_hover = false, yscale_ = 1;
+					if ( variable_instance_get(obj_system, "within_hover") == undefined ) { variable_instance_set(obj_system, "within_hover", false); }
+					if ( variable_instance_get(obj_system, "yscale_") == undefined ) { variable_instance_set(obj_system, "yscale_", 1); }
 					if ( ui_effoff < 6 ) {
 						var x_ = 605, y_ = 98, within_ = range_within(mouse_x_gui, x_ - 5, x_ + 20) && range_within(mouse_y_gui, y_ - 5, y_ + 5);
 						if ( within_ ) {
-							if ( !within_hover ) { within_hover = true; sfx_play(snd_sel_switch); } //Hover
-							if ( mouse_pressed ) { sfx_play(snd_sel_switch, 0, , 1.3); ui_effoff = approach(ui_effoff, 6, 1); yscale_ = 0.5; } //Pressed
+							if ( !obj_system.within_hover ) { obj_system.within_hover = true; sfx_play(snd_sel_switch); } //Hover
+							if ( mouse_pressed ) { sfx_play(snd_sel_switch, 0, , 1.3); ui_effoff = approach(ui_effoff, 6, 1); obj_system.yscale_ = 0.5; } //Pressed
 						}
 						else { within_hover = false; }
-						draw_sprite_ensure(spr_effects_icons, 12, x_ + ( abs(sin(current_time/300) * 5) ) , y_, -1, yscale_, , within_ ? c_white : c_yellow); //Right Arrow
+						draw_sprite_ensure(spr_effects_icons, 12, x_ + ( abs(sin(current_time/300) * 5) ) , y_, -1, obj_system.yscale_, , within_ ? c_white : c_yellow); //Right Arrow
 					}
-					yscale_ = lerp(yscale_, 1, 0.15);
+					obj_system.yscale_ = lerp(obj_system.yscale_, 1, 0.15);
 				#endregion
 				#region Left Button
-					static within_hover2 = false, yscale_2 = 1;
+					if ( variable_instance_get(obj_system, "within_hover2") == undefined ) { variable_instance_set(obj_system, "within_hover2", false); }
+					if ( variable_instance_get(obj_system, "yscale_2") == undefined ) { variable_instance_set(obj_system, "yscale_2", 1); }
 					if ( ui_effoff > 0 ) {
 						var x_ = 130, y_ = 98, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 5) && range_within(mouse_y_gui, y_ - 5, y_ + 5);
 						if ( within_ ) {
-							if ( !within_hover2 ) { within_hover2 = true; sfx_play(snd_sel_switch); } //Hover
-							if ( mouse_pressed ) { sfx_play(snd_sel_switch, 0, , 0.7); ui_effoff = approach(ui_effoff, 0, 1); yscale_2 = 0.5; } //Pressed
+							if ( !obj_system.within_hover2 ) { obj_system.within_hover2 = true; sfx_play(snd_sel_switch); } //Hover
+							if ( mouse_pressed ) { sfx_play(snd_sel_switch, 0, , 0.7); ui_effoff = approach(ui_effoff, 0, 1); obj_system.yscale_2 = 0.5; } //Pressed
 						}
-						else { within_hover2 = false; }
-						draw_sprite_ensure(spr_effects_icons, 12, x_ - ( abs(sin(current_time/300) * 5) ), y_, , yscale_2, , within_ ? c_white : c_yellow); //Left Arrow
+						else { obj_system.within_hover2 = false; }
+						draw_sprite_ensure(spr_effects_icons, 12, x_ - ( abs(sin(current_time/300) * 5) ), y_, , obj_system.yscale_2, , within_ ? c_white : c_yellow); //Left Arrow
 					}
-					yscale_2 = lerp(yscale_2, 1, 0.15);
+					obj_system.yscale_2 = lerp(obj_system.yscale_2, 1, 0.15);
 				#endregion
 			#endregion
 
@@ -257,15 +258,17 @@ function ui_manage() {
 	}
 	
 	#region Toggle Dialogue Box Visibility
-		static within_hover3 = false, yscale_3 = 1;
+		if ( variable_instance_get(obj_system, "within_hover3") == undefined ) { variable_instance_set(obj_system, "within_hover3", false); }
+		if ( variable_instance_get(obj_system, "yscale_3") == undefined ) { variable_instance_set(obj_system, "yscale_3", 1); }
+		
 		var x_ = 320, y_ = 473, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 20) && range_within(mouse_y_gui, y_ - 30, y_ + 5);
 		if ( within_ ) {
 			if ( !within_hover3 ) { within_hover3 = true; sfx_play(snd_sel_switch); } //Hover
-			if ( mouse_pressed ) { sfx_play(snd_enc1, 0, , bord_visible ? 0.7 : 1.3); bord_visible = !bord_visible; yscale_3 = 0.5; } //Pressed
+			if ( mouse_pressed ) { sfx_play(snd_enc1, 0, , bord_visible ? 0.7 : 1.3); bord_visible = !bord_visible; obj_system.yscale_3 = 0.5; } //Pressed
 		}
 		else { within_hover3 = false; }
-		draw_sprite_ensure(spr_effects_icons, 12, x_, y_, , yscale_3, bord_visible ? 90 : 270, within_ ? c_white : c_yellow); //Left Arrow
-		yscale_3 = lerp(yscale_3, 1, 0.15);
+		draw_sprite_ensure(spr_effects_icons, 12, x_, y_, , obj_system.yscale_3, bord_visible ? 90 : 270, within_ ? c_white : c_yellow); //Left Arrow
+		obj_system.yscale_3 = lerp(obj_system.yscale_3, 1, 0.15);
 	#endregion
 	
 	#region Textbox Disable

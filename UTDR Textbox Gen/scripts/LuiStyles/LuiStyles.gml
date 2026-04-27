@@ -67,6 +67,8 @@ function LuiStyle(_style = {}) constructor {
 	//Settings
 	min_width = _style[$ "min_width"] ?? 1;
 	min_height = _style[$ "min_height"] ?? 1;
+	auto_width = _style[$ "auto_width"] ?? true;
+	auto_height = _style[$ "auto_height"] ?? true;
 	margin = _style[$ "margin"] ?? 0;
 	padding = _style[$ "padding"] ?? 0;
 	gap = _style[$ "gap"] ?? 0;

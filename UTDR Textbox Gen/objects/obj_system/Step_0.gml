@@ -2,6 +2,7 @@
 if ( live_call() ) { return live_result; } 
 if ( bord_out ) { outlinesoup_step(640, 480); }
 soupy_lui.update();
+soupGUI.Update();
 
 #region Animation
 	if ( dial_text_gif && dial_face_auto && typist.get_delay_paused() ) { dial_face_index = 0; } //Stop the face from animating if the dialogue is being delayed

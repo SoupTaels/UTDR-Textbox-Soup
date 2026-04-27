@@ -12,7 +12,7 @@ function LuiText(_params = {}) : LuiBase(_params) constructor {
 	self.text_valign = _params[$ "text_valign"] ?? fa_middle;
 	self.scale_to_fit = _params[$ "scale_to_fit"] ?? false;
 	self.scale_x = _params[$ "scale_x"] ?? 1;
-	self.scale_y = _params[$ "scale_y"] ?? 1;
+	self.scale_y = _params[$ "scale_y"] ?? scale_x;
 	self.params = _params;
 	
 	///@desc Set text
@@ -86,7 +86,7 @@ function LuiText(_params = {}) : LuiBase(_params) constructor {
 				var _xscale = self.width / string_width(_text);
 				var _yscale = self.height / string_height(_text);
 				var _scale = min(_xscale, _yscale);
-				draw_text_transformed(_txt_x, _txt_y, _text, _scale, _scale, 0);
+				draw_text_transformed(_txt_x, _txt_y, _text, _scale * self.scale_x, _scale * self.scale_y, 0);
 			}
 		}
 	}

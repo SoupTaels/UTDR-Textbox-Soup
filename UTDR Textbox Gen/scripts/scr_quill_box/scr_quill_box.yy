@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"scr_quill_box",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"scr_quill_box",
+  "parent":{
+    "name":"Quill",
+    "path":"folders/Extensions/RefresherTowelGames/Quill.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
