@@ -1,5 +1,5 @@
 ///@desc Init
-if ( live_call() ) { return live_result; } 
+//if ( live_call() ) { return live_result; } 
 #region Dialogue Box
 	outlinesoup_init(, , , , 2);
 	spr_bord = spr_border_undertale; //Border Sprite
@@ -24,8 +24,6 @@ if ( live_call() ) { return live_result; }
 	dial_updatet = 0; //Dialogue update timer
 	dial_updatet_max = 45; //Dialogue update timer delay
 	dial_text_outline = c_black; //Dialogue Outline Color
-	dial_text_page = 0; //Current page
-	dial_text_page_c = 0; //Amount of pages in a dialogue sequence
 	
 	undo_stack_create(); //History of undo changes
 	
@@ -34,6 +32,9 @@ if ( live_call() ) { return live_result; }
 	dial_point_clr = c_white; //Dialogue Point Clr
 	dial_auto_wrap = true; //Whether to automatically wrap dialogue to new lines
 	dial_wrap_count = 1; //Current wrapped line
+	dial_text_page = 0; //Current page
+	dial_text_page_c = 0; //Amount of pages in a dialogue sequence
+	dial_text_line_spacing = -1; //Spacing between lines. -1 for auto.
 	
 	scribble_font_bake_outline_and_shadow("fnt_determination_nomono", "fnt_default_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 1, false); 
 	scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_monospaced_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); 
@@ -89,8 +90,9 @@ if ( live_call() ) { return live_result; }
 		scribble_typists_add_event("face_stick", function(_, param) { DIAL_GIF dial_face_original = get_face(dial_face_name); }); //Make the previous dialogue face stick
 		scribble_typists_add_event("speed_pop", function(_, param) { DIAL_GIF typist_spd = typist_spd_orig; }); //Changes the typist speed back to the default
 		
-		scribble_add_macro("newl", function() { return "\n  "; }); //Newline with no asterisk
-		scribble_add_macro("newl_a", function() { return "\n* "; }); //Newline with asterisk
+		scribble_add_macro("newl", function() { return "\n  "; }); //Newline with no asterisk and it's padded out
+		scribble_add_macro("newl_a", function() { return "\n* "; }); //Newline with asterisk and a space
+		scribble_add_macro("newl_l", function() { return chr(10); }); //Newline literal
 		scribble_add_macro("pg", function() { return "[/page]"; }); //New page shorthand
 		scribble_add_macro("sec", function(param) { var real_ = real_ext(param); return $"[delay,{real_ != "" ? real_  * 1000 : 0}]"; }); //Delay tag that converts seconds to milliseconds
 		scribble_add_macro("repeat", function(phrase_ = "", times_ = 1, startwith_ = "", endwith_ = "") { //Repeats a phrase for a specified time with an optional parameter to end and start it off with another phrase

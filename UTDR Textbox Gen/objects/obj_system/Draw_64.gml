@@ -1,5 +1,5 @@
 ///@desc Draw Dialogue Things
-if ( live_call() ) { return live_result; } 
+//if ( live_call() ) { return live_result; } 
 //draw_format("center", "center");
 
 #region UI Borders
@@ -28,13 +28,14 @@ if ( bord_visible ) {
 
 		#region Dialogue Text
 			if ( dial_text != "" ) { //No need to draw blank text
+				var line_sp = dial_text_line_spacing != -1 ? dial_text_line_spacing : ( dial_font == "fnt_monospaced_outline" ? "105%" : "120%" );
 				if ( dial_text_shdw ) { //Dialogue Text Shadow
 					var scrib_dial_shdw = scribble(dial_text, "dial_shdw") 
 					.starting_format(dial_font, c_white)
 					.blend(dial_text_shdw_clr, 1)
 					.scale(dial_text_scale)
 					.page(dial_text_page)
-					.line_spacing(dial_font == "fnt_monospaced_outline" ? "105%" : "120%")
+					.line_spacing(line_sp)
 					.wrap(dial_auto_wrap ? 580 - xx_ : -1)
 					.draw(dial_point_auto ? ( xx_ + dial_text_shdw_thick ) + 28 : xx_ + dial_text_shdw_thick, yy_ + dial_text_shdw_thick);
 				}
@@ -45,7 +46,7 @@ if ( bord_visible ) {
 				scrib_dial.scale(dial_text_scale);
 				scrib_dial.allow_line_data_getter();
 				scrib_dial.allow_glyph_data_getter();
-				scrib_dial.line_spacing(dial_font == "fnt_monospaced_outline" ? "105%" : "120%");
+				scrib_dial.line_spacing(line_sp);
 				scrib_dial.page(dial_text_page);
 				dial_text_page_c = scrib_dial.get_page_count();
 				scrib_dial.outline(dial_text_outline);

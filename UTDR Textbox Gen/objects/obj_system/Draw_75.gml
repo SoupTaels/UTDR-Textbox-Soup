@@ -1,5 +1,5 @@
 ///@desc Screenshot task
-if ( live_call() ) { return live_result; } 
+//if ( live_call() ) { return live_result; } 
 if ( screenshot || record.enabled ) { 
 	var dltrn = spr_bord == spr_border_deltarune; //Check if our border is Deltarune
 	var out_ = bord_out; //Whether to save with an outline
