@@ -114,7 +114,7 @@ function ui_manage() {
 			#endregion
 
 			#region Textbox and Quick Text
-				var x_ = 30, y_ = 130, w_ = 580, h_ = 160;
+				var x_ = 30, y_ = 130, w_ = 580, h_ = !bord_visible ? 245 : 160;
 				draw_sprite_ensure(spr_pixel, 0, x_ - 10, y_ - 14, w_ + 20, h_ + 24, 0, c_black, 1); //Textbox Outline Outer
 				draw_sprite_ensure(spr_pixel, 0, x_ - 8, y_ - 12, w_ + 16, h_ + 20, 0, c_white, 1); //Textbox Outline Inner
 				draw_sprite_ensure(spr_pixel, 0, x_ - 2, y_ - 6, w_ + 4, h_ + 8, 0, c_black, 1); //Textbox Inner Shadow and Outline

@@ -91,7 +91,14 @@ if ( live_call() ) { return live_result; }
 		
 		scribble_add_macro("newl", function() { return "\n  "; }); //Newline with no asterisk
 		scribble_add_macro("newl_a", function() { return "\n* "; }); //Newline with asterisk
-		scribble_add_macro("p_", function() { return "[/page]"; }); //New page shorthand
+		scribble_add_macro("pg", function() { return "[/page]"; }); //New page shorthand
+		scribble_add_macro("sec", function(param) { var real_ = real_ext(param); return $"[delay,{real_ != "" ? real_  * 1000 : 0}]"; }); //Delay tag that converts seconds to milliseconds
+		scribble_add_macro("repeat", function(phrase_ = "", times_ = 1, startwith_ = "", endwith_ = "") { //Repeats a phrase for a specified time with an optional parameter to end and start it off with another phrase
+			var real_ = string_digits(times_); if ( real_ == "" ) { return ""; }
+			var string_ = "";
+			string_ += startwith_; repeat ( real_ ) { string_ += phrase_; } string_ += endwith_;
+			return string_;
+		});
 	#endregion
 #endregion
 

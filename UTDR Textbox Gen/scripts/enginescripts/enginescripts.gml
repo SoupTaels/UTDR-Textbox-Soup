@@ -305,9 +305,7 @@ function first_decimal(string_) {
 ///@desc Returns a valid real number with anything that isn't a number stripped out. This also keeps the first decimal point. If no numbers were found, this will return "" instead.
 function real_ext(string_) {
 	string_ = string_digits_ext(string_);
-	show_debug_message(string_);
 	string_ = first_decimal(string_);
-	show_debug_message(string_);
 	return string_ != "" ? real(string_) : "";
 }
 
