@@ -47,7 +47,7 @@ if ( bord_visible ) {
 				scrib_dial.line_spacing("120%");
 				scrib_dial.page(dial_text_page);
 				dial_text_page_c = scrib_dial.get_page_count();
-				if ( dial_text_outline != -1 ) { scrib_dial.outline(dial_text_outline); }
+				scrib_dial.outline(dial_text_outline);
 				scrib_dial.wrap(dial_auto_wrap ? 580 - xx_ : -1);
 				scrib_dial.draw(dial_point_auto ? xx_ + 28 : xx_, yy_, dial_text_gif ? typist : undefined);
 
@@ -73,7 +73,7 @@ if ( bord_visible ) {
 								scrib_point.starting_format(dial_font, dial_point_clr);
 								scrib_point.scale(dial_text_scale);
 								scrib_point.allow_line_data_getter();
-								if ( dial_text_outline != -1 ) { scrib_point.outline(dial_text_outline); }
+								scrib_point.outline(dial_text_outline); 
 								scrib_point.draw(xx_ - 4, yy_ + lined.y);
 							}
 						i++; }

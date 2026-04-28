@@ -10,10 +10,10 @@ function __QuillRenderPushScissorGui(_x1, _y1, _x2, _y2) {
 	var _aw = display_get_width();
 	var _ah = display_get_height();
 	if (is_array(_pos) && array_length(_pos) >= 4) {
-		_ax = _pos[0];
-		_ay = _pos[1];
-		_aw = max(1, _pos[2] - _pos[0]);
-		_ah = max(1, _pos[3] - _pos[1]);
+		_ax = 0;
+		_ay = 0;
+		_aw = 640;
+		_ah = 480;
 	}
 
 	var _sx = (_gw > 0) ? (_aw / _gw) : 1;
@@ -887,7 +887,7 @@ function __QuillRenderDrawTextSingle(_tb, _st, _config, _text_rect, _active) {
 	var _align_off = global.__QUILL_CORE.__TextGetAlignOffset(_draw_text, _font, _view_w, _config);
 	var _tx = (_text_rect.x1 - _scroll_x) + _align_off;
 	var _ty = _text_rect.y1 + max(0, floor(((_text_rect.y2 - _text_rect.y1) - string_height("Ag")) * 0.5));
-	var _clip_prev = __QuillRenderPushScissorGui(_text_rect.x1, _text_rect.y1, _text_rect.x2, _text_rect.y2);
+	var _clip_prev = __QuillRenderPushScissorGui(_text_rect.x1 - 2, _text_rect.y1 - 2, _text_rect.x2 + 2, _text_rect.y2 + 2);
 
 	if (_enabled && _active && !_is_placeholder && global.__QUILL_CORE.__TextInputHasSelection(_tb)) {
 		var _sel = global.__QUILL_CORE.__TextInputGetSelectionRange(_tb);
@@ -954,7 +954,7 @@ function __QuillRenderDrawTextMulti(_tb, _st, _config, _text_rect, _active) {
 	var _old_font = draw_get_font();
 	draw_set_font(_font);
 
-	var _clip_prev = __QuillRenderPushScissorGui(_text_rect.x1, _text_rect.y1, _text_rect.x2, _text_rect.y2);
+	var _clip_prev = __QuillRenderPushScissorGui(_text_rect.x1 - 2, _text_rect.y1 - 2, _text_rect.x2 + 2, _text_rect.y2 + 2);
 
 	var _raw = _tb.GetValue();
 	var _src = global.__QUILL_CORE.__TextFromConfigMasked(_raw, _config);
@@ -985,7 +985,7 @@ function __QuillRenderDrawTextMulti(_tb, _st, _config, _text_rect, _active) {
 	_li = clamp(_li, 0, _count - 1);
 	var _cy = _text_rect.y1 + (_li * _layout.line_h) - _scroll_y;
 
-	draw_sprite_ensure(spr_pixel, 0, _text_rect.x1, _cy, _text_rect.x2 - _text_rect.x1, _layout.line_h, 0, _st.textbox.line_highlight_col, _st.textbox.line_highlight_a);
+	draw_sprite_ensure(spr_pixel, 0, _text_rect.x1, _cy - 2, _text_rect.x2 - _text_rect.x1, _layout.line_h + 2, 0, _st.textbox.line_highlight_col, _st.textbox.line_highlight_a);
 	
 	// Selection highlights.
 	if (_enabled && _active && !_is_placeholder && global.__QUILL_CORE.__TextInputHasSelection(_tb)) {

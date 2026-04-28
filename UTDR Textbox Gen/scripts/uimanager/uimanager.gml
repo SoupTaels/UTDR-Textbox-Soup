@@ -87,7 +87,7 @@ function ui_manage() {
 					var upd_ = false, keycur = keyboard_key;
 					if ( keyboard_check(vk_anykey) && keycur != 0 ) { 
 						switch ( keycur ) { //Banned keys
-							case vk_shift: case vk_control: case vk_lcontrol: case vk_rcontrol: case 20: case vk_tab: case vk_alt: case vk_lalt: case vk_ralt:
+							case vk_shift: case vk_control: case vk_lcontrol: case vk_rcontrol: case 20: case vk_alt: case vk_lalt: case vk_ralt:
 							case vk_up: case vk_down: case vk_left: case vk_right: case vk_escape: case vk_pageup: case vk_pagedown: { upd_ = false; } break;
 							default: { upd_ = true; }
 						}
@@ -105,22 +105,27 @@ function ui_manage() {
 						}
 					}
 					if ( keyboard_check(vk_control) && keyboard_check_pressed(ord("Z")) ) { //Undo/ redo
-						dial_updatet = 0;
 						if ( !keyboard_check(vk_shift) ) { undo_stack_undo(); } else { undo_stack_redo(); } 
+					}
+					if ( keyboard_check(vk_control) ) { //Disable updating
+						if ( keyboard_check(ord("Z")) || keyboard_check(ord("X")) || keyboard_check(ord("C")) || keyboard_check(ord("A")) ) { dial_updatet = 0; }
 					}
 				}
 			#endregion
 
-			var x_ = 30, y_ = 130, w_ = 580, h_ = 160;
-			draw_sprite_ensure(spr_pixel, 0, x_ - 8, y_ - 12, w_ + 16, h_ + 20, 0, c_white, 1); //Textbox Outline Outer
-			draw_sprite_ensure(spr_pixel, 0, x_ - 2, y_ - 6, w_ + 4, h_ + 8, 0, c_black, 1); //Textbox Outline Inner
-			textinput.Draw(x_, y_, w_, h_);
+			#region Textbox and Quick Text
+				var x_ = 30, y_ = 130, w_ = 580, h_ = 160;
+				draw_sprite_ensure(spr_pixel, 0, x_ - 10, y_ - 14, w_ + 20, h_ + 24, 0, c_black, 1); //Textbox Outline Outer
+				draw_sprite_ensure(spr_pixel, 0, x_ - 8, y_ - 12, w_ + 16, h_ + 20, 0, c_white, 1); //Textbox Outline Inner
+				draw_sprite_ensure(spr_pixel, 0, x_ - 2, y_ - 6, w_ + 4, h_ + 8, 0, c_black, 1); //Textbox Inner Shadow and Outline
+				textinput.Draw(x_, y_, w_, h_);
 		
-			draw_format("left", "center", fnt_abaddon);
-			draw_text_ext(20, 90, "Quick Colors:\n \nQuick Effects:", 12, -1);
+				draw_format("left", "center", fnt_abaddon);
+				draw_text_ext(20, 90, "Quick Colors:\n \nQuick Effects:", 12, -1);
+			#endregion
 			
 			#region Color and Effects Function
-				var butt_func = method({textinput, update_text}, function (data_) { //Button data
+				var butt_func = method({textinput, update_text, typist_spd}, function (data_, color_ = false) { //Button data
 					#region Commands with extra parameters
 						var extra_;
 						switch ( data_ ) {
@@ -128,13 +133,14 @@ function ui_manage() {
 							case "cycle": { extra_ = ",0,120"; } break;
 							case "offset": { extra_ = ",24,24"; } break;
 							case "alpha": { extra_ = ",0.5"; } break;
+							case "speed": { extra_ = $",{typist_spd}"; } break;
 							default: { extra_ = ""; }
 						}
 					#endregion
 					
 					textinput.Focus();
 
-					var txt_ = textinput.GetValue(), txt_insert = $"[{data_}{extra_}]", txt_insert_end = "[/]", result;
+					var txt_ = textinput.GetValue(), txt_insert = $"[{data_}{extra_}]", txt_insert_end = color_ ? "[/c]" : "[/]", result;
 					var getpos_ = textinput.GetSelection() ,pos_ = getpos_.start + 1, pos_2 = getpos_._end + 1; //Get the current cursor's position and highlighted position
 					if ( !getpos_.has_selection ) { //Not trying to highlight anything
 						result = string_insert(txt_insert, txt_, pos_);
@@ -154,34 +160,41 @@ function ui_manage() {
 				var colors_ = ["c_red", "c_yellow", "c_blue", "c_lime", "c_aqua", "c_cyan", "c_purple", "c_orange", "c_maroon", "c_fuchsia", "c_gold", "c_white", "c_ltgray", "c_gray", "c_dkgray", "c_black"], colors_i = 0, colors_len = array_length(colors_); //Available colors
 				repeat ( colors_len ) {
 					var colors_cur = colors_[colors_i]; //Current color
-					var butt_data = { x: 160 + ( 27 * colors_i ), y: 70, sprite: spr_pixel, color_butt: obj_system.colors_get[$ colors_cur], color_butt_hover: merge_color(obj_system.colors_get[$ colors_cur], color_get_value(obj_system.colors_get[$ colors_cur]) > 150 ? c_black : c_white, 0.3), on_click: method({ butt_func, colors_cur }, function () { butt_func(colors_cur); }), on_click_right: method({ butt_func, colors_cur }, function () { sfx_play(snd_equip2, , , 1.5); obj_system.dial_text_outline = obj_system.colors_get[$ colors_cur]; }) } 
+					var butt_data = { x: 160 + ( 27 * colors_i ), y: 70, sprite: spr_pixel, color_butt: colors_get[$ colors_cur], color_butt_hover: merge_color(colors_get[$ colors_cur], color_get_value(colors_get[$ colors_cur]) > 150 ? c_black : c_white, 0.3), on_click: method({ butt_func, colors_cur }, function () { butt_func(colors_cur, true); }), on_click_right: method({ butt_func, colors_cur }, function () { 
+						sfx_play(snd_equip2, , , 1.5); 
+						if ( obj_system.dial_text_outline != obj_system.colors_get[$ colors_cur] ) { obj_system.dial_text_outline = obj_system.colors_get[$ colors_cur]; } //Switching to a new color? Change the text outline
+						else { obj_system.dial_text_outline = c_black; } //Disable text outline
+					}) };
+					obj_system.spr_bord = spr_border_rounded
 					butt_data[$ "x2"] = butt_data.x + 20; butt_data[$ "y2"] = butt_data.y + 10; 
 					var butt_ = new Button(butt_data); butt_.update(); //Create button
 				colors_i++; }
 			#endregion
 			
 			#region Effects Buttons
-				var effects_ = ["Wave   ", "Wheel    ", "Shake ", "Wobble  ", "Pulse ", "Rainbow", "Slant ", "Scale    ", "Cycle  ", "Blink    ", "Offset", "Alpha   "], effects_i = 0, effects_len = array_length(effects_); //Available effects
+				var effects_ = ["Wave   ", "Wheel    ", "Shake ", "Wobble  ", "Pulse ", "Rainbow", "Slant ", "Scale    ", "Cycle  ", "Blink    ", "Offset", "Alpha   ", "Speed   "], effects_i = 0, effects_len = array_length(effects_), effects_off = effects_len - 6; //Available effects
 				repeat ( effects_len ) {
 					if ( effects_i > 5 ) { continue; }
-					var effects_cur = effects_[effects_i + ui_effoff]; //Current effect
-					var butt_data = { x: 180 + ( 75 * effects_i ), y: 95, color_butt: c_orange, color_butt_hover: c_yellow, color: c_black, text: $"{effects_cur} [spr_effects_icons,{effects_i + ui_effoff}]", padd_multi: 4, on_hover: undefined, on_click: method({ butt_func, effects_cur }, function () { butt_func(string_letters(string_lower(effects_cur))); }) } 
+					var effects_true = effects_i + ui_effoff;
+					var effects_cur = effects_[effects_true]; //Current effect
+					var butt_data = { x: 180 + ( 75 * effects_i ), y: 95, color_butt: c_orange, color_butt_hover: c_yellow, color: c_black, text: $"{effects_cur} [spr_effects_icons,{effects_true == 12 ? ( effects_true + 1 ) : effects_true}]", padd_multi: 4, on_hover: undefined, on_click: method({ butt_func, effects_cur }, function () { butt_func(string_letters(string_lower(effects_cur))); }) } 
 					var butt_ = new Button(butt_data); butt_.update(); //Create button
 				effects_i++; }
 				
 				#region Right Button
 					if ( variable_instance_get(obj_system, "within_hover") == undefined ) { variable_instance_set(obj_system, "within_hover", false); }
 					if ( variable_instance_get(obj_system, "yscale_") == undefined ) { variable_instance_set(obj_system, "yscale_", 1); }
-					if ( ui_effoff < 6 ) {
+					if ( ui_effoff < effects_off ) {
 						var x_ = 605, y_ = 98, within_ = range_within(mouse_x_gui, x_ - 5, x_ + 20) && range_within(mouse_y_gui, y_ - 5, y_ + 5);
 						if ( within_ ) {
-							if ( !obj_system.within_hover ) { obj_system.within_hover = true; sfx_play(snd_sel_switch); } //Hover
-							if ( mouse_pressed ) { sfx_play(snd_sel_switch, 0, , 1.3); ui_effoff = approach(ui_effoff, 6, 1); obj_system.yscale_ = 0.5; } //Pressed
+							if ( !within_hover ) { within_hover = true; sfx_play(snd_sel_switch); } //Hover
+							if ( mouse_pressed ) { sfx_play(snd_sel_switch, 0, , 1.3); ui_effoff = approach(ui_effoff, effects_off, 1); yscale_ = 0.5; } //Pressed
+							if ( mouse_pressed_right ) { sfx_play(snd_throw, 0, , 1.3); sfx_play(snd_bump, , 0.7, 1.5); ui_effoff = effects_off; } //Pressed Right
 						}
 						else { within_hover = false; }
-						draw_sprite_ensure(spr_effects_icons, 12, x_ + ( abs(sin(current_time/300) * 5) ) , y_, -1, obj_system.yscale_, , within_ ? c_white : c_yellow); //Right Arrow
+						draw_sprite_ensure(spr_effects_icons, 12, x_ + ( abs(sin(current_time/300) * 5) ) , y_, -1, yscale_, , within_ ? c_white : c_yellow); //Right Arrow
 					}
-					obj_system.yscale_ = lerp(obj_system.yscale_, 1, 0.15);
+					yscale_ = lerp(yscale_, 1, 0.15);
 				#endregion
 				#region Left Button
 					if ( variable_instance_get(obj_system, "within_hover2") == undefined ) { variable_instance_set(obj_system, "within_hover2", false); }
@@ -189,13 +202,14 @@ function ui_manage() {
 					if ( ui_effoff > 0 ) {
 						var x_ = 130, y_ = 98, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 5) && range_within(mouse_y_gui, y_ - 5, y_ + 5);
 						if ( within_ ) {
-							if ( !obj_system.within_hover2 ) { obj_system.within_hover2 = true; sfx_play(snd_sel_switch); } //Hover
-							if ( mouse_pressed ) { sfx_play(snd_sel_switch, 0, , 0.7); ui_effoff = approach(ui_effoff, 0, 1); obj_system.yscale_2 = 0.5; } //Pressed
+							if ( !within_hover2 ) {within_hover2 = true; sfx_play(snd_sel_switch); } //Hover
+							if ( mouse_pressed ) { sfx_play(snd_sel_switch, 0, , 0.7); ui_effoff = approach(ui_effoff, 0, 1); yscale_2 = 0.5; } //Pressed
+							if ( mouse_pressed_right ) { sfx_play(snd_throw, 0, , 1.3); sfx_play(snd_bump, , 0.7, 1.5); ui_effoff = 0; } //Pressed Right
 						}
-						else { obj_system.within_hover2 = false; }
-						draw_sprite_ensure(spr_effects_icons, 12, x_ - ( abs(sin(current_time/300) * 5) ), y_, , obj_system.yscale_2, , within_ ? c_white : c_yellow); //Left Arrow
+						else { within_hover2 = false; }
+						draw_sprite_ensure(spr_effects_icons, 12, x_ - ( abs(sin(current_time/300) * 5) ), y_, , yscale_2, , within_ ? c_white : c_yellow); //Left Arrow
 					}
-					obj_system.yscale_2 = lerp(obj_system.yscale_2, 1, 0.15);
+					yscale_2 = lerp(yscale_2, 1, 0.15);
 				#endregion
 			#endregion
 
@@ -203,7 +217,10 @@ function ui_manage() {
 				if ( dial_updatet > 1 ) { //Notification for updating text
 					dial_updatet--;
 					var ringcalc = map_value(dial_updatet, 0, dial_updatet_max, 0, 360), textx = 300, texty = 395; //Turn the values of a timer into a range of degrees
-					draw_sprite_stretched(spr_border_undertale, 0, textx - 110, texty - 20, 250, 40);
+					draw_sprite_stretched(spr_bord, 0, textx - 110, texty - 20, 250, 40);
+					
+					var ninesl_ = sprite_get_nineslice(spr_bord), off_ = spr_bord == spr_border_deltarune ? 15 : 5; 
+					if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, bord_index, ( textx - 110 ) - off_, ( texty - 20 ) - off_, 250 + ( off_ * 2 ), 40 + ( off_ * 2 ), bord_clr, 1); } else { draw_9slice(spr_bord, bord_index, textx - 110, texty - 20, 250, 40, bord_clr, bord_scale, bord_stretch); } //Dialogue Box
 					var updatering = CleanRing(textx + 115, texty, 5, 10, 360, ringcalc) //Update text ring
 														.Blend(c_yellow, 1)
 														.Draw();
@@ -261,10 +278,58 @@ function ui_manage() {
 		var x_ = 320, y_ = 473, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 20) && range_within(mouse_y_gui, y_ - 30, y_ + 5);
 		if ( within_ ) {
 			if ( !within_hover3 ) { within_hover3 = true; sfx_play(snd_sel_switch); } //Hover
-			if ( mouse_pressed ) { sfx_play(snd_enc1, 0, , bord_visible ? 0.7 : 1.3); bord_visible = !bord_visible; obj_system.yscale_3 = 0.5; } //Pressed
+			if ( mouse_pressed ) { sfx_play(snd_enc1, 0, , bord_visible ? 0.7 : 1.3); bord_visible = !bord_visible; yscale_3 = 0.5; } //Pressed
 		}
 		else { within_hover3 = false; }
-		draw_sprite_ensure(spr_effects_icons, 12, x_, y_, , obj_system.yscale_3, bord_visible ? 90 : 270, within_ ? c_white : c_yellow); //Left Arrow
-		obj_system.yscale_3 = lerp(obj_system.yscale_3, 1, 0.15);
+		draw_sprite_ensure(spr_effects_icons, 12, x_, y_, , yscale_3, bord_visible ? 90 : 270, within_ ? c_white : c_yellow); //Left Arrow
+		yscale_3 = lerp(yscale_3, 1, 0.15);
+	#endregion
+	
+	#region Switch Between Pages
+		#region Page Indicator Text
+			if ( dial_text_page_c > 1 && bord_visible ) {
+				draw_format("center", "center", fnt_abaddon, , 0.4);
+				draw_text(320, 333, $"< Page {dial_text_page + 1}/ {dial_text_page_c} >");
+				draw_format();
+			}
+		#endregion
+		
+		#region Left Page
+			if ( dial_text_page_c > 1 && dial_text_page > 0 ) { 
+				if ( variable_instance_get(obj_system, "within_hover4") == undefined ) { variable_instance_set(obj_system, "within_hover4", false); }
+				if ( variable_instance_get(obj_system, "yscale_4") == undefined ) { variable_instance_set(obj_system, "yscale_4", 1); }
+		
+				var x_ = 10, y_ = 400, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 20) && range_within(mouse_y_gui, y_ - 30, y_ + 5);
+				if ( within_ ) {
+					if ( !within_hover4 ) { within_hover4 = true; sfx_play(snd_sel_switch); } //Hover
+					if ( mouse_pressed ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw); dial_text_page = approach(dial_text_page, 0, 1); yscale_4 = 0.5; } //Pressed
+					if ( mouse_pressed_right ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw, , , 1.3); dial_text_page = 0; } //Pressed Right
+				}
+				else { within_hover4 = false; }
+				draw_sprite_stretched_ext(spr_pixel, 0, x_ - 22, y_ - 17, 39, 34, c_black, 1); //Outline
+				draw_sprite_stretched(spr_border_undertale, 0, x_ - 20, y_ - 15, 35, 30); //Border
+				draw_sprite_ensure(spr_effects_icons, 12, x_ - abs(sin(current_time/250) ) * 4, y_, -1, yscale_4, 180, within_ ? c_white : c_yellow); //Right Arrow
+				yscale_4 = lerp(yscale_4, 1, 0.15);
+			}
+		#endregion
+		
+		#region Right Page
+			if ( dial_text_page_c > 1 && dial_text_page < ( dial_text_page_c - 1 ) ) {
+				if ( variable_instance_get(obj_system, "within_hover5") == undefined ) { variable_instance_set(obj_system, "within_hover5", false); }
+				if ( variable_instance_get(obj_system, "yscale_5") == undefined ) { variable_instance_set(obj_system, "yscale_5", 1); }
+		
+				var x_ = 630, y_ = 400, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 20) && range_within(mouse_y_gui, y_ - 30, y_ + 5);
+				if ( within_ ) {
+					if ( !within_hover5 ) { within_hover5 = true; sfx_play(snd_sel_switch); } //Hover
+					if ( mouse_pressed ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw); dial_text_page = approach(dial_text_page, dial_text_page_c, 1); yscale_5 = 0.5; } //Pressed
+					if ( mouse_pressed_right ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw, , , 1.3); dial_text_page = dial_text_page_c - 1; } //Pressed Right
+				}
+				else { within_hover5 = false; }
+				draw_sprite_stretched_ext(spr_pixel, 0, x_ - 15, y_ - 17, 39, 34, c_black, 1); //Outline
+				draw_sprite_stretched(spr_border_undertale, 0, x_ - 13, y_ - 15, 35, 30); //Border
+				draw_sprite_ensure(spr_effects_icons, 12, x_ + abs(sin(current_time/250) ) * 4, y_, , yscale_5, 180, within_ ? c_white : c_yellow); //Right Arrow
+				yscale_5= lerp(yscale_5, 1, 0.15);
+			}
+		#endregion
 	#endregion
 }

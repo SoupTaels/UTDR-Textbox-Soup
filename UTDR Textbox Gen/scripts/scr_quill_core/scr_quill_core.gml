@@ -1510,7 +1510,8 @@ function __QuillCore() constructor {
 		}
 
 		// Right click opens context menu.
-		if (_mouse_r_pressed) {
+		//var _tb = __GetBoxById(_hover);
+		if ( _mouse_r_pressed ) {
 			if (_hover > 0) {
 				__SetActive(_hover);
 
@@ -1523,11 +1524,11 @@ function __QuillCore() constructor {
 						__TextInputSetCaret(_tb2, _idx3, false, _tb2.config);
 					}
 
-					OpenContextMenu(__BuildContextMenuForTb(_tb2), _mx, _my, _tb2.id);
+					if ( _tb2.context_menu_enabled ) { OpenContextMenu(__BuildContextMenuForTb(_tb2), _mx, _my, _tb2.id); }
 				}
 			}
 			else {
-				CloseContextMenu();
+				CloseContextMenu(); 
 			}
 		}
 
@@ -3569,7 +3570,7 @@ function __QuillCore() constructor {
 	/// @ignore
 	static __TextInputPasteClipboard = function(_tb, _config) {
 		var _clip = clipboard_get_text();
-		if (is_undefined(_clip)) return;
+		if ( is_undefined(_clip) || _clip == "" ) return;
 		__TextInputInsertText(_tb, string(_clip), _config);
 	};
 

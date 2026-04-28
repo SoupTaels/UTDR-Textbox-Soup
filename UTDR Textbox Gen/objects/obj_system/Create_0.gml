@@ -23,7 +23,7 @@ if ( live_call() ) { return live_result; }
 	dial_text_gif = false; //Whether to enable typewriting
 	dial_updatet = 0; //Dialogue update timer
 	dial_updatet_max = 45; //Dialogue update timer delay
-	dial_text_outline = -1; //Dialogue Outline Color
+	dial_text_outline = c_black; //Dialogue Outline Color
 	dial_text_page = 0; //Current page
 	dial_text_page_c = 0; //Amount of pages in a dialogue sequence
 	
@@ -40,7 +40,9 @@ if ( live_call() ) { return live_result; }
 	scribble_font_set_default("fnt_default"); //Use the normal dialogue font by default when using Scribble
 	
 	typist = scribble_typist();
-	typist.in(0.4, 0);
+	typist_spd = 0.4; //Typewriter speed
+	typist_spd_orig = typist_spd; //Typewriter original speed
+	typist.in(typist_spd, 0);
 	typist.function_per_char(function(_element, _position, _typist) { //Function to run per character
 		var mychr = chr(_element.get_glyph_data(_position - 1).unicode); //Get the currently revealed character
 		if ( mychr == chr(10) ) { dial_wrap_count++; } //Newline
@@ -54,6 +56,7 @@ if ( live_call() ) { return live_result; }
 	typist.function_on_complete(function() { //Function to run once the dialogue is complete
 		dial_face_index = 0;
 		dial_face = dial_face_original; //Switch back to the original face
+		typist_spd = typist_spd_orig; //Switch back to the original typewriter speed
 	});
 	
 	#region Typist Events
@@ -81,6 +84,7 @@ if ( live_call() ) { return live_result; }
 			}
 		});
 		scribble_typists_add_event("face_stick", function(_, param) { DIAL_GIF dial_face_original = get_face(dial_face_name); }); //Make the previous dialogue face stick
+		scribble_typists_add_event("speed_pop", function(_, param) { DIAL_GIF typist_spd = typist_spd_orig; }); //Changes the typist speed back to the default
 		
 		scribble_add_macro("newl", function() { return "\n  "; }); //Newline with no asterisk
 		scribble_add_macro("newl_a", function() { return "\n* "; }); //Newline with asterisk
@@ -147,10 +151,9 @@ if ( live_call() ) { return live_result; }
 	
 	#region Textbox
 		textinput = QuillMulti(, "(Click here to start typing!)\n(Your raw text input lives here. Processed output is below.)\n(Click on the quick buttons above to quickly insert text colors\n and effects. Try highlighting portions of texts!)\n \n   (Happy generating and make sure to eat some good soup!!)")
-			.SetInputMode(QUILL_TEXTMODE_TEXT).SetWrap(false).AllowActions(false).SetResizable(false)
+			.SetInputMode(QUILL_TEXTMODE_TEXT).SetWrap(false).AllowActions(false).SetResizable(false).ContextMenuAllow(false)
 			.SetTabInserts(true).SetTabUsesSpaces(false).SetTabSpaces(4)
 			.SetCaretBlink(false).SetCaretFade(true).SetCaretFadeTime(250).SetCaretRepeatRate(10)
-
 		///@desc Sets the theme for the textbox
 		quill_change = false;
 		quill_theme = function (init_ = false) {

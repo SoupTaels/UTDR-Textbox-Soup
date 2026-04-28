@@ -153,6 +153,7 @@ function __Quill(_kind, _label, _placeholder) constructor {
 	use_overlay_editor = true;
 	overlay_editor_title = "Edit text";
 	context_menu_items = [];
+	context_menu_enabled = true;
 
 	// Validation message (inline by default).
 	validation_message = "";
@@ -234,6 +235,11 @@ function __Quill(_kind, _label, _placeholder) constructor {
 	/// @param {bool} _bool
 	static AllowActions = function(_bool) {
 		global.__QUILL_CORE._actionenabled = _bool;
+		return self;
+	};
+	
+	static ContextMenuAllow = function(_bool) {
+		context_menu_enabled = _bool;
 		return self;
 	};
 

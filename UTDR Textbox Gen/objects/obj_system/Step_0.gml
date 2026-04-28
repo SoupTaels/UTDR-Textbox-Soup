@@ -3,6 +3,11 @@ if ( live_call() ) { return live_result; }
 if ( bord_out ) { outlinesoup_step(640, 480); }
 soupy_lui.update();
 
+#region Clamp Page Count
+	if ( dial_text == "" ) { dial_text_page = 0; dial_text_page_c = 0; }
+	dial_text_page = clamp(dial_text_page, 0, dial_text_page_c);
+#endregion
+
 #region Animation
 	if ( dial_text_gif && dial_face_auto && typist.get_delay_paused() ) { dial_face_index = 0; } //Stop the face from animating if the dialogue is being delayed
 	if ( bord_spd > 0 ) { //Animate the border
