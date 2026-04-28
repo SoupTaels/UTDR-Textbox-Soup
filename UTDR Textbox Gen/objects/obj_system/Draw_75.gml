@@ -42,12 +42,12 @@ if ( screenshot || record.enabled ) {
 		
 		var form = new FormData(); //Upload the result to a server (This is for the online folks. This is also why a second temp image is made)
 		#region uguu.se (3hr) (Open Source) (Seems like the best fit)
-			form.add_file("files[]", fpath);
-			http("https://uguu.se/upload.php?output=text", "POST", form, , function(http_status, result) { //Sucess!
-				show_debug_message($"{http_status} {result}");
-				clipboard_set_text(result); uploadstatus = true;
-			}, 
-			function(http_status, result) { uploadstatus = false; show_debug_message($"{http_status} {result}"); }); //Failed
+			//form.add_file("files[]", fpath);
+			//http("https://uguu.se/upload.php?output=text", "POST", form, , function(http_status, result) { //Sucess!
+			//	show_debug_message($"{http_status} {result}");
+			//	clipboard_set_text(result); uploadstatus = true;
+			//}, 
+			//function(http_status, result) { uploadstatus = false; show_debug_message($"{http_status} {result}"); }); //Failed
 		#endregion
 		
 		#region tmpfiles.org (1hr)
@@ -85,6 +85,7 @@ if ( screenshot || record.enabled ) {
 		obj_system.dial_wrap_count = 1;
 		obj_system.spr_bord = obj_system.bord_prev;
 		execute_shell_simple(fpath_final, , , 6); //Open the image in the PC's default photo viewer (Windows only)
+		obj_system.dial_text_page = 0;
 		exit;
 	});
 	
@@ -109,7 +110,7 @@ if ( screenshot || record.enabled ) {
 			
 			if ( state_ >= 1 ) { //If we stopped typing
 				if ( record.frames < 60 ) { record.frames++; }
-				else { finish_func(); }
+				else { if ( dial_text_page < dial_text_page_c - 1 ) { record.frames = 0; dial_text_page++; } else { finish_func(); } }
 			}
 		}
 	}

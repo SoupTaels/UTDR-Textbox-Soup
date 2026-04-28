@@ -103,7 +103,10 @@ function __Quill(_kind, _label, _placeholder) constructor {
 	preferred_x = 0;
 	preferred_x_valid = false;
 	caret_visible = true;
+	caret_blink = true;
 	caret_blink_time = 0;
+	caret_fade = false;
+	caret_fade_time = 0;
 
 	last_click_time = 0;
 	last_click_index = -1;
@@ -225,6 +228,14 @@ function __Quill(_kind, _label, _placeholder) constructor {
 	static SetValue = function(_v) {
 		global.__QUILL_CORE.__TextInputSetExternalValue(self, _v, config);
 	};
+	
+	/// @func AllowActions(_bool)
+	/// @desc Allow/ Disallow the ability to undo/ redo.
+	/// @param {bool} _bool
+	static AllowActions = function(_bool) {
+		global.__QUILL_CORE._actionenabled = _bool;
+		return self;
+	};
 
 	/// @func GetCaret()
 	/// @desc Get the current caret index.
@@ -240,6 +251,36 @@ function __Quill(_kind, _label, _placeholder) constructor {
 	/// @return {Struct.__Quill}
 	static SetCaret = function(_index, _extend = false) {
 		global.__QUILL_CORE.__TextInputSetCaret(self, floor(_index), (_extend == true), config);
+		return self;
+	};
+	
+	///@desc Sets whether the cursor can blink.
+	static SetCaretBlink = function(_bool = true) {
+		caret_blink = _bool;
+		return self;
+	};
+	
+	///@desc Sets whether the cursor can have a fade in and out animation when blink is disabled.
+	static SetCaretFade = function(_bool = false) {
+		caret_fade = _bool;
+		return self;
+	};
+	
+	///@desc Sets the fading speed when the cursor has a fading animation
+	static SetCaretFadeTime = function(_time = 0) {
+		caret_fade_time = _time;
+		return self;
+	};
+	
+	//@desc Sets the delay before the last pressed key starts to repeat itself
+	static SetCaretRepeatDelay = function(_time = 0) {
+		key_repeat_delay_ms = _time;
+		return self;
+	};
+	
+	//@desc Sets the delay between time to print the last key
+	static SetCaretRepeatRate = function(_time = 0) {
+		key_repeat_rate_ms = _time;
 		return self;
 	};
 

@@ -1,7 +1,7 @@
 // Feel free to edit these
 #macro QUILL_VB_ENABLE				1	// Whether Quill uses vbuffers or not
 #macro QUILL_VB_FREEZE_FRAMES		2	// How many frames Quill waits to freeze a vbuffer to avoid churn
-#macro QUILL_VB_DEBUG				1	// Debugging setting for Quill (turn this to 0 for public release)
+#macro QUILL_VB_DEBUG				0	// Debugging setting for Quill (turn this to 0 for public release)
 
 // Internal only \/
 

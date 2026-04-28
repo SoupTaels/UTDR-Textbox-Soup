@@ -11,7 +11,8 @@ function scribble_typists_add_event(_name, _function)
     static _macros_map            = _system.__macros_map;
     static _typewriter_events_map = _system.__typewriter_events_map;
     
-    if (!is_string(_name))
+    if ( _typewriter_events_map[? _name] != undefined ) { exit; }
+	if (!is_string(_name))
     {
         __scribble_error("Event names should be strings.\n(Input to script was \"", _name, "\")");
         exit;

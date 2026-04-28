@@ -1,3 +1,5 @@
+#macro DIAL_GIF if ( !dial_text_gif ) { exit; } //Only run if GIFs are enabled
+
 #region Default functions for the menu buttons
 	function on_enter_() { if ( obj_system.ui_tab != id_ ) { sfx_play(snd_sel_switch); TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } }
 	function on_leave_() { if ( obj_system.ui_tab != id_ ) { TweenFire("~ocirc", "$15", "yoff>", 0); text = text_static; color_butt = c_orange; } window_set_cursor(cr_default); }
@@ -11,17 +13,16 @@
 	}
 #endregion
 
-#macro DIAL_GIF if ( !dial_text_gif ) { exit; } //Only run if GIFs are enabled
-
 function TextChange(txt, point) : UndoableChange() constructor { //Handle undo/ redoing changes
+	live_auto_call
 	prev_txt = obj_system.dial_text; //Store previous/ inital text
-	point_prev = obj_system.soupGUI.TextboxGetPoint(obj_system.textBox); //Get previous point
+	point_prev = obj_system.textinput.GetCaret(); //Get previous point
 	mytxt = txt; //Get our new text
 	point_ = point; //Get our new point
-	
+
 	static can_apply = function() { return ( obj_system.dial_text != mytxt ); } //Don't push the same unchanged text to the undo stack
-	static apply = function() { with ( obj_system ) { dial_text = other.mytxt; soupGUI.TextboxSetText(textBox, dial_text); soupGUI.TextboxSetPoint(textBox, other.point_);  soupGUI.TextboxSetPointSecondary(textBox, other.point_); } sfx_play(snd_updated); } //Apply recent changes
-    static undo = function() { with ( obj_system ) { dial_text = other.prev_txt; soupGUI.TextboxSetText(textBox, dial_text); soupGUI.TextboxSetPoint(textBox, other.point_prev); soupGUI.TextboxSetPointSecondary(textBox, other.point_prev); } sfx_play(snd_throw); }
+	static apply = function() { with ( obj_system ) { dial_text = other.mytxt; textinput.SetValue(dial_text); textinput.SetCaret(other.point_); } sfx_play(snd_updated); } //Apply recent changes
+    static undo = function() { with ( obj_system ) { dial_text = other.prev_txt; textinput.SetValue(dial_text); textinput.SetCaret(other.point_prev); } sfx_play(snd_throw); }
 }
 
 ///@desc Create a GUI button. Accepts { x, y, text, padd_(x1, y1, x2, y2, multi), x2, y2, sprite, draw_nine, index, (x)(y)scale, angle, font, color, color_butt, halign, and valign, and functions for on_enter(runs once), on_hover, on_leave(once), on_click(once), on_held, on_released(once) }
@@ -67,20 +68,22 @@ function Button(datastruct_ = undefined) constructor {
 ///@desc Manages state for UI tabs.
 function ui_manage() {
 	live_auto_call 
-	
+
 	switch ( ui_tab ) {
 		case 0: { //Dialogue
 			#region Update Text
 				var update_text = function() { //Update text function
 					undo_stack_begin_move(); 
 						with ( obj_system ) {
-							var txt = new TextChange(soupGUI.TextboxGetText(textBox), soupGUI.TextboxGetPoint(textBox));
+							var txt = new TextChange(textinput.GetValue(), textinput.GetCaret());
 							undo_stack_apply_change(txt); 
 						}
 					undo_stack_complete_move();
+					
+					if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; }
 				}
 				
-				if ( soupGUI.TextboxGetFocus(textBox) ) { //If the input box is in focus
+				if ( textinput.IsFocused() ) { //If the input box is in focus
 					var upd_ = false, keycur = keyboard_key;
 					if ( keyboard_check(vk_anykey) && keycur != 0 ) { 
 						switch ( keycur ) { //Banned keys
@@ -107,19 +110,17 @@ function ui_manage() {
 					}
 				}
 			#endregion
-							
-			var off_ = 8, x_ = textbox_data.x - off_, y_ = textbox_data.y - off_, w_ = textbox_data.w + ( off_ * 2 ), h_ = textbox_data.h + ( off_ * 2 );
-			draw_set_alpha(1);
-			draw_sprite_stretched_ext(spr_border_undertale, 0, x_ - 2, y_ - 6, w_ + 4, h_ + 8, c_black, 1); //Textbox Outline
-			draw_sprite_stretched(spr_border_undertale, 0, x_, y_ - 4, w_, h_ + 4); //Textbox Border
-			soupGUI.Draw();
-			
+
+			var x_ = 30, y_ = 130, w_ = 580, h_ = 160;
+			draw_sprite_ensure(spr_pixel, 0, x_ - 8, y_ - 12, w_ + 16, h_ + 20, 0, c_white, 1); //Textbox Outline Outer
+			draw_sprite_ensure(spr_pixel, 0, x_ - 2, y_ - 6, w_ + 4, h_ + 8, 0, c_black, 1); //Textbox Outline Inner
+			textinput.Draw(x_, y_, w_, h_);
+		
 			draw_format("left", "center", fnt_abaddon);
 			draw_text_ext(20, 90, "Quick Colors:\n \nQuick Effects:", 12, -1);
 			
-			
 			#region Color and Effects Function
-				var butt_func = method({soupGUI, textBox, update_text}, function (data_) { //Button data
+				var butt_func = method({textinput, update_text}, function (data_) { //Button data
 					#region Commands with extra parameters
 						var extra_;
 						switch ( data_ ) {
@@ -131,25 +132,21 @@ function ui_manage() {
 						}
 					#endregion
 					
-					soupGUI.TextboxSetFocus(textBox, true);
-					var txt_ = soupGUI.TextboxGetText(textBox), txt_insert = $"[{data_}{extra_}]", txt_insert_end = "[/]"
-					var pos_ = soupGUI.TextboxGetPoint(textBox) + 1, pos_2 = soupGUI.TextboxGetPointSecondary(textBox) + 1; //Get the current cursor's position and highlighted position
-					if ( pos_2 == pos_ ) { //Not trying to highlight anything
-						var result = string_insert(txt_insert, txt_, pos_), finalpos = ( pos_ + string_length(txt_insert) ) - 1;
-						soupGUI.TextboxSetText(textBox, result);
-						//soupGUI.TextboxSetPoint(textBox, finalpos); soupGUI.TextboxSetPointSecondary(textBox, finalpos);
+					textinput.Focus();
+
+					var txt_ = textinput.GetValue(), txt_insert = $"[{data_}{extra_}]", txt_insert_end = "[/]", result;
+					var getpos_ = textinput.GetSelection() ,pos_ = getpos_.start + 1, pos_2 = getpos_._end + 1; //Get the current cursor's position and highlighted position
+					if ( !getpos_.has_selection ) { //Not trying to highlight anything
+						result = string_insert(txt_insert, txt_, pos_);
 					}
 					else { //Between highlighted text
-						var ending_ = pos_ > pos_2, pos_start = ending_ ? pos_2 : pos_, pos_end = ending_ ? pos_ : pos_2;
-						var result = string_insert(txt_insert_end, txt_, pos_end), finalpos = pos_start - 1;
-						result = string_insert(txt_insert, result, pos_start);
-						soupGUI.TextboxSetText(textBox, result);
-						soupGUI.TextboxSetPoint(textBox, finalpos); soupGUI.TextboxSetPointSecondary(textBox, finalpos);
+						result = string_insert(txt_insert, string_insert(txt_insert_end, txt_, pos_2), pos_);
 					}
-					update_text(); sfx_play(snd_bump, , , 1.5); audio_stop_sound(snd_updated);
+					textinput.SetValue(result); textinput.SetCaret(pos_ - 1); update_text();
+					sfx_play(snd_bump, , , 1.5); audio_stop_sound(snd_updated);
 				});
 			#endregion
-			
+
 			#region Color Buttons
 				if ( variable_instance_get(obj_system, "colors_get") == undefined ) { variable_instance_set(obj_system, "colors_get", __scribble_config_colours()); }
 				draw_sprite_ext(spr_pixel, 0, 158 - 2, 68 - 2, 429 + 4, 14 + 4, 0, c_white, 1); //Palette Outline White
@@ -221,7 +218,7 @@ function ui_manage() {
 			
 			#region Change Cursor
 				if ( range_within(mouse_x_gui, 120, 620) && range_within(mouse_y_gui, 60, 120) ) { window_set_cursor(cr_drag); } //At the command palette
-				else if ( range_within(mouse_x_gui, 20, 620) && range_within(mouse_y_gui, 110, 300) ) { window_set_cursor(cr_beam); } //At the command palette
+				else if ( range_within(mouse_x_gui, 20, 620) && range_within(mouse_y_gui, 110, 300) ) { window_set_cursor(cr_beam); } //At the textbox
 				else { if ( mouse_y_gui >= 60 ) { window_set_cursor(cr_default); } }
 			#endregion
 		} break;
@@ -269,10 +266,5 @@ function ui_manage() {
 		else { within_hover3 = false; }
 		draw_sprite_ensure(spr_effects_icons, 12, x_, y_, , obj_system.yscale_3, bord_visible ? 90 : 270, within_ ? c_white : c_yellow); //Left Arrow
 		obj_system.yscale_3 = lerp(obj_system.yscale_3, 1, 0.15);
-	#endregion
-	
-	#region Textbox Disable
-		var textboxstate = soupGUI.CanvasGetActive(textBox);
-		if ( ui_tab == 0 ) { if ( !textboxstate ) { soupGUI.CanvasActivate(textBox); } } else { if ( textboxstate ) { soupGUI.CanvasDeactivate(textBox); } }
 	#endregion
 }

@@ -15,7 +15,8 @@
 
 function scribble_font_bake_outline_and_shadow(_sourceFontName, _newFontName, _dX, _dY, _outlineMode, _separation, _smooth, _textureSize = undefined)
 {
-    var _outlineSize = 0;
+    if ( scribble_font_exists(_newFontName) ) { exit; }
+	var _outlineSize = 0;
     var _shader = __shd_scribble_bake_effect_no_outline;
     
     if (_outlineMode == SCRIBBLE_OUTLINE.FOUR_DIR)

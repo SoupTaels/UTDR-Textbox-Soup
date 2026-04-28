@@ -18,27 +18,25 @@ if ( live_call() ) { return live_result; }
 
 #region Dialogue Text
 	dial_text = $""; //Dialogue Text
-	//dial_text = $"Test dialogue text 1, 2, 3.....\nTest dialogue text 4, 5, 6.....\nTest dialogue text 7, 8, 9.....";
 	dial_font = "fnt_monospaced"; //Dialogue Font
 	dial_text_scale = 2; //Text Scale
 	dial_text_gif = false; //Whether to enable typewriting
 	dial_updatet = 0; //Dialogue update timer
 	dial_updatet_max = 45; //Dialogue update timer delay
-	dial_text_outline = c_red; //Dialogue Outline Color
+	dial_text_outline = -1; //Dialogue Outline Color
+	dial_text_page = 0; //Current page
+	dial_text_page_c = 0; //Amount of pages in a dialogue sequence
 	
 	undo_stack_create(); //History of undo changes
 	
-	dial_point_auto = false; //Whether to automatically add points
+	dial_point_auto = true; //Whether to automatically add points
 	dial_point_chr = "*"; //Dialogue Point Character
 	dial_point_clr = c_white; //Dialogue Point Clr
 	dial_auto_wrap = true; //Whether to automatically wrap dialogue to new lines
 	dial_wrap_count = 1; //Current wrapped line
 	
-	if ( !scribble_font_exists("fnt_default") ) { scribble_font_bake_outline_and_shadow("fnt_determination_nomono", "fnt_default", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 1, false); }
-	if ( !scribble_font_exists("fnt_monospaced") ) { scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_monospaced", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 0, false); }
-	
-	if ( !scribble_font_exists("fnt_default_outline") ) { scribble_font_bake_outline_and_shadow("fnt_determination_nomono", "fnt_default_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 1, false); }
-	if ( !scribble_font_exists("fnt_monospaced_outline") ) { scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_monospaced_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); }
+	scribble_font_bake_outline_and_shadow("fnt_determination_nomono", "fnt_default", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 1, false); 
+	scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_monospaced", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); 
 	scribble_font_set_default("fnt_default"); //Use the normal dialogue font by default when using Scribble
 	
 	typist = scribble_typist();
@@ -73,6 +71,14 @@ if ( live_call() ) { return live_result; }
 			DIAL_GIF
 			var bord_ = get_border(param[0]);
 			spr_bord = bord_ != -1 ? bord_ : spr_border_undertale;
+		});
+		scribble_typists_add_event("finish", function(_, param) { DIAL_GIF typist.skip(); }); //Finish all the text immediately
+		scribble_typists_add_event("skip", function(_, param) { //Skips to the next page, disregarding current dialogue
+			DIAL_GIF 
+			if ( dial_text_page < dial_text_page_c - 1 ) {
+				if ( array_length(param) == 0 ) { dial_text_page++; } //No argument provided? Just go to the next page
+				else { dial_text_page = real(string_digits(param[0])); dial_text_page = clamp(dial_text_page, 0, dial_text_page_c); } //Go to a specific page
+			}
 		});
 		scribble_typists_add_event("face_stick", function(_, param) { DIAL_GIF dial_face_original = get_face(dial_face_name); }); //Make the previous dialogue face stick
 		
@@ -139,27 +145,57 @@ if ( live_call() ) { return live_result; }
 		call_later(1, time_source_units_frames, on_reset_); //Reset all buttons on start
 	#endregion
 	
-	#region MajorGUI
-		soupGUI = new MajorGUI();
-		soupGUI.Setup(new Vector2(640, 480));
-		
-		textbox_data = { x: 30, y: 130, w: 580, h: 160 };
-		textBox = soupGUI.TextboxCreate(new Vector3(textbox_data.x, textbox_data.y), new Vector2(textbox_data.w, textbox_data.h), , 10, , 10, 7);
-		soupGUI.TextboxSetFont(textBox, fnt_speech);
-		soupGUI.TextboxSetMultiline(textBox, true);
-		soupGUI.TextboxSetGhostText(textBox, "(Click here to start typing!)\n(Your raw text input lives here. Processed output is below.)\n(Click on the quick buttons above to quickly insert text colors\n and effects. Try highlighting portions of texts!)\n \n   (Happy generating and make sure to eat some good soup!!)");
-		soupGUI.TextboxSetGhostTextColor(textBox, new Vector4(157, 140, 187, 255));
-		soupGUI.TextboxSetText(textBox, dial_text);
-		TweenScript(id, 0, 10, function() { sfx_play(snd_sparkle); window_mouse_set(320, 240); }); //Everything's loaded!
+	#region Textbox
+		textinput = QuillMulti(, "(Click here to start typing!)\n(Your raw text input lives here. Processed output is below.)\n(Click on the quick buttons above to quickly insert text colors\n and effects. Try highlighting portions of texts!)\n \n   (Happy generating and make sure to eat some good soup!!)")
+			.SetInputMode(QUILL_TEXTMODE_TEXT).SetWrap(false).AllowActions(false).SetResizable(false)
+			.SetTabInserts(true).SetTabUsesSpaces(false).SetTabSpaces(4)
+			.SetCaretBlink(false).SetCaretFade(true).SetCaretFadeTime(250).SetCaretRepeatRate(10)
+
+		///@desc Sets the theme for the textbox
+		quill_change = false;
+		quill_theme = function (init_ = false) {
+			var quill_soup_active = new QuillTheme();
+			quill_soup_active.textbox.text_col = c_white;
+			quill_soup_active.textbox.placeholder_col = #9d8cbb;
+			quill_soup_active.skins.prim_bg_idle_col = #524271;
+			quill_soup_active.skins.prim_bg_active_col = #292138;
+			quill_soup_active.skins.prim_bg_hover_col = #625279;
+			quill_soup_active.textbox.line_highlight_col = #503f6e;
+			quill_soup_active.skins.prim_border_thickness = 0;
+			quill_soup_active.scrollbar.thumb_active_col = #9a89b8;
+			quill_soup_active.scrollbar.thumb_active_a = 1;
+			quill_soup_active.scrollbar.track_col = #503f6e;
+			quill_soup_active.scrollbar.track_a = 1;
+			quill_soup_active.scrollbar.border_col = #503f6e;
+			quill_soup_active.scrollbar.border_a = 1;
+			quill_soup_active.selection.bg_col = #d6b5dd;
+
+			var quill_soup_inactive = new QuillTheme();
+			quill_soup_inactive.textbox.text_col = #9d8cbb;
+			quill_soup_inactive.textbox.placeholder_col = #9d8cbb;
+			quill_soup_inactive.skins.prim_bg_idle_col = #524271;
+			quill_soup_inactive.skins.prim_bg_active_col = #292138;
+			quill_soup_inactive.skins.prim_bg_hover_col = #625279;
+			quill_soup_inactive.textbox.line_highlight_a = 0;
+			quill_soup_inactive.skins.prim_border_thickness = 0;
+			quill_soup_inactive.scrollbar.border_col = #9d8cbb;
+			quill_soup_inactive.scrollbar.border_a = 1;
+			quill_soup_inactive.scrollbar.track_col = #9d8cbb;
+			quill_soup_inactive.scrollbar.track_a = 1;
+			quill_soup_inactive.scrollbar.thumb_idle_col = #d6b5dd;
+			quill_soup_inactive.scrollbar.thumb_idle_a = 1;
+
+			if ( !init_ ) { QuillSetTheme(obj_system.textinput.IsFocused() ? quill_soup_active : quill_soup_inactive); } else { QuillSetTheme(quill_soup_inactive); }
+		}
+		quill_theme(true);
 	#endregion
-	
+
 	#region Menu Sections
 		#region Init Style
 			var soupy_style = new LuiStyle({ padding: 15, gap: 10, color_text: c_white, color_hover: c_yellow, sound_click: snd_select, sound_hover: snd_sel_switch, }) //Main Style
 				.setRenderRegionOffset([10, 10, 10, 10])
-				.setFonts(fnt_determination, fnt_determination, fnt_determination)
+				.setFonts(fnt_determination, fnt_determination, fnt_determination).setColors(, c_orange, #962525)
 				.setSprites(spr_border_undertale, spr_border_undertale)
-				.setColors(, c_orange, #962525)
 			soupy_lui = new LuiMain().setStyle(soupy_style);
 		#endregion
 		
@@ -197,7 +233,7 @@ if ( live_call() ) { return live_result; }
 			///@desc Show/ hide Lui on appropiate screens.
 			ui_reset = function() {
 				if ( soupy_panel_portrait.visible ) { soupy_panel_portrait.setVisible(false); }
-		
+
 				var fx = true;
 				switch ( ui_tab ) {
 					case 0: { fx = false; } break;
@@ -209,8 +245,9 @@ if ( live_call() ) { return live_result; }
 				if ( fx && bord_visible ) { sfx_play(snd_enc1, 0, , 0.7); bord_visible = false; }
 				else if ( !fx && !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; }
 			}
+			ui_reset();
 		#endregion
-		ui_reset();
+
 	#endregion
-	
+
 #endregion

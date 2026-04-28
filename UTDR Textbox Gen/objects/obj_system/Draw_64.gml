@@ -33,6 +33,7 @@ if ( bord_visible ) {
 					.starting_format(dial_font, c_white)
 					.blend(dial_text_shdw_clr, 1)
 					.scale(dial_text_scale)
+					.page(dial_text_page)
 					.wrap(dial_auto_wrap ? 580 - xx_ : -1)
 					.draw(dial_point_auto ? ( xx_ + dial_text_shdw_thick ) + 28 : xx_ + dial_text_shdw_thick, yy_ + dial_text_shdw_thick);
 				}
@@ -44,16 +45,18 @@ if ( bord_visible ) {
 				scrib_dial.allow_line_data_getter();
 				scrib_dial.allow_glyph_data_getter();
 				scrib_dial.line_spacing("120%");
-				scrib_dial.outline(dial_text_outline);
+				scrib_dial.page(dial_text_page);
+				dial_text_page_c = scrib_dial.get_page_count();
+				if ( dial_text_outline != -1 ) { scrib_dial.outline(dial_text_outline); }
 				scrib_dial.wrap(dial_auto_wrap ? 580 - xx_ : -1);
 				scrib_dial.draw(dial_point_auto ? xx_ + 28 : xx_, yy_, dial_text_gif ? typist : undefined);
 
 				#region Dialogue Auto Point
 					if ( dial_point_auto ) {
 						if ( dial_text_shdw ) { //Dialogue Text Shadow
-							var linec = dial_text_gif ? dial_wrap_count : scrib_dial.get_line_count();
+							var linec = dial_text_gif ? dial_wrap_count : scrib_dial.get_line_count(dial_text_page);
 							var i = 0; repeat ( linec ) {
-								var lined = scrib_dial.get_line_data(i);
+								var lined = scrib_dial.get_line_data(i, dial_text_page);
 								if ( lined.forced_break ) {
 									var scrib_point = scribble(dial_point_chr); //Dialogue Point
 									scrib_point.starting_format(dial_font, dial_text_shdw_clr);
@@ -62,15 +65,15 @@ if ( bord_visible ) {
 								}
 							i++; }
 						}
-						var linec = dial_text_gif ? dial_wrap_count : scrib_dial.get_line_count();
+						var linec = dial_text_gif ? dial_wrap_count : scrib_dial.get_line_count(dial_text_page);
 						var i = 0; repeat ( linec ) {
-							var lined = scrib_dial.get_line_data(i);
+							var lined = scrib_dial.get_line_data(i, dial_text_page);
 							if ( lined.forced_break ) {
 								var scrib_point = scribble(dial_point_chr); //Dialogue Point
 								scrib_point.starting_format(dial_font, dial_point_clr);
 								scrib_point.scale(dial_text_scale);
 								scrib_point.allow_line_data_getter();
-								scrib_point.outline(dial_text_outline);
+								if ( dial_text_outline != -1 ) { scrib_point.outline(dial_text_outline); }
 								scrib_point.draw(xx_ - 4, yy_ + lined.y);
 							}
 						i++; }

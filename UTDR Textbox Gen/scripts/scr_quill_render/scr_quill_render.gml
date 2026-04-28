@@ -624,7 +624,7 @@ function __QuillRenderDrawLabel(_tb, _st, _layout) {
 	var _bg_a = clamp(_t_label.prim_bg_a, 0, 1);
 	var _border_a = clamp(_t_label.prim_border_a, 0, 1);
 	var _text_a = clamp(_t_label.text_a, 0, 1);
-	var _border_t = max(0, _t_label.prim_border_thickness);
+	var _border_t = _t_label.prim_border_thickness;
 	var _draw_bg = (_bg_a > 0);
 	var _draw_border = (_border_a > 0 && _border_t > 0);
 
@@ -777,7 +777,7 @@ function __QuillRenderDrawTextBox(_tb, _st, _x1, _y1, _x2, _y2, _active, _hover)
 		_need_bd_prim = false;
 	}
 
-	var _border_thickness = max(0, _t_skins.prim_border_thickness);
+	var _border_thickness = _t_skins.prim_border_thickness;
 	var _vb = -1;
 	if (QUILL_VB_ENABLE) {
 		var _cache = QUILL.__GetBoxCacheById(_tb.id);
@@ -824,7 +824,7 @@ function __QuillRenderDrawBorderPrimitive(_x1, _y1, _x2, _y2, _thickness) {
 		return;
 	}
 
-	var _t = max(1, floor(_thickness));
+	var _t = floor(_thickness);
 	var _t_max = floor(min(_w * 0.5, _h * 0.5));
 	if (_t > _t_max) {
 		_t = _t_max;
@@ -849,15 +849,15 @@ function __QuillRenderDrawSelectionSingle(_t_sel, _x, _y, _h, _x1, _x2) {
 }
 
 /// @ignore
-function __QuillRenderDrawCaret(_st, _x, _y, _h) {
+function __QuillRenderDrawCaret(_st, _x, _y, _h, _fade, _fadespd) {
 	var _t_skins = _st.skins;
 	if (__QuillRenderDrawSpriteSkin(_t_skins.caret_spr, _t_skins.caret_subimg, _x, _y, _st.caret.w, _h, _st.caret.col, _st.caret.a)) {
 		return;
 	}
-	var _old_a = draw_get_alpha();
-	draw_set_alpha(_old_a * _st.caret.a);
+	var _old_a = draw_get_alpha(), _anim = abs(sin(current_time/ _fadespd));
+	draw_set_alpha(!_fade ? _old_a * _st.caret.a : _anim);
 	draw_set_color(_st.caret.col);
-	draw_rectangle(_x, _y, _x + _st.caret.w, _y + _h, false);
+	draw_rectangle(_x, _y, _x + _st.caret.w, ( _y + _h ) + 4, false);
 	draw_set_alpha(_old_a);
 }
 
@@ -918,7 +918,7 @@ function __QuillRenderDrawTextSingle(_tb, _st, _config, _text_rect, _active) {
 
 	if (_enabled && _active && !_read_only && !_is_placeholder) {
 		var _blink_ms = max(1, floor(_st.caret.blink_ms));
-		if ((current_time - _tb.caret_blink_time) >= _blink_ms) {
+		if ((current_time - _tb.caret_blink_time) >= _blink_ms) && ( _tb.caret_blink ) {
 			_tb.caret_visible = !_tb.caret_visible;
 			_tb.caret_blink_time = current_time;
 		}
@@ -928,7 +928,7 @@ function __QuillRenderDrawTextSingle(_tb, _st, _config, _text_rect, _active) {
 			var _px = (_ci > 0) ? global.__QUILL_CORE.__TextMeasureVisualWidth(_prefix, _font, _config) : 0;
 			var _cx = _tx + _px;
 			var _ch = max(0, _text_rect.y2 - _text_rect.y1);
-			__QuillRenderDrawCaret(_st, _cx, _text_rect.y1 + 2, max(0, _ch - 4));
+			__QuillRenderDrawCaret(_st, _cx, _text_rect.y1 - 4, _ch, _tb.caret_fade, _tb.caret_fade_time);
 		}
 	}
 
@@ -980,7 +980,13 @@ function __QuillRenderDrawTextMulti(_tb, _st, _config, _text_rect, _active) {
 
 	var _old_a = draw_get_alpha();
 	var _enabled = _tb.IsEnabled();
+	
+	var _li = global.__QUILL_CORE.__TextAreaFindLineAtIndex(_layout, _tb.caret_index);
+	_li = clamp(_li, 0, _count - 1);
+	var _cy = _text_rect.y1 + (_li * _layout.line_h) - _scroll_y;
 
+	draw_sprite_ensure(spr_pixel, 0, _text_rect.x1, _cy, _text_rect.x2 - _text_rect.x1, _layout.line_h, 0, _st.textbox.line_highlight_col, _st.textbox.line_highlight_a);
+	
 	// Selection highlights.
 	if (_enabled && _active && !_is_placeholder && global.__QUILL_CORE.__TextInputHasSelection(_tb)) {
 		var _sel = global.__QUILL_CORE.__TextInputGetSelectionRange(_tb);
@@ -1040,7 +1046,7 @@ function __QuillRenderDrawTextMulti(_tb, _st, _config, _text_rect, _active) {
 	// Caret.
 	if (_enabled && _active && !_read_only && !_is_placeholder) {
 		var _blink_ms = max(1, floor(_st.caret.blink_ms));
-		if ((current_time - _tb.caret_blink_time) >= _blink_ms) {
+		if ((current_time - _tb.caret_blink_time) >= _blink_ms) && ( _tb.caret_blink ) {
 			_tb.caret_visible = !_tb.caret_visible;
 			_tb.caret_blink_time = current_time;
 		}
@@ -1054,7 +1060,7 @@ function __QuillRenderDrawTextMulti(_tb, _st, _config, _text_rect, _active) {
 			var _align_off3 = global.__QUILL_CORE.__TextGetAlignOffset(_ln3.text, _font, max(0, _text_rect.x2 - _text_rect.x1), _config);
 			var _cx = (_text_rect.x1 - _scroll_x) + _align_off3 + _px2;
 			var _cy = _text_rect.y1 + (_li * _layout.line_h) - _scroll_y;
-			__QuillRenderDrawCaret(_st, _cx, _cy + 2, max(0, _layout.line_h - 4));
+			__QuillRenderDrawCaret(_st, _cx, _cy - 4, _layout.line_h, _tb.caret_fade, _tb.caret_fade_time);
 		}
 	}
 

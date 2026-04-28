@@ -2,7 +2,6 @@
 if ( live_call() ) { return live_result; } 
 if ( bord_out ) { outlinesoup_step(640, 480); }
 soupy_lui.update();
-soupGUI.Update();
 
 #region Animation
 	if ( dial_text_gif && dial_face_auto && typist.get_delay_paused() ) { dial_face_index = 0; } //Stop the face from animating if the dialogue is being delayed
@@ -14,12 +13,6 @@ soupGUI.Update();
 			else { bord_index -= bord_spd; if ( round(bord_index) <= 0) { bord_anim_track = false; } }
 		} 
 	};
-#endregion
-
-#region Textbox Theme
-	var textboxActive = soupGUI.TextboxGetFocus(textBox);
-	if ( !textboxActive ) { soupGUI.TextboxSetTextColor(textBox, new Vector4(157, 140, 187, 255)); }
-	else { soupGUI.TextboxSetTextColor(textBox, new Vector4(255, 255, 255, 255)); }
 #endregion
 
 #region BG
@@ -44,4 +37,11 @@ soupGUI.Update();
 	_params.g_ParallaxPosition[2] -= .01;
 	fx_set_parameters(_fx,_params);
 	layer_set_fx("bg3d",_fx);
+#endregion
+
+#region Textbox Theme
+	if ( obj_system.textinput.IsFocused() ) {
+		if ( !quill_change ) { quill_change = true; quill_theme(); }
+	}
+	else { if ( quill_change ) { quill_change = false; quill_theme(); } }
 #endregion

@@ -182,6 +182,7 @@ function __QuillCore() constructor {
 	_boxes = [];
 	_by_id = {};
 	_next_id = 1;
+	_actionenabled = true;
 
 	_active_id = 0;
 	_hover_id = 0;
@@ -389,7 +390,7 @@ function __QuillCore() constructor {
 		"text_col", "text_a",
 		"placeholder_col", "placeholder_a",
 		"disabled_text_col", "disabled_text_a",
-		"validation_gap",
+		"validation_gap", "line_highlight_col", "line_highlight_a",
 		"validation_error_col", "validation_warn_col", "validation_info_col", "validation_a"
 		];
 		static __label_keys = [
@@ -1649,7 +1650,7 @@ function __QuillCore() constructor {
 				__TextInputPasteClipboard(_tb, _cfg);
 				return;
 			}
-			if (keyboard_check_pressed(ord("Z")) && !_read_only) {
+			if (keyboard_check_pressed(ord("Z")) && !_read_only && _actionenabled ) {
 				if (_shift) {
 					__TextInputRedo(_tb, _cfg);
 				}
@@ -1658,7 +1659,7 @@ function __QuillCore() constructor {
 				}
 				return;
 			}
-			if (keyboard_check_pressed(ord("Y")) && !_read_only) {
+			if (keyboard_check_pressed(ord("Y")) && !_read_only && _actionenabled ) {
 				__TextInputRedo(_tb, _cfg);
 				return;
 			}
@@ -2985,7 +2986,7 @@ function __QuillCore() constructor {
 
 	/// @ignore
 	static __TextInputClearSelection = function(_tb) {
-		_tb.selection_anchor = -1;
+		call_later(2, time_source_units_frames, method({ _tb }, function() { _tb.selection_anchor = -1; }));
 	};
 
 	/// @ignore
