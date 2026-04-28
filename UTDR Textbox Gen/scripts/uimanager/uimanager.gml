@@ -165,7 +165,7 @@ function ui_manage() {
 						if ( obj_system.dial_text_outline != obj_system.colors_get[$ colors_cur] ) { obj_system.dial_text_outline = obj_system.colors_get[$ colors_cur]; } //Switching to a new color? Change the text outline
 						else { obj_system.dial_text_outline = c_black; } //Disable text outline
 					}) };
-					obj_system.spr_bord = spr_border_rounded
+
 					butt_data[$ "x2"] = butt_data.x + 20; butt_data[$ "y2"] = butt_data.y + 10; 
 					var butt_ = new Button(butt_data); butt_.update(); //Create button
 				colors_i++; }

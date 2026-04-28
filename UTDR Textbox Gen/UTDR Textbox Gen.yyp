@@ -641,7 +641,6 @@
     {"$GMIncludedFile":"","%Name":"inigo quilez 2d sdf license.txt","CopyToMask":-1,"filePath":"datafiles/Licenses","name":"inigo quilez 2d sdf license.txt","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"scribble_license.txt","CopyToMask":-1,"filePath":"datafiles/licenses","name":"scribble_license.txt","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"scribble_license.txt","CopyToMask":-1,"filePath":"datafiles/Licenses","name":"scribble_license.txt","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
-    {"$GMIncludedFile":"","%Name":"reference_image.png","CopyToMask":-1,"filePath":"datafiles/reference","name":"reference_image.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
   ],
   "isEcma":false,
   "LibraryEmitters":[],

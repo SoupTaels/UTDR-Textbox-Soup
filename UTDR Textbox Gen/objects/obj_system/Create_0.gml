@@ -18,7 +18,7 @@ if ( live_call() ) { return live_result; }
 
 #region Dialogue Text
 	dial_text = $""; //Dialogue Text
-	dial_font = "fnt_monospaced"; //Dialogue Font
+	dial_font = "fnt_monospaced_outline"; //Dialogue Font
 	dial_text_scale = 2; //Text Scale
 	dial_text_gif = false; //Whether to enable typewriting
 	dial_updatet = 0; //Dialogue update timer
@@ -35,9 +35,12 @@ if ( live_call() ) { return live_result; }
 	dial_auto_wrap = true; //Whether to automatically wrap dialogue to new lines
 	dial_wrap_count = 1; //Current wrapped line
 	
-	scribble_font_bake_outline_and_shadow("fnt_determination_nomono", "fnt_default", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 1, false); 
-	scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_monospaced", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); 
-	scribble_font_set_default("fnt_default"); //Use the normal dialogue font by default when using Scribble
+	scribble_font_bake_outline_and_shadow("fnt_determination_nomono", "fnt_default_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 1, false); 
+	scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_monospaced_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); 
+	
+	scribble_font_bake_outline_and_shadow("fnt_determination_nomono", "fnt_default", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 1, false); 
+	scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_monospaced", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 0, false); 
+	scribble_font_set_default("fnt_monospaced_outline"); //Use the normal dialogue font by default when using Scribble
 	
 	typist = scribble_typist();
 	typist_spd = 0.4; //Typewriter speed
@@ -88,6 +91,7 @@ if ( live_call() ) { return live_result; }
 		
 		scribble_add_macro("newl", function() { return "\n  "; }); //Newline with no asterisk
 		scribble_add_macro("newl_a", function() { return "\n* "; }); //Newline with asterisk
+		scribble_add_macro("p_", function() { return "[/page]"; }); //New page shorthand
 	#endregion
 #endregion
 
