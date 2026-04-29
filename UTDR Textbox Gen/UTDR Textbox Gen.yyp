@@ -562,6 +562,8 @@
     {"$GMIncludedFile":"","%Name":"spr_undyne_officer_wink.png","CopyToMask":-1,"filePath":"datafiles/faces/undyne","name":"spr_undyne_officer_wink.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"spr_undyne_pissed_strip2.png","CopyToMask":-1,"filePath":"datafiles/faces/undyne","name":"spr_undyne_pissed_strip2.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"spr_undyne_shocked_strip2.png","CopyToMask":-1,"filePath":"datafiles/faces/undyne","name":"spr_undyne_shocked_strip2.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
+    {"$GMIncludedFile":"","%Name":"spr_font_custom_example_strip90.png","CopyToMask":-1,"filePath":"datafiles/fonts","name":"spr_font_custom_example_strip90.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
+    {"$GMIncludedFile":"","%Name":"spr_font_custom_example_two_strip90.png","CopyToMask":-1,"filePath":"datafiles/fonts","name":"spr_font_custom_example_two_strip90.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"gcmt-dll.dll","CopyToMask":0,"filePath":"datafiles/GMLive","name":"gcmt-dll.dll","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"gmlive-server-alt.exe","CopyToMask":0,"filePath":"datafiles/GMLive","name":"gmlive-server-alt.exe","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"gmlive-server.exe","CopyToMask":0,"filePath":"datafiles/GMLive","name":"gmlive-server.exe","resourceType":"GMIncludedFile","resourceVersion":"2.0",},

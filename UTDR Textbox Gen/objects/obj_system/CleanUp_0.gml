@@ -21,21 +21,29 @@ if ( debug_restart ) { exit; }
 	delete global.faces_dict_alt; global.faces_dict_alt = -1;
 #endregion
 
-#region Destroy Icons, Border, and Reference Image
+#region Destroy Icons, Border, Fonts, and Reference Image
 	#region Icons
-		var i = 0, geticons = struct_get_names(global.icons_dict), getamt = array_length(geticons);
+		var i_ = 0, geticons = struct_get_names(global.icons_dict), getamt = array_length(geticons);
 		repeat ( getamt ) {
-			var cur_ = geticons[i];
+			var cur_ = geticons[i_];
 			global.icons_dict[$ cur_].destroy();
-		i++;	}
+		i_++;	}
 	#endregion
 	
 	#region Borders
-		var i = 0, getbords = struct_get_names(global.bords_dict), getamt = array_length(getbords);
+		var i__ = 0, getbords = struct_get_names(global.bords_dict), getamt = array_length(getbords);
 		repeat ( getamt ) {
-			var cur_ = getbords[i];
+			var cur_ = getbords[i__];
 			global.bords_dict[$ cur_].destroy();
-		i++;	}
+		i__++;	}
+	#endregion
+	
+	#region Fonts
+		var i___ = 0, getfonts = struct_get_names(global.fonts_dict), getamt = array_length(getfonts);
+		repeat ( getamt ) {
+			var cur_ = getfonts[i___];
+			global.fonts_dict[$ cur_].destroy();
+		i___++;	}
 	#endregion
 	
 	if ( sprite_exists(global.refimg) ) { sprite_delete(global.refimg); show_debug_message("Reference image was destroyed and cleared from memory!"); }

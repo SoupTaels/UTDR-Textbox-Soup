@@ -48,13 +48,21 @@
 	typist_spd_orig = typist_spd; //Typewriter original speed
 	typist.in(typist_spd, 0);
 	typist.function_per_char(function(_element, _position, _typist) { //Function to run per character
-		var mychr = chr(_element.get_glyph_data(_position - 1).unicode); //Get the currently revealed character
-		if ( mychr == chr(10) ) { dial_wrap_count++; } //Newline
+		#region Auto Asterisks
+			var mychr = chr(_element.get_glyph_data(_position - 1).unicode); //Get the currently revealed character
+			if ( mychr == chr(10) ) { //Newline
+				var lined = _element.get_line_data(dial_wrap_count, dial_text_page);
+				if ( !lined.forced_break ) { dial_wrap_count++; } //Account for cases where there's a line wrap and a break
+				dial_wrap_count++;
+			}
+		#endregion
 		
-		if ( dial_face_auto ) { //Animate the face while dialogue is typing out
-			static anim_timer = 0; anim_timer++;
-			if ( anim_timer > 2 ) { anim_timer = 0; dial_face_index++; }
-		}
+		#region Animate Face
+			if ( dial_face != -1 && dial_face_auto ) { //Animate the face while dialogue is typing out
+				static anim_timer = 0; anim_timer++;
+				if ( anim_timer > 2 ) { anim_timer = 0; dial_face_index++; }
+			}
+		#endregion
 	});
 	
 	typist.function_on_complete(function() { //Function to run once the dialogue is complete

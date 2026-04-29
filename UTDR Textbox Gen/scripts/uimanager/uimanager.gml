@@ -140,7 +140,7 @@ function ui_manage() {
 					
 					textinput.Focus();
 
-					var txt_ = textinput.GetValue(), txt_insert = $"[{data_}{extra_}]", txt_insert_end = color_ ? "[/c]" : "[/]", result;
+					var txt_ = textinput.GetValue(), txt_insert = $"[{data_}{extra_}]", txt_insert_end = color_ ? "[/c]" : $"[/{data_}]", result;
 					var getpos_ = textinput.GetSelection() ,pos_ = getpos_.start + 1, pos_2 = getpos_._end + 1; //Get the current cursor's position and highlighted position
 					if ( !getpos_.has_selection ) { //Not trying to highlight anything
 						result = string_insert(txt_insert, txt_, pos_);
