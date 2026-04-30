@@ -1,10 +1,9 @@
-![Icon](https://i.imgur.com/Z21MzyU.png "Icon")
-<h1 style="text-align: center;">UTDR SoupGen</h1>
-<h4 style="text-align: center;">An insanely customizable and flexible offline Undertale & Deltarune dialogue textbox generator!</h4>
+<p align="center"><img src="https://i.imgur.com/Z21MzyU.png" style="display:block; margin:auto; width:300px"></p>
+<h1 align="center">🍲 UTDR SoupGen BETA 🍲</h1>
+<p align="center"><i><b>An insanely customizable and flexible offline Undertale & Deltarune dialogue textbox generator! Made in <a href="https://gamemaker.io/en">GameMaker</a> and powered by <a href="https://www.jujuadams.com/Scribble/#/latest/">Scribble</a>.</b></i></p>
 
-------------
+&nbsp;
 
+&nbsp;
 
-<p style="text-align: center;">
-So soupy!
-</p>
+<p align="center">So soupy!! Nothing here yet.</p>
