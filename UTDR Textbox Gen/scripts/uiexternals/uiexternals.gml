@@ -168,7 +168,6 @@ outputLog = "";
 		with ( fonts_dict[$ temp_] ) {
 			self[$ "font"] = font_add_sprite(sprite, ord("!"), false, 0); //Add as an actual font
 			self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; font_delete(font); delete font; font = -1; show_debug_message($"External font \"{fname}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
-			sprite_set_offset(sprite, sprite_get_width(sprite)/ 2, sprite_get_height(sprite)/ 2); //Center sprite
 		}
 		
 		var temp_2 = string_replace(fonts_cur, $"fonts{_path_separator}", ""); 

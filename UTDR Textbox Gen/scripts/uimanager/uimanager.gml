@@ -129,10 +129,9 @@ function ui_manage() {
 					#region Commands with extra parameters
 						var extra_;
 						switch ( data_ ) {
-							case "scale": { extra_ = ",0.5"; } break;
+							case "scale": case "wait": case "alpha": { extra_ = ",0.5"; } break;
 							case "cycle": { extra_ = ",0,120"; } break;
 							case "offset": { extra_ = ",24,24"; } break;
-							case "alpha": { extra_ = ",0.5"; } break;
 							case "speed": { extra_ = $",{typist_spd}"; } break;
 							default: { extra_ = ""; }
 						}
@@ -172,12 +171,12 @@ function ui_manage() {
 			#endregion
 			
 			#region Effects Buttons
-				var effects_ = ["Wave   ", "Wheel    ", "Shake ", "Wobble  ", "Pulse ", "Rainbow", "Slant ", "Scale    ", "Cycle  ", "Blink    ", "Offset", "Alpha   ", "Speed   "], effects_i = 0, effects_len = array_length(effects_), effects_off = effects_len - 6; //Available effects
+				var effects_ = ["Wave   ", "Wheel    ", "Shake ", "Wobble  ", "Pulse ", "Rainbow", "Slant ", "Scale    ", "Cycle  ", "Blink    ", "Alpha  ", "Speed    "], effects_i = 0, effects_len = array_length(effects_), effects_off = effects_len - 6; //Available effects
 				repeat ( effects_len ) {
 					if ( effects_i > 5 ) { continue; }
 					var effects_true = effects_i + ui_effoff;
 					var effects_cur = effects_[effects_true]; //Current effect
-					var butt_data = { x: 180 + ( 75 * effects_i ), y: 95, color_butt: c_orange, color_butt_hover: c_yellow, color: c_black, text: $"{effects_cur} [spr_effects_icons,{effects_true == 12 ? ( effects_true + 1 ) : effects_true}]", padd_multi: 4, on_hover: undefined, on_click: method({ butt_func, effects_cur }, function () { butt_func(string_letters(string_lower(effects_cur))); }) } 
+					var butt_data = { x: 180 + ( 75 * effects_i ), y: 95, color_butt: c_orange, color_butt_hover: c_yellow, color: c_black, text: $"{effects_cur} [spr_effects_icons,{effects_true}]", padd_multi: 4, on_hover: undefined, on_click: method({ butt_func, effects_cur }, function () { butt_func(string_letters(string_lower(effects_cur))); }) } 
 					var butt_ = new Button(butt_data); butt_.update(); //Create button
 				effects_i++; }
 				

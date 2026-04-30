@@ -102,7 +102,7 @@
 		scribble_add_macro("newl_a", function() { return "\n* "; }); //Newline with asterisk and a space
 		scribble_add_macro("newl_l", function() { return chr(10); }); //Newline literal
 		scribble_add_macro("pg", function() { return "[/page]"; }); //New page shorthand
-		scribble_add_macro("sec", function(param) { var real_ = real_ext(param); return $"[delay,{real_ != "" ? real_  * 1000 : 0}]"; }); //Delay tag that converts seconds to milliseconds
+		scribble_add_macro("wait", function(param) { var real_ = real_ext(param); return $"[delay,{real_ != "" ? real_  * 1000 : 0}]"; }); //Delay tag that converts seconds to milliseconds
 		scribble_add_macro("repeat", function(phrase_ = "", times_ = 1, startwith_ = "", endwith_ = "") { //Repeats a phrase for a specified time with an optional parameter to end and start it off with another phrase
 			var real_ = string_digits(times_); if ( real_ == "" ) { return ""; }
 			var string_ = "";
