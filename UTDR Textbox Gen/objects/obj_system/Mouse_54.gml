@@ -1,3 +1,0 @@
-///@desc 
-
-//customupload = get_string_async("Upload your custom sprite to an image hosting site(Imgur, catbox.moe, ImgBB, etc.), copy its image link, then paste it here:", "https://i.imgur.com/iOEFRF7.png");

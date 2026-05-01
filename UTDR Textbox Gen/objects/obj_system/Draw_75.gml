@@ -40,40 +40,6 @@ if ( screenshot || record.enabled ) {
 			surface_save_part(screenshot_surf, fpath_final, x_/ smallbox, y_/ smallbox, w_/ smallbox, h_/ smallbox); //Save output actual
 		}
 
-		var form = new FormData(); //Upload the result to a server (This is for the online folks. This is also why a second temp image is made)
-		#region uguu.se (3hr) (Open Source) (Seems like the best fit)
-			//form.add_file("files[]", fpath);
-			//http("https://uguu.se/upload.php?output=text", "POST", form,, function(http_status, result) { //Sucess!
-			//	show_debug_message($"{http_status} {result}");
-			//	clipboard_set_text(result); uploadstatus = true;
-			//	get_string_async("Here's your result uploaded!", result);
-			//}, 
-			//function(http_status, result) { uploadstatus = false; show_debug_message($"ERROR: {http_status} {result}"); show_message($"ERROR: {http_status} {result}"); }); //Failed
-		#endregion
-		
-		#region tmpfiles.org (1hr)
-			//form.add_file("file", fpath);
-			//http("https://tmpfiles.org/api/v1/upload", "POST", form, , function(http_status, result) { //Sucess!
-			//	show_debug_message($"{http_status} {result}");
-			//	var jsn = json_stringify(result), getlink = jsn.data.url;
-			//	var finallink = string_replace(getlink, "http://tmpfiles.org/", "http://tmpfiles.org/dl/");
-			//	clipboard_set_text(finallink); uploadstatus = true;
-			//	get_string_async("Here's your result uploaded!", finallink);
-			//}, 
-			//function(http_status, result) { uploadstatus = false; show_debug_message($"ERROR: {http_status} {result}"); show_message($"ERROR: {http_status} {result}"); }); //Failed
-		#endregion
-		
-		#region sxcu.net Host (24hr)
-			//form.add_data("self_destruct", true);
-			//form.add_file("file", fpath);
-			//http("https://sxcu.net/api/files/create", "POST", form, , function(http_status, result) { //Sucess!
-			//	var result = json_stringify(result);
-			//	show_debug_message($"{http_status} {result}");
-			//	clipboard_set_text(result.url); uploadstatus = true;
-			//}, 
-			//function(http_status, result) { uploadstatus = false; show_debug_message($"{http_status} {result}"); }); //Failed
-		#endregion
-		
 		if ( !gif_ ) { file_delete(fpath); }
 		show_debug_message($"{fname} saved at {fpath_final}!");
 		sfx_play(snd_dumbvictory);

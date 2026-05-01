@@ -137,8 +137,6 @@
 	ui_visible = true; //Whether the UI should be visible
 	ui_effoff = 0; //Effects array offset 
 	debug_restart = false;
-	customupload = -1; //String Async ID for getting custom sprites
-	uploadstatus = -1; //Upload status(-1 - in progress, true - success, false - failed)
 	
 	#region Main Menu Buttons
 		var i = 0, spr_ = spr_border_octagon, x_ = 320, y_ = 12, clr_ = c_orange, padd_ = 14;
