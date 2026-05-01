@@ -1,7 +1,10 @@
-<p><img style="display: block; margin-left: auto; margin-right: auto;" src="https://i.imgur.com/Z21MzyU.png" alt="https://i.imgur.com/Z21MzyU.png" width="320" height="320" /></p>
-<h1 style="text-align: center;">🍲 UTDR SoupGen <span style="color: #ff0000;">BETA</span> 🍲</h1>
+<p align="center"><img src="https://i.imgur.com/Z21MzyU.png" style="display:block; margin:auto; width:300px"></p>
 <hr />
-<p style="text-align: center;"><em><strong>An insanely customizable and flexible <span style="color: #ffcc00;">offline</span> Undertale &amp; Deltarune dialogue textbox generator! Made in <a href="https://gamemaker.io/en" target="_blank">GameMaker</a> and powered by <a href="https://www.jujuadams.com/Scribble/#/latest/">Scribble</a>.</strong></em></p>
-<p style="text-align: center;"><em><strong> </strong></em></p>
-<p style="text-align: center;"><em><strong> </strong></em></p>
-<p style="text-align: center;">I'm so soupy!! Nothing here yet.</p>
+<h1 align="center"><img src="https://i.imgur.com/dbLaBr6.png" style="display:block; margin:auto;"> <img src="https://i.imgur.com/56kKbOV.png" style="display:block; margin:auto;"> UTDR SoupGen BETA <img src="https://i.imgur.com/33gPmYw.png" style="display:block; margin:auto;"> <img src="https://i.imgur.com/4P4slYc.png" style="display:block; margin:auto;"></h1>
+<p align="center"><i><b>An insanely customizable, flexible, and soupy OFFLINE Undertale & Deltarune dialogue textbox generator! Made in <a href="https://gamemaker.io/en">GameMaker</a> and powered by <a href="https://www.jujuadams.com/Scribble/#/latest/">Scribble</a>.</b></i></p>
+<p align="center"><img src="https://i.imgur.com/450FvnA.gif" style="display:block; margin:auto;"></p>
+<p align="center"><img src="https://i.imgur.com/vqK1SvA.png" style="display:block; margin:auto;"></p>
+<hr />
+&nbsp;
+&nbsp;
+<p align="center">So soupy!! Nothing here yet.</p>
