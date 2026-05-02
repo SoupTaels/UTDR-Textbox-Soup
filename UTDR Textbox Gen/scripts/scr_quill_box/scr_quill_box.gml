@@ -709,6 +709,12 @@ function __Quill(_kind, _label, _placeholder) constructor {
 		config[$ "read_only"] = (_flag == true);
 		return self;
 	};
+	
+	/// @desc Get whether this box is read-only.
+	/// @return {Struct.__Quill}
+	static GetReadOnly = function() {
+		return config[$ "read_only"];
+	};
 
 	/// @desc Set the maximum number of characters allowed (0 = unlimited).
 	/// @param {Real} _len

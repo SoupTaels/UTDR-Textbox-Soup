@@ -24,9 +24,6 @@
 	dial_updatet = 0; //Dialogue update timer
 	dial_updatet_max = 45; //Dialogue update timer delay
 	dial_text_outline = c_black; //Dialogue Outline Color
-	
-	undo_stack_create(); //History of undo changes
-	
 	dial_point_auto = true; //Whether to automatically add points
 	dial_point_chr = "*"; //Dialogue Point Character
 	dial_point_clr = c_white; //Dialogue Point Clr
@@ -58,7 +55,7 @@
 		#endregion
 		
 		#region Animate Face
-			if ( dial_face != -1 && dial_face_auto ) { //Animate the face while dialogue is typing out
+			if ( USING_FACE && dial_face_auto ) { //Animate the face while dialogue is typing out
 				static anim_timer = 0; anim_timer++;
 				if ( anim_timer > 2 ) { anim_timer = 0; dial_face_index++; }
 			}
@@ -67,19 +64,19 @@
 	
 	typist.function_on_complete(function() { //Function to run once the dialogue is complete
 		dial_face_index = 0;
-		dial_face = dial_face_original; //Switch back to the original face
+		dial_face[dial_text_page] = dial_face_original[dial_text_page]; //Switch back to the original face
 		typist_spd = typist_spd_orig; //Switch back to the original typewriter speed
 	});
 	
 	#region Typist Events
 		scribble_typists_add_event("face", function(_, param) { //Switch to a new portrait sprite
 			DIAL_GIF
-			dial_face_prev = dial_face; //Get the previous face
-			dial_face = get_face(param[0], array_length(param) > 1 ? param[1] : -1);
-			if ( dial_face != -1 ) { dial_face_name = param[0]; }
+			dial_face_prev[dial_text_page] = dial_face[dial_text_page]; //Get the previous face
+			dial_face[dial_text_page] = get_face(param[0], array_length(param) > 1 ? param[1] : -1);
+			if ( USING_FACE ) { dial_face_name[dial_text_page] = param[0]; }
 		});
-		scribble_typists_add_event("face_orig", function(_, param) { DIAL_GIF dial_face_original = get_face(param[0], array_length(param) > 1 ? param[1] : -1); }); //Change the original previous face to a new 
-		scribble_typists_add_event("face_prev", function(_, param) { DIAL_GIF dial_face = dial_face_prev; }); //Change the face back to the previous face
+		scribble_typists_add_event("face_orig", function(_, param) { DIAL_GIF dial_face_original[dial_text_page] = get_face(param[0], array_length(param) > 1 ? param[1] : -1); }); //Change the original previous face to a new 
+		scribble_typists_add_event("face_prev", function(_, param) { DIAL_GIF dial_face[dial_text_page] = dial_face_prev[dial_text_page]; }); //Change the face back to the previous face
 		scribble_typists_add_event("face_auto", function(_, param) { DIAL_GIF dial_face_auto = bool(string_letters(param[0])); }); //Switch the automatically animation of the face
 		scribble_typists_add_event("face_index", function(_, param) { DIAL_GIF dial_face_index = real(string_digits(param[0])); }); //Change the index of the face(if dial_face_auto is off), for sprites with more sprites and expressions
 		scribble_typists_add_event("border", function(_, param) { //Switch to a new border sprite
@@ -95,7 +92,7 @@
 				else { dial_text_page = real(string_digits(param[0])); dial_text_page = clamp(dial_text_page, 0, dial_text_page_c); } //Go to a specific page
 			}
 		});
-		scribble_typists_add_event("face_stick", function(_, param) { DIAL_GIF dial_face_original = get_face(dial_face_name); }); //Make the previous dialogue face stick
+		scribble_typists_add_event("face_stick", function(_, param) { DIAL_GIF dial_face_original[dial_text_page] = get_face(dial_face_name[dial_text_page]); }); //Make the previous dialogue face stick
 		scribble_typists_add_event("speed_pop", function(_, param) { DIAL_GIF typist_spd = typist_spd_orig; }); //Changes the typist speed back to the default
 		
 		scribble_add_macro("newl", function() { return "\n  "; }); //Newline with no asterisk and it's padded out
@@ -119,13 +116,13 @@
 #endregion
 
 #region Dialogue Face
-	dial_face = -1; //Dialogue Face
+	dial_face[dial_text_page] = -1; //Dialogue Face
 	dial_face_index = 0; //Dialogue Face Frame
-	dial_face_prev = -1; //Previous Dial Face
-	dial_face_original = -1; //Original Dial Face
+	dial_face_prev[dial_text_page] = -1; //Previous Dial Face
+	dial_face_original[dial_text_page] = -1; //Original Dial Face
 	dial_face_auto = true; //Whether to automatically animate the sprite when dialogue is typing
 	dial_face_clr = c_white; //Dialogue Face Clr
-	dial_face_name = -1; //Dialogue Portrait Internal Name
+	dial_face_name[dial_text_page] = -1; //Dialogue Portrait Internal Name
 #endregion
 
 #region UI
@@ -137,6 +134,11 @@
 	ui_visible = true; //Whether the UI should be visible
 	ui_effoff = 0; //Effects array offset 
 	debug_restart = false;
+	ui_message = { is_destroyed: true }; //Message box struct
+	file_dragging = false; //Whether a file is being dragged on screen.
+	file_dragging_id = 0; //Custom sprites added via file dragging
+	undo_stack_create(); //History of undo changes
+	file_dropper_init(); //Handle file dropping
 	
 	#region Main Menu Buttons
 		var i = 0, spr_ = spr_border_octagon, x_ = 320, y_ = 12, clr_ = c_orange, padd_ = 14;

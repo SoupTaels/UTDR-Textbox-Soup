@@ -40,6 +40,7 @@ outputLog = "";
 	///@param {string} expression Expression type
 	function get_face(name, expression = -1) {
 		var face = -1, has__ = string_search(name, "_", false);
+		if ( global.faces_dict[$ name] != -1 ) { with ( global.faces_dict[$ name] ) { if ( self[$ "DEFAULT CUSTOM SOUPY"] != undefined ) { return self[$ "DEFAULT CUSTOM SOUPY"].sprite; } } }
 		if ( has__ ) { 
 			var count = string_count("_", name);
 			
@@ -138,7 +139,9 @@ outputLog = "";
 		
 		///@desc Returns a sprite index from an externally added border sprite.
 		///@param {string} name Border Sprite Name (ex: bordercustomexample, bordercustomexampletwo, etc.)
-		function get_border(name) { return struct_exists(global.bords_dict, name) ? global.bords_dict[$ name].sprite : ( struct_exists(global.bords_dict_alt, name) ? global.bords_dict_alt[$ name].sprite : -1 ); }
+		function get_border(name) { 
+			return struct_exists(global.bords_dict, name) ? global.bords_dict[$ name].sprite : ( struct_exists(global.bords_dict_alt, name) ? global.bords_dict_alt[$ name].sprite : -1 ); 
+		}
 		
 		///@desc Returns a struct from an externally added border sprite.
 		///@param {string} name Border Sprite Name (ex: bordercustomexample, bordercustomexampletwo, etc.)

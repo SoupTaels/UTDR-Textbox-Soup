@@ -1,4 +1,6 @@
 #macro DIAL_GIF if ( !dial_text_gif ) { exit; } //Only run if GIFs are enabled
+#macro UI_MESSAGE obj_system.ui_message.is_destroyed //Only function if there isn't a message box being displayed
+#macro USING_FACE dial_face[dial_text_page] != -1 && dial_face[dial_text_page] != 0
 
 #region Default functions for the menu buttons
 	function on_enter_() { if ( obj_system.ui_tab != id_ ) { sfx_play(snd_sel_switch); TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } }
@@ -50,19 +52,27 @@ function Button(datastruct_ = undefined) constructor {
 		if ( hastext ) { button.draw(x_ + xoff, y_ + yoff); } //Draw Scribble text
 			
 		if ( hovered && window_has_focus() ) { //If the mouse has enter within the bounding box
-			if ( !on_enter ) { on_enter = true; on_leave = false; if ( !is_undefined(data[$ "on_enter"]) ) { data[$ "on_enter"](); } } //Mouse Entered Function
-			if ( !is_undefined(data[$ "on_hover"]) ) { data[$ "on_hover"](); } //Mouse Hovering Function
-			if ( mouse_pressed ) { if ( !is_undefined(data[$ "on_click"]) ) { data[$ "on_click"](); exit; } } //Mouse Pressed Function
-			if ( mouse_check ) { if ( !is_undefined(data[$ "on_held"]) ) { data[$ "on_held"](); } } //Mouse Held Function
-			if ( mouse_released ) { if ( !is_undefined(data[$ "on_released"]) ) { data[$ "on_released"](); } } //Mouse Released Function
-			if ( mouse_pressed_right ) { if ( !is_undefined(data[$ "on_click_right"]) ) { data[$ "on_click_right"](); exit; } } //Mouse Pressed Function
-			if ( mouse_check_right ) { if ( !is_undefined(data[$ "on_held_right"]) ) { data[$ "on_held_right"](); } } //Mouse Held Function
-			if ( mouse_released_right ) { if ( !is_undefined(data[$ "on_released_right"]) ) { data[$ "on_released_right"](); } } //Mouse Released Function
+			if ( UI_MESSAGE ) { 
+				if ( !on_enter ) { on_enter = true; on_leave = false; if ( !is_undefined(data[$ "on_enter"]) ) { data[$ "on_enter"](); } } //Mouse Entered Function
+				if ( !is_undefined(data[$ "on_hover"]) ) { data[$ "on_hover"](); } //Mouse Hovering Function
+				if ( mouse_pressed ) { if ( !is_undefined(data[$ "on_click"]) ) { data[$ "on_click"](); exit; } } //Mouse Pressed Function
+				if ( mouse_check ) { if ( !is_undefined(data[$ "on_held"]) ) { data[$ "on_held"](); } } //Mouse Held Function
+				if ( mouse_released ) { if ( !is_undefined(data[$ "on_released"]) ) { data[$ "on_released"](); } } //Mouse Released Function
+				if ( mouse_pressed_right ) { if ( !is_undefined(data[$ "on_click_right"]) ) { data[$ "on_click_right"](); exit; } } //Mouse Pressed Function
+				if ( mouse_check_right ) { if ( !is_undefined(data[$ "on_held_right"]) ) { data[$ "on_held_right"](); } } //Mouse Held Function
+				if ( mouse_released_right ) { if ( !is_undefined(data[$ "on_released_right"]) ) { data[$ "on_released_right"](); } } //Mouse Released Function
+			}
 		}
 		else { //If the mouse just left the bounding box
 			if ( on_enter ) { if ( !on_leave ) { on_leave = true; on_enter = false; if ( !is_undefined(data[$ "on_leave"]) ) { data[$ "on_leave"](); } } } //Mouse Leave Function
 		}
 	}
+}
+
+///@desc Display a LimeUI message box, blocking ui
+function soupy_message(message_, snd_ = snd_error, height_ = 50, y_ = 10) { 
+	sfx_play(snd_);
+	if ( UI_MESSAGE ) { obj_system.ui_message = luiShowMessage(obj_system.soupy_lui, , , message_, , y_); obj_system.ui_message.setHeight(height_); }
 }
 
 ///@desc Manages state for UI tabs.
@@ -118,7 +128,11 @@ function ui_manage() {
 				draw_sprite_ensure(spr_pixel, 0, x_ - 10, y_ - 14, w_ + 20, h_ + 24, 0, c_black, 1); //Textbox Outline Outer
 				draw_sprite_ensure(spr_pixel, 0, x_ - 8, y_ - 12, w_ + 16, h_ + 20, 0, c_white, 1); //Textbox Outline Inner
 				draw_sprite_ensure(spr_pixel, 0, x_ - 2, y_ - 6, w_ + 4, h_ + 8, 0, c_black, 1); //Textbox Inner Shadow and Outline
+
+				textinput.SetReadOnly(!UI_MESSAGE);
+				if ( textinput.GetReadOnly() ) { textinput.SetEnabled(false); } else { textinput.SetEnabled(true); }
 				textinput.Draw(x_, y_, w_, h_);
+				QuillDrawOverlays();
 		
 				draw_format("left", "center", fnt_abaddon);
 				draw_text_ext(20, 90, "Quick Colors:\n \nQuick Effects:", 12, -1);
@@ -180,36 +194,38 @@ function ui_manage() {
 					var butt_ = new Button(butt_data); butt_.update(); //Create button
 				effects_i++; }
 				
-				#region Right Button
-					if ( variable_instance_get(obj_system, "within_hover") == undefined ) { variable_instance_set(obj_system, "within_hover", false); }
-					if ( variable_instance_get(obj_system, "yscale_") == undefined ) { variable_instance_set(obj_system, "yscale_", 1); }
-					if ( ui_effoff < effects_off ) {
-						var x_ = 605, y_ = 98, within_ = range_within(mouse_x_gui, x_ - 5, x_ + 20) && range_within(mouse_y_gui, y_ - 5, y_ + 5);
-						if ( within_ ) {
-							if ( !within_hover ) { within_hover = true; sfx_play(snd_sel_switch); } //Hover
-							if ( mouse_pressed ) { sfx_play(snd_sel_switch, 0, , 1.3); ui_effoff = approach(ui_effoff, effects_off, 1); yscale_ = 0.5; } //Pressed
-							if ( mouse_pressed_right ) { sfx_play(snd_throw, 0, , 1.3); sfx_play(snd_bump, , 0.7, 1.5); ui_effoff = effects_off; } //Pressed Right
+				if ( UI_MESSAGE ) {
+					#region Right Button
+						if ( variable_instance_get(obj_system, "within_hover") == undefined ) { variable_instance_set(obj_system, "within_hover", false); }
+						if ( variable_instance_get(obj_system, "yscale_") == undefined ) { variable_instance_set(obj_system, "yscale_", 1); }
+						if ( ui_effoff < effects_off ) {
+							var x_ = 605, y_ = 98, within_ = range_within(mouse_x_gui, x_ - 5, x_ + 20) && range_within(mouse_y_gui, y_ - 5, y_ + 5);
+							if ( within_ ) {
+								if ( !within_hover ) { within_hover = true; sfx_play(snd_sel_switch); } //Hover
+								if ( mouse_pressed ) { sfx_play(snd_sel_switch, 0, , 1.3); ui_effoff = approach(ui_effoff, effects_off, 1); yscale_ = 0.5; } //Pressed
+								if ( mouse_pressed_right ) { sfx_play(snd_throw, 0, , 1.3); sfx_play(snd_bump, , 0.7, 1.5); ui_effoff = effects_off; } //Pressed Right
+							}
+							else { within_hover = false; }
+							draw_sprite_ensure(spr_effects_icons, 12, x_ + ( abs(sin(current_time/300) * 5) ) , y_, -1, yscale_, , within_ ? c_white : c_yellow); //Right Arrow
 						}
-						else { within_hover = false; }
-						draw_sprite_ensure(spr_effects_icons, 12, x_ + ( abs(sin(current_time/300) * 5) ) , y_, -1, yscale_, , within_ ? c_white : c_yellow); //Right Arrow
-					}
-					yscale_ = lerp(yscale_, 1, 0.15);
-				#endregion
-				#region Left Button
-					if ( variable_instance_get(obj_system, "within_hover2") == undefined ) { variable_instance_set(obj_system, "within_hover2", false); }
-					if ( variable_instance_get(obj_system, "yscale_2") == undefined ) { variable_instance_set(obj_system, "yscale_2", 1); }
-					if ( ui_effoff > 0 ) {
-						var x_ = 130, y_ = 98, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 5) && range_within(mouse_y_gui, y_ - 5, y_ + 5);
-						if ( within_ ) {
-							if ( !within_hover2 ) {within_hover2 = true; sfx_play(snd_sel_switch); } //Hover
-							if ( mouse_pressed ) { sfx_play(snd_sel_switch, 0, , 0.7); ui_effoff = approach(ui_effoff, 0, 1); yscale_2 = 0.5; } //Pressed
-							if ( mouse_pressed_right ) { sfx_play(snd_throw, 0, , 1.3); sfx_play(snd_bump, , 0.7, 1.5); ui_effoff = 0; } //Pressed Right
+						yscale_ = lerp(yscale_, 1, 0.15);
+					#endregion
+					#region Left Button
+						if ( variable_instance_get(obj_system, "within_hover2") == undefined ) { variable_instance_set(obj_system, "within_hover2", false); }
+						if ( variable_instance_get(obj_system, "yscale_2") == undefined ) { variable_instance_set(obj_system, "yscale_2", 1); }
+						if ( ui_effoff > 0 ) {
+							var x_ = 130, y_ = 98, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 5) && range_within(mouse_y_gui, y_ - 5, y_ + 5);
+							if ( within_ ) {
+								if ( !within_hover2 ) {within_hover2 = true; sfx_play(snd_sel_switch); } //Hover
+								if ( mouse_pressed ) { sfx_play(snd_sel_switch, 0, , 0.7); ui_effoff = approach(ui_effoff, 0, 1); yscale_2 = 0.5; } //Pressed
+								if ( mouse_pressed_right ) { sfx_play(snd_throw, 0, , 1.3); sfx_play(snd_bump, , 0.7, 1.5); ui_effoff = 0; } //Pressed Right
+							}
+							else { within_hover2 = false; }
+							draw_sprite_ensure(spr_effects_icons, 12, x_ - ( abs(sin(current_time/300) * 5) ), y_, , yscale_2, , within_ ? c_white : c_yellow); //Left Arrow
 						}
-						else { within_hover2 = false; }
-						draw_sprite_ensure(spr_effects_icons, 12, x_ - ( abs(sin(current_time/300) * 5) ), y_, , yscale_2, , within_ ? c_white : c_yellow); //Left Arrow
-					}
-					yscale_2 = lerp(yscale_2, 1, 0.15);
-				#endregion
+						yscale_2 = lerp(yscale_2, 1, 0.15);
+					#endregion
+				}
 			#endregion
 
 			#region Text Update
@@ -233,9 +249,11 @@ function ui_manage() {
 			#endregion
 			
 			#region Change Cursor
-				if ( range_within(mouse_x_gui, 120, 620) && range_within(mouse_y_gui, 60, 120) ) { window_set_cursor(cr_drag); } //At the command palette
-				else if ( range_within(mouse_x_gui, 20, 620) && range_within(mouse_y_gui, 110, 300) ) { window_set_cursor(cr_beam); } //At the textbox
-				else { if ( mouse_y_gui >= 60 ) { window_set_cursor(cr_default); } }
+				if ( UI_MESSAGE ) {
+					if ( range_within(mouse_x_gui, 120, 620) && range_within(mouse_y_gui, 60, 120) ) { window_set_cursor(cr_drag); } //At the command palette
+					else if ( range_within(mouse_x_gui, 20, 620) && range_within(mouse_y_gui, 110, 300) ) { window_set_cursor(cr_beam); } //At the textbox
+					else { if ( mouse_y_gui >= 60 ) { window_set_cursor(cr_default); } }
+				}
 			#endregion
 		} break;
 		
@@ -271,63 +289,66 @@ function ui_manage() {
 	}
 	
 	#region Toggle Dialogue Box Visibility
-		if ( variable_instance_get(obj_system, "within_hover3") == undefined ) { variable_instance_set(obj_system, "within_hover3", false); }
-		if ( variable_instance_get(obj_system, "yscale_3") == undefined ) { variable_instance_set(obj_system, "yscale_3", 1); }
+		if ( UI_MESSAGE && ui_tab == 0 ) {
+			if ( variable_instance_get(obj_system, "within_hover3") == undefined ) { variable_instance_set(obj_system, "within_hover3", false); }
+			if ( variable_instance_get(obj_system, "yscale_3") == undefined ) { variable_instance_set(obj_system, "yscale_3", 1); }
 		
-		var x_ = 320, y_ = 473, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 20) && range_within(mouse_y_gui, y_ - 30, y_ + 5);
-		if ( within_ ) {
-			if ( !within_hover3 ) { within_hover3 = true; sfx_play(snd_sel_switch); } //Hover
-			if ( mouse_pressed ) { sfx_play(snd_enc1, 0, , bord_visible ? 0.7 : 1.3); bord_visible = !bord_visible; yscale_3 = 0.5; } //Pressed
+			var x_ = 320, y_ = 473, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 20) && range_within(mouse_y_gui, y_ - 30, y_ + 5);
+			if ( within_ ) {
+				if ( !within_hover3 ) { within_hover3 = true; sfx_play(snd_sel_switch); } //Hover
+				if ( mouse_pressed ) { sfx_play(snd_enc1, 0, , bord_visible ? 0.7 : 1.3); bord_visible = !bord_visible; yscale_3 = 0.5; } //Pressed
+			}
+			else { within_hover3 = false; }
+			draw_sprite_ensure(spr_effects_icons, 12, x_, y_, , yscale_3, bord_visible ? 90 : 270, within_ ? c_white : c_yellow); //Left Arrow
+			yscale_3 = lerp(yscale_3, 1, 0.15);
 		}
-		else { within_hover3 = false; }
-		draw_sprite_ensure(spr_effects_icons, 12, x_, y_, , yscale_3, bord_visible ? 90 : 270, within_ ? c_white : c_yellow); //Left Arrow
-		yscale_3 = lerp(yscale_3, 1, 0.15);
 	#endregion
 	
 	#region Switch Between Pages
+		if ( UI_MESSAGE ) {
+			#region Left Page
+				if ( dial_text_page_c > 1 && dial_text_page > 0 ) { 
+					if ( variable_instance_get(obj_system, "within_hover4") == undefined ) { variable_instance_set(obj_system, "within_hover4", false); }
+					if ( variable_instance_get(obj_system, "yscale_4") == undefined ) { variable_instance_set(obj_system, "yscale_4", 1); }
+		
+					var x_ = 10, y_ = 400, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 20) && range_within(mouse_y_gui, y_ - 30, y_ + 5);
+					if ( within_ ) {
+						if ( !within_hover4 ) { within_hover4 = true; sfx_play(snd_sel_switch); } //Hover
+						if ( mouse_pressed ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw); dial_text_page = approach(dial_text_page, 0, 1); yscale_4 = 0.5; } //Pressed
+						if ( mouse_pressed_right ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw, , , 1.3); dial_text_page = 0; } //Pressed Right
+					}
+					else { within_hover4 = false; }
+					draw_sprite_stretched_ext(spr_pixel, 0, x_ - 22, y_ - 17, 39, 34, c_black, 1); //Outline
+					draw_sprite_stretched(spr_border_undertale, 0, x_ - 20, y_ - 15, 35, 30); //Border
+					draw_sprite_ensure(spr_effects_icons, 12, x_ - abs(sin(current_time/250) ) * 4, y_, -1, yscale_4, 180, within_ ? c_white : c_yellow); //Right Arrow
+					yscale_4 = lerp(yscale_4, 1, 0.15);
+				}
+			#endregion
+		
+			#region Right Page
+				if ( dial_text_page_c > 1 && dial_text_page < ( dial_text_page_c - 1 ) ) {
+					if ( variable_instance_get(obj_system, "within_hover5") == undefined ) { variable_instance_set(obj_system, "within_hover5", false); }
+					if ( variable_instance_get(obj_system, "yscale_5") == undefined ) { variable_instance_set(obj_system, "yscale_5", 1); }
+		
+					var x_ = 630, y_ = 400, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 20) && range_within(mouse_y_gui, y_ - 30, y_ + 5);
+					if ( within_ ) {
+						if ( !within_hover5 ) { within_hover5 = true; sfx_play(snd_sel_switch); } //Hover
+						if ( mouse_pressed ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw); dial_text_page = approach(dial_text_page, dial_text_page_c, 1); yscale_5 = 0.5; } //Pressed
+						if ( mouse_pressed_right ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw, , , 1.3); dial_text_page = dial_text_page_c - 1; } //Pressed Right
+					}
+					else { within_hover5 = false; }
+					draw_sprite_stretched_ext(spr_pixel, 0, x_ - 15, y_ - 17, 39, 34, c_black, 1); //Outline
+					draw_sprite_stretched(spr_border_undertale, 0, x_ - 13, y_ - 15, 35, 30); //Border
+					draw_sprite_ensure(spr_effects_icons, 12, x_ + abs(sin(current_time/250) ) * 4, y_, , yscale_5, 180, within_ ? c_white : c_yellow); //Right Arrow
+					yscale_5= lerp(yscale_5, 1, 0.15);
+				}
+			#endregion
+		}
 		#region Page Indicator Text
 			if ( dial_text_page_c > 1 && bord_visible ) {
 				draw_format("center", "center", fnt_abaddon, , 0.4);
 				draw_text(320, 333, $"< Page {dial_text_page + 1}/ {dial_text_page_c} >");
 				draw_format();
-			}
-		#endregion
-		
-		#region Left Page
-			if ( dial_text_page_c > 1 && dial_text_page > 0 ) { 
-				if ( variable_instance_get(obj_system, "within_hover4") == undefined ) { variable_instance_set(obj_system, "within_hover4", false); }
-				if ( variable_instance_get(obj_system, "yscale_4") == undefined ) { variable_instance_set(obj_system, "yscale_4", 1); }
-		
-				var x_ = 10, y_ = 400, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 20) && range_within(mouse_y_gui, y_ - 30, y_ + 5);
-				if ( within_ ) {
-					if ( !within_hover4 ) { within_hover4 = true; sfx_play(snd_sel_switch); } //Hover
-					if ( mouse_pressed ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw); dial_text_page = approach(dial_text_page, 0, 1); yscale_4 = 0.5; } //Pressed
-					if ( mouse_pressed_right ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw, , , 1.3); dial_text_page = 0; } //Pressed Right
-				}
-				else { within_hover4 = false; }
-				draw_sprite_stretched_ext(spr_pixel, 0, x_ - 22, y_ - 17, 39, 34, c_black, 1); //Outline
-				draw_sprite_stretched(spr_border_undertale, 0, x_ - 20, y_ - 15, 35, 30); //Border
-				draw_sprite_ensure(spr_effects_icons, 12, x_ - abs(sin(current_time/250) ) * 4, y_, -1, yscale_4, 180, within_ ? c_white : c_yellow); //Right Arrow
-				yscale_4 = lerp(yscale_4, 1, 0.15);
-			}
-		#endregion
-		
-		#region Right Page
-			if ( dial_text_page_c > 1 && dial_text_page < ( dial_text_page_c - 1 ) ) {
-				if ( variable_instance_get(obj_system, "within_hover5") == undefined ) { variable_instance_set(obj_system, "within_hover5", false); }
-				if ( variable_instance_get(obj_system, "yscale_5") == undefined ) { variable_instance_set(obj_system, "yscale_5", 1); }
-		
-				var x_ = 630, y_ = 400, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 20) && range_within(mouse_y_gui, y_ - 30, y_ + 5);
-				if ( within_ ) {
-					if ( !within_hover5 ) { within_hover5 = true; sfx_play(snd_sel_switch); } //Hover
-					if ( mouse_pressed ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw); dial_text_page = approach(dial_text_page, dial_text_page_c, 1); yscale_5 = 0.5; } //Pressed
-					if ( mouse_pressed_right ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw, , , 1.3); dial_text_page = dial_text_page_c - 1; } //Pressed Right
-				}
-				else { within_hover5 = false; }
-				draw_sprite_stretched_ext(spr_pixel, 0, x_ - 15, y_ - 17, 39, 34, c_black, 1); //Outline
-				draw_sprite_stretched(spr_border_undertale, 0, x_ - 13, y_ - 15, 35, 30); //Border
-				draw_sprite_ensure(spr_effects_icons, 12, x_ + abs(sin(current_time/250) ) * 4, y_, , yscale_5, 180, within_ ? c_white : c_yellow); //Right Arrow
-				yscale_5= lerp(yscale_5, 1, 0.15);
 			}
 		#endregion
 	#endregion

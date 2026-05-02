@@ -3,9 +3,19 @@
 if ( bord_out ) { outlinesoup_step(640, 480); }
 soupy_lui.update();
 
-#region Clamp Page Count
+#region Clamp Page Count and Ensure Face
 	if ( dial_text == "" ) { dial_text_page = 0; dial_text_page_c = 0; }
 	dial_text_page = clamp(dial_text_page, 0, dial_text_page_c);
+	
+	if ( dial_text_page_c > 1 ) { //Prevents out of bounds array reads
+		var result = array_length(dial_face);
+		if ( result < dial_text_page_c ) { 
+			dial_face[dial_text_page_c - 1] = -1;
+			dial_face_prev[dial_text_page_c - 1] = -1; 
+			dial_face_original[dial_text_page_c - 1] = -1; 
+			dial_face_name[dial_text_page_c - 1] = -1; 
+		}
+	}
 #endregion
 
 #region Animation
@@ -49,4 +59,11 @@ soupy_lui.update();
 		if ( !quill_change ) { quill_change = true; quill_theme(); }
 	}
 	else { if ( quill_change ) { quill_change = false; quill_theme(); } }
+#endregion
+
+#region Broadcast Signal
+	if ( struct_names_count(global.soupsignal) > 0 ) { 
+		var sig_ = soupy_alarm("signals", 1, true);
+		soupy_alarm_run(sig_.myname_, 0, function () { global.soupsignal = {}; });
+	}
 #endregion

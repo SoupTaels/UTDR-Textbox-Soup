@@ -33,7 +33,7 @@ function mouse_debug()
 		if ( doublepress == 0 ) { doublepress = 15; }
 		else { doublepress = 0; clipboard_set_text(!keyboard_check(ord("Q")) ? $"{mouse_x_gui}, {mouse_y_gui}" : $"{mouse_x}, {mouse_y}"); }
 	}
-	//draw_format();
+	draw_format();
 }
 
 ///@desc Sets up default drawing parameters
