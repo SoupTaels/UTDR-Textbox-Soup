@@ -136,7 +136,8 @@
 	debug_restart = false;
 	ui_message = { is_destroyed: true }; //Message box struct
 	file_dragging = false; //Whether a file is being dragged on screen.
-	file_dragging_id = 0; //Custom sprites added via file dragging
+	file_dragging_face = -1; //For async face sprite loading
+	file_dragging_bord = -1; //For async border sprite loading
 	undo_stack_create(); //History of undo changes
 	file_dropper_init(); //Handle file dropping
 	

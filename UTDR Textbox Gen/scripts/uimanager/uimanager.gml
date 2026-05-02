@@ -69,12 +69,6 @@ function Button(datastruct_ = undefined) constructor {
 	}
 }
 
-///@desc Display a LimeUI message box, blocking ui
-function soupy_message(message_, snd_ = snd_error, height_ = 50, y_ = 10) { 
-	sfx_play(snd_);
-	if ( UI_MESSAGE ) { obj_system.ui_message = luiShowMessage(obj_system.soupy_lui, , , message_, , y_); obj_system.ui_message.setHeight(height_); }
-}
-
 ///@desc Manages state for UI tabs.
 function ui_manage() {
 	live_auto_call 

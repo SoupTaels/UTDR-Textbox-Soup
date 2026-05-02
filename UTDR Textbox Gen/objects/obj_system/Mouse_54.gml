@@ -1,2 +1,4 @@
 ///@desc 
-show_debug_message("Page: {2} | Current Face: {0} | Original Face: {1}", dial_face[dial_text_page], dial_face_original[dial_text_page], dial_text_page);
+soupy_message_ext([ "Credits:", ".+\\/\\/\\_______________________________________________/\\/\\/+.", "", "Scribble, Clean Shapes, Gumshoe: JujuAdams", "GMLive, ExecuteShellSimple, FileDropper: YellowAfterlife", "TweenGMX: stephenloney", 
+	"Undo Stack: alphish-creature(Alice)", "LimeUI: Limekys", "Quill: RefresherTowelGames", "Undertale, Deltarune: Toby Fox, Temmie Chang", "Happy generating by yours truly, Soup Taels!", "", "Huge thanks to JujuAdams especially as this wouldn't", "have be possible without his tools!" ], 
+	"Cool!", , , , , fnt_abaddon);
