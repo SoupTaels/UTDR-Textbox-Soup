@@ -326,3 +326,48 @@ function string_exclude(string_, exclude_, sub_ = "") {
 	
 ///@desc delta_time optimizer
 function deltaizer() { return delta_time * game_get_speed(gamespeed_fps) * 0.000001; }
+
+function string_between(str, substr1, substr2, skip = 0, startfrom = 1) {
+	    var first_found = false;
+	    var str_between = "";
+    
+	    var times_found = 0;
+    
+	    var str_length = string_length(str);
+	    var substr1_length = string_length(substr1);
+	    var substr2_length = string_length(substr2);
+    
+	    for(var i = startfrom; i < str_length; i++) {
+	        if !first_found {
+	            if string_ord_at(str, i) == string_ord_at(substr1, 1) {
+	                var same_chars = true;
+	                for(var s = 0; s < substr1_length-1; s++) {
+	                    same_chars = string_ord_at(str, i+s) == string_ord_at(substr1, s+1);
+	                    if !same_chars break;
+	                }
+                
+	                if same_chars {
+	                    if times_found++ == skip {
+	                        first_found = true;
+	                        i += substr1_length-1;
+	                    }
+	                }
+	            }
+	        }
+	        else {    
+	            if string_ord_at(str, i) == string_ord_at(substr2, 1) {
+	                var same_chars = true;
+	                for(var s = 0; s < substr2_length-1; s++) {
+	                    same_chars = string_ord_at(str, i+s) == string_ord_at(substr2, s+1);
+	                    if !same_chars break;
+	                }
+	                if same_chars return str_between;
+	            }
+            
+	            str_between += string_char_at(str, i);
+	        }
+	    }
+    
+	    if first_found str_between += string_char_at(str, i);
+	    return str_between;
+}

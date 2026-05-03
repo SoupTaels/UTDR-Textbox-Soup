@@ -3,70 +3,64 @@ outputLog = "";
 	faces_dict = {};
 	faces_dict_alt = {};
 	
-	var findfaces = gumshoe("faces", ".png"), faces_i = 0, faces_len = array_length(findfaces), _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
+	var findfaces = gumshoe("faces", ".png"), faces_i = 0, faces_count = 0, faces_len = array_length(findfaces), _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
 	repeat ( faces_len ) {
 		var faces_cur = findfaces[faces_i]; //Current face we're looking at
 		var faces_dir = filename_dir_name(faces_cur); //Get directory name
 		if ( !struct_exists(global.faces_dict, faces_dir) ) { global.faces_dict[$ faces_dir] = {}; } //Create new struct face dictionary
-	
-		var temp_ = string_replace(faces_cur, $"faces{_path_separator}{faces_dir}{_path_separator}", ""); //Remove faces/(folder name)/
-		temp_ = string_replace(string_replace(string_replace(temp_, "_strip", ""), ".png", ""), "spr_", ""); //Remove .png, _strip, and spr_
-		var temp2 = string_digits(temp_), imgnum = temp2 != "" ? real(temp2) : 1; //Get how many numbers are in this strip image
-		temp_ = string_letters(temp_); //Remove anything that isn't a letter
-		var faces_emote = string_replace(temp_, faces_dir, ""); //Get face expression
-	
-		with ( global.faces_dict[$ faces_dir] ) {
-			self[$ faces_emote] = { sprite: sprite_add(faces_cur, imgnum, false, false, 0, 0), expression: faces_emote, name: faces_cur, } //Add sprite index and expression name to the global face dictonary
-			with ( self[$ faces_emote] ) { 
-				self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External face \"{name}\" was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
-				sprite_set_offset(sprite, sprite_get_width(sprite)/ 2, sprite_get_height(sprite)/ 2); //Center sprite
+			var temp_ = string_replace(faces_cur, $"faces{_path_separator}{faces_dir}{_path_separator}", ""); //Remove faces/(folder name)/
+			var imgnum = string_between(temp_, "_strip", ".png"); imgnum = imgnum == "" ? 1 : imgnum; //Get the image number if it's a strip file
+			var faces_emote = string_exclude(string_replace(string_replace(string_replace(temp_, $"_strip", ""), $"spr_{faces_dir}_", ""), ".png", ""), "1234567890"); //Get face expression
+			
+			with ( global.faces_dict[$ faces_dir] ) {
+				self[$ faces_emote] = { sprite: sprite_add(faces_cur, imgnum, false, false, 0, 0), expression: faces_emote, name: faces_cur, count: imgnum, } //Add sprite index and expression name to the global face dictonary
+				with ( self[$ faces_emote] ) { 
+					self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External face \"{name}\" was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
+					sprite_set_offset(sprite, sprite_get_width(sprite)/ 2, sprite_get_height(sprite)/ 2); //Center sprite
+					
+					var scrib_ = $"{faces_dir}_{expression}"; scribble_external_sprite_add(sprite, scrib_); //Register sprite with Scribble
+					var altname_ = $"spr_{scrib_}"; if ( !scribble_external_sprite_exists(altname_) ) { scribble_external_sprite_add(sprite, altname_); } //Alternative name
+					global.faces_dict_alt[$ altname_] = { sprite, name: altname_, destroy } //Add sprite index and expression name to the global face alt dictonary
+					var out_ = $"Added \"{expression}\" from {name}! | Image number: {count} | Scribble name: {scrib_} | Scribble alt name: {altname_}";
+					show_debug_message(out_); global.outputLog += $"{out_}\n";
+					faces_count++;
+				}
 			}
-			var out_ = $"Added \"{self[$ faces_emote].expression}\" from {self[$ faces_emote].name}!";
-			scribble_external_sprite_add(self[$ faces_emote].sprite, $"{faces_dir}_{self[$ faces_emote].expression}");
-			
-			var temp_2 = string_replace(faces_cur, $"faces{_path_separator}{faces_dir}{_path_separator}", ""); //Remove faces/(folder name)/
-			temp_2 = string_replace(string_replace(temp_2, "_strip", ""), ".png", ""); //Remove .png and _strip.
-			temp_2 = string_exclude(temp_2, "0123456789");
-			if ( !scribble_external_sprite_exists(temp_2) ) { scribble_external_sprite_add(self[$ faces_emote].sprite, temp_2); } //alternative
-			
-			global.faces_dict_alt[$ temp_2] = { sprite: self[$ faces_emote].sprite, name: temp_2 } //Add sprite index and expression name to the global face alt dictonary
-			show_debug_message(out_); global.outputLog += $"{out_}\n";
-		}
-		faces_i++;
-	}
+	faces_i++; }
+	show_debug_message($"Over {faces_count} external faces were loaded!");
 	
 	///@desc Returns a sprite index from an externally added face sprite.
-	///@param {string} name Character Name or Expression Name (ex: alphys, toriel, asgore, or alphys_depressedsorry, undyne_pissed, etc.)
+	///@param {string} name Character Name or Expression Name
 	///@param {string} expression Expression type
-	function get_face(name, expression = -1) {
-		var face = -1, has__ = string_search(name, "_", false);
-		if ( global.faces_dict[$ name] != -1 ) { with ( global.faces_dict[$ name] ) { if ( self[$ "DEFAULT CUSTOM SOUPY"] != undefined ) { return self[$ "DEFAULT CUSTOM SOUPY"].sprite; } } }
-		if ( has__ ) { 
-			var count = string_count("_", name);
-			
-			if ( count == 1 ) {
-				var sep = string_split(name, "_"); 
-				if ( !struct_exists(global.faces_dict, sep[0])) { face = -1; return face; } 
-				with ( global.faces_dict[$ sep[0]] ) { if ( !struct_exists(self, sep[1])) { face = -1; return face; }  face = self[$ sep[1]].sprite; }
+	///@param {string} return_ What to return
+	function get_face(name, expression = -1, return_ = "sprite") {
+		/*
+			var result = get_face("alphys", "depressed sorry");
+			show_debug_message(result);
+
+			var result = get_face("alphys depressed sorry");
+			show_debug_message(result);
+
+			var result = get_face("spr_alphys_depressed_sorry");
+			show_debug_message(result);
+
+			var result = get_face("alphys", "depressed_sorry");
+			show_debug_message(result);
+
+			var result = get_face("alphys_depressed_sorry");
+			show_debug_message(result);
+		*/
+		if ( expression == -1 ) { //Just proving a name, probably using the quick way to get a sprite
+			var getface = global.faces_dict_alt[$ name], getfacespr = global.faces_dict_alt[$ $"spr_{name}"], name2 = string_replace_all(name, " ", "_"), getfacespr2 = global.faces_dict_alt[$ $"spr_{name2}"];
+			return getface != undefined ? getface[$ return_] : ( getfacespr != undefined ? getfacespr[$ return_] : ( getfacespr2 != undefined ? getfacespr2[$ return_] : -1 ) );
+		}
+		else { //Providing a face name and expression
+			var getface = global.faces_dict[$ name];
+			if ( getface != undefined ) {
+				var exp_ =  getface[$ expression], getexp = string_replace_all(expression, " ", "_"), exp_2 =  getface[$ getexp];
+				return exp_ != undefined ? exp_[$ return_] : ( exp_2 != undefined ? exp_2[$ return_] : -1 );
 			}
-			else {
-				if ( !struct_exists(global.faces_dict_alt, name)) { face = -1; return face; } 
-				with ( global.faces_dict_alt[$ name] ) { face = self.sprite; }
-			}
-		} 
-		else {
-			if ( !struct_exists(global.faces_dict, name)) { face = -1; return face; } 
-			with ( global.faces_dict[$ name] ) { if ( !struct_exists(self, expression)) { face = -1; return face; } face = self[$ expression].sprite; } }
-		return face;
-	}
-	
-	///@desc Returns the name of a face expression from an externally added face sprite.
-	///@param {string} name Character Name or Expression Name (ex: alphys, toriel, asgore, or alphys_depressedsorry, undyne_pissed, etc.)
-	///@param {string} expression Expression type
-	function get_face_name(name, expression) {
-		var face = -1, has__ = string_search(name, "_", false);
-		if ( has__ ) { var sep = string_split(name, "_"); with ( global.faces_dict[$ sep[0]] ) { face = self[$ sep[1]].expression; } } else	{ with ( global.faces_dict[$ name] ) { face = self[$ expression].expression; } }
-		return face;
+		}
 	}
 #endregion
 
@@ -132,7 +126,6 @@ outputLog = "";
 			var temp_2 = string_replace(bords_cur, $"borders{_path_separator}", ""); 
 			temp_2 = string_replace(string_replace(temp_2, $"_strip", ""), $".png", "");
 			temp_2 = string_exclude(temp_2, "0123456789");
-			if ( !scribble_external_sprite_exists(temp_2) ) { scribble_external_sprite_add(global.bords_dict[$ temp_].sprite, temp_2); } //alternative
 			global.bords_dict_alt[$ temp_2] = { sprite: global.bords_dict[$ temp_].sprite, name: temp_2 } //Add sprite index and expression name to the global icon alt dictonary
 			show_debug_message(out_); global.outputLog += $"{out_}\n";
 		bords_i++; }

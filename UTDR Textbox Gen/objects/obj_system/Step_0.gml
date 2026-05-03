@@ -2,7 +2,6 @@
 //if ( live_call() ) { return live_result; } 
 if ( bord_out ) { outlinesoup_step(640, 480); }
 soupy_lui.update();
-
 #region Clamp Page Count and Ensure Face
 	if ( dial_text == "" ) { dial_text_page = 0; dial_text_page_c = 0; }
 	dial_text_page = clamp(dial_text_page, 0, dial_text_page_c);

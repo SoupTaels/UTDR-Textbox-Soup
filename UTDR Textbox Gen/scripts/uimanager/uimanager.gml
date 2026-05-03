@@ -1,6 +1,6 @@
 #macro DIAL_GIF if ( !dial_text_gif ) { exit; } //Only run if GIFs are enabled
-#macro UI_MESSAGE obj_system.ui_message.is_destroyed //Only function if there isn't a message box being displayed
-#macro USING_FACE dial_face[dial_text_page] != -1 && dial_face[dial_text_page] != 0
+#macro UI_MESSAGE !obj_system.ui_paused //For pausing ui elements
+#macro USING_FACE dial_face[dial_text_page] != -1 && dial_face[dial_text_page] != 0 //If the dialogue box will contain a face
 
 #region Default functions for the menu buttons
 	function on_enter_() { if ( obj_system.ui_tab != id_ ) { sfx_play(snd_sel_switch); TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } }
@@ -249,6 +249,23 @@ function ui_manage() {
 					else { if ( mouse_y_gui >= 60 ) { window_set_cursor(cr_default); } }
 				}
 			#endregion
+			
+			#region Clear Page Face
+				var resettime = 60;
+				if ( bord_visible && dial_face[dial_text_page] != -1 && ( range_within(mouse_x_gui, 40, 174) && range_within(mouse_y_gui, 323, 480) ) && mouse_check_right ) { //Hovering over the dialogue portrait
+					soupy_alarm("removeface", resettime);
+					soupy_alarm_run("removeface", 1, function () { dial_face[dial_text_page] = -1; sfx_play(snd_throw); }); //Timer to clear face
+
+					draw_sprite_stretched_ext(spr_border_undertale, 0, 40, 323, 134, 136, c_red, 0.7); //BG
+					var ringcalc = map_value(soupy_alarm_get("removeface", "timer", false), 0, resettime, 0, 360), textx = 110, texty = 390; //Turn the values of a timer into a range of degrees
+					var updatering = CleanRing(textx, texty, 20, 30, 360, ringcalc) //Update text ring
+														.Blend(c_red, 1)
+														.Draw();
+					draw_format(fa_center, fa_middle, fnt_speech, c_red);
+					draw_text(textx, texty, "Removing\n\n\n\n\n\nface...");
+				}
+				else { soupy_alarm_set("removeface", "timer", resettime); }
+			#endregion
 		} break;
 		
 		case 1: { //Style
@@ -299,7 +316,7 @@ function ui_manage() {
 	#endregion
 	
 	#region Switch Between Pages
-		if ( UI_MESSAGE ) {
+		if ( UI_MESSAGE && ui_tab == 0 ) {
 			#region Left Page
 				if ( dial_text_page_c > 1 && dial_text_page > 0 ) { 
 					if ( variable_instance_get(obj_system, "within_hover4") == undefined ) { variable_instance_set(obj_system, "within_hover4", false); }
@@ -340,9 +357,10 @@ function ui_manage() {
 		}
 		#region Page Indicator Text
 			if ( dial_text_page_c > 1 && bord_visible ) {
-				draw_format("center", "center", fnt_abaddon, , 0.4);
-				draw_text(320, 333, $"< Page {dial_text_page + 1}/ {dial_text_page_c} >");
-				draw_format();
+				var pageind = scribble($"[offset,0,3]< Page {dial_text_page + 1}/ {dial_text_page_c} >[offsetPop] [spr_effects_icons,16]")
+										.starting_format("fnt_abaddon_outline", c_gray)
+										.align(fa_center, fa_middle)
+										.draw(320, 333)
 			}
 		#endregion
 	#endregion

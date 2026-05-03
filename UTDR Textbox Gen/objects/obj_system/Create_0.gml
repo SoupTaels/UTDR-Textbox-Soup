@@ -33,10 +33,18 @@
 	dial_text_page_c = 0; //Amount of pages in a dialogue sequence
 	dial_text_line_spacing = -1; //Spacing between lines. -1 for auto.
 	
-	scribble_font_bake_outline_and_shadow("fnt_determination_nomono", "fnt_default_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 1, false); 
-	scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_monospaced_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); 
+	scribble_font_bake_outline_and_shadow("fnt_determination_nomono", "fnt_default_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); 
+	scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_monospaced_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
+	scribble_font_bake_outline_and_shadow("fnt_abaddon", "fnt_abaddon_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
+	scribble_font_bake_outline_and_shadow("fnt_speech", "fnt_speech_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
+	scribble_font_bake_outline_and_shadow("fnt_sans", "fnt_sans_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); 
+	scribble_font_bake_outline_and_shadow("fnt_papyrus", "fnt_papyrus_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
+	scribble_font_bake_outline_and_shadow("fnt_tiny", "fnt_tiny_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); 
+	scribble_font_bake_outline_and_shadow("fnt_damage", "fnt_damage_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); 
+	scribble_font_bake_outline_and_shadow("fnt_arial", "fnt_arial_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); 
+	scribble_font_bake_outline_and_shadow("fnt_pixel", "fnt_pixel_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); 
 	
-	scribble_font_bake_outline_and_shadow("fnt_determination_nomono", "fnt_default", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 1, false); 
+	scribble_font_bake_outline_and_shadow("fnt_determination_nomono", "fnt_default", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 0, false); 
 	scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_monospaced", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 0, false); 
 	scribble_font_set_default("fnt_monospaced_outline"); //Use the normal dialogue font by default when using Scribble
 	
@@ -134,7 +142,7 @@
 	ui_visible = true; //Whether the UI should be visible
 	ui_effoff = 0; //Effects array offset 
 	debug_restart = false;
-	ui_message = { is_destroyed: true }; //Message box struct
+	ui_paused = false; //Whether to freeze ui elements
 	file_dragging = false; //Whether a file is being dragged on screen.
 	file_dragging_face = -1; //For async face sprite loading
 	file_dragging_bord = -1; //For async border sprite loading
@@ -258,7 +266,7 @@
 			///@desc Show/ hide Lui on appropiate screens.
 			ui_reset = function() {
 				if ( soupy_panel_portrait.visible ) { soupy_panel_portrait.setVisible(false); }
-
+				
 				var fx = true;
 				switch ( ui_tab ) {
 					case 0: { fx = false; } break;
@@ -272,7 +280,6 @@
 			}
 			ui_reset();
 		#endregion
-
 	#endregion
 
 #endregion

@@ -119,7 +119,6 @@ if ( file_dragging ) { //Receive signal for file dragging
 		draw_text(320, bord_visible ? 210 : 255,  "Drag your text document here to copy over its contents!\n(.TXT ONLY)");
 	}
 }
-
 soupy_lui.render();
 mouse_debug();
 //draw_sprite_ensure(get_face("sck", "capn"), current_time/300, 320, 240);

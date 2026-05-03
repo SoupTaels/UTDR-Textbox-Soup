@@ -4,7 +4,7 @@
 ///@arg {Real} height
 ///@arg {String} message_text
 ///@arg {String} button_text
-function luiShowMessage(ui, width = LUI_AUTO, height = LUI_AUTO, message_text = "", button_text = "OK", y_ = LUI_AUTO) {
+function luiShowMessage(ui, width = LUI_AUTO, height = LUI_AUTO, message_text = "", button_text = "OK", y_ = LUI_AUTO, func_ = function(){}) {
 	// Black block area
 	var _box_message_screen = new LuiBox({x: 0, y: 0})
 		.centerContent()
@@ -28,6 +28,7 @@ function luiShowMessage(ui, width = LUI_AUTO, height = LUI_AUTO, message_text = 
 	var _btn_close = new LuiButton({text: button_text}).setData("message_screen", _box_message_screen);
 	_btn_close.addEvent(LUI_EV_CLICK, function(_element) {
 		var _message_screen = _element.getData("message_screen");
+		func_();
 		_message_screen.destroy();
 	});
 	// Build message screen

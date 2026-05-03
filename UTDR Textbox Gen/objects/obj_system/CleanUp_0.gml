@@ -7,18 +7,12 @@ soupy_lui.destroy();
 if ( debug_restart ) { exit; }
 
 #region Destroy Faces
-	var i = 0, getfaces = struct_get_names(global.faces_dict), getamt = array_length(getfaces);
+	var i = 0, getfaces = struct_get_names(global.faces_dict_alt), getamt = array_length(getfaces);
 	repeat ( getamt ) {
-		var cur_ = getfaces[i];
-		with ( global.faces_dict[$ cur_] ) {
-			var getexp = struct_get_names(self), getamt_ = array_length(getexp), i_ = 0;
-			repeat ( getamt_ ) {
-				var face = self[$ getexp[i_]];
-				face.destroy();
-			i_++; }
-		}
+		var cur_ = getfaces[i], get_ = global.faces_dict_alt[$ cur_];
+		get_.destroy();
 	i++;	}
-	delete global.faces_dict_alt; global.faces_dict_alt = -1;
+	show_debug_message($"Over {getamt} external faces were destroyed!");
 #endregion
 
 #region Destroy Icons, Border, Fonts, and Reference Image
