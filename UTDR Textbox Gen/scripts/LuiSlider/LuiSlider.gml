@@ -12,7 +12,7 @@
 function LuiSlider(_params = {}) : LuiProgressBar(_params) constructor {
 	
 	self.can_drag = true;
-	
+	self.params = _params; 
 	self.knob_extender = _params[$ "knob_extender"] ?? 1;
 	
 	// Calculate knob width in constructor
@@ -49,17 +49,17 @@ function LuiSlider(_params = {}) : LuiProgressBar(_params) constructor {
 		
 		// Base
 		if !is_undefined(self.style.sprite_progress_bar) {
-			draw_sprite_stretched_ext(self.style.sprite_progress_bar, 0, _bar_x, _bar_y, _bar_w, _bar_h, _blend_back, 1);
+			draw_sprite_stretched_ext(self.params[$ "bar_sprite_back"] ?? self.style.sprite_progress_bar, 0, _bar_x, _bar_y, _bar_w, _bar_h, self.params[$ "bar_color_back"] ?? _blend_back, 1);
 		}
 		
 		// Bar value
 		if !is_undefined(self.style.sprite_progress_bar_value) {
-			draw_sprite_stretched_ext(self.style.sprite_progress_bar_value, 0, _bar_x, _bar_y, _bar_w * self.bar_value, _bar_h, _blend_accent, 1);
+			draw_sprite_stretched_ext(self.params[$ "bar_sprite"] ?? self.style.sprite_progress_bar_value, 0, _bar_x, _bar_y, _bar_w * self.bar_value, _bar_h, self.params[$ "bar_color"] ?? _blend_accent, 1);
 		}
 		
 		// Border
 		if !is_undefined(self.style.sprite_progress_bar_border) {
-			draw_sprite_stretched_ext(self.style.sprite_progress_bar_border, 0, _bar_x, _bar_y, _bar_w, _bar_h, _blend_border, 1);
+			draw_sprite_stretched_ext(self.params[$ "bar_sprite_border"] ?? self.style.sprite_progress_bar_border, 0, _bar_x, _bar_y, _bar_w, _bar_h, _blend_border, 1);
 		}
 		
 		// Text
@@ -71,14 +71,14 @@ function LuiSlider(_params = {}) : LuiProgressBar(_params) constructor {
 		draw_set_valign(self.is_dragging ? fa_bottom : fa_middle);
 		var _text_x = self.is_dragging ? self.x + self.width * self.bar_value : self.x + self.width div 2;
 		var _text_y = self.is_dragging ? self.y - 4 : self.y + self.height div 2;
-		draw_text(_text_x, _text_y, self.value);
 		
-		// Slider knob
 		var _knob_x = clamp(self.x + self.width * self.bar_value - self.knob_width div 2, self.x, self.x + self.width - self.knob_width);
 		var _spr_x1 = _knob_x - self.knob_extender;
 		var _spr_y1 = self.y - self.knob_extender;
 		var _spr_w = self.knob_width + self.knob_extender*2;
 		var _spr_h = self.height + self.knob_extender*2;
+		
+		// Slider knob
 		if !is_undefined(self.style.sprite_slider_knob) {
 			draw_sprite_stretched_ext(self.style.sprite_slider_knob, 0, _spr_x1, _spr_y1, _spr_w, _spr_h, _blend_secondary, 1);
 		}
@@ -86,6 +86,14 @@ function LuiSlider(_params = {}) : LuiProgressBar(_params) constructor {
 		// Knob border
 		if !is_undefined(self.style.sprite_slider_knob_border) {
 			draw_sprite_stretched_ext(self.style.sprite_slider_knob_border, 0, _spr_x1, _spr_y1, _spr_w, _spr_h, _blend_border, 1);
+		}
+		
+		if ( self.display_value ) { 
+			if ( self.is_dragging ) {
+				var ww = string_width(self.value), hh = string_height(self.value);
+				draw_sprite_stretched_ext(self.style.sprite_slider_knob, 0, ( _text_x - ( ww/ 2 ) ) - self.style.padding, ( _text_y - ( hh ) ) - self.style.padding, ww + ( self.style.padding * 2 ), hh + ( self.style.padding * 2 ), _blend_secondary, 1);
+			}
+			draw_text(_text_x, _text_y, self.value); 
 		}
 	}
 	
@@ -108,5 +116,9 @@ function LuiSlider(_params = {}) : LuiProgressBar(_params) constructor {
 		var x2 = x1 + _element.width;
 		var _new_value = _element._calculateValue((_data.mouse_x - x1) / (x2 - x1) * (_element.max_value - _element.min_value) + _element.min_value);
 		_element.set(_new_value);
+	});
+	
+	update_values = method(self, function () {
+		bar_value = Range(value, min_value, max_value, 0, 1);
 	});
 }

@@ -25,10 +25,10 @@ function luiShowMessage(ui, width = LUI_AUTO, height = LUI_AUTO, message_text = 
 	var _txt_message = new LuiText({value: message_text, text_halign: fa_center, text_valign: fa_middle})
 	_txt_message.y = y_;
 	// Button
-	var _btn_close = new LuiButton({text: button_text}).setData("message_screen", _box_message_screen);
+	var _btn_close = new LuiButton({text: button_text}).setData("message_screen", _box_message_screen).setData("func", func_);
 	_btn_close.addEvent(LUI_EV_CLICK, function(_element) {
-		var _message_screen = _element.getData("message_screen");
-		func_();
+		var _message_screen = _element.getData("message_screen"), myfunc = _element.getData("func");
+		myfunc();
 		_message_screen.destroy();
 	});
 	// Build message screen

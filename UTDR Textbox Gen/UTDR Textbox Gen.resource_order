@@ -9,6 +9,7 @@
     {"name":"ExecuteShellSimple","order":6,"path":"folders/Extensions/ExecuteShellSimple.yy",},
     {"name":"File Dropper","order":10,"path":"folders/Extensions/File Dropper.yy",},
     {"name":"GMLive","order":1,"path":"folders/Extensions/GMLive.yy",},
+    {"name":"Samuel Venable","order":12,"path":"folders/Extensions/Samuel Venable.yy",},
     {"name":"Gumshoe","order":5,"path":"folders/Extensions/Gumshoe.yy",},
     {"name":"Limekys","order":8,"path":"folders/Extensions/Limekys.yy",},
     {"name":"LimeUI","order":1,"path":"folders/Extensions/Limekys/LimeUI.yy",},
@@ -59,6 +60,7 @@
     {"name":"EaseHeartbeat","order":1,"path":"animcurves/EaseHeartbeat/EaseHeartbeat.yy",},
     {"name":"EaseMidSlow","order":2,"path":"animcurves/EaseMidSlow/EaseMidSlow.yy",},
     {"name":"GMLive_fallback","order":1,"path":"extensions/GMLive_fallback/GMLive_fallback.yy",},
+    {"name":"libfilesystem","order":1,"path":"extensions/libfilesystem/libfilesystem.yy",},
     {"name":"fnt_abaddon","order":7,"path":"fonts/fnt_abaddon/fnt_abaddon.yy",},
     {"name":"fnt_arial","order":8,"path":"fonts/fnt_arial/fnt_arial.yy",},
     {"name":"fnt_damage","order":3,"path":"fonts/fnt_damage/fnt_damage.yy",},
@@ -312,6 +314,7 @@
     {"name":"spr_pixel","order":2,"path":"sprites/spr_pixel/spr_pixel.yy",},
     {"name":"spr_reference_1","order":1,"path":"sprites/spr_reference_1/spr_reference_1.yy",},
     {"name":"spr_reference_2","order":2,"path":"sprites/spr_reference_2/spr_reference_2.yy",},
+    {"name":"spr_soul","order":4,"path":"sprites/spr_soul/spr_soul.yy",},
     {"name":"spr_testbg","order":3,"path":"sprites/spr_testbg/spr_testbg.yy",},
   ],
 }
