@@ -544,8 +544,8 @@ function __scribble_gen_2_parser()
                     
                         // [offset,dX,dY]
                         case 38:
-							var _offset_dx = (_tag_parameter_count > 1)? real( string_digits(_tag_parameters[1]) == "" ? 0 : string_digits(_tag_parameters[1]) ) : 0;
-                            var _offset_dy = (_tag_parameter_count > 2)? real( string_digits(_tag_parameters[2]) == "" ? 0 : string_digits(_tag_parameters[2]) ) : 0;
+							var _offset_dx = ( _tag_parameter_count > 1 ) ? ( real_ext(_tag_parameters[1]) != "" ? real_ext(_tag_parameters[1]) : 0 ) : 0;
+                            var _offset_dy = ( _tag_parameter_count > 2 ) ? ( real_ext(_tag_parameters[2]) != "" ? real_ext(_tag_parameters[2]) : 0 ) : 0;
                         
                             array_push(_offset_data_array, _glyph_count, _offset_dx, _offset_dy);
                         break;

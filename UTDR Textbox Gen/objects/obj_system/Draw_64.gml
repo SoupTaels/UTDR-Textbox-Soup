@@ -40,11 +40,10 @@ if ( bord_visible ) {
 
 		#region Dialogue Text
 			if ( dial_text != "" && dial_text != chr(0) ) { //No need to draw blank text
-				var line_sp = dial_text_line_spacing != -1 ? dial_text_line_spacing : ( dial_font == "fnt_monospaced_outline" ? "105%" : "120%" );
+				var line_sp = dial_text_line_spacing != -1 ? dial_text_line_spacing : "130%";
 				if ( dial_text_shdw ) { //Dialogue Text Shadow
 					var scrib_dial_shdw = scribble(dial_text, "dial_shdw") 
-					.starting_format(dial_font, c_white)
-					.blend(dial_text_shdw_clr, 1)
+					.starting_format(dial_font, dial_text_shdw_clr)
 					.scale(dial_text_scale)
 					.page(dial_text_page)
 					.line_spacing(line_sp)
@@ -52,18 +51,18 @@ if ( bord_visible ) {
 					.draw(dial_point_auto ? ( xx_ + dial_text_shdw_thick ) + 28 : xx_ + dial_text_shdw_thick, yy_ + dial_text_shdw_thick);
 				}
 			
+				var tx_x = dial_point_auto ? xx_ + 28 : xx_, wrapcalc = dial_auto_wrap ? 580 - xx_ : -1;
+				if ( dial_text_outline != -1 ) { text_outliner_shitty(tx_x, yy_, line_sp, wrapcalc); } //Outline the text in a very shitty and unoptimized way.
 				var scrib_dial = scribble(dial_text) //Dialogue Text
 				scrib_dial.starting_format(dial_font, c_white);
-				scrib_dial.blend(c_white, 1)
 				scrib_dial.scale(dial_text_scale);
 				scrib_dial.allow_line_data_getter();
 				scrib_dial.allow_glyph_data_getter();
 				scrib_dial.line_spacing(line_sp);
 				scrib_dial.page(dial_text_page);
 				dial_text_page_c = scrib_dial.get_page_count();
-				scrib_dial.outline(dial_text_outline);
-				scrib_dial.wrap(dial_auto_wrap ? 580 - xx_ : -1);
-				scrib_dial.draw(dial_point_auto ? xx_ + 28 : xx_, yy_, dial_text_gif ? typist : undefined);
+				scrib_dial.wrap(wrapcalc);
+				scrib_dial.draw(tx_x, yy_, dial_text_gif ? typist : undefined);
 
 				#region Dialogue Auto Point
 					if ( dial_point_auto ) {
@@ -78,12 +77,13 @@ if ( bord_visible ) {
 									scrib_point_shdw.draw(( xx_ + dial_text_shdw_thick ) - 4, ( yy_ + lined.y ) + dial_text_shdw_thick);
 								}
 								
+								var p_x = xx_ - 4, p_y = yy_ + lined.y;
+								if ( dial_text_outline != -1 ) { text_outliner_shitty_point(p_x, p_y); } //Outline the text in a very shitty and unoptimized way.
 								var scrib_point = scribble(dial_point_chr); //Dialogue Point
 								scrib_point.starting_format(dial_font, dial_point_clr);
 								scrib_point.scale(dial_text_scale);
 								scrib_point.allow_line_data_getter();
-								scrib_point.outline(dial_text_outline); 
-								scrib_point.draw(xx_ - 4, yy_ + lined.y);
+								scrib_point.draw(p_x, p_y);
 							}
 						i++; }
 					}
@@ -93,12 +93,8 @@ if ( bord_visible ) {
 	if  ( bord_out ) { outlinesoup_end(); }
 }
 
-#region UI
-	ui_manage();
+ui_manage();
 	
-	draw_sprite_ext(spr_pixel, 0, 0, 0, 640, 480, 0, c_black, fader);
-#endregion
-
 if ( file_dragging ) { //Receive signal for file dragging
 	//Portrait
 	if ( bord_visible ) {
@@ -119,7 +115,10 @@ if ( file_dragging ) { //Receive signal for file dragging
 		draw_text(320, bord_visible ? 210 : 255,  "Drag your text document here to copy over its contents!\n(.TXT ONLY)");
 	}
 }
+
 soupy_lui.render();
+draw_sprite_ext(spr_pixel, 0, 0, 0, 640, 480, 0, c_black, fader);
+
 mouse_debug();
 //draw_sprite_ensure(get_face("sck", "capn"), current_time/300, 320, 240);
 //draw_sprite_ensure(get_face("undyne", "pissed"), current_time/300, 320 + 40, 240);

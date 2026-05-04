@@ -169,8 +169,8 @@ function ui_manage() {
 					var colors_cur = colors_[colors_i]; //Current color
 					var butt_data = { x: 160 + ( 27 * colors_i ), y: 70, sprite: spr_pixel, color_butt: colors_get[$ colors_cur], color_butt_hover: merge_color(colors_get[$ colors_cur], color_get_value(colors_get[$ colors_cur]) > 150 ? c_black : c_white, 0.3), on_click: method({ butt_func, colors_cur }, function () { butt_func(colors_cur, true); }), on_click_right: method({ butt_func, colors_cur }, function () { 
 						sfx_play(snd_equip2, , , 1.5); 
-						if ( obj_system.dial_text_outline != obj_system.colors_get[$ colors_cur] ) { obj_system.dial_text_outline = obj_system.colors_get[$ colors_cur]; } //Switching to a new color? Change the text outline
-						else { obj_system.dial_text_outline = c_black; } //Disable text outline
+						if ( obj_system.dial_text_outline != obj_system.colors_get[$ colors_cur] ) { obj_system.dial_text_outline = obj_system.colors_get[$ colors_cur]; show_debug_message(obj_system.dial_text_outline); } //Switching to a new color? Change the text outline
+						else { obj_system.dial_text_outline = -1; } //Disable text outline
 					}) };
 
 					butt_data[$ "x2"] = butt_data.x + 20; butt_data[$ "y2"] = butt_data.y + 10; 

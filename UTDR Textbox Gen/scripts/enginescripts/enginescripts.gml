@@ -306,7 +306,7 @@ function first_decimal(string_) {
 function real_ext(string_) {
 	string_ = string_digits_ext(string_);
 	string_ = first_decimal(string_);
-	return string_ != "" ? real(string_) : "";
+	return ( string_ != "" && string_ != "-" && string_ != "." ) ? real(string_) : "";
 }
 
 ///@desc Makes a copy of a string, but excluding characters in a character exclusion string. Optionally can replace those characters with another character.

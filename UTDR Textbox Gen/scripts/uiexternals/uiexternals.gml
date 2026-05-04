@@ -27,7 +27,8 @@ outputLog = "";
 				}
 			}
 	faces_i++; }
-	show_debug_message($"Over {faces_count} external faces were loaded!");
+	var out_ = $"Over {faces_count} external faces were loaded!";
+	show_debug_message(out_); global.outputLog += $"{out_}\n";
 	
 	///@desc Returns a sprite index from an externally added face sprite.
 	///@param {string} name Character Name or Expression Name
@@ -174,7 +175,7 @@ outputLog = "";
 		var getfont = asset_get_name(fonts_dict[$ temp_].sprite);
 		scribble_font_rename(getfont, global.fonts_dict_alt[$ temp_2].name); //Let us use the font's filename instead of whatever name gamemaker generated for us
 		scribble_font_duplicate(global.fonts_dict_alt[$ temp_2].name, global.fonts_dict[$ temp_].name); //Also let us use the quick name version
-		var out_ = $"Added \"{fonts_dict[$ temp_].name}\" from {fonts_dict[$ temp_].fname}! Renamed custom font from {getfont} to {global.fonts_dict_alt[$ temp_2].name} for use with Scribble.";
+		var out_ = $"Added \"{fonts_dict[$ temp_].name}\" and outline variant from {fonts_dict[$ temp_].fname}! Renamed custom font from {getfont} to {global.fonts_dict_alt[$ temp_2].name} for use with Scribble.";
 		show_debug_message(out_); global.outputLog += $"{out_}\n";
 	fonts_i++; }
 	
@@ -188,6 +189,6 @@ outputLog = "";
 #endregion
 
 //var _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
-//var oLog = file_text_open_write($"{program_directory}{_path_separator}external_database_log.txt");
+//var oLog = file_text_open_write($"{program_directory}{_path_separator}latest_soupy_run.txt");
 //file_text_write_string(oLog, global.outputLog);
 //file_text_close(oLog);

@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"draw_9slice",
+  "%Name":"scribbletextoutline",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"draw_9slice",
+  "name":"scribbletextoutline",
   "parent":{
     "name":"Scripts",
     "path":"folders/Scripts.yy",

@@ -1,4 +1,4 @@
-soup_store("rgb r", color_get_red(bord_clr)); soup_store("rgb g", color_get_green(bord_clr)); soup_store("rgb b", color_get_blue(bord_clr));
+/*soup_store("rgb r", color_get_red(bord_clr)); soup_store("rgb g", color_get_green(bord_clr)); soup_store("rgb b", color_get_blue(bord_clr));
 var clr = new LuiImage({ value: spr_soul, width: 60, height: 48 }).addEvent(LUI_EV_CREATE, function(element_) { soup_store("element spr", element_); element_.setColor(make_color_rgb(soup_checkout("rgb r", false), soup_checkout("rgb g", false), soup_checkout("rgb b", false))); });
 var elemarr = [
 	new LuiText({ value: "   <- New dialogue border color", text_halign: fa_center, text_valign: fa_middle, scale_x: 2, }).addContent(clr),
@@ -31,7 +31,7 @@ var elemarr = [
 	}),
 ];
 soupy_popup(elemarr, function() { sfx_play(snd_equip); obj_system.bord_clr = make_color_rgb(soup_checkout("rgb r"), soup_checkout("rgb g"), soup_checkout("rgb b")); soup_store_clear(); }, "SET COLOR!");
-//bord_clr = get_color_ext(c_white, "Change dialogue box color:");
+//bord_clr = get_color_ext(c_white, "Change dialogue box color:");*/
 /*soupy_message([ "Credits:", ".+\\/\\/\\_______________________________________________/\\/\\/+.", "", "Scribble, Clean Shapes, Gumshoe: JujuAdams", "GMLive, ExecuteShellSimple, FileDropper: YellowAfterlife", "TweenGMX: stephenloney", 
-	"Undo Stack: alphish-creature(Alice)", "LimeUI: Limekys", "Quill: RefresherTowelGames", "Undertale, Deltarune: Toby Fox, Temmie Chang", "Happy generating by yours truly, Soup Taels!", "", "Huge thanks to JujuAdams especially as this wouldn't", "have be possible without his tools!" ], 
+	"Undo Stack: alphish-creature(Alice)", "LimeUI: Limekys", "Quill: RefresherTowelGames", "Undertale, Deltarune: Toby Fox, Temmie Chang", "Made in GameMaker", "", "Huge thanks to JujuAdams especially as this wouldn't", "have be possible without his tools!", "", "Happy generating by yours truly, Soup Taels!" ], 
 	"Cool!", , , , , fnt_abaddon);

@@ -1,3 +1,3 @@
 ///@desc 
 debug_restart = true; 
-room_restart();
+event_perform(ev_create, 0);

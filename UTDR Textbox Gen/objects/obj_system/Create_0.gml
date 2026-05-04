@@ -17,13 +17,14 @@
 #endregion
 
 #region Dialogue Text
-	dial_text = $""; //Dialogue Text
-	dial_font = "fnt_monospaced_outline"; //Dialogue Font
+	dial_text = ""; //Dialogue Text
+	dial_font = "fnt_determination"; scribble_font_set_default("fnt_determination_nomono"); //Dialogue Font
 	dial_text_scale = 2; //Text Scale
 	dial_text_gif = false; //Whether to enable typewriting
 	dial_updatet = 0; //Dialogue update timer
 	dial_updatet_max = 45; //Dialogue update timer delay
-	dial_text_outline = c_black; //Dialogue Outline Color
+	dial_text_outline = -1; //Dialogue Outline Color
+	dial_text_outline_thick = 2; //Dialogue Outline Thick
 	dial_point_auto = true; //Whether to automatically add points
 	dial_point_chr = "*"; //Dialogue Point Character
 	dial_point_clr = c_white; //Dialogue Point Clr
@@ -32,21 +33,6 @@
 	dial_text_page = 0; //Current page
 	dial_text_page_c = 0; //Amount of pages in a dialogue sequence
 	dial_text_line_spacing = -1; //Spacing between lines. -1 for auto.
-	
-	scribble_font_bake_outline_and_shadow("fnt_determination_nomono", "fnt_default_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); 
-	scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_monospaced_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
-	scribble_font_bake_outline_and_shadow("fnt_abaddon", "fnt_abaddon_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
-	scribble_font_bake_outline_and_shadow("fnt_speech", "fnt_speech_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
-	scribble_font_bake_outline_and_shadow("fnt_sans", "fnt_sans_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); 
-	scribble_font_bake_outline_and_shadow("fnt_papyrus", "fnt_papyrus_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
-	scribble_font_bake_outline_and_shadow("fnt_tiny", "fnt_tiny_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); 
-	scribble_font_bake_outline_and_shadow("fnt_damage", "fnt_damage_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); 
-	scribble_font_bake_outline_and_shadow("fnt_arial", "fnt_arial_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); 
-	scribble_font_bake_outline_and_shadow("fnt_pixel", "fnt_pixel_outline", 1, 1, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); 
-	
-	scribble_font_bake_outline_and_shadow("fnt_determination_nomono", "fnt_default", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 0, false); 
-	scribble_font_bake_outline_and_shadow("fnt_determination", "fnt_monospaced", 1, 1, SCRIBBLE_OUTLINE.NO_OUTLINE, 0, false); 
-	scribble_font_set_default("fnt_monospaced_outline"); //Use the normal dialogue font by default when using Scribble
 	
 	typist = scribble_typist();
 	typist_spd = 0.4; //Typewriter speed
@@ -146,6 +132,7 @@
 	file_dragging = false; //Whether a file is being dragged on screen.
 	undo_stack_create(); //History of undo changes
 	file_dropper_init(); //Handle file dropping
+	var tinysoup = "icons\\tinysoupy.png"; if ( file_exists(tinysoup) ) { widget_set_icon(tinysoup); }
 	
 	#region Main Menu Buttons
 		var i = 0, spr_ = spr_border_octagon, x_ = 320, y_ = 12, clr_ = c_orange, padd_ = 14;
