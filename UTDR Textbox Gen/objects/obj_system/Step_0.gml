@@ -3,16 +3,29 @@
 if ( bord_out ) { outlinesoup_step(640, 480); }
 soupy_lui.update();
 
-#region Animation
-	if ( dial_text_gif && dial_face_auto && typist.get_delay_paused() ) { dial_face_index = 0; } //Stop the face from animating if the dialogue is being delayed
-	if ( bord_spd > 0 ) { //Animate the border
-		var amt = sprite_get_number(spr_bord);
-		if ( bord_anim == 0 ) { bord_index += bord_spd mod amt; }
-		else { 
-			if ( !bord_anim_track ) { bord_index += bord_spd mod amt; if ( round(bord_index) >= amt) { bord_anim_track = true; } }
-			else { bord_index -= bord_spd; if ( round(bord_index) <= 0) { bord_anim_track = false; } }
-		} 
-	};
+#region Animation & Effects
+	#region Animate Face
+		if ( dial_text_gif && dial_face_auto && typist.get_delay_paused() ) { dial_face_index = 0; } //Stop the face from animating if the dialogue is being delayed
+		if ( bord_spd > 0 ) { //Animate the border
+			var amt = sprite_get_number(spr_bord);
+			if ( bord_anim == 0 ) { bord_index += bord_spd mod amt; }
+			else { 
+				if ( !bord_anim_track ) { bord_index += bord_spd mod amt; if ( round(bord_index) >= amt) { bord_anim_track = true; } }
+				else { bord_index -= bord_spd; if ( round(bord_index) <= 0) { bord_anim_track = false; } }
+			} 
+		};
+	#endregion
+	
+	#region Shake Face
+		var canshake = soup_checkout("face shaker", false);
+		if ( canshake != undefined ) {
+			soupy_alarm("face shaker", canshake.time_ + 1);
+			soupy_alarm_run("face shaker", 1, function () { soup_checkout("face shaker"); dial_face_xoff = 0; dial_face_yoff = 0; exit; });
+		
+			if ( canshake.x_ ) { dial_face_xoff = random_range(-canshake.off_, canshake.off_); }
+			if ( canshake.y_ ) { dial_face_yoff = random_range(-canshake.off_, canshake.off_); }
+		}
+	#endregion
 #endregion
 
 #region BG

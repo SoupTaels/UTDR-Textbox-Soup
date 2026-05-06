@@ -34,7 +34,7 @@ var elemarr = [
 ];
 soupy_popup(elemarr, function() { sfx_play(snd_equip); obj_system.bord_clr = make_color_rgb(soup_checkout("rgb r"), soup_checkout("rgb g"), soup_checkout("rgb b")); soup_store_clear(); }, "SET COLOR!");
 //bord_clr = get_color_ext(c_white, "Change dialogue box color:");*/
-/*var arr_ = [];
+var arr_ = [];
 var credits_add = method({ arr_ }, function(text_ = "", link_ = "") {
 	array_push(arr_, new LuiText({ value: text_, text_halign: fa_center, text_valign: fa_middle, font: fnt_abaddon, color: c_white, xoff: 0 }).setData("link", link_).setTooltip(link_, true, fnt_abaddon).setPadding(5)
 	.addEvent(LUI_EV_CLICK, function(element_) { var link_ = element_.getData("link"); if ( link_ != "" ) { sfx_play(snd_select); execute_shell_simple(link_); } })

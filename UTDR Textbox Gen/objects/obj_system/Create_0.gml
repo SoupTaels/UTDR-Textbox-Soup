@@ -27,7 +27,7 @@
 	dial_text_outline_thick = 2; //Dialogue Outline Thick
 	dial_point_auto = true; //Whether to automatically add points
 	dial_point_chr = "*"; //Dialogue Point Character
-	dial_point_clr = c_white; //Dialogue Point Clr
+	dial_point_clr = c_white; dial_point_clr_anim = c_white; dial_point_clr_anim_alpha = 0; //Dialogue Point Clr and flash color
 	dial_auto_wrap = true; //Whether to automatically wrap dialogue to new lines
 	dial_wrap_count = 1; //Current wrapped line
 	dial_text_page = 0; //Current page
@@ -60,6 +60,7 @@
 			dial_face_index = 0;
 			if ( !dial_face_keep ) { FACE_CURRENT = dial_face_original[dial_text_page]; } //Switch back to the original face
 			typist_spd = typist_spd_orig; //Switch back to the original typewriter speed
+			dial_face_alpha = 1; dial_face_angle = 0; dial_face_xoff = 0; dial_face_yoff = 0; 
 		});
 	#endregion
 	
@@ -89,6 +90,41 @@
 		});
 		scribble_typists_add_event("face_stick", function(_, param) { DIAL_GIF FACE_ORIGINAL = get_face(FACE_INTERNAL); }); //Make the previous dialogue face stick
 		scribble_typists_add_event("speed_pop", function(_, param) { DIAL_GIF typist_spd = typist_spd_orig; }); //Changes the typist speed back to the default
+		scribble_typists_add_event("effect", function(_, param) { //Play an effect
+			DIAL_GIF
+			var len = array_length(param);
+			switch ( param[0] ) {
+				case "squash": case "squish": { TweenFire("$15", "~oquad", "dial_face_xscale_off", 0.3, 0, "dial_face_yscale_off", -0.3, 0); } break; //Squish the face 
+				case "squeeze": case "stretch": { TweenFire("$15", "~oquad", "dial_face_xscale_off", -0.3, 0, "dial_face_yscale_off", 0.3, 0); } break; //Squeeze the face
+				case "flash": { //Make the face flash a color [effect,flash,r,g,b,frames]
+					var getclr = real_ext(len > 1 ? param[1] : "255"), getclr2 = real_ext(len > 2 ? param[2] : "255"), getclr3 = real_ext(len > 3 ? param[3] : "255"), time_ = real_ext(len > 4 ? param[4] : "15");
+					var myclr = make_color_rgb(getclr != "" ? getclr : 255, getclr2 != "" ? getclr2 : 255, getclr3 != "" ? getclr3 : 255); dial_point_clr_anim = myclr;
+					TweenFire("?", obj_system, $"${time_ != "" ? time_ : 15}", "~oquad", "dial_point_clr_anim_alpha", 1, 0); 
+				} break;
+				case "fade": case "ghost": case "opacity": { //Make the face fade out to the specified target number [effect,fade,#,frames]
+					var getamt = real_ext(len > 1 ? param[1] : "0"), time_ = real_ext(len > 2 ? param[2] : "3");
+					TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", "dial_face_alpha>", getamt != "" ? getamt : 0); 
+				} break;
+				case "rotate": case "rot": case "angle": { //Make the face rotate to the specified target number [effect,rotate,#,frames,issmooth]
+					var getamt = real_ext(len > 1 ? param[1] : "360"), time_ = real_ext(len > 2 ? param[2] : "30"), smooth_ = real_ext(len > 3 ? param[3] : "0"); smooth_ = smooth_ != "" ? bool(smooth_) : false;
+					TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", $"~{!smooth_? "linear" : "oquad"}", "dial_face_angle>", getamt != "" ? getamt : 0); 
+				} break;
+				case "scale": { //Make the face scale to the specified target number [effect,scale,#,#,frames,issmooth]
+					var getamt = real_ext(len > 1 ? param[1] : "0"), getamt2 = real_ext(len > 2 ? param[2] : "0"), time_ = real_ext(len > 3 ? param[3] : "30"), smooth_ = real_ext(len > 4 ? param[4] : "0"); smooth_ = smooth_ != "" ? bool(smooth_) : false;
+					TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", $"~{!smooth_? "linear" : "oquad"}", "dial_face_xscale_off>", getamt != "" ? getamt : 0, "dial_face_yscale_off>", getamt2 != "" ? getamt2 : 0); 
+				} break;
+				case "slide": { //Make the face slide to the specified target number [effect,slide,#,#,frames,issmooth]
+					var getamt = real_ext(len > 1 ? param[1] : "0"), getamt2 = real_ext(len > 2 ? param[2] : "0"), time_ = real_ext(len > 3 ? param[3] : "30"), smooth_ = real_ext(len > 4 ? param[4] : "0"); smooth_ = smooth_ != "" ? bool(smooth_) : false;
+					TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", $"~{!smooth_? "linear" : "oquad"}", "dial_face_xoff>", getamt != "" ? getamt : 0, "dial_face_yoff>", getamt2 != "" ? getamt2 : 0); 
+				} break;
+				case "shake": case "rumble": { //Make the shake in place for some time [effect,shake,x,y,frames,intensity]
+					var x_ = real_ext(len > 1 ? param[1] : "0"), y_ = real_ext(len > 2 ? param[2] : "0"), time_ = real_ext(len > 3 ? param[3] : 10), off_ = real_ext(len > 4 ? param[4] : 2)
+					 x_ = x_ != "" ? bool(x_) : false; y_ = y_ != "" ? bool(y_) : false;
+					 soupy_alarm_set("face shaker", "timer", time_);
+					soup_store("face shaker", { x_, y_, time_, off_ });
+				} break;
+			}
+		});
 		
 		scribble_add_macro("icon", function(param) { var result = get_icon(param) return result != -1 ? $"[{result}]" : ""; }); //Newline with no asterisk and it's padded out
 		scribble_add_macro("newl", function() { return "\n  "; }); //Newline with no asterisk and it's padded out
@@ -119,6 +155,11 @@
 	dial_face_clr = c_white; //Dialogue Face Clr
 	dial_face_name[dial_text_page] = -1; //Dialogue Portrait Internal Name
 	dial_face_keep = false; //Whether to always keep the last dialogue face or reset back to the original face
+	dial_face_xscale = 2; dial_face_yscale = 2; //Dialogue Face Xscale & Yscale
+	dial_face_xscale_off = 0; dial_face_yscale_off = 0; //Dialogue Face Xscale & Yscale offset, for animation
+	dial_face_angle = 0; //Dialogue Face Rotation
+	dial_face_alpha = 1; //Dialogue Face Alpha
+	dial_face_xoff = 0; dial_face_yoff = 0; //Dialogue Face X & Y offset, for animation
 #endregion
 
 #region UI

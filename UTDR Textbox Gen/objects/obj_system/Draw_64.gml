@@ -38,7 +38,8 @@ if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , 0, 0);
 
 				var ninesl_ = sprite_get_nineslice(spr_bord); 
 				if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, 1); } else { draw_9slice(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, bord_scale, bord_stretch); } //Dialogue Box
-				if ( FACE_USING ) { draw_sprite_ensure(FACE_CURRENT, dial_face_index, bordx + ( 74 + offset_ ), bordy + ( 76 + offset_ ), 2, 2, 0, dial_face_clr, 1); } //Dialogue Face
+				if ( FACE_USING ) { draw_sprite_ensure(FACE_CURRENT, dial_face_index, bordx + ( 74 + offset_ ) + dial_face_xoff, bordy + ( 76 + offset_ ) + dial_face_yoff, dial_face_xscale + dial_face_xscale_off, dial_face_yscale + dial_face_yscale_off, dial_face_angle, dial_face_clr, dial_face_alpha); } //Dialogue Face
+				if ( FACE_USING && dial_point_clr_anim_alpha > 0 ) { gpu_set_fog(true, dial_point_clr_anim, -16000, 16000); draw_sprite_ensure(FACE_CURRENT, dial_face_index, bordx + ( 74 + offset_ ) + dial_face_xoff, bordy + ( 76 + offset_ ) + dial_face_yoff, dial_face_xscale + dial_face_xscale_off, dial_face_yscale + dial_face_yscale_off, dial_face_angle, c_white, dial_point_clr_anim_alpha); gpu_set_fog(false, 0, 0, 0); } //Dialogue Face Flashing
 			#endregion
 
 			#region Dialogue Text
