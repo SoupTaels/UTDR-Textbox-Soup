@@ -863,7 +863,8 @@ function __scribble_class_typist(_per_line) constructor
                     if (__last_character <= _page_character_count)
                     {
                         //Only play sound once per frame if we're going reaaaally fast
-                        __play_sound(_head_pos, _glyph_data_getter? (_page_data.__glyph_grid[# round(_head_pos)-1, __SCRIBBLE_GLYPH_LAYOUT.__UNICODE]) : 0);
+						var headpos = round(_head_pos) - 1; if ( headpos < 0 ) { headpos = 0; }
+                        __play_sound(_head_pos, _glyph_data_getter? (_page_data.__glyph_grid[# headpos, __SCRIBBLE_GLYPH_LAYOUT.__UNICODE]) : 0);
                     }
                     else
                     {

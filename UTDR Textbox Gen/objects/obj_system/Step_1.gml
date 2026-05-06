@@ -1,5 +1,5 @@
 ///@desc Context Menu, Page Count, Etc.
-if ( live_call() ) { return live_result; } 
+//if ( live_call() ) { return live_result; } 
 #region Page Count and Ensure Face
 	dial_text_page_c = string_count("[/page]", dial_text) + 1;
 	dial_text_page = clamp(dial_text_page, 0, dial_text_page_c - 1);
@@ -18,11 +18,11 @@ if ( live_call() ) { return live_result; }
 #region Context Menu
 	var result, txt_ = textinput.GetValue(), select_ = textinput.GetSelection();
 	result = textinput.ContextMenuGetItem("soupy_copy");
-	result.SetEnabled(txt_ != "" && select_.has_selection);
+	result.SetEnabled(txt_ != "" && select_.has_selection); //Only enable if there's text and we've selected something
 	result = textinput.ContextMenuGetItem("soupy_cut");
-	result.SetEnabled(txt_ != "" && select_.has_selection);
+	result.SetEnabled(txt_ != "" && select_.has_selection); //Only enable if there's text and we've selected something
 	result = textinput.ContextMenuGetItem("soupy_clear");
-	result.SetEnabled(txt_ != "");
+	result.SetEnabled(txt_ != ""); //Only enable if there's text
 	result = textinput.ContextMenuGetItem("soupy_paste");
-	result.SetEnabled(clipboard_has_text());
+	result.SetEnabled(clipboard_has_text()); //Only enable if there's text in the clipboard
 #endregion

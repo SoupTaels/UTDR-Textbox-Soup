@@ -4,8 +4,6 @@ outlinesoup_cleanup();
 window_set_cursor(cr_default);
 soupy_lui.destroy(); 
 
-if ( debug_restart ) { exit; }
-
 #region Destroy Faces
 	var i = 0, getfaces = struct_get_names(global.faces_dict_alt), getamt = array_length(getfaces);
 	repeat ( getamt ) {

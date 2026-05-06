@@ -1,5 +1,4 @@
 function text_outliner_shitty(x_, y_, line_sp, wrap_) {
-	//live_auto_call 
 	#region Main
 		var scrib_dial = scribble(dial_text).starting_format(dial_font, dial_text_outline).scale(dial_text_scale).line_spacing(line_sp).page(dial_text_page).wrap(wrap_)
 		.draw(x_ + dial_text_outline_thick, y_, dial_text_gif ? typist : undefined); //Right
@@ -23,7 +22,6 @@ function text_outliner_shitty(x_, y_, line_sp, wrap_) {
 }
 
 function text_outliner_shitty_point(x_, y_) {
-	//live_auto_call
 	#region Main
 		var scrib_point = scribble(dial_point_chr) //Dialogue Point
 		.starting_format(dial_font, dial_text_outline).scale(dial_text_scale)

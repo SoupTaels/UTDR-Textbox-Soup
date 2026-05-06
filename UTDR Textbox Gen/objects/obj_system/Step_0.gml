@@ -45,3 +45,8 @@ soupy_lui.update();
 		soupy_alarm_run(sig_.myname_, 0, function () { global.soupsignal = {}; });
 	}
 #endregion
+
+#region Fullscreen, Debug
+	if ( keyboard_check_pressed(vk_f2) ) { event_perform(ev_create, 0); }
+	if ( keyboard_check_pressed(vk_f4) ) { window_set_fullscreen( !window_get_fullscreen() ); sfx_play(snd_equip2); }
+#endregion
