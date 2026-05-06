@@ -1,5 +1,5 @@
 ///@desc Init
-//if ( live_call() ) { return live_result; } 
+if ( live_call() ) { return live_result; } 
 #region Dialogue Box
 	outlinesoup_init(, , , , 2);
 	spr_bord = spr_border_undertale; //Border Sprite
@@ -18,7 +18,7 @@
 
 #region Dialogue Text
 	dial_text = ""; //Dialogue Text
-	dial_font = "fnt_determination"; scribble_font_set_default("fnt_determination_nomono"); //Dialogue Font
+	dial_font = "fnt_determination"; //Dialogue Font
 	dial_text_scale = 2; //Text Scale
 	dial_text_gif = false; //Whether to enable typewriting
 	dial_updatet = 0; //Dialogue update timer
@@ -49,7 +49,7 @@
 		#endregion
 		
 		#region Animate Face
-			if ( USING_FACE && dial_face_auto ) { //Animate the face while dialogue is typing out
+			if ( FACE_USING && dial_face_auto ) { //Animate the face while dialogue is typing out
 				static anim_timer = 0; anim_timer++;
 				if ( anim_timer > 2 ) { anim_timer = 0; dial_face_index++; }
 			}
@@ -58,19 +58,19 @@
 	
 	typist.function_on_complete(function() { //Function to run once the dialogue is complete
 		dial_face_index = 0;
-		dial_face[dial_text_page] = dial_face_original[dial_text_page]; //Switch back to the original face
+		FACE_CURRENT = dial_face_original[dial_text_page]; //Switch back to the original face
 		typist_spd = typist_spd_orig; //Switch back to the original typewriter speed
 	});
 	
 	#region Typist Events
 		scribble_typists_add_event("face", function(_, param) { //Switch to a new portrait sprite
 			DIAL_GIF
-			dial_face_prev[dial_text_page] = dial_face[dial_text_page]; //Get the previous face
-			dial_face[dial_text_page] = get_face(param[0], array_length(param) > 1 ? param[1] : -1);
-			if ( USING_FACE ) { dial_face_name[dial_text_page] = param[0]; }
+			FACE_PREVIOUS = FACE_CURRENT; //Get the previous face
+			FACE_CURRENT = get_face(param[0], array_length(param) > 1 ? param[1] : -1);
+			if ( FACE_USING ) { FACE_INTERNAL = param[0]; }
 		});
-		scribble_typists_add_event("face_orig", function(_, param) { DIAL_GIF dial_face_original[dial_text_page] = get_face(param[0], array_length(param) > 1 ? param[1] : -1); }); //Change the original previous face to a new 
-		scribble_typists_add_event("face_prev", function(_, param) { DIAL_GIF dial_face[dial_text_page] = dial_face_prev[dial_text_page]; }); //Change the face back to the previous face
+		scribble_typists_add_event("face_orig", function(_, param) { DIAL_GIF FACE_ORIGINAL = get_face(param[0], array_length(param) > 1 ? param[1] : -1); }); //Change the original previous face to a new 
+		scribble_typists_add_event("face_prev", function(_, param) { DIAL_GIF FACE_CURRENT = FACE_PREVIOUS; }); //Change the face back to the previous face
 		scribble_typists_add_event("face_auto", function(_, param) { DIAL_GIF dial_face_auto = bool(string_letters(param[0])); }); //Switch the automatically animation of the face
 		scribble_typists_add_event("face_index", function(_, param) { DIAL_GIF dial_face_index = real(string_digits(param[0])); }); //Change the index of the face(if dial_face_auto is off), for sprites with more sprites and expressions
 		scribble_typists_add_event("border", function(_, param) { //Switch to a new border sprite
@@ -86,13 +86,13 @@
 				else { dial_text_page = real(string_digits(param[0])); dial_text_page = clamp(dial_text_page, 0, dial_text_page_c); } //Go to a specific page
 			}
 		});
-		scribble_typists_add_event("face_stick", function(_, param) { DIAL_GIF dial_face_original[dial_text_page] = get_face(dial_face_name[dial_text_page]); }); //Make the previous dialogue face stick
+		scribble_typists_add_event("face_stick", function(_, param) { DIAL_GIF FACE_ORIGINAL = get_face(FACE_INTERNAL); }); //Make the previous dialogue face stick
 		scribble_typists_add_event("speed_pop", function(_, param) { DIAL_GIF typist_spd = typist_spd_orig; }); //Changes the typist speed back to the default
 		
+		scribble_add_macro("icon", function(param) { var result = get_icon(param) return result != -1 ? $"[{result}]" : ""; }); //Newline with no asterisk and it's padded out
 		scribble_add_macro("newl", function() { return "\n  "; }); //Newline with no asterisk and it's padded out
 		scribble_add_macro("newl_a", function() { return "\n* "; }); //Newline with asterisk and a space
 		scribble_add_macro("newl_l", function() { return chr(10); }); //Newline literal
-		scribble_add_macro("pg", function() { return "[/page]"; }); //New page shorthand
 		scribble_add_macro("wait", function(param) { var real_ = real_ext(param); return $"[delay,{real_ != "" ? real_  * 1000 : 0}]"; }); //Delay tag that converts seconds to milliseconds
 		scribble_add_macro("repeat", function(phrase_ = "", times_ = 1, startwith_ = "", endwith_ = "") { //Repeats a phrase for a specified time with an optional parameter to end and start it off with another phrase
 			var real_ = string_digits(times_); if ( real_ == "" ) { return ""; }
@@ -130,9 +130,6 @@
 	debug_restart = false;
 	ui_paused = false; //Whether to freeze ui elements
 	file_dragging = false; //Whether a file is being dragged on screen.
-	undo_stack_create(); //History of undo changes
-	file_dropper_init(); //Handle file dropping
-	var tinysoup = "icons\\tinysoupy.png"; if ( file_exists(tinysoup) ) { widget_set_icon(tinysoup); }
 	
 	#region Main Menu Buttons
 		var i = 0, spr_ = spr_border_octagon, x_ = 320, y_ = 12, clr_ = c_orange, padd_ = 14;
@@ -163,57 +160,65 @@
 			
 		call_later(1, time_source_units_frames, on_reset_); //Reset all buttons on start
 	#endregion
-	
+
 	#region Textbox
+		quill_change = false; //QuillMulti()
 		textinput = QuillMulti(, "(Click here to start typing!)\n(Your raw text input lives here. Processed output is below.)\n(Click on the quick buttons above to quickly insert text colors\n and effects. Try highlighting portions of texts!)\n \n   (Happy generating and make sure to eat some good soup!!)")
-			.SetInputMode(QUILL_TEXTMODE_TEXT).SetWrap(false).AllowActions(false).SetResizable(false).ContextMenuAllow(false)
+			.SetInputMode(QUILL_TEXTMODE_TEXT).SetWrap(false).AllowActions(false).SetResizable(false).SetUseOverlayEditor(false)
 			.SetTabInserts(true).SetTabUsesSpaces(false).SetTabSpaces(4)
 			.SetCaretBlink(false).SetCaretFade(true).SetCaretFadeTime(250).SetCaretRepeatRate(10)
-		///@desc Sets the theme for the textbox
-		quill_change = false;
-		quill_theme = function (init_ = false) {
-			var quill_soup_active = new QuillTheme();
-			quill_soup_active.textbox.text_col = c_white;
-			quill_soup_active.textbox.placeholder_col = #9d8cbb;
-			quill_soup_active.skins.prim_bg_idle_col = #524271;
-			quill_soup_active.skins.prim_bg_active_col = #292138;
-			quill_soup_active.skins.prim_bg_hover_col = #625279;
-			quill_soup_active.textbox.line_highlight_col = #503f6e;
-			quill_soup_active.skins.prim_border_thickness = 0;
-			quill_soup_active.scrollbar.thumb_active_col = #9a89b8;
-			quill_soup_active.scrollbar.thumb_active_a = 1;
-			quill_soup_active.scrollbar.track_col = #503f6e;
-			quill_soup_active.scrollbar.track_a = 1;
-			quill_soup_active.scrollbar.border_col = #503f6e;
-			quill_soup_active.scrollbar.border_a = 1;
-			quill_soup_active.selection.bg_col = #d6b5dd;
-
-			var quill_soup_inactive = new QuillTheme();
-			quill_soup_inactive.textbox.text_col = #9d8cbb;
-			quill_soup_inactive.textbox.placeholder_col = #9d8cbb;
-			quill_soup_inactive.skins.prim_bg_idle_col = #524271;
-			quill_soup_inactive.skins.prim_bg_active_col = #292138;
-			quill_soup_inactive.skins.prim_bg_hover_col = #625279;
-			quill_soup_inactive.textbox.line_highlight_a = 0;
-			quill_soup_inactive.skins.prim_border_thickness = 0;
-			quill_soup_inactive.scrollbar.border_col = #9d8cbb;
-			quill_soup_inactive.scrollbar.border_a = 1;
-			quill_soup_inactive.scrollbar.track_col = #9d8cbb;
-			quill_soup_inactive.scrollbar.track_a = 1;
-			quill_soup_inactive.scrollbar.thumb_idle_col = #d6b5dd;
-			quill_soup_inactive.scrollbar.thumb_idle_a = 1;
-
-			if ( !init_ ) { QuillSetTheme(obj_system.textinput.IsFocused() ? quill_soup_active : quill_soup_inactive); } else { QuillSetTheme(quill_soup_inactive); }
-		}
-		quill_theme(true);
-	#endregion
+			.OnBlur(function() { //Theme for inactivity
+				var quill_soup_inactive = new QuillTheme();
+				quill_soup_inactive.textbox.text_col = #9d8cbb; quill_soup_inactive.textbox.placeholder_col = #9d8cbb; quill_soup_inactive.textbox.line_highlight_a = 0;
+				quill_soup_inactive.skins.prim_bg_idle_col = #524271; quill_soup_inactive.skins.prim_bg_active_col = #292138; quill_soup_inactive.skins.prim_bg_hover_col = #625279; quill_soup_inactive.skins.prim_border_thickness = 0;
+				quill_soup_inactive.scrollbar.border_col = #9d8cbb; quill_soup_inactive.scrollbar.border_a = 1; quill_soup_inactive.scrollbar.track_col = #9d8cbb; quill_soup_inactive.scrollbar.track_a = 1; quill_soup_inactive.scrollbar.thumb_idle_col = #d6b5dd; quill_soup_inactive.scrollbar.thumb_idle_a = 1;
+			
+				QuillSetTheme(quill_soup_inactive);
+			})
+			.OnFocus(function() { //Theme for activity
+				var quill_soup_active = new QuillTheme();
+				quill_soup_active.textbox.text_col = c_white; quill_soup_active.textbox.placeholder_col = #9d8cbb; quill_soup_active.textbox.line_highlight_col = #503f6e;
+				quill_soup_active.skins.prim_bg_idle_col = #524271; quill_soup_active.skins.prim_bg_active_col = #292138; quill_soup_active.skins.prim_bg_hover_col = #625279; quill_soup_active.skins.prim_border_thickness = 0;
+				quill_soup_active.scrollbar.thumb_active_col = #9a89b8; quill_soup_active.scrollbar.thumb_active_a = 1; quill_soup_active.scrollbar.track_col = #503f6e; quill_soup_active.scrollbar.track_a = 1; quill_soup_active.scrollbar.border_col = #503f6e; quill_soup_active.scrollbar.border_a = 1;
+				quill_soup_active.selection.bg_col = #d6b5dd; quill_soup_active.menu.item_hover_col = #9d8cbb; quill_soup_active.menu.bg_spr = spr_border_undertale; quill_soup_active.menu.prim_bg_col = c_white; quill_soup_active.menu.prim_bg_a = 1; quill_soup_active.menu.prim_border_col = c_black; quill_soup_active.menu.text_col = c_white; quill_soup_active.menu.sep_col = #9d8cbb; quill_soup_active.menu.disabled_text_col = #625279; quill_soup_active.menu.sep_h = 3; quill_soup_active.menu.pad_x = 10; quill_soup_active.menu.pad_y = 20; quill_soup_active.menu.item_hover_a = 1; quill_soup_active.menu.prim_padd = 2;
+			
+				QuillSetTheme(quill_soup_active);
+			})
+			
+			textinput.ContextMenuAddItem(QuillContextMenuItem("Copy", method(self, function () { //Copy text to clipboard
+				var txt_ = textinput.GetSelection(), result = string_copy_at(textinput.GetValue(), txt_.start + 1, txt_._end + 1) ;
+				if ( clipboard_get_text() != result ) { clipboard_set_text(result); sfx_play(snd_equip); } else { sfx_play(snd_cancel); }
+			}), "soupy_copy").SetShortcut("Ctrl+C"))
+			.ContextMenuAddItem(QuillContextMenuItem("Cut", method(self, function () { //Copy text to clipboard, then delete text
+				var txt_ = textinput.GetSelection(), result = string_copy_at(textinput.GetValue(), txt_.start + 1, txt_._end + 1), finalresult = string_delete_at(textinput.GetValue(), txt_.start + 1, txt_._end + 1);
+				clipboard_set_text(result); sfx_play(snd_throw); textinput.SetValue(finalresult); dial_updatet = 1; textinput.SetCaret(txt_.start);
+			}), "soupy_cut").SetShortcut("Ctrl+X"))
+			.ContextMenuAddItem(QuillContextMenuItem("Paste", method(self, function () { //Paste text from clipboard
+				var caret_ = textinput.GetCaret(), txt_ = textinput.GetValue(), select_ = textinput.GetSelection();
+				if ( !select_.has_selection ) { //Paste text
+					var result = string_insert(clipboard_get_text(), txt_, caret_ + 1);
+					sfx_play(snd_bump);
+				}
+				else { //Delete selection, then paste text
+					var remove_ = string_delete_at(txt_, select_.start + 1, select_._end + 1);
+					var result = string_insert(clipboard_get_text(), remove_, caret_ + 1);
+					sfx_play(snd_enc1);
+				}
+				textinput.SetValue(result); dial_updatet = 1; textinput.SetCaret(caret_);
+			}), "soupy_paste").SetShortcut("Ctrl+V"))
+			.ContextMenuAddItem(QuillContextMenuSeparator())
+			.ContextMenuAddItem(QuillContextMenuItem("Select All", method(self, function () { textinput.SelectAll(); sfx_play(snd_enc1); }), "soupy_select").SetShortcut("Ctrl+A"))
+			.ContextMenuAddItem(QuillContextMenuItem("Clear All", method(self, soupy_context_clear), "soupy_clear").SetShortcut("Ctrl+S"))
+			.ContextMenuAddItem(QuillContextMenuSeparator())
+			.ContextMenuAddItem(QuillContextMenuItem("Insert Page", method(self, soupy_context_page), "soupy_page").SetShortcut("Ctrl+D"))
+			.on_blur();
 
 	#region Menu Sections
 		#region Init Style
 			var soupy_style = new LuiStyle({ padding: 15, gap: 10, color_text: c_white, color_hover: c_yellow, sound_click: snd_select, sound_hover: snd_sel_switch, }) //Main Style
 				.setRenderRegionOffset([10, 10, 10, 10])
 				.setFonts(fnt_determination, fnt_determination, fnt_determination).setColors(, c_orange, #962525)
-				.setSprites(spr_border_undertale, spr_border_undertale)
+				.setSprites(spr_border_undertale_outlined, spr_border_undertale_outlined)
 			soupy_lui = new LuiMain().setStyle(soupy_style);
 		#endregion
 		

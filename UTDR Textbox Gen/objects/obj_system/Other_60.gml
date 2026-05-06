@@ -3,8 +3,8 @@ var result = soup_checkout("external face");
 if ( result != undefined ) {
 	var curface = global.faces_dict[$ result.myname], spr_ = curface[$ result.id_].sprite;
 	sprite_set_offset(spr_, sprite_get_width(spr_)/ 2, sprite_get_height(spr_)/ 2); //Center sprite
-	dial_face[dial_text_page] = spr_;
-	dial_face_original[dial_text_page] = dial_face[dial_text_page];
+	FACE_CURRENT = spr_;
+	FACE_ORIGINAL = FACE_CURRENT;
 	
 	soupy_message(result.msg, , , , , snd_sparkle2);
 }

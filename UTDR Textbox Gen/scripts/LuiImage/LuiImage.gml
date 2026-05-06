@@ -13,6 +13,10 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 	self.color_blend = _params[$ "color"] ?? c_white;
 	self.alpha = _params[$ "alpha"] ?? 1;
 	self.maintain_aspect = _params[$ "maintain_aspect"] ?? true;
+	self.draw_normal = _params[$ "draw_normal"] ?? false;
+	self.angle = _params[$ "angle"] ?? 0;
+	self.xscale = _params[$ "xscale"] ?? 1;
+	self.yscale = _params[$ "yscale"] ?? 1;
 	
 	self.sprite_real_width = 0;
 	self.sprite_real_height = 0;
@@ -79,13 +83,18 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 			_blend_color = merge_color(_blend_color, c_black, 0.5);
 		}
 		//Draw sprite
-		var _sprite_render_function = self.style.sprite_render_function ?? draw_sprite_stretched_ext;
-		if !is_undefined(self.value) && sprite_exists(self.value) {
-			_sprite_render_function(self.value, self.subimg, 
-										floor(self.x + self.width/2 - _width/2), 
-										floor(self.y + self.height/2 - _height/2), 
-										_width, _height, 
-										_blend_color, self.alpha);
+		if ( !self.draw_normal ) {
+			var _sprite_render_function = self.style.sprite_render_function ?? draw_sprite_stretched_ext;
+			if !is_undefined(self.value) && sprite_exists(self.value) {
+				_sprite_render_function(self.value, self.subimg, 
+											floor(self.x + self.width/2 - _width/2), 
+											floor(self.y + self.height/2 - _height/2), 
+											_width, _height, 
+											_blend_color, self.alpha);
+			}
+		}
+		else {
+			draw_sprite_ext(self.value, self.subimg, self.x + self.width/2, self.y + self.height/2, self.xscale, self.yscale, self.angle ?? 0, _blend_color, self.alpha); 
 		}
 	}
 	

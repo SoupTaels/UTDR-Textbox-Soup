@@ -1,21 +1,7 @@
-///@desc Dialogue Systems
+///@desc BG, Signals, Etc.
 //if ( live_call() ) { return live_result; } 
 if ( bord_out ) { outlinesoup_step(640, 480); }
 soupy_lui.update();
-#region Clamp Page Count and Ensure Face
-	if ( dial_text == "" ) { dial_text_page = 0; dial_text_page_c = 0; }
-	dial_text_page = clamp(dial_text_page, 0, dial_text_page_c);
-	
-	if ( dial_text_page_c > 1 ) { //Prevents out of bounds array reads
-		var result = array_length(dial_face);
-		if ( result < dial_text_page_c ) { 
-			dial_face[dial_text_page_c - 1] = -1;
-			dial_face_prev[dial_text_page_c - 1] = -1; 
-			dial_face_original[dial_text_page_c - 1] = -1; 
-			dial_face_name[dial_text_page_c - 1] = -1; 
-		}
-	}
-#endregion
 
 #region Animation
 	if ( dial_text_gif && dial_face_auto && typist.get_delay_paused() ) { dial_face_index = 0; } //Stop the face from animating if the dialogue is being delayed
@@ -51,13 +37,6 @@ soupy_lui.update();
 	_params.g_ParallaxPosition[2] -= .01;
 	fx_set_parameters(_fx,_params);
 	layer_set_fx("bg3d",_fx);
-#endregion
-
-#region Textbox Theme
-	if ( obj_system.textinput.IsFocused() ) {
-		if ( !quill_change ) { quill_change = true; quill_theme(); }
-	}
-	else { if ( quill_change ) { quill_change = false; quill_theme(); } }
 #endregion
 
 #region Broadcast Signal

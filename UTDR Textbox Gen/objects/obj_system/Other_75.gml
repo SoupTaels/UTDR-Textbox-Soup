@@ -13,7 +13,7 @@ var async_result = async_load;
 			show_debug_message($"File Path: {fpath}\nFile Name: {fname}\nFile Type: {fext}\nFinal Name: {finalname}");
 			if ( bord_visible && ( range_within(mouse_x_gui, 0, 174) && range_within(mouse_y_gui, 323, 480) ) ) { //Hovering over the dialogue portrait
 				if ( fext == ".png" ) {
-					if ( struct_exists(global.faces_dict_alt, finalname) ) { dial_face[dial_text_page] = get_face(finalname); dial_face_original[dial_text_page] = dial_face[dial_text_page]; sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_sparkle); } //If this sprite already exists within our face dictonary, just set the current page's face to that
+					if ( struct_exists(global.faces_dict_alt, finalname) ) { FACE_CURRENT = get_face(finalname); FACE_ORIGINAL = FACE_CURRENT; sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_sparkle); } //If this sprite already exists within our face dictonary, just set the current page's face to that
 					else {
 						#region Sprite Doesn't Exist Message
 							#region Yes Button
@@ -24,7 +24,7 @@ var async_result = async_load;
 					
 									var fname = element_.getData("fname"), fpath = element_.getData("fpath"), myname = element_.getData("finalname");
 									if ( !struct_exists(global.faces_dict, myname) ) { global.faces_dict[$ myname] = {}; } //Create new struct face dictionary
-									var imgnum = string_digits(fname); imgnum = imgnum != "" ? real(imgnum) : 1; //Get number of images in this sprite
+									var imgnum = string_between(fname, "_strip", ".png"); imgnum = imgnum == "" ? 1 : imgnum; //Get the image number if it's a strip file
 									with ( global.faces_dict[$ myname] ) {
 										var finalname = string_replace(string_replace(fname, "_strip", ""), ".png", ""); finalname = string_exclude(finalname, "0123456789");
 
@@ -91,7 +91,7 @@ var async_result = async_load;
 					
 									var fname = element_.getData("fname"), fpath = element_.getData("fpath"), myname = element_.getData("finalname");
 									if ( !struct_exists(global.bords_dict, myname) ) { global.bords_dict[$ myname] = {}; } //Create new struct border dictionary
-									var imgnum = string_digits(fname); imgnum = imgnum != "" ? real(imgnum) : 1; //Get number of images in this sprite
+									var imgnum = string_between(fname, "_strip", ".png"); imgnum = imgnum == "" ? 1 : imgnum; //Get the image number if it's a strip file
 									with ( global.bords_dict[$ myname] ) {
 										var finalname = string_replace(string_replace(fname, "_strip", ""), ".png", ""); finalname = string_exclude(finalname, "0123456789");
 

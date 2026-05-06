@@ -53,7 +53,7 @@ function LuiMain() : LuiBase() constructor {
 	// SYSTEM
 	
 	///@desc Create animation for any variables of target element
-	static animate = function(target_element, property, end_value, duration, easing_func = global.Ease.OutQuad) {
+	static animate = function(target_element, property, end_value, duration, easing_func = global.Ease.OutQuad, start_value) {
 	    
 		// Delete previous if found to exlude animation conflicts
 		for (var i = array_length(self.active_animations) - 1; i >= 0; --i) {
@@ -65,7 +65,7 @@ function LuiMain() : LuiBase() constructor {
 	    }
 		
 		// Create new tween
-		var _tween = new LuiTween(target_element, property, end_value, duration, easing_func);
+		var _tween = new LuiTween(target_element, property, end_value, duration, easing_func, start_value);
 	    array_push(self.active_animations, _tween);
 		
 		return _tween;
@@ -351,11 +351,12 @@ function LuiMain() : LuiBase() constructor {
 			if _element.tooltip != "" {
 				var _padding = self.style.padding; //Screen border indentation
 				var _padding_text = self.style.padding; //Text border indentation inside tooltip box
-				draw_set_font(self.style.font_default);
+				draw_set_font(_element.tooltip_font ?? self.style.font_default);
 				var _width = string_width(_element.tooltip) + _padding_text*2;
 				var _height = string_height(_element.tooltip) + _padding_text*2;
-				var _mouse_x = clamp(device_mouse_x_to_gui(0) + 16, _padding, self.width - _width - _padding);
-				var _mouse_y = clamp(device_mouse_y_to_gui(0) + 16, _padding, self.height - _height - _padding);
+				var _xx = !_element.tooltip_center ? ( device_mouse_x_to_gui(0) + _padding ) : ( ( device_mouse_x_to_gui(0) - _width/ 2) );
+				var _mouse_x = clamp(_xx, _padding, self.width - _width - _padding);
+				var _mouse_y = clamp(device_mouse_y_to_gui(0) + _padding, _padding, self.height - _height - _padding);
 				// Draw tooltip sprite back
 				if !is_undefined(self.style.sprite_tooltip) {
 					draw_sprite_stretched_ext(self.style.sprite_tooltip, 0, _mouse_x, _mouse_y, _width, _height, self.style.color_primary, LUI_FORCE_ALPHA_1 ? 1 : _prev_alpha);

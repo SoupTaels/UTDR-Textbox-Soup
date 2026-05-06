@@ -7,7 +7,9 @@
 /// maintain_aspect
 ///@arg {Struct} [_params] Struct with parameters
 function LuiImageButton(_params = {}) : LuiImage(_params) constructor {
-	
+	self.params = _params;
+	self.draw_normal = _params[$ "draw_normal"] ?? false;
+	self.color_hover = _params[$ "color_hover"];
 	self.draw = function() {
 		//Calculate fit size
 		var _width = self.width;
@@ -23,7 +25,7 @@ function LuiImageButton(_params = {}) : LuiImage(_params) constructor {
 		var _blend_color = self.color_blend;
 		if !self.deactivated {
 			if self.isMouseHovered() {
-				_blend_color = merge_color(_blend_color, self.style.color_hover, 0.5);
+				_blend_color = merge_color(_blend_color, self.color_hover ?? self.style.color_hover, 0.5);
 				if self.is_pressed {
 					_blend_color = merge_color(_blend_color, c_black, 0.5);
 				}
@@ -32,13 +34,18 @@ function LuiImageButton(_params = {}) : LuiImage(_params) constructor {
 			_blend_color = merge_color(_blend_color, c_black, 0.5);
 		}
 		//Draw sprite button
-		var _sprite_render_function = self.style.sprite_render_function ?? draw_sprite_stretched_ext;
-		if !is_undefined(self.value) && sprite_exists(self.value) {
-			_sprite_render_function(self.value, self.subimg, 
-										floor(self.x + self.width/2 - _width/2), 
-										floor(self.y + self.height/2 - _height/2), 
-										_width, _height, 
-										_blend_color, self.alpha);
+		if ( !self.draw_normal ) {
+			var _sprite_render_function = self.style.sprite_render_function ?? draw_sprite_stretched_ext;
+			if !is_undefined(self.value) && sprite_exists(self.value) {
+				_sprite_render_function(self.value, self.subimg, 
+											floor(self.x + self.width/2 - _width/2), 
+											floor(self.y + self.height/2 - _height/2), 
+											_width, _height, 
+											_blend_color, self.alpha);
+			}
+		}
+		else {
+			draw_sprite_ext(self.value, self.subimg, self.x + self.width/2, self.y + self.height/2, 1, 1, self.params[$ "angle"] ?? 0, _blend_color, self.alpha); 
 		}
 	}
 	

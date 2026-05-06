@@ -13,6 +13,9 @@ function LuiText(_params = {}) : LuiBase(_params) constructor {
 	self.scale_to_fit = _params[$ "scale_to_fit"] ?? false;
 	self.scale_x = _params[$ "scale_x"] ?? 1;
 	self.scale_y = _params[$ "scale_y"] ?? scale_x;
+	self.color = _params[$ "color"] ?? undefined;
+	self.font = _params[$ "font"] ?? undefined;
+	self.xoff = _params[$ "xoff"] ?? 0; self.yoff = _params[$ "yoff"] ?? 0;
 	self.params = _params;
 	
 	///@desc Set text
@@ -46,9 +49,9 @@ function LuiText(_params = {}) : LuiBase(_params) constructor {
 	self.draw = function() {
 		//Set font properties
 		if !is_undefined(self.style.font_default) {
-			draw_set_font(self.params[$ "font"] ?? self.style.font_default);
+			draw_set_font(self.font ?? self.style.font_default);
 		}
-		draw_set_color(self.params[$ "color"] ?? ( !self.deactivated ? self.style.color_text : merge_color(self.style.color_text, c_black, 0.5) ));
+		draw_set_color(self.color ?? ( !self.deactivated ? self.style.color_text : merge_color(self.style.color_text, c_black, 0.5) ));
 		draw_set_alpha(1);
 		draw_set_halign(self.text_halign);
 		draw_set_valign(self.text_valign);
@@ -80,13 +83,13 @@ function LuiText(_params = {}) : LuiBase(_params) constructor {
 		//Draw text
 		if self.value != "" {
 			if !self.scale_to_fit {
-				self._drawTruncatedText(_txt_x, _txt_y, self.value, self.width, self.scale_x, self.scale_y);
+				self._drawTruncatedText(_txt_x + self.xoff, _txt_y + self.yoff, self.value, self.width, self.scale_x, self.scale_y);
 			} else {
 				var _text = self.value;
 				var _xscale = self.width / string_width(_text);
 				var _yscale = self.height / string_height(_text);
 				var _scale = min(_xscale, _yscale);
-				draw_text_transformed(_txt_x, _txt_y, _text, _scale * self.scale_x, _scale * self.scale_y, 0);
+				draw_text_transformed(_txt_x + self.xoff, _txt_y + self.yoff, _text, _scale * self.scale_x, _scale * self.scale_y, 0);
 			}
 		}
 	}

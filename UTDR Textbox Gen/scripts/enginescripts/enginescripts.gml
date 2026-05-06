@@ -327,47 +327,54 @@ function string_exclude(string_, exclude_, sub_ = "") {
 ///@desc delta_time optimizer
 function deltaizer() { return delta_time * game_get_speed(gamespeed_fps) * 0.000001; }
 
+///@desc Returns a copy of the string found between two substrings.
+///@param {string} str String to search through
+///@param {string} substr1 Start substring
+///@param {string} substr2 End substring
+///@param {real} skip Skip the first nth substr1 (optional argument, default 0)
+///@param {real} startfrom Start from the nth character (optional argument, default 1)
 function string_between(str, substr1, substr2, skip = 0, startfrom = 1) {
-	    var first_found = false;
-	    var str_between = "";
+	var first_found = false, str_between = "", times_found = 0, str_length = string_length(str), substr1_length = string_length(substr1), substr2_length = string_length(substr2);
+	for ( var i = startfrom; i < str_length; i++; ) {
+		if ( !first_found ) {
+			if ( string_ord_at(str, i) == string_ord_at(substr1, 1) ) {
+				for ( var s = 0, same_chars = true; s < substr1_length-1; s++; ) {
+					same_chars = string_ord_at(str, i + s) == string_ord_at(substr1, s + 1);
+					if ( !same_chars ) { break; }
+				}
+				if ( same_chars ) { if ( times_found++ == skip ) { first_found = true; i += substr1_length-1; } }
+			}
+		}
+		else {    
+			if ( string_ord_at(str, i) == string_ord_at(substr2, 1) ) {
+				for ( var s = 0, same_chars = true; s < substr2_length - 1; s++; ) {
+					same_chars = string_ord_at(str, i + s) == string_ord_at(substr2, s + 1);
+					if ( !same_chars ) { break; }
+				}
+				if ( same_chars ) { return str_between; }
+			}
+			str_between += string_char_at(str, i);
+		}
+	}
     
-	    var times_found = 0;
-    
-	    var str_length = string_length(str);
-	    var substr1_length = string_length(substr1);
-	    var substr2_length = string_length(substr2);
-    
-	    for(var i = startfrom; i < str_length; i++) {
-	        if !first_found {
-	            if string_ord_at(str, i) == string_ord_at(substr1, 1) {
-	                var same_chars = true;
-	                for(var s = 0; s < substr1_length-1; s++) {
-	                    same_chars = string_ord_at(str, i+s) == string_ord_at(substr1, s+1);
-	                    if !same_chars break;
-	                }
-                
-	                if same_chars {
-	                    if times_found++ == skip {
-	                        first_found = true;
-	                        i += substr1_length-1;
-	                    }
-	                }
-	            }
-	        }
-	        else {    
-	            if string_ord_at(str, i) == string_ord_at(substr2, 1) {
-	                var same_chars = true;
-	                for(var s = 0; s < substr2_length-1; s++) {
-	                    same_chars = string_ord_at(str, i+s) == string_ord_at(substr2, s+1);
-	                    if !same_chars break;
-	                }
-	                if same_chars return str_between;
-	            }
-            
-	            str_between += string_char_at(str, i);
-	        }
-	    }
-    
-	    if first_found str_between += string_char_at(str, i);
-	    return str_between;
+	if ( first_found ) { str_between += string_char_at(str, i); }
+	return str_between;
+}
+
+///@desc Returns a copy of the string found between two string positions.
+///@param {string} str String to search through
+///@param {real} start_ Start substring
+///@param {real} end_ End substring
+function string_copy_at(str, start_, end_) {
+	var correct_ = start_ < end_;
+	return string_copy(str, correct_ ? start_ : end_,  correct_ ? ( end_ - start_ ) : ( start_ - end_ ));
+}
+
+///@desc Returns a copy of the string without the string found between the two string positions.
+///@param {string} str String to search through
+///@param {real} start_ Start substring
+///@param {real} end_ End substring
+function string_delete_at(str, start_, end_) {
+	var correct_ = start_ < end_;
+	return string_delete(str, correct_ ? start_ : end_,  correct_ ? ( end_ - start_ ) : ( start_ - end_ ));
 }

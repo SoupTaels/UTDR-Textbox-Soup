@@ -55,7 +55,7 @@ function LuiBase(_params = {}) constructor {
 	self.render_content_enabled = true;
 	self.need_to_update_content = false;
 	self.main_ui = undefined;
-	self.tooltip = "";
+	self.tooltip = ""; self.tooltip_center = false; self.tooltip_font = undefined;
 	self.binded_variable = undefined;
 	self.is_pressed = false;
 	self.is_mouse_hovered = false;
@@ -697,9 +697,9 @@ function LuiBase(_params = {}) constructor {
 		return self;
 	}
 	
-	///@desc Set popup text to element when mouse on it
-	static setTooltip = function(_string) {
-		self.tooltip = _string;
+	///@desc Set popup text to element when mouse on it, and whether it should be centered
+	static setTooltip = function(_string, _center = false, _font = undefined) {
+		self.tooltip = _string; self.tooltip_center = _center; self.tooltip_font = _font;
 		return self;
 	}
 	

@@ -1,6 +1,10 @@
 #macro DIAL_GIF if ( !dial_text_gif ) { exit; } //Only run if GIFs are enabled
 #macro UI_MESSAGE !obj_system.ui_paused //For pausing ui elements
-#macro USING_FACE dial_face[dial_text_page] != -1 && dial_face[dial_text_page] != 0 //If the dialogue box will contain a face
+#macro FACE_CURRENT dial_face[dial_text_page] //Get the current dialogue face
+#macro FACE_ORIGINAL dial_face_original[dial_text_page] //Get the original dialogue face
+#macro FACE_PREVIOUS dial_face_prev[dial_text_page] //Get the previous dialogue face
+#macro FACE_INTERNAL dial_face_name[dial_text_page] //Get the internal name for the current dialogue face
+#macro FACE_USING FACE_CURRENT != -1 && FACE_CURRENT != 0 //If the dialogue box will contain a face
 
 #region Default functions for the menu buttons
 	function on_enter_() { if ( obj_system.ui_tab != id_ ) { sfx_play(snd_sel_switch); TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } }
@@ -12,6 +16,18 @@
 		
 		var i = 0;
 		repeat ( array_length(obj_system.butt) ) { with ( obj_system.butt[i].data ) { if ( obj_system.ui_tab != id_ ) { TweenFire("~ocirc", "$15", "yoff>", 0); text = text_static; color_butt = c_orange; } else { TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } } i++; }
+	}
+#endregion
+
+#region Context Menu Functions
+	///@desc Clears all text in the textbox
+	function soupy_context_clear() { textinput.SetValue(""); sfx_play(snd_throw); dial_updatet = 1; }
+	
+	///@desc Inserts a page break in the textbox
+	function soupy_context_page() { 
+		var txt_ = textinput.GetValue(), cursor_ = textinput.GetCaret() + 1;
+		txt_ = string_insert("[/page]", txt_, cursor_); textinput.SetValue(txt_);
+		sfx_play(snd_bump); dial_updatet = 1; textinput.SetCaret(cursor_); 
 	}
 #endregion
 
@@ -111,9 +127,8 @@ function ui_manage() {
 					if ( keyboard_check(vk_control) && keyboard_check_pressed(ord("Z")) ) { //Undo/ redo
 						if ( !keyboard_check(vk_shift) ) { undo_stack_undo(); } else { undo_stack_redo(); } 
 					}
-					if ( keyboard_check(vk_control) ) { //Disable updating
-						if ( keyboard_check(ord("Z")) || keyboard_check(ord("X")) || keyboard_check(ord("C")) || keyboard_check(ord("A")) ) { dial_updatet = 0; }
-					}
+					if ( keyboard_check(vk_control) && keyboard_check_pressed(ord("S")) ) { soupy_context_clear(); } //Clear All
+					if ( keyboard_check(vk_control) && keyboard_check_pressed(ord("D")) ) { soupy_context_page(); } //Insert Page Break
 				}
 			#endregion
 
@@ -252,9 +267,9 @@ function ui_manage() {
 			
 			#region Clear Page Face
 				var resettime = 60;
-				if ( bord_visible && dial_face[dial_text_page] != -1 && ( range_within(mouse_x_gui, 40, 174) && range_within(mouse_y_gui, 323, 480) ) && mouse_check_right ) { //Hovering over the dialogue portrait
+				if ( bord_visible && FACE_CURRENT != -1 && ( range_within(mouse_x_gui, 40, 174) && range_within(mouse_y_gui, 323, 480) ) && mouse_check_right ) { //Hovering over the dialogue portrait
 					soupy_alarm("removeface", resettime);
-					soupy_alarm_run("removeface", 1, function () { dial_face[dial_text_page] = -1; sfx_play(snd_throw); }); //Timer to clear face
+					soupy_alarm_run("removeface", 1, function () { FACE_CURRENT = -1; sfx_play(snd_throw); }); //Timer to clear face
 
 					draw_sprite_stretched_ext(spr_border_undertale, 0, 40, 323, 134, 136, c_red, 0.7); //BG
 					var ringcalc = map_value(soupy_alarm_get("removeface", "timer", false), 0, resettime, 0, 360), textx = 110, texty = 390; //Turn the values of a timer into a range of degrees
@@ -358,7 +373,7 @@ function ui_manage() {
 		#region Page Indicator Text
 			if ( dial_text_page_c > 1 && bord_visible ) {
 				var pageind = scribble($"[offset,0,3]< Page {dial_text_page + 1}/ {dial_text_page_c} >[offsetPop] [spr_effects_icons,16]")
-										.starting_format("fnt_abaddon_outline", c_gray)
+										.starting_format("fnt_abaddon", c_gray)
 										.align(fa_center, fa_middle)
 										.draw(320, 333)
 			}

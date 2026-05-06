@@ -3,10 +3,10 @@
 ///@arg {String} property The name of the property to animate (e.g., "slider_x", "alpha").
 ///@arg {Real} end_value The target value of the property.
 ///@arg {Real} duration The duration of the animation in seconds.
-function LuiTween(target_element, property, end_value, duration, easing_func) constructor {
+function LuiTween(target_element, property, end_value, duration, easing_func, start_value) constructor {
 	self.target = target_element;
 	self.property = property;
-	self.start_value = target_element[$ property];
+	self.start_value = start_value ?? target_element[$ property];
 	self.end_value = end_value;
 	self.duration = max(0.01, duration);
 	self.easing_func = easing_func;

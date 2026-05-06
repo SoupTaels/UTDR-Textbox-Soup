@@ -435,7 +435,7 @@ function __QuillCore() constructor {
 		"border_col", "border_a"
 		];
 		static __menu_keys = [
-		"item_h", "pad_x", "pad_y",
+		"item_h", "pad_x", "pad_y", "prim_padd",
 		"min_w", "max_w", "viewport_margin", "shortcut_gap", "sep_min_h",
 		"bg_spr", "bg_subimg",
 		"border_spr", "border_subimg", "border_spr_outside_draw",
@@ -2211,7 +2211,7 @@ function __QuillCore() constructor {
 
 		var _old_font = draw_get_font();
 		var _menu_font = _st.fonts.menu;
-		if (is_real(_menu_font) && _menu_font >= 0 && font_exists(_menu_font)) {
+		if ( font_exists(_menu_font) ) {
 			draw_set_font(_menu_font);
 		}
 
@@ -2258,7 +2258,7 @@ function __QuillCore() constructor {
 			if (_need_panel_bd_prim) {
 				draw_set_alpha(_old_alpha * _t_menu.prim_border_a);
 				draw_set_color(_t_menu.prim_border_col);
-				__QuillRenderDrawBorderPrimitive(_panel_outer_x1, _panel_outer_y1, _panel_outer_x2, _panel_outer_y2, 1);
+				__QuillRenderDrawBorderPrimitive(_panel_outer_x1 - _t_menu.prim_padd, _panel_outer_y1 - _t_menu.prim_padd, _panel_outer_x2 + _t_menu.prim_padd, _panel_outer_y2 + _t_menu.prim_padd, _t_menu.prim_padd);
 			}
 		}
 		draw_set_alpha(_old_alpha);
@@ -2433,11 +2433,11 @@ function __QuillCore() constructor {
 
 		var _scope = { tb_id: _tb.id };
 		var _base = [];
-		array_push(_base, new __QuillContextMenuItem("Cut", method(_scope, __ContextActionCut), "builtin_cut").SetShortcut("Ctrl+X").SetEnabled(!_read_only && _can_copy && _can_copy_pwd));
-		array_push(_base, new __QuillContextMenuItem("Copy", method(_scope, __ContextActionCopy), "builtin_copy").SetShortcut("Ctrl+C").SetEnabled(_can_copy && _can_copy_pwd));
-		array_push(_base, new __QuillContextMenuItem("Paste", method(_scope, __ContextActionPaste), "builtin_paste").SetShortcut("Ctrl+V").SetEnabled(!_read_only));
-		array_push(_base, new __QuillContextMenuSeparator("builtin_sep_core"));
-		array_push(_base, new __QuillContextMenuItem("Select all", method(_scope, __ContextActionSelectAll), "builtin_select_all").SetShortcut("Ctrl+A").SetEnabled(string_length(_tb.GetValue()) > 0));
+		//array_push(_base, new __QuillContextMenuItem("Cut", method(_scope, __ContextActionCut), "builtin_cut").SetShortcut("Ctrl+X").SetEnabled(!_read_only && _can_copy && _can_copy_pwd));
+		//array_push(_base, new __QuillContextMenuItem("Copy", method(_scope, __ContextActionCopy), "builtin_copy").SetShortcut("Ctrl+C").SetEnabled(_can_copy && _can_copy_pwd));
+		//array_push(_base, new __QuillContextMenuItem("Paste", method(_scope, __ContextActionPaste), "builtin_paste").SetShortcut("Ctrl+V").SetEnabled(!_read_only));
+		//array_push(_base, new __QuillContextMenuSeparator("builtin_sep_core"));
+		//array_push(_base, new __QuillContextMenuItem("Select all", method(_scope, __ContextActionSelectAll), "builtin_select_all").SetShortcut("Ctrl+A").SetEnabled(string_length(_tb.GetValue()) > 0));
 
 		if (is_struct(_cfg) && _cfg[$ "multiline"] == true && (_tb.use_overlay_editor == true)) {
 			array_push(_base, new __QuillContextMenuSeparator("builtin_sep_editor"));

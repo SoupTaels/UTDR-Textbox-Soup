@@ -31,11 +31,11 @@ if ( bord_visible ) {
 		#region Dialogue Box
 			var dltrn = spr_bord == spr_border_deltarune; //Check if our border is Deltarune
 			var offset_ = dltrn ? 8 : 0, offset_w = dltrn ? 15 : 0, offset_h = dltrn ? 16 : 0, bordx = 32 - offset_, bordy = 315 - offset_, bordw = 578 + offset_w, bordh = 152 + offset_w; //Border coords
-			var xx_ = ( bordx + ( ( USING_FACE ? 144 : 28 ) + ( dial_point_auto ? 4 : 0 ) ) ) + ( offset_ + dltrn ? 6 : 0 ), yy_ = ( bordy + 29 ) + offset_; //Text X Y
+			var xx_ = ( bordx + ( ( FACE_USING ? 144 : 28 ) + ( dial_point_auto ? 4 : 0 ) ) ) + ( offset_ + dltrn ? 6 : 0 ), yy_ = ( bordy + 29 ) + offset_; //Text X Y
 
 			var ninesl_ = sprite_get_nineslice(spr_bord ); 
 			if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, 1); } else { draw_9slice(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, bord_scale, bord_stretch); } //Dialogue Box
-			if ( USING_FACE ) { draw_sprite_ensure(dial_face[dial_text_page], dial_face_index, bordx + ( 74 + offset_ ), bordy + ( 76 + offset_ ), 2, 2, 0, dial_face_clr, 1); } //Dialogue Face
+			if ( FACE_USING ) { draw_sprite_ensure(FACE_CURRENT, dial_face_index, bordx + ( 74 + offset_ ), bordy + ( 76 + offset_ ), 2, 2, 0, dial_face_clr, 1); } //Dialogue Face
 		#endregion
 
 		#region Dialogue Text
@@ -60,7 +60,6 @@ if ( bord_visible ) {
 				scrib_dial.allow_glyph_data_getter();
 				scrib_dial.line_spacing(line_sp);
 				scrib_dial.page(dial_text_page);
-				dial_text_page_c = scrib_dial.get_page_count();
 				scrib_dial.wrap(wrapcalc);
 				scrib_dial.draw(tx_x, yy_, dial_text_gif ? typist : undefined);
 

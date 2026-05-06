@@ -2,7 +2,7 @@
 /// @desc Creates the undo stack controller instance.
 /// @returns {Undefined}
 function undo_stack_create() {
-    instance_create_depth(0, 0, 0, ctrl_UndoStack);
+	if ( !instance_exists(ctrl_UndoStack) ) { instance_create_depth(0, 0, 0, ctrl_UndoStack); }
 }
 
 /// @func undo_stack_destroy()

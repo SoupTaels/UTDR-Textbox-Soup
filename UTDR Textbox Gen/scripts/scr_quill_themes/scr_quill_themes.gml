@@ -238,6 +238,7 @@ function QuillMenuSubtheme() : QuillSubtheme() constructor {
 	item_h = 22;
 	pad_x = 8;
 	pad_y = 6;
+	prim_padd = 1;
 	min_w = 140;
 	max_w = 520;
 	viewport_margin = 4;

@@ -30,7 +30,7 @@ if ( screenshot || record.enabled ) {
 	surface_reset_target();
 	
 	var finish_func = method({folder, _path_separator, fname, record, x_, y_, w_, h_, smallbox, screenshot_surf }, function(gif_ = true) { //Finished recording/ screenshotting
-		var fpath = $"{folder}{_path_separator}{fname}_.{gif_ ? "gif" : "png"}", fpath_final = $"{program_directory}{_path_separator}{folder}{_path_separator}{fname}_.{gif_ ? "gif" : "png"}";
+		var fpath = $"{folder}{_path_separator}{fname}_.{gif_ ? "gif" : "png"}", fpath_final = $"{executable_get_directory()}{folder}{_path_separator}{fname}_.{gif_ ? "gif" : "png"}";
 		if ( gif_ ) {
 			gif_save(record.id_, fpath_final);
 			fpath = fpath_final;
