@@ -68,7 +68,7 @@ if ( bord_visible ) {
 						var linec = dial_text_gif ? dial_wrap_count : scrib_dial.get_line_count(dial_text_page);
 						var i = 0; repeat ( linec ) {
 							var lined = scrib_dial.get_line_data(i, dial_text_page), chr_ = chr(scrib_dial.get_glyph_data(lined.glyph_start, dial_text_page).unicode);
-							if ( lined.forced_break && ( chr_ != chr(10) && chr_ != chr(0) ) ) { //Don't show anything if the line only contains an newline literal
+							if ( lined.forced_break && ( chr_ != chr(10) && chr_ != chr(0) && chr_ != "" && chr_ != " " ) && ( !dial_text_gif || typist.get_state() >= 0.05 * typist_spd ) ) { //Don't show anything if the line only contains an newline literal
 								if ( dial_text_shdw ) { 
 									var scrib_point_shdw = scribble(dial_point_chr, "point_shdw"); //Dialogue Point
 									scrib_point_shdw.starting_format(dial_font, dial_text_shdw_clr);

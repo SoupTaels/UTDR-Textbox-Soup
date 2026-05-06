@@ -27,7 +27,7 @@
 	function soupy_context_page() { 
 		var txt_ = textinput.GetValue(), cursor_ = textinput.GetCaret() + 1;
 		txt_ = string_insert("[/page]", txt_, cursor_); textinput.SetValue(txt_);
-		sfx_play(snd_bump); dial_updatet = 1; textinput.SetCaret(cursor_); 
+		sfx_play(snd_bump); dial_updatet = 1; textinput.SetCaret(cursor_ - 1); 
 	}
 #endregion
 
