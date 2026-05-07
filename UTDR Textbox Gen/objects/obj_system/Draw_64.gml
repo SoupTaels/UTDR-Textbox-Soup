@@ -1,13 +1,14 @@
 ///@desc Draw Dialogue Things
-//if ( live_call() ) { return live_result; } 
+if ( live_call() ) { return live_result; } 
 #region UI Borders and Buttons
 	if ( ui_visible ) {
 		#region Orange and White Border
 			outlinesoup_start();
-				draw_sprite_stretched_ext(spr_border_octagon, 0, 10, 20, room_width - 20, room_height - 90, c_white, 0.6); //Back opacity
-				draw_sprite_stretched_ext(spr_border_tabs, 2, 10, 280, room_width - 20, room_height - 350, merge_color(c_orange, c_white, 0.5), 1); //Fading Part
-				draw_sprite_stretched_ext(spr_border_tabs, 2, 10, 300, room_width - 20, room_height - 370, c_white, 1); //Bottom
-				draw_sprite_stretched_ext(spr_border_tabs, 1, 10, 20, room_width - 20, room_height - 220, c_orange, 1); //Top
+				var yoff = ui_tab_yoff;
+				draw_sprite_stretched_ext(spr_border_octagon, 0, 10, 20, room_width - 20, ( room_height - 90 ) + yoff, c_white, 0.6); //Back opacity
+				draw_sprite_stretched_ext(spr_border_tabs, 2, 10, 280, room_width - 20, ( room_height - 350 ) + yoff, merge_color(c_orange, c_white, 0.5), 1); //Fading Part
+				draw_sprite_stretched_ext(spr_border_tabs, 2, 10, 300, room_width - 20, ( room_height - 370 ) + yoff, c_white, 1); //Bottom
+				draw_sprite_stretched_ext(spr_border_tabs, 1, 10, 20, room_width - 20, ( room_height - 220 ), c_orange, 1); //Top
 			outlinesoup_end();
 		#endregion
 		
@@ -90,6 +91,15 @@ if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , 0, 0);
 							i++; }
 						}
 					#endregion
+				}
+				else { //Draw placeholders
+					if ( FACE_CURRENT == -1 ) {
+						var emptytxt = scribble("[c_dkgray][wheel][scale,3](But nobody came.)")
+						.align(fa_center, fa_middle)
+						.draw(390, 390);
+					
+						draw_sprite(spr_face_placeholder, 0, 40, 323);  //Portrait placeholder
+					}
 				}
 			#endregion
 		if  ( bord_out ) { outlinesoup_end(); }

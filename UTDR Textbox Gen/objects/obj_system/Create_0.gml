@@ -170,6 +170,7 @@
 	record = { enabled: false, type: 0, frames: 0, framesmax: 0, id_: -1, quant: 1, }; //Whether to record, the type of recording(0 - static, 1 - wait for dialogue to finish), and how long to record for
 	ui_visible = true; //Whether the UI should be visible
 	ui_effoff = 0; //Effects array offset 
+	ui_tab_yoff = 0; //Y offset for the orange and white borders
 	ui_paused = false; //Whether to freeze ui elements
 	file_dragging = false; //Whether a file is being dragged on screen.
 	

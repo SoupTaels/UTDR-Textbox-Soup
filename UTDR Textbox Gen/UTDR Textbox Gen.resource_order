@@ -316,6 +316,7 @@
     {"name":"spr_color_button","order":2,"path":"sprites/spr_color_button/spr_color_button.yy",},
     {"name":"spr_effects_icons","order":1,"path":"sprites/spr_effects_icons/spr_effects_icons.yy",},
     {"name":"spr_face_blank","order":1,"path":"sprites/spr_face_blank/spr_face_blank.yy",},
+    {"name":"spr_face_placeholder","order":2,"path":"sprites/spr_face_placeholder/spr_face_placeholder.yy",},
     {"name":"spr_pixel","order":2,"path":"sprites/spr_pixel/spr_pixel.yy",},
     {"name":"spr_reference_1","order":1,"path":"sprites/spr_reference_1/spr_reference_1.yy",},
     {"name":"spr_reference_2","order":2,"path":"sprites/spr_reference_2/spr_reference_2.yy",},

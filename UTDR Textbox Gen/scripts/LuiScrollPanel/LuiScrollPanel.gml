@@ -1,7 +1,6 @@
 ///@desc Panel with the ability to scroll down/up.
 ///@arg {Struct} [_params] Struct with parameters
 function LuiScrollPanel(_params = {}) : LuiBase(_params) constructor {
-	
 	self.draw_content_in_cutted_region = true;
 	
 	self.scroll_offset_y = 0;
@@ -60,20 +59,21 @@ function LuiScrollPanel(_params = {}) : LuiBase(_params) constructor {
 			draw_sprite_stretched_ext(self.style.sprite_panel, 0, self.x, self.y, self.width, self.height, _blend_color, 1);
 		}
 		//Scroll slider
-		if array_length(self.getContainer().content) > 0 {
+		if ( array_length(self.getContainer().content) > 0 ) {
 			var _scroll_slider_x = self.x + self.width - self.style.scroll_slider_width - self.scroll_pin_edge_offset;
 			var _scroll_pin_y_offset = Range(self.scroll_offset_y, 0, -(self.scroll_container.height - self.height), self.scroll_pin_edge_offset, self.height - self.style.scroll_slider_width - self.scroll_pin_edge_offset);
+			_scroll_pin_y_offset = max(_scroll_pin_y_offset, self.scroll_pin_edge_offset);
 			// Slider back
 			if !is_undefined(self.style.sprite_scroll_slider) {
 				draw_sprite_stretched_ext(self.style.sprite_scroll_slider, 0, _scroll_slider_x, self.y + self.scroll_pin_edge_offset, self.style.scroll_slider_width, self.height - self.scroll_pin_edge_offset*2, self.style.color_back, 1);
 			}
-			// Scroll pin
-			if !is_undefined(self.style.sprite_scroll_pin) {
-				draw_sprite_stretched_ext(self.style.sprite_scroll_pin, 0, _scroll_slider_x, self.y + _scroll_pin_y_offset, self.style.scroll_slider_width, self.style.scroll_slider_width, self.style.color_secondary, 1);
-			}
-			// Scroll pin border
-			if !is_undefined(self.style.sprite_scroll_pin_border) {
-				draw_sprite_stretched_ext(self.style.sprite_scroll_pin_border, 0, _scroll_slider_x, self.y + _scroll_pin_y_offset, self.style.scroll_slider_width, self.style.scroll_slider_width, self.style.color_border, 1);
+			if ( self.scroll_container.height >= self.height ) {
+				if !is_undefined(self.style.sprite_scroll_pin) { // Scroll pin
+					draw_sprite_stretched_ext(self.style.sprite_scroll_pin, 0, _scroll_slider_x, self.y + _scroll_pin_y_offset, self.style.scroll_slider_width, self.style.scroll_slider_width, self.style.color_secondary, 1);
+				}
+				if !is_undefined(self.style.sprite_scroll_pin_border) { // Scroll pin border
+					draw_sprite_stretched_ext(self.style.sprite_scroll_pin_border, 0, _scroll_slider_x, self.y + _scroll_pin_y_offset, self.style.scroll_slider_width, self.style.scroll_slider_width, self.style.color_border, 1);
+				}
 			}
 		}
 		//Panel border
@@ -108,12 +108,11 @@ function LuiScrollPanel(_params = {}) : LuiBase(_params) constructor {
 				self.drag_start_y = -1;
 			}
 		}
+		
 		// Scrolling
-		if self.scroll_offset_y != self.scroll_target_offset_y {
-			self.scroll_target_offset_y = clamp(self.scroll_target_offset_y, -(self.scroll_container.height - self.height), 0);
-			self.scroll_offset_y = SmoothApproachDelta(self.scroll_offset_y, self.scroll_target_offset_y, self.scroll_smoothness, 0.1);
-			self._applyScroll();
-		}
+		self.scroll_target_offset_y = clamp(self.scroll_target_offset_y, -(self.scroll_container.height - self.height), 0);
+		self.scroll_offset_y = SmoothApproachDelta(self.scroll_offset_y, self.scroll_target_offset_y, self.scroll_smoothness, 0.1);
+		if ( self.scroll_offset_y != self.scroll_target_offset_y ) { self._applyScroll(); }
 	}
 	
 	self.addEvent(LUI_EV_CREATE, function(_element) {

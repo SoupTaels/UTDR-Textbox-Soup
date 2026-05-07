@@ -234,7 +234,8 @@ function __scribble_class_element(_string, _unique_id) constructor
     /// @param colour
     static starting_format = function(_font_name, _in_colour)
     {
-        if (is_string(_font_name))
+        if ( !is_string(_font_name) ) { _font_name = font_get_name(_font_name); }
+		if (is_string(_font_name))
         {
             if (_font_name != __starting_font)
             {

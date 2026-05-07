@@ -1,6 +1,8 @@
 ///@desc BG, Signals, Etc.
 //if ( live_call() ) { return live_result; } 
 if ( bord_out ) { outlinesoup_step(640, 480); }
+ui_tab_yoff = lerp(ui_tab_yoff, !bord_visible ? ( ui_tab == 0 ? 55 : 65 ) : 0, 0.15); //Smoothly adjust orange and white borders
+soupy_panel_portrait.setHeight(340 + ui_tab_yoff);
 soupy_lui.update();
 
 #region Animation & Effects
