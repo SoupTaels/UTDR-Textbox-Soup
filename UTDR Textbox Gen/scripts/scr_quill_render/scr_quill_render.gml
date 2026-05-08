@@ -7,13 +7,13 @@ function __QuillRenderPushScissorGui(_x1, _y1, _x2, _y2) {
 	var _pos = application_get_position();
 	var _ax = 0;
 	var _ay = 0;
-	var _aw = 640;
-	var _ah = 480;
+	var _aw = display_get_width();
+	var _ah = display_get_height();
 	if (is_array(_pos) && array_length(_pos) >= 4) {
-		_ax = 0;
-		_ay = 0;
-		_aw = 640;
-		_ah = 480;
+		_ax = _pos[0];
+		_ay = _pos[1];
+		_aw = max(1, _pos[2] - _pos[0]);
+		_ah = max(1, _pos[3] - _pos[1]);
 	}
 
 	var _sx = (_gw > 0) ? (_aw / _gw) : 1;

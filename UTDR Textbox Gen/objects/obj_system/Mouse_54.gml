@@ -1,3 +1,4 @@
+
 //var result = get_open_filename_ext("Image File (.PNG Only)|*.png", "", directory_get_pictures_path(), "Select a sprite to import.");
 //FACE_CURRENT = result;
 /*soup_store("rgb r", color_get_red(bord_clr)); soup_store("rgb g", color_get_green(bord_clr)); soup_store("rgb b", color_get_blue(bord_clr));
@@ -32,7 +33,7 @@ var elemarr = [
 		sfx_play(snd_throw, 0, , 1.5);
 	}),
 ];
-soupy_popup(elemarr, function() { sfx_play(snd_equip); obj_system.bord_clr = make_color_rgb(soup_checkout("rgb r"), soup_checkout("rgb g"), soup_checkout("rgb b")); soup_store_clear(); }, "SET COLOR!");
+soupy_popup(elemarr, function() { sfx_play(snd_equip); SYSTEMUI.bord_clr = make_color_rgb(soup_checkout("rgb r"), soup_checkout("rgb g"), soup_checkout("rgb b")); soup_store_clear(); }, "SET COLOR!");
 //bord_clr = get_color_ext(c_white, "Change dialogue box color:");*/
 /*var arr_ = [];
 var credits_add = method({ arr_ }, function(text_ = "", link_ = "", scribble_ = false) {

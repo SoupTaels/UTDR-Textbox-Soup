@@ -5,7 +5,6 @@
 	spr_bord = spr_border_undertale; //Border Sprite
 	bord_clr = c_white; //Border Color
 	bord_out = true; //Whether border should have an outline
-	bord_small = false; //Whether to render everything out in a small box
 	bord_prev = spr_bord; //Previous border
 	bord_visible = true; //Whether the dialogue box is visible
 	bord_index = 0; //Border image index
@@ -167,7 +166,7 @@
 	ui_tab = 0; //Current Tab (0 - Dialogue, 1 - Face, 2 - Border, 3 - About)
 	screenshot = false; //Screenshot task
 	screenshot_surf = -1; //Screenshot surface
-	record = { enabled: false, type: 0, frames: 0, framesmax: 0, id_: -1, quant: 1, }; //Whether to record, the type of recording(0 - static, 1 - wait for dialogue to finish), and how long to record for
+	record = { enabled: false, type: 0, frames: 0, framesmax: 0, id_: -1, quant: 1, delay: 60, }; //Whether to record, the type of recording(0 - static, 1 - wait for dialogue to finish), and how long to record for
 	ui_visible = true; //Whether the UI should be visible
 	ui_effoff = 0; //Effects array offset 
 	ui_tab_yoff = 0; //Y offset for the orange and white borders

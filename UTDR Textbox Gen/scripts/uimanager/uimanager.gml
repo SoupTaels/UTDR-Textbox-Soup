@@ -1,5 +1,6 @@
 #macro DIAL_GIF if ( !dial_text_gif ) { exit; } //Only run if GIFs are enabled
-#macro UI_MESSAGE !obj_system.ui_paused //For pausing ui elements
+#macro SYSTEMUI obj_system //System object
+#macro UI_MESSAGE !SYSTEMUI.ui_paused //For pausing ui elements
 #macro FACE_CURRENT dial_face[dial_text_page] //Get the current dialogue face
 #macro FACE_ORIGINAL dial_face_original[dial_text_page] //Get the original dialogue face
 #macro FACE_PREVIOUS dial_face_prev[dial_text_page] //Get the previous dialogue face
@@ -7,15 +8,15 @@
 #macro FACE_USING FACE_CURRENT != -1 && FACE_CURRENT != 0 //If the dialogue box will contain a face
 
 #region Default functions for the menu buttons
-	function on_enter_() { if ( obj_system.ui_tab != id_ ) { sfx_play(snd_sel_switch); TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } }
-	function on_leave_() { if ( obj_system.ui_tab != id_ ) { TweenFire("~ocirc", "$15", "yoff>", 0); text = text_static; color_butt = c_orange; } window_set_cursor(cr_default); }
-	function on_click_() { if ( obj_system.ui_tab != id_ ) { sfx_play(snd_select); obj_system.ui_tab = id_; on_reset_(); } else { sfx_play(snd_bump, , , random_range(0.8, 1.2)); } }
+	function on_enter_() { if ( SYSTEMUI.ui_tab != id_ ) { sfx_play(snd_sel_switch); TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } }
+	function on_leave_() { if ( SYSTEMUI.ui_tab != id_ ) { TweenFire("~ocirc", "$15", "yoff>", 0); text = text_static; color_butt = c_orange; } window_set_cursor(cr_default); }
+	function on_click_() { if ( SYSTEMUI.ui_tab != id_ ) { sfx_play(snd_select); SYSTEMUI.ui_tab = id_; on_reset_(); } else { sfx_play(snd_bump, , , random_range(0.8, 1.2)); } }
 	function on_hover_() { window_set_cursor(cr_drag); }
 	function on_reset_() { 
-		obj_system.ui_reset();
+		SYSTEMUI.ui_reset();
 		
 		var i = 0;
-		repeat ( array_length(obj_system.butt) ) { with ( obj_system.butt[i].data ) { if ( obj_system.ui_tab != id_ ) { TweenFire("~ocirc", "$15", "yoff>", 0); text = text_static; color_butt = c_orange; } else { TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } } i++; }
+		repeat ( array_length(SYSTEMUI.butt) ) { with ( SYSTEMUI.butt[i].data ) { if ( SYSTEMUI.ui_tab != id_ ) { TweenFire("~ocirc", "$15", "yoff>", 0); text = text_static; color_butt = c_orange; } else { TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } } i++; }
 	}
 #endregion
 
@@ -33,12 +34,12 @@
 
 function TextChange(txt, point) : UndoableChange() constructor { //Handle undo/ redoing changes
 	live_auto_call
-	prev_txt = obj_system.dial_text; //Store previous/ inital text
-	point_prev = obj_system.textinput.GetCaret(); //Get previous point
+	prev_txt = SYSTEMUI.dial_text; //Store previous/ inital text
+	point_prev = SYSTEMUI.textinput.GetCaret(); //Get previous point
 	mytxt = txt; //Get our new text
 	point_ = point; //Get our new point
 
-	static can_apply = function() { return ( obj_system.dial_text != mytxt ); } //Don't push the same unchanged text to the undo stack
+	static can_apply = function() { return ( SYSTEMUI.dial_text != mytxt ); } //Don't push the same unchanged text to the undo stack
 	static apply = function() { with ( obj_system ) { dial_text = other.mytxt; textinput.SetValue(dial_text); textinput.SetCaret(other.point_); } sfx_play(snd_updated); } //Apply recent changes
     static undo = function() { with ( obj_system ) { dial_text = other.prev_txt; textinput.SetValue(dial_text); textinput.SetCaret(other.point_prev); } sfx_play(snd_throw); }
 }
@@ -182,10 +183,10 @@ function ui_manage() {
 				var colors_ = ["c_red", "c_yellow", "c_blue", "c_lime", "c_aqua", "c_cyan", "c_purple", "c_orange", "c_maroon", "c_fuchsia", "c_gold", "c_white", "c_ltgray", "c_gray", "c_dkgray", "c_black"], colors_i = 0, colors_len = array_length(colors_); //Available colors
 				repeat ( colors_len ) {
 					var colors_cur = colors_[colors_i]; //Current color
-					var butt_data = { x: 160 + ( 27 * colors_i ), y: 70, sprite: spr_color_button, draw_nine: false, leeway: 3, color_butt: colors_get[$ colors_cur], color_butt_hover: merge_color(colors_get[$ colors_cur], color_get_value(colors_get[$ colors_cur]) > 150 ? c_black : c_white, 0.3), on_click: method({ colors_cur }, function () { obj_system.butt_func(colors_cur, true); }), on_click_right: method({ colors_cur }, function () { 
+					var butt_data = { x: 160 + ( 27 * colors_i ), y: 70, sprite: spr_color_button, draw_nine: false, leeway: 3, color_butt: colors_get[$ colors_cur], color_butt_hover: merge_color(colors_get[$ colors_cur], color_get_value(colors_get[$ colors_cur]) > 150 ? c_black : c_white, 0.3), on_click: method({ colors_cur }, function () { SYSTEMUI.butt_func(colors_cur, true); }), on_click_right: method({ colors_cur }, function () { 
 						sfx_play(snd_equip2, , , 1.5); 
-						if ( obj_system.dial_text_outline != obj_system.colors_get[$ colors_cur] ) { obj_system.dial_text_outline = obj_system.colors_get[$ colors_cur]; } //Switching to a new color? Change the text outline
-						else { obj_system.dial_text_outline = -1; } //Disable text outline
+						if ( SYSTEMUI.dial_text_outline != SYSTEMUI.colors_get[$ colors_cur] ) { SYSTEMUI.dial_text_outline = SYSTEMUI.colors_get[$ colors_cur]; } //Switching to a new color? Change the text outline
+						else { SYSTEMUI.dial_text_outline = -1; } //Disable text outline
 					}) };
 					
 					butt_data[$ "x2"] = butt_data.x + sprite_get_width(butt_data.sprite); butt_data[$ "y2"] = butt_data.y + sprite_get_height(butt_data.sprite); 
@@ -199,7 +200,7 @@ function ui_manage() {
 					if ( effects_i > 5 ) { continue; }
 					var effects_true = effects_i + ui_effoff;
 					var effects_cur = effects_[effects_true]; //Current effect
-					var butt_data = { x: 180 + ( 75 * effects_i ), y: 95, color_butt: c_orange, color_butt_hover: c_yellow, color: c_black, text: $"{effects_cur} [spr_effects_icons,{effects_true}]", padd_multi: 4, on_hover: undefined, on_click: method({ effects_cur }, function () { obj_system.butt_func(string_letters(string_lower(effects_cur))); }) } 
+					var butt_data = { x: 180 + ( 75 * effects_i ), y: 95, color_butt: c_orange, color_butt_hover: c_yellow, color: c_black, text: $"{effects_cur} [spr_effects_icons,{effects_true}]", padd_multi: 4, on_hover: undefined, on_click: method({ effects_cur }, function () { SYSTEMUI.butt_func(string_letters(string_lower(effects_cur))); }) } 
 					var butt_ = new Button(butt_data); butt_.update(); //Create button
 				effects_i++; }
 				

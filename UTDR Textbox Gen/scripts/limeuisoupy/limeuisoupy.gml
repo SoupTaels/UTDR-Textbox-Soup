@@ -20,14 +20,14 @@ function soupy_message(textarr_ = ["Test", "Test 2"], textbutt_ = "OK", width = 
 	
 	array_push(arr_arr, new LuiButton({ text: textbutt_, "height": 35, font: font_, }).setData("allowmultiple", allowmultiple_).setData("container", containter_).setData("func", func_).setPadding(padd_)
 	.addEvent(LUI_EV_CLICK, function (element_) { 
-		var allowmultiple = element_.getData("allowmultiple"); obj_system.ui_paused = allowmultiple;
+		var allowmultiple = element_.getData("allowmultiple"); SYSTEMUI.ui_paused = allowmultiple;
 		var myfunc = element_.getData("func"); myfunc(); 
 		var maincan = element_.getData("container"); maincan.destroy(); }));
 	panel_.addContent([
 		new LuiColumn().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.flex_end).addContent(arr_arr),
 	]);
-	obj_system.soupy_lui.addContent(containter_.addContent(panel_));
-	obj_system.ui_paused = true;
+	SYSTEMUI.soupy_lui.addContent(containter_.addContent(panel_));
+	SYSTEMUI.ui_paused = true;
 }
 
 ///@desc Displays a LimeUI popup box accepting arrays for LimeUI elements.
@@ -48,12 +48,12 @@ function soupy_popup(elementsarr, func_ = function(){}, textbutt_ = "OK", width 
 	var arr_arr = elementsarr;	
 	array_push(arr_arr, new LuiButton({ text: textbutt_, "height": 35, font: font_, }).setData("allowmultiple", allowmultiple_).setData("container", containter_).setData("func", func_).setPadding(padd_)
 	.addEvent(LUI_EV_CLICK, function (element_) { 
-		var allowmultiple_ = element_.getData("allowmultiple"); obj_system.ui_paused = allowmultiple_;
+		var allowmultiple_ = element_.getData("allowmultiple"); SYSTEMUI.ui_paused = allowmultiple_;
 		var myfunc = element_.getData("func"); myfunc();
 		var maincan = element_.getData("container"); maincan.destroy(); }));
 	panel_.addContent([
 		new LuiColumn().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.flex_end).addContent(arr_arr),
 	]);
-	obj_system.soupy_lui.addContent(containter_.addContent(panel_));
-	obj_system.ui_paused = true;
+	SYSTEMUI.soupy_lui.addContent(containter_.addContent(panel_));
+	SYSTEMUI.ui_paused = true;
 }

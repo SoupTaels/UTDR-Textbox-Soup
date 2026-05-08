@@ -43,7 +43,7 @@ var async_result = async_load;
 										}
 									}
 									get_panel_.container.destroy();
-									obj_system.ui_paused = false;
+									SYSTEMUI.ui_paused = false;
 								});
 							#endregion
 				
@@ -51,7 +51,7 @@ var async_result = async_load;
 								var panel_no_ = new LuiButton({ text: "No." }).setData("panel_bg_", panel_bg_).addEvent(LUI_EV_CREATE, function(element_) { sfx_play(snd_equip); }).addEvent(LUI_EV_CLICK, function(element_) {
 									var get_panel_ = element_.getData("panel_bg_");
 									get_panel_.container.destroy(); 
-									obj_system.ui_paused = false;
+									SYSTEMUI.ui_paused = false;
 									sfx_play(snd_cancel);
 								});
 							#endregion
@@ -60,7 +60,7 @@ var async_result = async_load;
 								new LuiColumn().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.flex_end).addContent([ panel_yes_, panel_no_, ]),
 							]);
 							soupy_lui.addContent(panel_bg_.addContent(panel_));
-							obj_system.ui_paused = true;
+							SYSTEMUI.ui_paused = true;
 						#endregion
 					}
 				}
@@ -74,7 +74,7 @@ var async_result = async_load;
 					buffer_delete(result);
 					dial_text_page = 0;
 					textinput.SetValue(txt);
-					obj_system.dial_updatet = 1;
+					SYSTEMUI.dial_updatet = 1;
 					sfx_play(snd_equip2);
 				}
 			}
@@ -104,7 +104,7 @@ var async_result = async_load;
 										clipboard_set_text($"[border,{finalname}]");
 									}
 									get_panel_.container.destroy(); 
-									obj_system.ui_paused = false;
+									SYSTEMUI.ui_paused = false;
 								});
 							#endregion
 				
@@ -112,7 +112,7 @@ var async_result = async_load;
 								var panel_no_ = new LuiButton({ text: "No." }).setData("panel_bg_", panel_bg_).addEvent(LUI_EV_CREATE, function(element_) { sfx_play(snd_equip); }).addEvent(LUI_EV_CLICK, function(element_) {
 									var get_panel_ = element_.getData("panel_bg_");
 									get_panel_.container.destroy(); 
-									obj_system.ui_paused = false;
+									SYSTEMUI.ui_paused = false;
 									sfx_play(snd_cancel);
 								});
 							#endregion
@@ -121,7 +121,7 @@ var async_result = async_load;
 								new LuiColumn().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.flex_end).addContent([ panel_yes_, panel_no_, ]),
 							]);
 							soupy_lui.addContent(panel_bg_.addContent(panel_));
-							obj_system.ui_paused = true;
+							SYSTEMUI.ui_paused = true;
 						#endregion
 					}
 				}

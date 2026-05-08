@@ -1,5 +1,5 @@
 ///@desc Draw Dialogue Things
-if ( live_call() ) { return live_result; } 
+//if ( live_call() ) { return live_result; } 
 #region UI Borders and Buttons
 	if ( ui_visible ) {
 		#region Orange and White Border
