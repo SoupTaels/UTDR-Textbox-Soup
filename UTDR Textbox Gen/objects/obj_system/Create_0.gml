@@ -17,14 +17,21 @@
 #endregion
 
 #region Dialogue Text
+	var i = 0, str = "fnt_determination|fnt_determination_nomono|fnt_speech|fnt_damage|fnt_tiny|fnt_sans|fnt_papyrus|fnt_abaddon|fnt_arial|fnt_pixel", arr = string_split(str, "|"), len = array_length(arr);
+	repeat (  len ) {
+		var cur_ = arr[i];
+		scribble_font_bake_outline_and_shadow(cur_, $"{cur_}_outline", 0, 0, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); scribble_font_set_remap(cur_, $"{cur_}_outline"); 
+	i++; }
+	
+	scribble_glyph_set("fnt_sans_outline", all, SCRIBBLE_GLYPH.X_OFFSET, -1); scribble_glyph_set("fnt_sans_outline", all, SCRIBBLE_GLYPH.Y_OFFSET, 0.5); scribble_glyph_set("fnt_sans_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, 16);
+	
 	dial_text = ""; //Dialogue Text
 	dial_font = "fnt_determination"; //Dialogue Font
 	dial_text_scale = 2; //Text Scale
 	dial_text_gif = false; //Whether to enable typewriting
 	dial_updatet = 0; //Dialogue update timer
 	dial_updatet_max = 45; //Dialogue update timer delay
-	dial_text_outline = -1; //Dialogue Outline Color
-	dial_text_outline_thick = 2; //Dialogue Outline Thick
+	dial_text_outline = c_black; //Dialogue Outline Color
 	dial_point_auto = true; //Whether to automatically add points
 	dial_point_chr = "*"; //Dialogue Point Character
 	dial_point_clr = c_white; dial_point_clr_anim = c_white; dial_point_clr_anim_alpha = 0; //Dialogue Point Clr and flash color

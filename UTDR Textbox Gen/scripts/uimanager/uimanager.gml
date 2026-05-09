@@ -234,7 +234,7 @@ function ui_manage() {
 					var butt_data = { x: 160 + ( 27 * colors_i ), y: 70, sprite: spr_color_button, draw_nine: false, leeway: 3, color_butt: colors_get[$ colors_cur], color_butt_hover: merge_color(colors_get[$ colors_cur], color_get_value(colors_get[$ colors_cur]) > 150 ? c_black : c_white, 0.3), on_click: method({ colors_cur }, function () { SYSTEMUI.butt_func(colors_cur, true); }), on_click_right: method({ colors_cur }, function () { 
 						sfx_play(snd_equip2, , , 1.5); 
 						var clrget = SYSTEMUI.colors_get[$ colors_cur];
-						SYSTEMUI.dial_text_outline = SYSTEMUI.dial_text_outline != clrget ? clrget : -1; //Switching to a new color? Change the text outline, otherwise disable text outline
+						SYSTEMUI.dial_text_outline = SYSTEMUI.dial_text_outline != clrget ? clrget : c_black; //Switching to a new color? Change the text outline, otherwise disable text outline
 					}) };
 					
 					butt_data[$ "x2"] = butt_data.x + sprite_get_width(butt_data.sprite); butt_data[$ "y2"] = butt_data.y + sprite_get_height(butt_data.sprite); 

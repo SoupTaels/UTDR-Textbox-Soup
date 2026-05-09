@@ -1,5 +1,5 @@
 ///@desc Draw Dialogue Things
-//if ( live_call() ) { return live_result; } 
+if ( live_call() ) { return live_result; } 
 #region UI Borders and Buttons
 	if ( ui_visible ) {
 		#region Orange and White Border
@@ -45,7 +45,7 @@ if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , 0, 0);
 
 			#region Dialogue Text
 				if ( dial_text != "" && dial_text != chr(0) ) { //No need to draw blank text
-					var line_sp = dial_text_line_spacing != -1 ? dial_text_line_spacing : "130%";
+					var line_sp = dial_text_line_spacing != -1 ? dial_text_line_spacing : "113%";
 					#region Dialogue Text Shadow
 						if ( dial_text_shdw ) {
 							var scrib_dial_shdw = scribble(dial_text, "dial_shdw") 
@@ -57,9 +57,8 @@ if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , 0, 0);
 			
 					#region Actual Text
 						var tx_x = dial_point_auto ? xx_ + 28 : xx_, wrapcalc = dial_auto_wrap ? 580 - xx_ : -1;
-						if ( dial_text_outline != -1 ) { text_outliner_shitty(tx_x, yy_, line_sp, wrapcalc); } //Outline the text in a very shitty and unoptimized way.
 						var scrib_dial = scribble(dial_text) //Dialogue Text
-							.starting_format(dial_font, c_white).scale(dial_text_scale)
+							.starting_format(dial_font, c_white).scale(dial_text_scale).outline(dial_text_outline)
 							.allow_line_data_getter().allow_glyph_data_getter()
 							.line_spacing(line_sp).page(dial_text_page).wrap(wrapcalc)
 							scrib_dial.draw(tx_x, yy_, dial_text_gif ? typist : undefined);
@@ -81,9 +80,8 @@ if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , 0, 0);
 								
 									#region Actual Asterisk
 										var p_x = xx_ - 4, p_y = yy_ + lined.y;
-										if ( dial_text_outline != -1 ) { text_outliner_shitty_point(p_x, p_y); } //Outline the text in a very shitty and unoptimized way.
 										var scrib_point = scribble(dial_point_chr) //Dialogue Point
-											.starting_format(dial_font, dial_point_clr).scale(dial_text_scale)
+											.starting_format(dial_font, dial_point_clr).scale(dial_text_scale).outline(dial_text_outline)
 											.allow_line_data_getter()
 											scrib_point.draw(p_x, p_y);
 									#endregion

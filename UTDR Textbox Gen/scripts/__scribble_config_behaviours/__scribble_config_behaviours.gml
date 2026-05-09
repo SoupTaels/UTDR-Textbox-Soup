@@ -165,7 +165,7 @@
 //What function to use to play audio from Scribble. This function is called using the same
 //parameters as `audio_play_sound()`:
 //  `SCRIBBLE_AUDIO_PLAY_FUNCTION(sound, 1, false, gain, 0, pitch)`
-#macro SCRIBBLE_AUDIO_PLAY_FUNCTION  sfx_scribble
+#macro SCRIBBLE_AUDIO_PLAY_FUNCTION  audio_play_sound
 
 //Character used to open a command tag. First 127 ASCII chars only.
 #macro SCRIBBLE_COMMAND_TAG_OPEN  ord("[")
