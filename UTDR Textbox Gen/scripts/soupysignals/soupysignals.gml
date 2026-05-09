@@ -45,5 +45,9 @@ function soup_checkout_async(name_) {
 	if ( async_result[? "id"] == soup_checkout(name_) ) { return async_result[? "value"]; }	
 }
 
+///@desc Checks if the specified variable exists within the soup store.
+///@param {string} name_ Variable name
+function soup_store_exists(name_) { return !is_undefined(global.soupstore[$ name_]); }
+
 ///@desc Clear the soup store of any variables.
 function soup_store_clear() { delete global.soupstore; global.soupstore = {}; }

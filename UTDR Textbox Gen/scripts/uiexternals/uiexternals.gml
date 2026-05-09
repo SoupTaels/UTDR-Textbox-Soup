@@ -171,9 +171,9 @@ outputLog = "";
 	
 			global.fonts_dict_alt[$ temp_2] = { sprite, font, name, } //Add sprite index and expression name to the global icon alt dictonary
 			var getfont = asset_get_name(sprite);
-			scribble_font_bake_outline_and_shadow(getfont, $"{getfont}_outline", 0, 0, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
-			scribble_font_delete(getfont); //Delete original font and only use outline font
-			scribble_font_rename($"{getfont}_outline", name); //Let us use the font's filename instead of whatever name gamemaker generated for us
+			scribble_font_rename(getfont, name); //Let us use the font's filename instead of whatever name gamemaker generated for us
+			scribble_font_bake_outline_and_shadow(name, $"{name}_outline", 0, 0, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
+			scribble_glyph_set($"{name}_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, 14);
 			var out_ = $"Added \"{name}\" and outline variant from {fname_}! Renamed custom font from {getfont} to {global.fonts_dict_alt[$ temp_2].name} for use with Scribble.\nImage Count: {count}";
 			show_debug_message(out_); global.outputLog += $"{out_}\n";
 		}

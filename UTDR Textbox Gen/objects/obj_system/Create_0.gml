@@ -20,10 +20,11 @@
 	var i = 0, str = "fnt_determination|fnt_determination_nomono|fnt_speech|fnt_damage|fnt_tiny|fnt_sans|fnt_papyrus|fnt_abaddon|fnt_arial|fnt_pixel", arr = string_split(str, "|"), len = array_length(arr);
 	repeat (  len ) {
 		var cur_ = arr[i];
-		scribble_font_bake_outline_and_shadow(cur_, $"{cur_}_outline", 0, 0, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); scribble_font_set_remap(cur_, $"{cur_}_outline"); 
+		scribble_font_bake_outline_and_shadow(cur_, $"{cur_}_outline", 0, 0, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); scribble_glyph_set($"{cur_}_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, 14);
 	i++; }
 	
-	scribble_glyph_set("fnt_sans_outline", all, SCRIBBLE_GLYPH.X_OFFSET, -1); scribble_glyph_set("fnt_sans_outline", all, SCRIBBLE_GLYPH.Y_OFFSET, 0.5); scribble_glyph_set("fnt_sans_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, 16);
+	scribble_glyph_set("fnt_sans", all, SCRIBBLE_GLYPH.X_OFFSET, -0.5); scribble_glyph_set("fnt_sans", all, SCRIBBLE_GLYPH.Y_OFFSET, 1.5); scribble_glyph_set("fnt_sans", all, SCRIBBLE_GLYPH.FONT_HEIGHT, 14);
+	scribble_glyph_set("fnt_sans_outline", all, SCRIBBLE_GLYPH.X_OFFSET, -1.5); scribble_glyph_set("fnt_sans_outline", all, SCRIBBLE_GLYPH.Y_OFFSET, 0.5); scribble_glyph_set("fnt_sans_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, 14);
 	
 	dial_text = ""; //Dialogue Text
 	dial_font = "fnt_determination"; //Dialogue Font
@@ -314,8 +315,8 @@
 				
 			///@desc Toggle between different exporting types and export the dialogue
 			ui_export = function(type_ = 0, fmax_ = 180) {
-				ui_tab = -1; ui_visible = false;
-				sfx_play(snd_equip);
+				ui_tab = -1; ui_visible = false; 
+				if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_equip);
 					
 				switch ( type_ ) {
 					case 0: { screenshot = true; screenshot_stacked = false; } break; //Take single screenshot, no typewriter

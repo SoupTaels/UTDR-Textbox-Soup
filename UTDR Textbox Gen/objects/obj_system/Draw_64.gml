@@ -27,7 +27,7 @@ if ( live_call() ) { return live_result; }
 	}
 #endregion
 
-if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , 0, 0); } //Reference image
+if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , -1, 0); } //Reference image
 
 #region Dialogue Box, Text, Face, etc.
 	if ( bord_visible ) {
@@ -45,13 +45,13 @@ if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , 0, 0);
 
 			#region Dialogue Text
 				if ( dial_text != "" && dial_text != chr(0) ) { //No need to draw blank text
-					var line_sp = dial_text_line_spacing != -1 ? dial_text_line_spacing : "113%";
+					var line_sp = dial_text_line_spacing != -1 ? dial_text_line_spacing : "130%";
 					#region Dialogue Text Shadow
 						if ( dial_text_shdw ) {
-							var scrib_dial_shdw = scribble(dial_text, "dial_shdw") 
+							var scrib_dial_shdw = scribble(dial_text) 
 								.starting_format(dial_font, dial_text_shdw_clr).scale(dial_text_scale)
 								.page(dial_text_page).line_spacing(line_sp).wrap(dial_auto_wrap ? 580 - xx_ : -1)
-								scrib_dial.draw(dial_point_auto ? ( xx_ + dial_text_shdw_thick ) + 28 : xx_ + dial_text_shdw_thick, yy_ + dial_text_shdw_thick);
+								scrib_dial_shdw.draw(dial_point_auto ? ( xx_ + dial_text_shdw_thick ) + 28 : xx_ + dial_text_shdw_thick, yy_ + dial_text_shdw_thick, dial_text_gif ? typist : undefined);
 						}
 					#endregion
 			
@@ -131,6 +131,8 @@ ui_manage(); //Menu handler
 
 soupy_lui.render(); //LimeUI
 draw_sprite_ext(spr_pixel, 0, 0, 0, 640, 480, 0, c_black, fader); //Black fade overlay
+
+if ( !ui_visible ) { var gen_ = scribble("[rainbow][wave]Generating...!").scale(4).align(fa_center, fa_middle).draw(320, 240); }
 
 mouse_debug();
 //draw_sprite_ensure(get_face("sck", "capn"), current_time/300, 320, 240);

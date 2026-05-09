@@ -69,7 +69,9 @@
     {"$GMFolder":"","%Name":"GUI","folderPath":"folders/Sprites/GUI.yy","name":"GUI","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Misc.","folderPath":"folders/Sprites/Misc..yy","name":"Misc.","resourceType":"GMFolder","resourceVersion":"2.0",},
   ],
-  "ForcedPrefabProjectReferences":[],
+  "ForcedPrefabProjectReferences":[
+    {"link":"io.gamemaker.gm_filter_heathaze-1.0.0","name":"io.gamemaker.gm_filter_heathaze-1.0.0","path":"io.gamemaker.gm_filter_heathaze-1.0.0.yyp",},
+  ],
   "IncludedFiles":[
     {"$GMIncludedFile":"","%Name":"spr_border_custom_animated_strip4.png","CopyToMask":-1,"filePath":"datafiles/borders","name":"spr_border_custom_animated_strip4.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"spr_border_custom_example_two.png","CopyToMask":-1,"filePath":"datafiles/borders","name":"spr_border_custom_example_two.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
