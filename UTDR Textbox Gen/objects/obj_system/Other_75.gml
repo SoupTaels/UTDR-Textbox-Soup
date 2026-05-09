@@ -14,7 +14,7 @@ var async_result = async_load;
 			show_debug_message($"File Path: {fpath}\nFile Name: {fname}\nFile Type: {fext}\nFinal Name: {finalname}");
 			if ( bord_visible && ( range_within(mouse_x_gui, 0, 174) && range_within(mouse_y_gui, 323, 480) ) ) { //Hovering over the dialogue portrait
 				if ( fext == ".png" ) {
-					if ( struct_exists(global.faces_dict_alt, finalname) ) { FACE_CURRENT = get_face(finalname); FACE_ORIGINAL = FACE_CURRENT; sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_sparkle); } //If this sprite already exists within our face dictonary, just set the current page's face to that
+					if ( struct_exists(global.faces_dict_alt, finalname) ) { FACE_CURRENT = get_face(finalname); FACE_ORIGINAL = FACE_CURRENT; FACE_INTERNAL = finalname; sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_sparkle); } //If this sprite already exists within our face dictonary, just set the current page's face to that
 					else {
 						#region Sprite Doesn't Exist Message
 							#region Yes Button

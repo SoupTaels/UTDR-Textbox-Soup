@@ -5,6 +5,7 @@ if ( result != undefined ) {
 	sprite_set_offset(spr_, sprite_get_width(spr_)/ 2, sprite_get_height(spr_)/ 2); //Center sprite
 	FACE_CURRENT = spr_;
 	FACE_ORIGINAL = FACE_CURRENT;
+	FACE_INTERNAL = result.myname;
 	
 	soupy_message(result.msg, , , , , snd_sparkle2);
 }
