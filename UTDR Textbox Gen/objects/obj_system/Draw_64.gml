@@ -31,14 +31,14 @@ if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , 0, 0);
 
 #region Dialogue Box, Text, Face, etc.
 	if ( bord_visible ) {
-		if ( bord_out ) { outlinesoup_start(); }
+		outlinesoup_start();
 			#region Dialogue Box
 				var dltrn = spr_bord == spr_border_deltarune; //Check if our border is Deltarune
 				var offset_ = dltrn ? 8 : 0, offset_w = dltrn ? 15 : 0, offset_h = dltrn ? 16 : 0, bordx = 32 - offset_, bordy = 315 - offset_, bordw = 578 + offset_w, bordh = 152 + offset_w; //Border coords
 				var xx_ = ( bordx + ( ( FACE_USING ? 144 : 28 ) + ( dial_point_auto ? 4 : 0 ) ) ) + ( offset_ + dltrn ? 6 : 0 ), yy_ = ( bordy + 29 ) + offset_; //Text X Y
 
 				var ninesl_ = sprite_get_nineslice(spr_bord); 
-				if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, 1); } else { draw_9slice(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, bord_scale, bord_stretch); } //Dialogue Box
+				if ( bord_box_visible ) { if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, 1); } else { draw_9slice(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, bord_scale, bord_stretch); } } //Dialogue Box
 				if ( FACE_USING ) { draw_sprite_ensure(FACE_CURRENT, dial_face_index, bordx + ( 74 + offset_ ) + dial_face_xoff, bordy + ( 76 + offset_ ) + dial_face_yoff, dial_face_xscale + dial_face_xscale_off, dial_face_yscale + dial_face_yscale_off, dial_face_angle, dial_face_clr, dial_face_alpha); } //Dialogue Face
 				if ( FACE_USING && dial_point_clr_anim_alpha > 0 ) { gpu_set_fog(true, dial_point_clr_anim, -16000, 16000); draw_sprite_ensure(FACE_CURRENT, dial_face_index, bordx + ( 74 + offset_ ) + dial_face_xoff, bordy + ( 76 + offset_ ) + dial_face_yoff, dial_face_xscale + dial_face_xscale_off, dial_face_yscale + dial_face_yscale_off, dial_face_angle, c_white, dial_point_clr_anim_alpha); gpu_set_fog(false, 0, 0, 0); } //Dialogue Face Flashing
 			#endregion
@@ -102,7 +102,7 @@ if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , 0, 0);
 					}
 				}
 			#endregion
-		if  ( bord_out ) { outlinesoup_end(); }
+		outlinesoup_end();
 	}
 #endregion
 

@@ -6,7 +6,8 @@
 	bord_clr = c_white; //Border Color
 	bord_out = true; //Whether border should have an outline
 	bord_prev = spr_bord; //Previous border
-	bord_visible = true; //Whether the dialogue box is visible
+	bord_visible = true; //Whether the dialogue box and text is visible
+	bord_box_visible = true; //Whether the dialogue box is visible
 	bord_index = 0; //Border image index
 	bord_spd = 0; //Border image speed
 	bord_anim = 1; //Animation type ( 0 - Start over, 1 - Bounce back )
@@ -65,32 +66,29 @@
 	
 	#region Typist Events
 		scribble_typists_add_event("face", function(_, param) { //Switch to a new portrait sprite
-			DIAL_GIF
 			FACE_PREVIOUS = FACE_CURRENT; //Get the previous face
 			FACE_CURRENT = get_face(param[0], array_length(param) > 1 ? param[1] : -1);
 			if ( FACE_USING ) { FACE_INTERNAL = param[0]; }
 		});
-		scribble_typists_add_event("face_orig", function(_, param) { DIAL_GIF FACE_ORIGINAL = get_face(param[0], array_length(param) > 1 ? param[1] : -1); }); //Change the original previous face to a new 
-		scribble_typists_add_event("face_prev", function(_, param) { DIAL_GIF FACE_CURRENT = FACE_PREVIOUS; }); //Change the face back to the previous face
-		scribble_typists_add_event("face_auto", function(_, param) { DIAL_GIF dial_face_auto = bool(string_letters(param[0])); }); //Switch the automatically animation of the face
-		scribble_typists_add_event("face_index", function(_, param) { DIAL_GIF dial_face_index = real(string_digits(param[0])); }); //Change the index of the face(if dial_face_auto is off), for sprites with more sprites and expressions
+		scribble_typists_add_event("face_orig", function(_, param) { FACE_ORIGINAL = get_face(param[0], array_length(param) > 1 ? param[1] : -1); }); //Change the original previous face to a new 
+		scribble_typists_add_event("face_prev", function(_, param) { FACE_CURRENT = FACE_PREVIOUS; }); //Change the face back to the previous face
+		scribble_typists_add_event("face_auto", function(_, param) { dial_face_auto = bool(string_letters(param[0])); }); //Switch the automatically animation of the face
+		scribble_typists_add_event("face_index", function(_, param) { dial_face_index = real(string_digits(param[0])); }); //Change the index of the face(if dial_face_auto is off), for sprites with more sprites and expressions
 		scribble_typists_add_event("border", function(_, param) { //Switch to a new border sprite
-			DIAL_GIF
 			var bord_ = get_border(param[0]);
 			spr_bord = bord_ != -1 ? bord_ : spr_border_undertale;
 		});
-		scribble_typists_add_event("finish", function(_, param) { DIAL_GIF typist.skip(); }); //Finish all the text immediately
-		scribble_typists_add_event("skip", function(_, param) { //Skips to the next page, disregarding current dialogue
-			DIAL_GIF 
+		scribble_typists_add_event("finish", function(_, param) { typist.skip(); }); //Finish all the text immediately
+		scribble_typists_add_event("skip", function(_, param) { //Skips to the next page, disregarding current dialogue 
 			if ( dial_text_page < dial_text_page_c - 1 ) {
 				if ( array_length(param) == 0 ) { dial_text_page++; } //No argument provided? Just go to the next page
 				else { dial_text_page = real(string_digits(param[0])); dial_text_page = clamp(dial_text_page, 0, dial_text_page_c); } //Go to a specific page
 			}
 		});
-		scribble_typists_add_event("face_stick", function(_, param) { DIAL_GIF FACE_ORIGINAL = get_face(FACE_INTERNAL); }); //Make the previous dialogue face stick
-		scribble_typists_add_event("speed_pop", function(_, param) { DIAL_GIF typist_spd = typist_spd_orig; }); //Changes the typist speed back to the default
-		scribble_typists_add_event("effect", function(_, param) { //Play an effect
-			DIAL_GIF
+		scribble_typists_add_event("face_stick", function(_, param) { FACE_ORIGINAL = get_face(FACE_INTERNAL); }); //Make the previous dialogue face stick
+		scribble_typists_add_event("speed_pop", function(_, param) { typist_spd = typist_spd_orig; }); //Changes the typist speed back to the default
+		
+		var efxfunc = function(_, param) { //Play an effect
 			var len = array_length(param);
 			switch ( param[0] ) {
 				case "squash": case "squish": { TweenFire("$15", "~oquad", "dial_face_xscale_off", 0.3, 0, "dial_face_yscale_off", -0.3, 0); } break; //Squish the face 
@@ -108,11 +106,11 @@
 					var getamt = real_ext(len > 1 ? param[1] : "360"), time_ = real_ext(len > 2 ? param[2] : "30"), smooth_ = real_ext(len > 3 ? param[3] : "0"); smooth_ = smooth_ != "" ? bool(smooth_) : false;
 					TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", $"~{!smooth_? "linear" : "oquad"}", "dial_face_angle>", getamt != "" ? getamt : 0); 
 				} break;
-				case "scale": { //Make the face scale to the specified target number [effect,scale,#,#,frames,issmooth]
+				case "scale": case "size": { //Make the face scale to the specified target number [effect,scale,#,#,frames,issmooth]
 					var getamt = real_ext(len > 1 ? param[1] : "0"), getamt2 = real_ext(len > 2 ? param[2] : "0"), time_ = real_ext(len > 3 ? param[3] : "30"), smooth_ = real_ext(len > 4 ? param[4] : "0"); smooth_ = smooth_ != "" ? bool(smooth_) : false;
 					TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", $"~{!smooth_? "linear" : "oquad"}", "dial_face_xscale_off>", getamt != "" ? getamt : 0, "dial_face_yscale_off>", getamt2 != "" ? getamt2 : 0); 
 				} break;
-				case "slide": { //Make the face slide to the specified target number [effect,slide,#,#,frames,issmooth]
+				case "slide": case "move": case "xy": { //Make the face slide to the specified target number [effect,slide,#,#,frames,issmooth]
 					var getamt = real_ext(len > 1 ? param[1] : "0"), getamt2 = real_ext(len > 2 ? param[2] : "0"), time_ = real_ext(len > 3 ? param[3] : "30"), smooth_ = real_ext(len > 4 ? param[4] : "0"); smooth_ = smooth_ != "" ? bool(smooth_) : false;
 					TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", $"~{!smooth_? "linear" : "oquad"}", "dial_face_xoff>", getamt != "" ? getamt : 0, "dial_face_yoff>", getamt2 != "" ? getamt2 : 0); 
 				} break;
@@ -123,12 +121,13 @@
 					soup_store("face shaker", { x_, y_, time_, off_ });
 				} break;
 			}
-		});
+		}
+		scribble_typists_add_event("effect", efxfunc); scribble_typists_add_event("fx", efxfunc);
 		
 		scribble_add_macro("icon", function(param) { var result = get_icon(param) return result != -1 ? $"[{result}]" : ""; }); //Newline with no asterisk and it's padded out
-		scribble_add_macro("newl", function() { return "\n  "; }); //Newline with no asterisk and it's padded out
-		scribble_add_macro("newl_a", function() { return "\n* "; }); //Newline with asterisk and a space
-		scribble_add_macro("newl_l", function() { return chr(10); }); //Newline literal
+		scribble_add_macro("newlp", function() { return "\n  "; }); //Newline with no asterisk and it's padded out
+		scribble_add_macro("newla", function() { return "\n* "; }); //Newline with asterisk and a space
+		scribble_add_macro("newl", function() { return chr(10); }); //Newline literal
 		scribble_add_macro("wait", function(param) { var real_ = real_ext(param); return $"[delay,{real_ != "" ? real_  * 1000 : 0}]"; }); //Delay tag that converts seconds to milliseconds
 		scribble_add_macro("repeat", function(phrase_ = "", times_ = 1, startwith_ = "", endwith_ = "") { //Repeats a phrase for a specified time with an optional parameter to end and start it off with another phrase
 			var real_ = string_digits(times_); if ( real_ == "" ) { return ""; }
@@ -165,6 +164,7 @@
 	fader = 1; TweenFire("$10", "+10", "fader>", 0); //Black overlay
 	ui_tab = 0; //Current Tab (0 - Dialogue, 1 - Face, 2 - Border, 3 - About)
 	screenshot = false; //Screenshot task
+	screenshot_stacked = false; //Whether dialogue exports are stacked
 	screenshot_surf = -1; //Screenshot surface
 	record = { enabled: false, type: 0, frames: 0, framesmax: 0, id_: -1, quant: 1, delay: 60, }; //Whether to record, the type of recording(0 - static, 1 - wait for dialogue to finish), and how long to record for
 	ui_visible = true; //Whether the UI should be visible
@@ -241,64 +241,83 @@
 				.ContextMenuAddItem(QuillContextMenuItem("Insert Page", method(self, soupy_context_page), "soupy_page").SetShortcut("Ctrl+D"))
 				.on_blur();
 			#endregion
+	#endregion
+	
+	#region Menu Sections
+		#region Init Style
+			var soupy_style = new LuiStyle({ padding: 15, gap: 10, color_text: c_white, color_hover: c_yellow, sound_click: snd_select, sound_hover: snd_sel_switch, }) //Main Style
+				.setRenderRegionOffset([10, 10, 10, 10])
+				.setFonts(fnt_determination, fnt_determination, fnt_determination).setColors(, c_orange, #962525, #15ee97)
+				.setSprites(spr_border_undertale_outlined, spr_border_undertale_outlined).setSpriteCheckbox(spr_border_undertale, spr_pixel)
+			soupy_lui = new LuiMain().setStyle(soupy_style);
+		#endregion
+		
+		#region Portrait Panel
+			var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
+			soupy_panel_portrait = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_ }); //Start containter
+			soupy_panel_portrait.scroll_pin_edge_offset = 10; soupy_panel_portrait.sprite_panel = false;
+		
+				portrait_header_cur_panel = new LuiContainer().setPadding(0).addContent([
+					new LuiText({ value: "Selected Face:" }),
+					new LuiText({ value: "Selected Face:" }),
+					new LuiText({ value: "Selected Face:" }),
+					new LuiText({ value: "Selected Face:" }),
+					new LuiText({ value: "Selected Face:" }),
+					new LuiText({ value: "Selected Face:" }),
+				]);
+				portrait_header_set_panel = new LuiContainer().setPadding(0).addContent([
+					new LuiText({ value: "Selected Face: 2" }),
+					new LuiText({ value: "Selected Face: 2" }),
+					new LuiText({ value: "Selected Face: 2" }),
+					new LuiText({ value: "Selected Face: 2" }),
+					new LuiText({ value: "Selected Face: 2" }),
+					new LuiText({ value: "Selected Face: 2" }),
+				]);
+		
+				var portrait_header_base = { text: "", color: c_orange, sprite_button: spr_pixel, font: fnt_speech, text_color: c_black, sound_click: snd_enc1, sound_click_pitch: 1.3, };
+				var portrait_header_cur = new LuiButton(portrait_header_base).setIcon(spr_gui_icons,,, c_black,, 1).addEvent(LUI_EV_CLICK, function() { portrait_header_cur_panel.toggleVisible(); }); portrait_header_cur.text = "Current Face";
+				var portrait_header_set = new LuiButton(portrait_header_base).setIcon(spr_gui_icons,,, c_black,, 5).addEvent(LUI_EV_CLICK, function() { portrait_header_set_panel.toggleVisible(); }); portrait_header_set.text = "Face Settings";
+			soupy_panel_portrait.addContent([portrait_header_cur, portrait_header_cur_panel, portrait_header_set, portrait_header_set_panel]); //End container
+		#endregion
 
-		#region Menu Sections
-			#region Init Style
-				var soupy_style = new LuiStyle({ padding: 15, gap: 10, color_text: c_white, color_hover: c_yellow, sound_click: snd_select, sound_hover: snd_sel_switch, }) //Main Style
-					.setRenderRegionOffset([10, 10, 10, 10])
-					.setFonts(fnt_determination, fnt_determination, fnt_determination).setColors(, c_orange, #962525)
-					.setSprites(spr_border_undertale_outlined, spr_border_undertale_outlined)
-				soupy_lui = new LuiMain().setStyle(soupy_style);
-			#endregion
+		soupy_lui.addContent([soupy_panel_portrait, ]); //Add everything to the main ui
 		
-			#region Portrait Panel
-				var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
-				soupy_panel_portrait = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_ }); //Start containter
-				soupy_panel_portrait.scroll_pin_edge_offset = 10; soupy_panel_portrait.sprite_panel = false;
-		
-					portrait_header_cur_panel = new LuiContainer().setPadding(0).addContent([
-						new LuiText({ value: "Selected Face:" }),
-						new LuiText({ value: "Selected Face:" }),
-						new LuiText({ value: "Selected Face:" }),
-						new LuiText({ value: "Selected Face:" }),
-						new LuiText({ value: "Selected Face:" }),
-						new LuiText({ value: "Selected Face:" }),
-					]);
-					portrait_header_set_panel = new LuiContainer().setPadding(0).addContent([
-						new LuiText({ value: "Selected Face: 2" }),
-						new LuiText({ value: "Selected Face: 2" }),
-						new LuiText({ value: "Selected Face: 2" }),
-						new LuiText({ value: "Selected Face: 2" }),
-						new LuiText({ value: "Selected Face: 2" }),
-						new LuiText({ value: "Selected Face: 2" }),
-					]);
-		
-					var portrait_header_base = { text: "", color: c_orange, sprite_button: spr_pixel, font: fnt_speech, text_color: c_black, sound_click: snd_enc1, sound_click_pitch: 1.3, };
-					var portrait_header_cur = new LuiButton(portrait_header_base).setIcon(spr_gui_icons,,, c_black,, 1).addEvent(LUI_EV_CLICK, function() { portrait_header_cur_panel.toggleVisible(); }); portrait_header_cur.text = "Current Face";
-					var portrait_header_set = new LuiButton(portrait_header_base).setIcon(spr_gui_icons,,, c_black,, 5).addEvent(LUI_EV_CLICK, function() { portrait_header_set_panel.toggleVisible(); }); portrait_header_set.text = "Face Settings";
-				soupy_panel_portrait.addContent([portrait_header_cur, portrait_header_cur_panel, portrait_header_set, portrait_header_set_panel]); //End container
-			#endregion
-
-			soupy_lui.addContent([soupy_panel_portrait, ]); //Add everything to the main ui
-		
-			#region Functions
-				///@desc Show/ hide Lui on appropiate screens.
-				ui_reset = function() {
-					if ( soupy_panel_portrait.visible ) { soupy_panel_portrait.setVisible(false); }
+		#region Functions
+			///@desc Show/ hide Lui on appropiate screens.
+			ui_reset = function() {
+				if ( soupy_panel_portrait.visible ) { soupy_panel_portrait.setVisible(false); }
 				
-					var fx = true;
-					switch ( ui_tab ) {
-						case 0: { fx = false; } break;
-						case 1: {  } break;
-						case 2: { soupy_panel_portrait.setVisible(true); } break;
-						case 3: {  } break;
-						case 4: {  } break;
-					}
-					if ( fx && bord_visible ) { sfx_play(snd_enc1, 0, , 0.7); bord_visible = false; }
-					else if ( !fx && !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; }
+				var fx = true;
+				switch ( ui_tab ) {
+					case 0: { fx = false; } break;
+					case 1: {  } break;
+					case 2: { soupy_panel_portrait.setVisible(true); } break;
+					case 3: {  } break;
+					case 4: {  } break;
 				}
-				ui_reset();
-			#endregion
+				if ( fx && bord_visible ) { sfx_play(snd_enc1, 0, , 0.7); bord_visible = false; }
+				else if ( !fx && !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; }
+			}
+			ui_reset();
+				
+			///@desc Toggle between different exporting types and export the dialogue
+			ui_export = function(type_ = 0, fmax_ = 180) {
+				ui_tab = -1; ui_visible = false;
+				sfx_play(snd_equip);
+					
+				switch ( type_ ) {
+					case 0: { screenshot = true; screenshot_stacked = false; } break; //Take single screenshot, no typewriter
+					case 1: { //Record till dialogue ends, typewriter
+						with ( record ) { enabled = true; framesmax = 0; frames = 0; type = 1; }
+						dial_text_gif = true;
+					} break;
+					case 2: { //Record for a set timer, no typewriter just animated text
+						with ( record ) { enabled = true; framesmax = fmax_; frames = 0; type = 0; }
+					} break;
+					case 3: { screenshot = true; screenshot_stacked = true; } break; //Take a stack of screenshots, no typewriter
+					case 4: {  } break;
+				}
+			}
 		#endregion
 	#endregion
 #endregion

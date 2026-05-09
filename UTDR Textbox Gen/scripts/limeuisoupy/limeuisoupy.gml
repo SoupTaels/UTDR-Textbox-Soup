@@ -6,7 +6,11 @@
 ///@param {real} padd_ Padding
 ///@param {Asset.GMSound} snd_ Sound
 ///@param {Asset.GMFont} font_ Text Font
-function soupy_message(textarr_ = ["Test", "Test 2"], textbutt_ = "OK", width = 620, height = -1, padd_ = 5, snd_ = snd_dimbox, font_ = fnt_determination, func_ = function(){}, allowmultiple_ = false) {
+///@param {function} func_ Function to run
+///@param {bool} allowmultiple_ Whether to allow multiple popups
+///@param {bool} scribble_ Whether to render text as a Scribble class (performance penalty)
+///@param {real} wrap_ Maximum text on a line before a line break
+function soupy_message(textarr_ = ["Test", "Test 2"], textbutt_ = "OK", width = 620, height = -1, padd_ = 5, snd_ = snd_dimbox, font_ = fnt_determination, func_ = function(){}, allowmultiple_ = false, scribble_ = false, wrap_ = -1) {
 	window_set_cursor(cr_default);
 	if ( !UI_MESSAGE ) { exit; }
 	if ( !is_array(textarr_) ) { textarr_ = string_split(textarr_, "|"); }
@@ -15,7 +19,7 @@ function soupy_message(textarr_ = ["Test", "Test 2"], textbutt_ = "OK", width = 
 	var panel_ = new LuiPanel({ width, height }); //Container 
 	var arr_len =  array_length(textarr_), arr_i = 0, arr_arr = [];
 	repeat ( arr_len ) {
-		array_push(arr_arr, new LuiText({ value: textarr_[arr_i], text_halign: fa_center, text_valign: fa_middle, font: font_, }).setPadding(padd_));
+		array_push(arr_arr, new LuiText({ value: textarr_[arr_i], text_halign: fa_center, text_valign: fa_middle, font: font_, scribbletext: scribble_, wraplimit: wrap_ }).setPadding(padd_));
 	arr_i++; }
 	
 	array_push(arr_arr, new LuiButton({ text: textbutt_, "height": 35, font: font_, }).setData("allowmultiple", allowmultiple_).setData("container", containter_).setData("func", func_).setPadding(padd_)
@@ -28,6 +32,7 @@ function soupy_message(textarr_ = ["Test", "Test 2"], textbutt_ = "OK", width = 
 	]);
 	SYSTEMUI.soupy_lui.addContent(containter_.addContent(panel_));
 	SYSTEMUI.ui_paused = true;
+	return containter_;
 }
 
 ///@desc Displays a LimeUI popup box accepting arrays for LimeUI elements.
@@ -39,6 +44,7 @@ function soupy_message(textarr_ = ["Test", "Test 2"], textbutt_ = "OK", width = 
 ///@param {real} padd_ Padding
 ///@param {Asset.GMSound} snd_ Sound
 ///@param {Asset.GMFont} font_ Text Font
+///@param {bool} allowmultiple_ Whether to allow multiple popups
 function soupy_popup(elementsarr, func_ = function(){}, textbutt_ = "OK", width = 620, height = -1, padd_ = 5, snd_ = snd_dimbox, font_ = fnt_determination, allowmultiple_ = false) {
 	window_set_cursor(cr_default);
 	if ( !allowmultiple_ && !UI_MESSAGE ) { exit; }
@@ -56,4 +62,5 @@ function soupy_popup(elementsarr, func_ = function(){}, textbutt_ = "OK", width 
 	]);
 	SYSTEMUI.soupy_lui.addContent(containter_.addContent(panel_));
 	SYSTEMUI.ui_paused = true;
+	return containter_;
 }

@@ -1,4 +1,3 @@
-#macro DIAL_GIF if ( !dial_text_gif ) { exit; } //Only run if GIFs are enabled
 #macro SYSTEMUI obj_system //System object
 #macro UI_MESSAGE !SYSTEMUI.ui_paused //For pausing ui elements
 #macro FACE_CURRENT dial_face[dial_text_page] //Get the current dialogue face
@@ -26,9 +25,9 @@
 	
 	///@desc Inserts a page break in the textbox
 	function soupy_context_page() { 
-		var txt_ = textinput.GetValue(), cursor_ = textinput.GetCaret() + 1;
-		txt_ = string_insert("[/page]", txt_, cursor_); textinput.SetValue(txt_);
-		sfx_play(snd_bump); dial_updatet = 1; textinput.SetCaret(cursor_ - 1); 
+		var txt_ = textinput.GetValue(), cursor_ = textinput.GetCaret() + 1, insert_ = "[/page]";
+		txt_ = string_insert(insert_, txt_, cursor_); textinput.SetValue(txt_);
+		sfx_play(snd_bump); dial_updatet = 1; textinput.SetCaret(( cursor_ + string_length(insert_) ) - 1); 
 	}
 #endregion
 
@@ -133,6 +132,55 @@ function ui_manage() {
 				}
 			#endregion
 
+			#region Switch between pages
+				if ( UI_MESSAGE ) {
+					#region Left Page
+						if ( dial_text_page_c > 1 && dial_text_page > 0 ) { 
+							if ( variable_instance_get(obj_system, "within_hover4") == undefined ) { variable_instance_set(obj_system, "within_hover4", false); }
+							if ( variable_instance_get(obj_system, "yscale_4") == undefined ) { variable_instance_set(obj_system, "yscale_4", 1); }
+		
+							var x_ = 10, y_ = 400, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 20) && range_within(mouse_y_gui, y_ - 30, y_ + 5);
+							if ( within_ ) {
+								if ( !within_hover4 ) { within_hover4 = true; sfx_play(snd_sel_switch); } //Hover
+								if ( mouse_pressed ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw); dial_text_page = approach(dial_text_page, 0, 1); yscale_4 = 0.5; } //Pressed
+								if ( mouse_pressed_right ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw, , , 1.3); dial_text_page = 0; } //Pressed Right
+							}
+							else { within_hover4 = false; }
+							draw_sprite_stretched_ext(spr_pixel, 0, x_ - 22, y_ - 17, 39, 34, c_black, 1); //Outline
+							draw_sprite_stretched(spr_border_undertale, 0, x_ - 20, y_ - 15, 35, 30); //Border
+							draw_sprite_ensure(spr_effects_icons, 12, x_ - abs(sin(current_time/250) ) * 4, y_, -1, yscale_4, 180, within_ ? c_white : c_yellow); //Right Arrow
+							yscale_4 = lerp(yscale_4, 1, 0.15);
+						}
+					#endregion
+					#region Right Page
+						if ( dial_text_page_c > 1 && dial_text_page < ( dial_text_page_c - 1 ) ) {
+							if ( variable_instance_get(obj_system, "within_hover5") == undefined ) { variable_instance_set(obj_system, "within_hover5", false); }
+							if ( variable_instance_get(obj_system, "yscale_5") == undefined ) { variable_instance_set(obj_system, "yscale_5", 1); }
+		
+							var x_ = 630, y_ = 400, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 20) && range_within(mouse_y_gui, y_ - 30, y_ + 5);
+							if ( within_ ) {
+								if ( !within_hover5 ) { within_hover5 = true; sfx_play(snd_sel_switch); } //Hover
+								if ( mouse_pressed ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw); dial_text_page = approach(dial_text_page, dial_text_page_c, 1); yscale_5 = 0.5; } //Pressed
+								if ( mouse_pressed_right ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw, , , 1.3); dial_text_page = dial_text_page_c - 1; } //Pressed Right
+							}
+							else { within_hover5 = false; }
+							draw_sprite_stretched_ext(spr_pixel, 0, x_ - 15, y_ - 17, 39, 34, c_black, 1); //Outline
+							draw_sprite_stretched(spr_border_undertale, 0, x_ - 13, y_ - 15, 35, 30); //Border
+							draw_sprite_ensure(spr_effects_icons, 12, x_ + abs(sin(current_time/250) ) * 4, y_, , yscale_5, 180, within_ ? c_white : c_yellow); //Right Arrow
+							yscale_5= lerp(yscale_5, 1, 0.15);
+						}
+					#endregion
+					#region Page Indicator Text
+						if ( dial_text_page_c > 1 && bord_visible ) {
+							var pageind = scribble($"[offset,0,3]< Page {dial_text_page + 1}/ {dial_text_page_c} >[offsetPop] [spr_effects_icons,16]")
+													.starting_format("fnt_abaddon", c_gray)
+													.align(fa_center, fa_middle)
+													.draw(320, 333)
+						}
+					#endregion
+				}
+			#endregion
+			
 			#region Textbox and Quick Text
 				var x_ = 30, y_ = 130, w_ = 580, h_ = !bord_visible ? 310 : 160;
 				draw_sprite_ensure(spr_pixel, 0, x_ - 10, y_ - 14, w_ + 20, h_ + 24, 0, c_black, 1); //Textbox Outline Outer
@@ -281,55 +329,6 @@ function ui_manage() {
 					draw_text(textx, texty, "Clearing\n\n\n\n\n\nface...");
 				}
 				else { soupy_alarm_set("removeface", "timer", resettime); }
-			#endregion
-			
-			#region Switch between pages
-				if ( UI_MESSAGE ) {
-					#region Left Page
-						if ( dial_text_page_c > 1 && dial_text_page > 0 ) { 
-							if ( variable_instance_get(obj_system, "within_hover4") == undefined ) { variable_instance_set(obj_system, "within_hover4", false); }
-							if ( variable_instance_get(obj_system, "yscale_4") == undefined ) { variable_instance_set(obj_system, "yscale_4", 1); }
-		
-							var x_ = 10, y_ = 400, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 20) && range_within(mouse_y_gui, y_ - 30, y_ + 5);
-							if ( within_ ) {
-								if ( !within_hover4 ) { within_hover4 = true; sfx_play(snd_sel_switch); } //Hover
-								if ( mouse_pressed ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw); dial_text_page = approach(dial_text_page, 0, 1); yscale_4 = 0.5; } //Pressed
-								if ( mouse_pressed_right ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw, , , 1.3); dial_text_page = 0; } //Pressed Right
-							}
-							else { within_hover4 = false; }
-							draw_sprite_stretched_ext(spr_pixel, 0, x_ - 22, y_ - 17, 39, 34, c_black, 1); //Outline
-							draw_sprite_stretched(spr_border_undertale, 0, x_ - 20, y_ - 15, 35, 30); //Border
-							draw_sprite_ensure(spr_effects_icons, 12, x_ - abs(sin(current_time/250) ) * 4, y_, -1, yscale_4, 180, within_ ? c_white : c_yellow); //Right Arrow
-							yscale_4 = lerp(yscale_4, 1, 0.15);
-						}
-					#endregion
-					#region Right Page
-						if ( dial_text_page_c > 1 && dial_text_page < ( dial_text_page_c - 1 ) ) {
-							if ( variable_instance_get(obj_system, "within_hover5") == undefined ) { variable_instance_set(obj_system, "within_hover5", false); }
-							if ( variable_instance_get(obj_system, "yscale_5") == undefined ) { variable_instance_set(obj_system, "yscale_5", 1); }
-		
-							var x_ = 630, y_ = 400, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 20) && range_within(mouse_y_gui, y_ - 30, y_ + 5);
-							if ( within_ ) {
-								if ( !within_hover5 ) { within_hover5 = true; sfx_play(snd_sel_switch); } //Hover
-								if ( mouse_pressed ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw); dial_text_page = approach(dial_text_page, dial_text_page_c, 1); yscale_5 = 0.5; } //Pressed
-								if ( mouse_pressed_right ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw, , , 1.3); dial_text_page = dial_text_page_c - 1; } //Pressed Right
-							}
-							else { within_hover5 = false; }
-							draw_sprite_stretched_ext(spr_pixel, 0, x_ - 15, y_ - 17, 39, 34, c_black, 1); //Outline
-							draw_sprite_stretched(spr_border_undertale, 0, x_ - 13, y_ - 15, 35, 30); //Border
-							draw_sprite_ensure(spr_effects_icons, 12, x_ + abs(sin(current_time/250) ) * 4, y_, , yscale_5, 180, within_ ? c_white : c_yellow); //Right Arrow
-							yscale_5= lerp(yscale_5, 1, 0.15);
-						}
-					#endregion
-					#region Page Indicator Text
-						if ( dial_text_page_c > 1 && bord_visible ) {
-							var pageind = scribble($"[offset,0,3]< Page {dial_text_page + 1}/ {dial_text_page_c} >[offsetPop] [spr_effects_icons,16]")
-													.starting_format("fnt_abaddon", c_gray)
-													.align(fa_center, fa_middle)
-													.draw(320, 333)
-						}
-					#endregion
-				}
 			#endregion
 			
 			#region Toggle Dialogue Box Visibility

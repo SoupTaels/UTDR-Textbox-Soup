@@ -20,12 +20,14 @@ enum LUI_INPUT_MODE {
 function LuiInput(_params = {}) : LuiBase(_params) constructor {
     
     self.value = string(_params[$ "value"] ?? "");
+	self.margin = _params[$ "offset"] ?? 6;
     self.placeholder = _params[$ "placeholder"] ?? "";
     self.is_masked = _params[$ "is_masked"] ?? false;
     self.max_length = _params[$ "max_length"] ?? 255;
     self.input_mode = _params[$ "input_mode"] ?? LUI_INPUT_MODE.text;
     self.excluded_chars = _params[$ "excluded_chars"] ?? "";
     self.allowed_chars = _params[$ "allowed_chars"] ?? "";
+	self.type_sfx = _params[$ "type_sfx"] ?? -1;
     
     self.is_incorrect = false;
     self.cursor_pointer = "";
@@ -201,7 +203,7 @@ function LuiInput(_params = {}) : LuiBase(_params) constructor {
         draw_set_valign(fa_middle);
         
         //Get text
-        var _margin = 6;
+        var _margin = self.margin;
         var _txt_x = self.x + _margin;
         var _txt_y = self.y + self.height / 2;
         var _display_text = self.value;
@@ -282,6 +284,7 @@ function LuiInput(_params = {}) : LuiBase(_params) constructor {
             _e.set(_e._limit_value(_e.get() + _paste));
             keyboard_string = _e.get();
         }
+		sfx_play(_e.type_sfx);
     });
     
     self.addEvent(LUI_EV_DESTROY, function(_e) {

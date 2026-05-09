@@ -7,6 +7,13 @@ function LuiCheckbox(_params = {}) : LuiBase(_params) constructor {
 	
 	self.value = _params[$ "value"] ?? false;
 	self.text = _params[$ "text"] ?? "";
+	self.sound_click = _params[$ "sound_click"] ?? undefined; self.sound_click_gain = _params[$ "sound_click_gain"] ?? undefined; self.sound_click_pitch = _params[$ "sound_click_pitch"] ?? undefined;
+	self.sound_hover = _params[$ "sound_hover"] ?? undefined; self.sound_hover_gain = _params[$ "sound_hover_gain"] ?? undefined; self.sound_hover_pitch = _params[$ "sound_hover_pitch"] ?? undefined;
+	self.checkbox_spr = _params[$ "checkbox_spr"] ?? false;
+	self.checkbox_spr_index = _params[$ "checkbox_spr_index"] ?? 0;
+	self.checkbox_spr_xscale = _params[$ "checkbox_spr_xscale"] ?? 1;
+	self.checkbox_spr_yscale = _params[$ "checkbox_spr_yscale"] ?? 1;
+	self.checkbox_clr = _params[$ "checkbox_clr"] ?? undefined;
 	
 	///@desc Set display text of checkbox (render right of checkbox)
 	///@arg {string} _text
@@ -18,7 +25,7 @@ function LuiCheckbox(_params = {}) : LuiBase(_params) constructor {
 	self.draw = function() {
 		// Base
 		if !is_undefined(self.style.sprite_checkbox) {
-			var _blend_color = self.style.color_back;
+			var _blend_color = self.checkbox_clr ?? self.style.color_back;
 			if self.deactivated {
 				_blend_color = merge_color(_blend_color, c_black, 0.5);
 			}
@@ -38,7 +45,8 @@ function LuiCheckbox(_params = {}) : LuiBase(_params) constructor {
 			}
 			var _draw_width = min(self.width, self.height);
 			var _draw_height = min(self.width, self.height);
-			draw_sprite_stretched_ext(self.style.sprite_checkbox_pin, 0, self.x, self.y, _draw_width, _draw_height, _blend_color, 1);
+			if ( !self.checkbox_spr ) { draw_sprite_stretched_ext(self.style.sprite_checkbox_pin, 0, self.x, self.y, _draw_width, _draw_height, _blend_color, 1); }
+			else { draw_sprite_ext(self.checkbox_spr, self.checkbox_spr_index, self.x + ( _draw_width/ 2 ), self.y + ( _draw_height/ 2 ), self.checkbox_spr_xscale, self.checkbox_spr_yscale, 0, _blend_color, self.value); } 
 		}
 		// Text
 		if self.text != "" {
@@ -67,14 +75,10 @@ function LuiCheckbox(_params = {}) : LuiBase(_params) constructor {
 	
 	self.addEvent(LUI_EV_CLICK, function(_element) {
 		_element.set(!_element.get());
-		if !is_undefined(_element.style.sound_click) {
-			sfx_play(self.params[$ "sound_click"] ?? _element.style.sound_click, , self.params[$ "sound_click_gain"] ?? 1, self.params[$ "sound_click_pitch"] ?? 1);
-		}
+		sfx_play(_element.sound_click ?? _element.style.sound_click, , _element.sound_click_gain ?? 1, _element.sound_click_pitch ?? 1);
 	});
 	
 	self.addEvent(LUI_EV_MOUSE_ENTER, function(_element) {
-		if !is_undefined(_element.style.sound_hover) {
-			sfx_play(self.params[$ "sound_hover"] ?? _element.style.sound_hover, , self.params[$ "sound_hover_gain"] ?? 1, self.params[$ "sound_hover_pitch"] ?? 1);
-		}
+		sfx_play(_element.sound_hover ?? _element.style.sound_hover, , _element.sound_hover_gain ?? 1, _element.sound_hover_pitch ?? 1);
 	});
 }

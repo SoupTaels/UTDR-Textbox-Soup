@@ -275,7 +275,7 @@ function draw_sprite_outline(sprite_ = sprite_index, index_ = image_index, x_ = 
 }
 
 ///@desc Shorthand for audio_play_sound()
-function sfx_play(snd, loop = false, gain = 1, pitch = 1) { return audio_play_sound(snd, 0, loop, gain, , pitch); }
+function sfx_play(snd, loop = false, gain = 1, pitch = 1) { if ( snd == -1 || snd == undefined ) { exit; } return audio_play_sound(snd, 0, loop, gain, , pitch); }
 
 ///@desc Removes anything that isn't a number or decimal point
 function string_digits_ext(str){

@@ -990,6 +990,7 @@
     {"id":{"name":"spr_border_undertale","path":"sprites/spr_border_undertale/spr_border_undertale.yy",},},
     {"id":{"name":"spr_color_button","path":"sprites/spr_color_button/spr_color_button.yy",},},
     {"id":{"name":"spr_effects_icons","path":"sprites/spr_effects_icons/spr_effects_icons.yy",},},
+    {"id":{"name":"spr_export_icons","path":"sprites/spr_export_icons/spr_export_icons.yy",},},
     {"id":{"name":"spr_face_blank","path":"sprites/spr_face_blank/spr_face_blank.yy",},},
     {"id":{"name":"spr_face_placeholder","path":"sprites/spr_face_placeholder/spr_face_placeholder.yy",},},
     {"id":{"name":"spr_face_test","path":"sprites/spr_face_test/spr_face_test.yy",},},

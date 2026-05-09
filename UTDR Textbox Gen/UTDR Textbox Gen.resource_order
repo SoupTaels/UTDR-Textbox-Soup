@@ -315,6 +315,7 @@
     {"name":"spr_border_undertale","order":1,"path":"sprites/spr_border_undertale/spr_border_undertale.yy",},
     {"name":"spr_color_button","order":2,"path":"sprites/spr_color_button/spr_color_button.yy",},
     {"name":"spr_effects_icons","order":1,"path":"sprites/spr_effects_icons/spr_effects_icons.yy",},
+    {"name":"spr_export_icons","order":3,"path":"sprites/spr_export_icons/spr_export_icons.yy",},
     {"name":"spr_face_blank","order":1,"path":"sprites/spr_face_blank/spr_face_blank.yy",},
     {"name":"spr_face_placeholder","order":2,"path":"sprites/spr_face_placeholder/spr_face_placeholder.yy",},
     {"name":"spr_pixel","order":2,"path":"sprites/spr_pixel/spr_pixel.yy",},

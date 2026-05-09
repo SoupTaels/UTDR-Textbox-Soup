@@ -1,5 +1,6 @@
 ///@desc External Sprites
 //if ( live_call() ) { return live_result; }
+if ( !ui_visible ) { exit; } //Don't want to allow file dragging while we're exporting
 var async_result = async_load;
 
 #region Dropping Files

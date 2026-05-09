@@ -18,6 +18,7 @@ function LuiText(_params = {}) : LuiBase(_params) constructor {
 	self.xoff = _params[$ "xoff"] ?? 0; self.yoff = _params[$ "yoff"] ?? 0;
 	self.params = _params;
 	self.scribble_ = _params[$ "scribbletext"] ?? false;
+	self.wraplimit = _params[$ "wraplimit"] ?? -1; self.wrapsep = _params[$ "wrapsep"] ?? 1;
 	
 	///@desc Set text
 	///@arg {string} _text
@@ -95,13 +96,14 @@ function LuiText(_params = {}) : LuiBase(_params) constructor {
 					var _xscale = self.width / string_width(_text);
 					var _yscale = self.height / string_height(_text);
 					var _scale = min(_xscale, _yscale);
-					draw_text_transformed(_txt_x + self.xoff, _txt_y + self.yoff, _text, _scale * self.scale_x, _scale * self.scale_y, 0);
+					draw_text_ext_transformed(_txt_x + self.xoff, _txt_y + self.yoff, _text, self.wrapsep, self.wraplimit, _scale * self.scale_x, _scale * self.scale_y, 0);
 				}
 			}
 			else {
 				var text_ = scribble(self.value)
 				.align(self.text_halign, self.text_valign)
 				.starting_format(self.font ?? self.style.font_default, self.color ?? ( !self.deactivated ? self.style.color_text : merge_color(self.style.color_text, c_black, 0.5) ))
+				.wrap(self.wraplimit)
 				.draw(_txt_x + self.xoff, _txt_y + self.yoff);
 			}
 		}
