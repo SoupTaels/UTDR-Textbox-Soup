@@ -45,7 +45,7 @@ function soupy_message(textarr_ = ["Test", "Test 2"], textbutt_ = "OK", width = 
 ///@param {Asset.GMSound} snd_ Sound
 ///@param {Asset.GMFont} font_ Text Font
 ///@param {bool} allowmultiple_ Whether to allow multiple popups
-function soupy_popup(elementsarr, func_ = function(){}, textbutt_ = "OK", width = 620, height = -1, padd_ = 5, snd_ = snd_dimbox, font_ = fnt_determination, allowmultiple_ = false) {
+function soupy_popup(elementsarr, func_ = function(){}, textbutt_ = "OK", width = 620, height = -1, padd_ = 5, snd_ = snd_dimbox, font_ = fnt_determination, allowmultiple_ = false, gap_ = 5) {
 	window_set_cursor(cr_default);
 	if ( !allowmultiple_ && !UI_MESSAGE ) { exit; }
 	sfx_play(snd_);
@@ -58,7 +58,7 @@ function soupy_popup(elementsarr, func_ = function(){}, textbutt_ = "OK", width 
 		var myfunc = element_.getData("func"); myfunc();
 		var maincan = element_.getData("container"); maincan.destroy(); }));
 	panel_.addContent([
-		new LuiColumn().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.flex_end).addContent(arr_arr),
+		new LuiColumn().setGap(gap_).setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.flex_end).addContent(arr_arr),
 	]);
 	SYSTEMUI.soupy_lui.addContent(containter_.addContent(panel_));
 	SYSTEMUI.ui_paused = true;

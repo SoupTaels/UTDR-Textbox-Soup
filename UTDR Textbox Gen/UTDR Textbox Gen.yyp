@@ -724,6 +724,7 @@
     {"id":{"name":"o_SharedTweener","path":"objects/o_SharedTweener/o_SharedTweener.yy",},},
     {"id":{"name":"obj_gmlive","path":"objects/obj_gmlive/obj_gmlive.yy",},},
     {"id":{"name":"obj_quill_core","path":"objects/obj_quill_core/obj_quill_core.yy",},},
+    {"id":{"name":"obj_stacker","path":"objects/obj_stacker/obj_stacker.yy",},},
     {"id":{"name":"obj_system","path":"objects/obj_system/obj_system.yy",},},
     {"id":{"name":"oSteadyDeltaTime","path":"objects/oSteadyDeltaTime/oSteadyDeltaTime.yy",},},
     {"id":{"name":"rm_soupy","path":"rooms/rm_soupy/rm_soupy.yy",},},

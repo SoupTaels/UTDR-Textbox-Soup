@@ -20,11 +20,13 @@
 	var i = 0, str = "fnt_determination|fnt_determination_nomono|fnt_speech|fnt_damage|fnt_tiny|fnt_sans|fnt_papyrus|fnt_abaddon|fnt_arial|fnt_pixel", arr = string_split(str, "|"), len = array_length(arr);
 	repeat (  len ) {
 		var cur_ = arr[i];
-		scribble_font_bake_outline_and_shadow(cur_, $"{cur_}_outline", 0, 0, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false); scribble_glyph_set($"{cur_}_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, 14);
+		scribble_font_bake_outline_and_shadow(cur_, $"{cur_}_outline", 0, 0, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
+		var h_ = scribble_glyph_get(cur_, "W", SCRIBBLE_GLYPH.FONT_HEIGHT), x_ = scribble_glyph_get(cur_, "A", SCRIBBLE_GLYPH.LEFT_OFFSET);
+		scribble_glyph_set($"{cur_}_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, h_); scribble_glyph_set($"{cur_}_outline", all, SCRIBBLE_GLYPH.LEFT_OFFSET, x_);
 	i++; }
 	
-	scribble_glyph_set("fnt_sans", all, SCRIBBLE_GLYPH.X_OFFSET, -0.5); scribble_glyph_set("fnt_sans", all, SCRIBBLE_GLYPH.Y_OFFSET, 1.5); scribble_glyph_set("fnt_sans", all, SCRIBBLE_GLYPH.FONT_HEIGHT, 14);
-	scribble_glyph_set("fnt_sans_outline", all, SCRIBBLE_GLYPH.X_OFFSET, -1.5); scribble_glyph_set("fnt_sans_outline", all, SCRIBBLE_GLYPH.Y_OFFSET, 0.5); scribble_glyph_set("fnt_sans_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, 14);
+	scribble_glyph_set("fnt_sans", all, SCRIBBLE_GLYPH.X_OFFSET, -0.5); scribble_glyph_set("fnt_sans", all, SCRIBBLE_GLYPH.Y_OFFSET, 1.5);
+	scribble_glyph_set("fnt_sans_outline", all, SCRIBBLE_GLYPH.X_OFFSET, -1.5); scribble_glyph_set("fnt_sans_outline", all, SCRIBBLE_GLYPH.Y_OFFSET, 0.5);
 	
 	dial_text = ""; //Dialogue Text
 	dial_font = "fnt_determination"; //Dialogue Font
@@ -163,6 +165,10 @@
 					case "funnytext": { return "[scale,0.65][icon,funnytext game over][wait,3][newl][/page][scale,0.5][spr_dw_tv_time_its][delay]  [spr_dw_tv_time_t][delay][offset,-50,15][spr_dw_tv_time_v][offsetPop][delay][offset,-30][spr_dw_tv_time_time][delay][newl][/page][scale,0.6][icon,funnytext dark fountain][wait,3][newl][/page][scale,0.65][spr_funnytext_physical_challenges][wait,3][newl][/page][scale,1.3][funnytext_tears][wait,3][newl][/page][scale,1.3][spr_funnytext_win][wait,3][newl][/page][scale,0.4][spr_funnytext_win_big][wait,3][newl][/page][scale,1.45][spr_funnytext_flames][wait,3]"; break; }
 					//Test all the effects
 					case "effects": { return "[wave]Wavy text.[/wave] [wheel]Wheel text.[/wheel] [shake]Shaky text.[/shake] [wobble]Wobbly text.[/wobble] [pulse]Pulse text.[/pulse] [rainbow]Rainbow text.[/rainbow] [slant]Slanted text.[/slant][newl][/page][scale,0.5]Scaled text.[/scale] [cycle,70,150]Color cycling text.[/cycle] [blink]Blink text.[/blink] [alpha,0.5]Different alpha.[/alpha][newl][/page][speed,4]Speedy text test: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"; break; }
+					//Test dialogue stacking
+					case "stack": { return "[repeat,test[newl][/page]test2[newl][/page]test3[newl][/page]test4[newl][/page]test5[newl][/page]test6[newl][/page]test7[newl][/page]test8[newl][/page]test9,5]"; break; }
+					//Test overloading the dialogue stack
+					case "overload": { return "[test,stack][/page][test,stack]"; break; }
 					default: { return "Testing suite ID not found."; }
 				}
 			});
@@ -279,7 +285,7 @@
 		#region Init Style
 			var soupy_style = new LuiStyle({ padding: 15, gap: 10, color_text: c_white, color_hover: c_yellow, sound_click: snd_select, sound_hover: snd_sel_switch, }) //Main Style
 				.setRenderRegionOffset([10, 10, 10, 10])
-				.setFonts(fnt_determination, fnt_determination, fnt_determination).setColors(, c_orange, #962525, #15ee97)
+				.setFonts(fnt_determination, fnt_determination, fnt_determination).setColors(, c_orange, #f43e83, #15ee97)
 				.setSprites(spr_border_undertale_outlined, spr_border_undertale_outlined).setSpriteCheckbox(spr_border_undertale, spr_pixel)
 			soupy_lui = new LuiMain().setStyle(soupy_style);
 		#endregion
@@ -333,7 +339,7 @@
 			ui_reset();
 				
 			///@desc Toggle between different exporting types and export the dialogue
-			ui_export = function(type_ = 0, fmax_ = 180, delay_ = 60, quant_ = 1) {
+			ui_export = function(type_ = 0, fmax_ = 180, delay_ = 60, quant_ = 1, xoff_ = 0, yoff_ = 0) {
 				ui_tab = -1; ui_visible = false; 
 				if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_equip);
 					
@@ -346,8 +352,13 @@
 					case 2: { //Record for a set timer, no typewriter just animated text
 						with ( record ) { enabled = true; framesmax = fmax_; frames = 0; type = 0; quant = quant_; }
 					} break;
-					case 3: { screenshot = true; screenshot_stacked = true; } break; //Take a stack of screenshots, no typewriter
-					case 4: {  } break;
+					case 3: { //Take a stack of screenshots, no typewriter
+						var offstruct = {
+							soupstack_yoff: yoff_, //Gap between dialogue box sprites
+							soupstack_xoff: xoff_, //Shift the dialogue boxes to the right by this amount
+						}
+						screenshot = true; screenshot_stacked = true; instance_create_depth(0, 0, 0, obj_stacker, offstruct); 
+					} break;
 				}
 			}
 		#endregion

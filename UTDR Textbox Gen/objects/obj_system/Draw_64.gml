@@ -1,5 +1,6 @@
 ///@desc Draw Dialogue Things
 if ( live_call() ) { return live_result; } 
+if ( dial_text_page >= dial_text_page_c ) { exit; } //Prevents the stack export from going out of bounds
 #region UI Borders and Buttons
 	if ( ui_visible ) {
 		#region Orange and White Border
@@ -136,10 +137,10 @@ draw_sprite_ext(spr_pixel, 0, 0, 0, 640, 480, 0, c_black, fader); //Black fade o
 #region Generating Text
 	if ( !ui_visible ) { 
 		var gen_ = scribble("[rainbow][wave]Generating...!").scale(4).align(fa_center, fa_middle).draw(320, 210); 
-		if ( record.enabled ) {
-			if ( record.type == 0 ) { draw_format("center", "center", fnt_determination, c_yellow); draw_text(320, 260, $"(Page: {dial_text_page} | Timer: {record.frames}/ {record.framesmax})"); } //Show current page and timer
-			else { draw_format("center", "center", fnt_determination, c_yellow); draw_text_transformed(320, 260, $"(Page: {dial_text_page + 1}/ {dial_text_page_c})", 2, 2, 0); } //Show current page and total page count
+		if ( record.enabled && record.type == 0) {
+			draw_format("center", "center", fnt_determination, c_yellow); draw_text(320, 260, $"(Page: {dial_text_page} | Timer: {record.frames}/ {record.framesmax})"); //Show current page and timer
 		}
+		else { draw_format("center", "center", fnt_determination, c_yellow); draw_text_transformed(320, 260, $"(Page: {dial_text_page + 1}/ {dial_text_page_c})", 2, 2, 0); } //Show current page and total page count
 	}
 #endregion
 

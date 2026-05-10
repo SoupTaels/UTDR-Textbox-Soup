@@ -629,6 +629,11 @@ function __Quill(_kind, _label, _placeholder) constructor {
 	static ContextMenuGetItem = function(_key_or_uid) {
 		return global.__QUILL_CORE.__ContextMenuCollectionGet(context_menu_items, _key_or_uid);
 	};
+	
+	///@desc Returns whether the context menu is opened
+	static ContextMenuIsOpened = function() {
+		return global.__QUILL_CORE._context_menu_open;
+	};
 
 	/// @func ContextMenuClearItems()
 	/// @desc Clear all custom context menu items on this textbox.

@@ -7,6 +7,8 @@ function LuiToggleSwitch(_params = {}) : LuiBase(_params) constructor {
 	
 	self.value = _params[$ "value"] ?? false;
 	self.text = _params[$ "text"] ?? "";
+	self.sound_click = _params[$ "sound_click"] ?? undefined; self.sound_click_gain = _params[$ "sound_click_gain"] ?? undefined; self.sound_click_pitch = _params[$ "sound_click_pitch"] ?? undefined;
+	self.sound_hover = _params[$ "sound_hover"] ?? undefined; self.sound_hover_gain = _params[$ "sound_hover_gain"] ?? undefined; self.sound_hover_pitch = _params[$ "sound_hover_pitch"] ?? undefined;
 	
 	self.slider_size = 32;
 	self.slider_xoffset = 0;
@@ -88,15 +90,11 @@ function LuiToggleSwitch(_params = {}) : LuiBase(_params) constructor {
 	
 	self.addEvent(LUI_EV_CLICK, function(_element) {
 		_element.set(!_element.get());
-		if !is_undefined(_element.style.sound_click) {
-			sfx_play(self.params[$ "sound_click"] ?? _element.style.sound_click, , self.params[$ "sound_click_gain"] ?? 1, self.params[$ "sound_click_pitch"] ?? 1);
-		}
+		sfx_play(_element.sound_click ?? _element.style.sound_click, , _element.sound_click_gain ?? 1, _element.sound_click_pitch ?? 1);
 	});
 	
 	self.addEvent(LUI_EV_MOUSE_ENTER, function(_element) {
-		if !is_undefined(_element.style.sound_hover) {
-			sfx_play(self.params[$ "sound_hover"] ?? _element.style.sound_hover, , self.params[$ "sound_hover_gain"] ?? 1, self.params[$ "sound_hover_pitch"] ?? 1);
-		}
+		sfx_play(_element.sound_hover ?? _element.style.sound_hover, , _element.sound_hover_gain ?? 1, _element.sound_hover_pitch ?? 1);
 	});
 	
 	self.addEvent(LUI_EV_POSITION_UPDATE, function(_element) {

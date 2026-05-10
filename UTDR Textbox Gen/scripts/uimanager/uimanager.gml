@@ -39,7 +39,17 @@ function TextChange(txt, point) : UndoableChange() constructor { //Handle undo/ 
 	point_ = point; //Get our new point
 
 	static can_apply = function() { return ( SYSTEMUI.dial_text != mytxt ); } //Don't push the same unchanged text to the undo stack
-	static apply = function() { with ( obj_system ) { dial_text = other.mytxt; textinput.SetValue(dial_text); textinput.SetCaret(other.point_); } sfx_play(snd_updated); } //Apply recent changes
+	static apply = function() { with ( obj_system ) { //Apply recent changes
+		dial_text = other.mytxt; 
+		textinput.SetValue(dial_text);
+		
+		var lasttyped = file_text_open_write($"{executable_get_directory()}latest_soupy_last_typed.txt");
+		file_text_write_string(lasttyped, dial_text); //Save what the user last typed
+		file_text_close(lasttyped);
+		
+		textinput.SetCaret(other.point_); } 
+		sfx_play(snd_updated); 
+	}
     static undo = function() { with ( obj_system ) { dial_text = other.prev_txt; textinput.SetValue(dial_text); textinput.SetCaret(other.point_prev); } sfx_play(snd_throw); }
 }
 
@@ -287,7 +297,7 @@ function ui_manage() {
 			#endregion
 
 			#region Text Update
-				if ( dial_updatet > 1 ) { //Notification for updating text
+				if ( dial_updatet > 1 && !textinput.ContextMenuIsOpened() ) { //Notification for updating text
 					dial_updatet--;
 					var ringcalc = map_value(dial_updatet, 0, dial_updatet_max, 0, 360), textx = 300, texty = 395; //Turn the values of a timer into a range of degrees
 					draw_sprite_stretched(spr_bord, 0, textx - 110, texty - 20, 250, 40);
@@ -346,6 +356,7 @@ function ui_manage() {
 					yscale_3 = lerp(yscale_3, 1, 0.15);
 				}
 			#endregion
+
 		} break;
 		
 		case 1: { //Style

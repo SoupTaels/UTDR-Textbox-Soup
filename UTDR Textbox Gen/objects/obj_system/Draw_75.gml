@@ -33,22 +33,38 @@ if ( screenshot || record.enabled ) {
 	#endregion
 	
 	#region Function for finishing recording
-		var finish_func = method({folder, _path_separator, fname, record, x_, y_, w_, h_, screenshot_surf }, function(gif_ = true) { //Finished recording/ screenshotting
+		var finish_func = method({folder, _path_separator, fname, record, x_, y_, w_, h_, screenshot_surf }, function(gif_ = true, stack_ = false) { //Finished recording/ screenshotting
 			var fpath_final = $"{executable_get_directory()}{folder}{_path_separator}{fname}_.{gif_ ? "gif" : "png"}";
-			if ( gif_ ) { gif_save(record.id_, fpath_final); } //Save GIF
-			else { surface_save_part(screenshot_surf, fpath_final, x_, y_, w_, h_); } //Save screenshot
-
-			soupy_message($"{fname}.{gif_ ? "gif" : "png"}[/] [rainbow][wave]saved at[/]| |[c_lime]{fpath_final}![/]| |Your [c_gold]good soup[/] is ready!|The file path was [c_yellow]copied to your clipboard[/] and|the result will open up in your [c_cyan]default image viewer[/].", "I'm so soupy!!", , , , snd_dumbvictory, fnt_abaddon, , , true, 590);
+			if ( !stack_ ) {
+				if ( gif_ ) { gif_save(record.id_, fpath_final); } //Save GIF
+				else { surface_save_part(screenshot_surf, fpath_final, x_, y_, w_, h_); } //Save screenshot
+				
+				soupy_message($"{fname}.{gif_ ? "gif" : "png"}[/] [rainbow][wave]saved at[/]| |[c_lime]{fpath_final}![/]| |Your [c_gold]good soup[/] is ready!|The file path was [c_yellow]copied to your clipboard[/] and|the result will open up in your [c_cyan]default image viewer[/].", "I'm so soupy!!", , , , snd_dumbvictory, fnt_abaddon, , , true, 590);
+				execute_shell_simple($"{executable_get_directory()}{folder}", , , 6); //Open the directory (Windows only)
+				execute_shell_simple(fpath_final, , , 6); //Open the image in the PC's default photo viewer (Windows only)
+				clipboard_set_text(fpath_final);
+			}
+			
 			surface_free(screenshot_surf); screenshot_surf = -1;
 			with ( record ) { frames = 0; framesmax = 0; enabled = false; id_ = -1; }
 			with ( SYSTEMUI ) { dial_text_gif = false; dial_wrap_count = 1; spr_bord = bord_prev; dial_text_page = 0; bord_box_visible = true; ui_tab = 0; ui_visible = true; }
-			execute_shell_simple(fpath_final, , , 6); //Open the image in the PC's default photo viewer (Windows only)
-			clipboard_set_text(fpath_final);
 			exit;
 		});
 	#endregion
 	
-	if ( screenshot ) { screenshot = false; finish_func(false); }
+	if ( screenshot ) { 
+		if ( !screenshot_stacked ) { screenshot = false; finish_func(false); }
+		else {
+			if ( dial_text_page < dial_text_page_c ) { //Create sprite from surface, then push them to the stack
+				with ( obj_stacker ) {
+					if ( soupstack_path == "" ) { var fpath_final = $"{executable_get_directory()}{folder}{_path_separator}{fname}_.png"; soupstack_path = fpath_final; soupstack_fname = fname; soupstack_folder = folder; }
+					array_push(soupstack_spr, sprite_create_from_surface(other.screenshot_surf, x_, y_, w_, h_, false, false, 0, 0));
+				}
+				dial_text_page++; sfx_play(snd_equip2); 
+			}
+			else { finish_func(false, true); screenshot = false; instance_destroy(obj_stacker); exit; }
+		}
+	}
 	else if ( record.enabled ) {
 		var record_func = method({ record, screenshot_surf, x_, y_, w_, h_, typist }, function(init_ = false) { if ( init_ ) { record.id_ = gif_open(w_, h_); typist.reset(); } else { var debug = gif_add_surface(record.id_, screenshot_surf, 2, x_, y_, record.quant); } });
 		if ( record.type == 0 ) { //No typing animation

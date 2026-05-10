@@ -173,7 +173,7 @@ outputLog = "";
 			var getfont = asset_get_name(sprite);
 			scribble_font_rename(getfont, name); //Let us use the font's filename instead of whatever name gamemaker generated for us
 			scribble_font_bake_outline_and_shadow(name, $"{name}_outline", 0, 0, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
-			scribble_glyph_set($"{name}_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, 14);
+			scribble_glyph_set($"{name}_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, scribble_glyph_get(name, "W", SCRIBBLE_GLYPH.FONT_HEIGHT));
 			var out_ = $"Added \"{name}\" and outline variant from {fname_}! Renamed custom font from {getfont} to {global.fonts_dict_alt[$ temp_2].name} for use with Scribble.\nImage Count: {count}";
 			show_debug_message(out_); global.outputLog += $"{out_}\n";
 		}
@@ -188,7 +188,6 @@ outputLog = "";
 	}
 #endregion
 
-var _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
 var oLog = file_text_open_write($"{executable_get_directory()}latest_soupy_run.txt");
 file_text_write_string(oLog, global.outputLog);
 file_text_close(oLog);
