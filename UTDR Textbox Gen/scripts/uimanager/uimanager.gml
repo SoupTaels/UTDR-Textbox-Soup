@@ -318,7 +318,7 @@ function ui_manage() {
 				var resettime = 60;
 				if ( bord_visible && FACE_CURRENT != -1 && ( range_within(mouse_x_gui, 40, 174) && range_within(mouse_y_gui, 323, 480) ) && mouse_check_right ) { //Hovering over the dialogue portrait
 					soupy_alarm("removeface", resettime);
-					soupy_alarm_run("removeface", 1, function () { FACE_CURRENT = -1; sfx_play(snd_throw); }); //Timer to clear face
+					soupy_alarm_run("removeface", 1, function () { FACE_CURRENT = -1; FACE_ORIGINAL = -1; FACE_PREVIOUS = -1; sfx_play(snd_throw); }); //Timer to clear face
 
 					draw_sprite_stretched_ext(spr_border_undertale, 0, 40, 323, 134, 136, c_red, 0.7); //BG
 					var ringcalc = map_value(soupy_alarm_get("removeface", "timer", false), 0, resettime, 0, 360), textx = 110, texty = 390; //Turn the values of a timer into a range of degrees

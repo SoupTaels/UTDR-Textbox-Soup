@@ -61,6 +61,7 @@ if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , -1, 0)
 							.starting_format(dial_font, c_white).scale(dial_text_scale).outline(dial_text_outline)
 							.allow_line_data_getter().allow_glyph_data_getter()
 							.line_spacing(line_sp).page(dial_text_page).wrap(wrapcalc)
+							if ( record.enabled || screenshot ) { dial_text_page_c = scrib_dial.get_page_count(); }
 							scrib_dial.draw(tx_x, yy_, dial_text_gif ? typist : undefined);
 					#endregion
 
@@ -132,7 +133,15 @@ ui_manage(); //Menu handler
 soupy_lui.render(); //LimeUI
 draw_sprite_ext(spr_pixel, 0, 0, 0, 640, 480, 0, c_black, fader); //Black fade overlay
 
-if ( !ui_visible ) { var gen_ = scribble("[rainbow][wave]Generating...!").scale(4).align(fa_center, fa_middle).draw(320, 240); }
+#region Generating Text
+	if ( !ui_visible ) { 
+		var gen_ = scribble("[rainbow][wave]Generating...!").scale(4).align(fa_center, fa_middle).draw(320, 210); 
+		if ( record.enabled ) {
+			if ( record.type == 0 ) { draw_format("center", "center", fnt_determination, c_yellow); draw_text(320, 260, $"(Page: {dial_text_page} | Timer: {record.frames}/ {record.framesmax})"); } //Show current page and timer
+			else { draw_format("center", "center", fnt_determination, c_yellow); draw_text_transformed(320, 260, $"(Page: {dial_text_page + 1}/ {dial_text_page_c})", 2, 2, 0); } //Show current page and total page count
+		}
+	}
+#endregion
 
 mouse_debug();
 //draw_sprite_ensure(get_face("sck", "capn"), current_time/300, 320, 240);

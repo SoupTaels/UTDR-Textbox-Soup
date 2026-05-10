@@ -28,6 +28,7 @@ function LuiInput(_params = {}) : LuiBase(_params) constructor {
     self.excluded_chars = _params[$ "excluded_chars"] ?? "";
     self.allowed_chars = _params[$ "allowed_chars"] ?? "";
 	self.type_sfx = _params[$ "type_sfx"] ?? -1;
+	self.color_normal = _params[$ "color_normal"] ?? undefined; self.color_hover = _params[$ "color_hover"] ?? undefined;
     
     self.is_incorrect = false;
     self.cursor_pointer = "";
@@ -174,10 +175,10 @@ function LuiInput(_params = {}) : LuiBase(_params) constructor {
     self.draw = function() {
         //Base
         if !is_undefined(self.style.sprite_input) {
-            var _blend_color = self.style.color_back;
+            var _blend_color = self.color_normal ?? self.style.color_back;
             if !self.deactivated {
                 if !self.has_focus && self.isMouseHovered() {
-                    _blend_color = merge_color(self.style.color_back, self.style.color_hover, 0.5);
+                    _blend_color = merge_color(self.color_normal ?? self.style.color_back, self.color_hover ?? self.style.color_hover, 0.5);
                 }
                 if self.is_incorrect {
                     _blend_color = merge_color(_blend_color, self.style.color_semantic_error, 0.5);
@@ -284,6 +285,9 @@ function LuiInput(_params = {}) : LuiBase(_params) constructor {
             _e.set(_e._limit_value(_e.get() + _paste));
             keyboard_string = _e.get();
         }
+    });
+	
+	 self.addEvent(LUI_EV_KEYBOARD_RELEASE, function(_e) {
 		sfx_play(_e.type_sfx);
     });
     

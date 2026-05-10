@@ -44,7 +44,7 @@
 	
 	#region Typist
 		typist = scribble_typist(); //Dialogue Engine
-		typist_spd = 0.4; //Typewriter speed
+		typist_spd = 0.5; //Typewriter speed
 		typist_spd_orig = typist_spd; //Typewriter original speed
 		typist.in(typist_spd, 0);
 		typist.function_per_char(function(_element, _position, _typist) { //Function to run per character
@@ -58,7 +58,7 @@
 			#endregion
 		
 			#region Animate Face
-				if ( FACE_USING && dial_face_auto ) { //Animate the face while dialogue is typing out
+				if ( ( FACE_USING && dial_face_auto ) && string_lettersdigits(mychr) != "" ) { //Animate the face while dialogue is typing out. Only animate if there's letters and numbers being said
 					static anim_timer = 0; anim_timer++;
 					if ( anim_timer > 2 ) { anim_timer = 0; dial_face_index++; }
 				}
@@ -73,81 +73,100 @@
 	#endregion
 	
 	#region Typist Events
-		scribble_typists_add_event("face", function(_, param) { //Switch to a new portrait sprite
-			FACE_PREVIOUS = FACE_CURRENT; //Get the previous face
-			FACE_CURRENT = get_face(param[0], array_length(param) > 1 ? param[1] : -1);
-			if ( FACE_USING ) { FACE_INTERNAL = param[0]; }
-		});
-		scribble_typists_add_event("face_orig", function(_, param) { FACE_ORIGINAL = get_face(param[0], array_length(param) > 1 ? param[1] : -1); }); //Change the original previous face to a new 
-		scribble_typists_add_event("face_prev", function(_, param) { FACE_CURRENT = FACE_PREVIOUS; }); //Change the face back to the previous face
-		scribble_typists_add_event("face_auto", function(_, param) { dial_face_auto = bool(string_letters(param[0])); }); //Switch the automatically animation of the face
-		scribble_typists_add_event("face_index", function(_, param) { dial_face_index = real(string_digits(param[0])); }); //Change the index of the face(if dial_face_auto is off), for sprites with more sprites and expressions
-		scribble_typists_add_event("border", function(_, param) { //Switch to a new border sprite
-			var bord_ = get_border(param[0]);
-			spr_bord = bord_ != -1 ? bord_ : spr_border_undertale;
-		});
-		scribble_typists_add_event("finish", function(_, param) { typist.skip(); }); //Finish all the text immediately
-		scribble_typists_add_event("skip", function(_, param) { //Skips to the next page, disregarding current dialogue 
-			if ( dial_text_page < dial_text_page_c - 1 ) {
-				if ( array_length(param) == 0 ) { dial_text_page++; } //No argument provided? Just go to the next page
-				else { dial_text_page = real(string_digits(param[0])); dial_text_page = clamp(dial_text_page, 0, dial_text_page_c); } //Go to a specific page
-			}
-		});
-		scribble_typists_add_event("face_stick", function(_, param) { FACE_ORIGINAL = get_face(FACE_INTERNAL); }); //Make the previous dialogue face stick
-		scribble_typists_add_event("face_stick_all", function(_, param) { //Make the previous dialogue face stick for all upcoming dialogue
-			var i = dial_text_page, face_spr = FACE_CURRENT; 
-			repeat ( ( dial_text_page_c ) - i ) { dial_face[i] = face_spr; dial_face_prev[i] = face_spr; dial_face_original[i] = face_spr; dial_face_name[i] = FACE_INTERNAL; i++; }
-		});
-		scribble_typists_add_event("speed_pop", function(_, param) { typist_spd = typist_spd_orig; }); //Changes the typist speed back to the default
+		#region Dialogue Settings
+			scribble_typists_add_event("face", function(_, param) { //Switch to a new portrait sprite
+				FACE_PREVIOUS = FACE_CURRENT; //Get the previous face
+				FACE_CURRENT = get_face(param[0], array_length(param) > 1 ? param[1] : -1);
+				if ( FACE_USING ) { FACE_INTERNAL = param[0]; }
+			});
+			scribble_typists_add_event("face_orig", function(_, param) { FACE_ORIGINAL = get_face(param[0], array_length(param) > 1 ? param[1] : -1); }); //Change the original previous face to a new 
+			scribble_typists_add_event("face_prev", function(_, param) { FACE_CURRENT = FACE_PREVIOUS; }); //Change the face back to the previous face
+			scribble_typists_add_event("face_auto", function(_, param) { dial_face_auto = bool(string_letters(param[0])); }); //Switch the automatically animation of the face
+			scribble_typists_add_event("face_index", function(_, param) { dial_face_index = real(string_digits(param[0])); }); //Change the index of the face(if dial_face_auto is off), for sprites with more sprites and expressions
+			scribble_typists_add_event("border", function(_, param) { //Switch to a new border sprite
+				var bord_ = get_border(param[0]);
+				spr_bord = bord_ != -1 ? bord_ : spr_border_undertale;
+			});
+			scribble_typists_add_event("finish", function(_, param) { typist.skip(); }); //Finish all the text immediately
+			scribble_typists_add_event("skip", function(_, param) { //Skips to the next page, disregarding current dialogue 
+				if ( dial_text_page < dial_text_page_c - 1 ) {
+					if ( array_length(param) == 0 ) { dial_text_page++; } //No argument provided? Just go to the next page
+					else { dial_text_page = real(string_digits(param[0])); dial_text_page = clamp(dial_text_page, 0, dial_text_page_c); } //Go to a specific page
+				}
+			});
+			scribble_typists_add_event("face_stick", function(_, param) { FACE_ORIGINAL = get_face(FACE_INTERNAL); }); //Make the previous dialogue face stick
+			scribble_typists_add_event("face_stick_all", function(_, param) { //Make the previous dialogue face stick for all upcoming dialogue
+				var i = dial_text_page, face_spr = FACE_CURRENT; 
+				repeat ( ( dial_text_page_c ) - i ) { dial_face[i] = face_spr; dial_face_prev[i] = face_spr; dial_face_original[i] = face_spr; dial_face_name[i] = FACE_INTERNAL; i++; }
+			});
+			scribble_typists_add_event("speed_pop", function(_, param) { typist_spd = typist_spd_orig; }); //Changes the typist speed back to the default
+		#endregion
 		
-		var efxfunc = function(_, param) { //Play an effect
-			var len = array_length(param);
-			var delayfunc = function () { SYSTEMUI.typist.pause(); TweenScript(SYSTEMUI, 0, 2, function () { SYSTEMUI.typist.unpause(); }); }
-			switch ( param[0] ) {
-				case "squash": case "squish": { TweenFire("$15", "~oquad", "dial_face_xscale_off", 0.3, 0, "dial_face_yscale_off", -0.3, 0); delayfunc(); } break; //Squish the face 
-				case "squeeze": case "stretch": { TweenFire("$15", "~oquad", "dial_face_xscale_off", -0.3, 0, "dial_face_yscale_off", 0.3, 0); delayfunc(); } break; //Squeeze the face
-				case "flash": { //Make the face flash a color [effect,flash,r,g,b,frames]
-					var getclr = real_ext(len > 1 ? param[1] : "255"), getclr2 = real_ext(len > 2 ? param[2] : "255"), getclr3 = real_ext(len > 3 ? param[3] : "255"), time_ = real_ext(len > 4 ? param[4] : "15");
-					var myclr = make_color_rgb(getclr != "" ? getclr : 255, getclr2 != "" ? getclr2 : 255, getclr3 != "" ? getclr3 : 255); dial_point_clr_anim = myclr;
-					TweenFire("?", obj_system, $"${time_ != "" ? time_ : 15}", "~oquad", "dial_point_clr_anim_alpha", 1, 0); delayfunc();
-				} break;
-				case "fade": case "ghost": case "opacity": { //Make the face fade out to the specified target number [effect,fade,#,frames]
-					var getamt = real_ext(len > 1 ? param[1] : "0"), time_ = real_ext(len > 2 ? param[2] : "30");
-					TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", "dial_face_alpha>", getamt != "" ? getamt : 0); delayfunc();
-				} break;
-				case "rotate": case "rot": case "angle": { //Make the face rotate to the specified target number [effect,rotate,#,frames,issmooth]
-					var getamt = real_ext(len > 1 ? param[1] : "360"), time_ = real_ext(len > 2 ? param[2] : "30"), smooth_ = real_ext(len > 3 ? param[3] : "0"); smooth_ = smooth_ != "" ? bool(smooth_) : false;
-					TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", $"~{!smooth_? "linear" : "oquad"}", "dial_face_angle>", getamt != "" ? getamt : 0); delayfunc();
-				} break;
-				case "scale": case "size": { //Make the face scale to the specified target number [effect,scale,#,#,frames,issmooth]
-					var getamt = real_ext(len > 1 ? param[1] : "0"), getamt2 = real_ext(len > 2 ? param[2] : "0"), time_ = real_ext(len > 3 ? param[3] : "30"), smooth_ = real_ext(len > 4 ? param[4] : "0"); smooth_ = smooth_ != "" ? bool(smooth_) : false;
-					TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", $"~{!smooth_? "linear" : "oquad"}", "dial_face_xscale_off>", getamt != "" ? getamt : 0, "dial_face_yscale_off>", getamt2 != "" ? getamt2 : 0); delayfunc();
-				} break;
-				case "slide": case "move": case "xy": { //Make the face slide to the specified target number [effect,slide,#,#,frames,issmooth]
-					var getamt = real_ext(len > 1 ? param[1] : "0"), getamt2 = real_ext(len > 2 ? param[2] : "0"), time_ = real_ext(len > 3 ? param[3] : "30"), smooth_ = real_ext(len > 4 ? param[4] : "0"); smooth_ = smooth_ != "" ? bool(smooth_) : false;
-					TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", $"~{!smooth_? "linear" : "oquad"}", "dial_face_xoff>", getamt != "" ? getamt : 0, "dial_face_yoff>", getamt2 != "" ? getamt2 : 0); delayfunc();
-				} break;
-				case "shake": case "rumble": { //Make the shake in place for some time [effect,shake,x,y,frames,intensity]
-					var x_ = real_ext(len > 1 ? param[1] : "0"), y_ = real_ext(len > 2 ? param[2] : "0"), time_ = real_ext(len > 3 ? param[3] : 10), off_ = real_ext(len > 4 ? param[4] : 2)
-					 x_ = x_ != "" ? bool(x_) : false; y_ = y_ != "" ? bool(y_) : false;
-					 soupy_alarm_set("face shaker", "timer", time_);
-					soup_store("face shaker", { x_, y_, time_, off_ }); delayfunc();
-				} break;
+		#region Face Effects
+			var efxfunc = function(_, param) { //Play an effect
+				var len = array_length(param);
+				var delayfunc = function () { SYSTEMUI.typist.pause(); TweenScript(SYSTEMUI, 0, 2, function () { SYSTEMUI.typist.unpause(); }); }
+				switch ( param[0] ) {
+					case "squash": case "squish": { TweenFire("$15", "~oquad", "dial_face_xscale_off", 0.3, 0, "dial_face_yscale_off", -0.3, 0); delayfunc(); } break; //Squish the face 
+					case "squeeze": case "stretch": { TweenFire("$15", "~oquad", "dial_face_xscale_off", -0.3, 0, "dial_face_yscale_off", 0.3, 0); delayfunc(); } break; //Squeeze the face
+					case "flash": { //Make the face flash a color [effect,flash,r,g,b,frames]
+						var getclr = real_ext(len > 1 ? param[1] : "255"), getclr2 = real_ext(len > 2 ? param[2] : "255"), getclr3 = real_ext(len > 3 ? param[3] : "255"), time_ = real_ext(len > 4 ? param[4] : "15");
+						var myclr = make_color_rgb(getclr != "" ? getclr : 255, getclr2 != "" ? getclr2 : 255, getclr3 != "" ? getclr3 : 255); dial_point_clr_anim = myclr;
+						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 15}", "~oquad", "dial_point_clr_anim_alpha", 1, 0); delayfunc();
+					} break;
+					case "fade": case "ghost": case "opacity": { //Make the face fade out to the specified target number [effect,fade,#,frames]
+						var getamt = real_ext(len > 1 ? param[1] : "0"), time_ = real_ext(len > 2 ? param[2] : "30");
+						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", "dial_face_alpha>", getamt != "" ? getamt : 0); delayfunc();
+					} break;
+					case "rotate": case "rot": case "angle": { //Make the face rotate to the specified target number [effect,rotate,#,frames,issmooth]
+						var getamt = real_ext(len > 1 ? param[1] : "360"), time_ = real_ext(len > 2 ? param[2] : "30"), smooth_ = real_ext(len > 3 ? param[3] : "0"); smooth_ = smooth_ != "" ? bool(smooth_) : false;
+						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", $"~{!smooth_? "linear" : "oquad"}", "dial_face_angle>", getamt != "" ? getamt : 0); delayfunc();
+					} break;
+					case "scale": case "size": { //Make the face scale to the specified target number [effect,scale,#,#,frames,issmooth]
+						var getamt = real_ext(len > 1 ? param[1] : "0"), getamt2 = real_ext(len > 2 ? param[2] : "0"), time_ = real_ext(len > 3 ? param[3] : "30"), smooth_ = real_ext(len > 4 ? param[4] : "0"); smooth_ = smooth_ != "" ? bool(smooth_) : false;
+						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", $"~{!smooth_? "linear" : "oquad"}", "dial_face_xscale_off>", getamt != "" ? getamt : 0, "dial_face_yscale_off>", getamt2 != "" ? getamt2 : 0); delayfunc();
+					} break;
+					case "slide": case "move": case "xy": { //Make the face slide to the specified target number [effect,slide,#,#,frames,issmooth]
+						var getamt = real_ext(len > 1 ? param[1] : "0"), getamt2 = real_ext(len > 2 ? param[2] : "0"), time_ = real_ext(len > 3 ? param[3] : "30"), smooth_ = real_ext(len > 4 ? param[4] : "0"); smooth_ = smooth_ != "" ? bool(smooth_) : false;
+						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", $"~{!smooth_? "linear" : "oquad"}", "dial_face_xoff>", getamt != "" ? getamt : 0, "dial_face_yoff>", getamt2 != "" ? getamt2 : 0); delayfunc();
+					} break;
+					case "shake": case "rumble": { //Make the shake in place for some time [effect,shake,x,y,frames,intensity]
+						var x_ = real_ext(len > 1 ? param[1] : "0"), y_ = real_ext(len > 2 ? param[2] : "0"), time_ = real_ext(len > 3 ? param[3] : 10), off_ = real_ext(len > 4 ? param[4] : 2)
+						 x_ = x_ != "" ? bool(x_) : false; y_ = y_ != "" ? bool(y_) : false;
+						 soupy_alarm_set("face shaker", "timer", time_);
+						soup_store("face shaker", { x_, y_, time_, off_ }); delayfunc();
+					} break;
+				}
 			}
-		}
-		scribble_typists_add_event("effect", efxfunc); scribble_typists_add_event("fx", efxfunc);
+			scribble_typists_add_event("effect", efxfunc); scribble_typists_add_event("fx", efxfunc);
+		#endregion
 		
-		scribble_add_macro("icon", function(param) { var result = get_icon(param) return result != -1 ? $"[{result}]" : ""; }); //Newline with no asterisk and it's padded out
-		scribble_add_macro("newlp", function() { return "\n  "; }); //Newline with no asterisk and it's padded out
-		scribble_add_macro("newla", function() { return "\n* "; }); //Newline with asterisk and a space
-		scribble_add_macro("newl", function() { return chr(10); }); //Newline literal
-		scribble_add_macro("wait", function(param) { var real_ = real_ext(param); return $"[delay,{real_ != "" ? real_  * 1000 : 0}]"; }); //Delay tag that converts seconds to milliseconds
-		scribble_add_macro("repeat", function(phrase_ = "", times_ = 1, startwith_ = "", endwith_ = "") { //Repeats a phrase for a specified time with an optional parameter to end and start it off with another phrase
-			var real_ = string_digits(times_); if ( real_ == "" ) { return ""; }
-			var string_ = "";
-			string_ += startwith_; repeat ( real_ ) { string_ += phrase_; } string_ += endwith_;
-			return string_;
-		});
+		#region Macros
+			scribble_add_macro("icon", function(param) { var result = get_icon(param) return result != -1 ? $"[{result}]" : ""; }); //Icon helper tag [icon,funnytext game over]
+			scribble_add_macro("newlp", function() { return "\n  "; }); //Newline with no asterisk and it's padded out
+			scribble_add_macro("newla", function() { return "\n* "; }); //Newline with asterisk and a space
+			scribble_add_macro("newl", function() { return chr(10); }); //Newline literal
+			scribble_add_macro("wait", function(param) { var real_ = real_ext(param); return $"[delay,{real_ != "" ? real_  * 1000 : 0}]"; }); //Delay tag that converts seconds to milliseconds [wait,1] 
+			scribble_add_macro("repeat", function(phrase_ = "", times_ = 1, startwith_ = "", endwith_ = "") { //Repeats a phrase for a specified time with an optional parameter to end and start it off with another phrase [repeat,phrase,times,startwith,endwith]
+				var real_ = string_digits(times_); if ( real_ == "" ) { return ""; }
+				var string_ = "";
+				string_ += startwith_; repeat ( real_ ) { string_ += phrase_; } string_ += endwith_;
+				return string_;
+			});
+			scribble_add_macro("test", function(param) { //Various stress tests and testing suites
+				switch ( param ) {
+					//Stress test the typewriter gif export
+					case "fullpage": { return "[repeat,s,96][newl][/page][c_red][repeat,o,96][newl][/page][c_gold][repeat,u,96][newl][/page][/][rainbow][repeat,p,96][newl][/page][/][shake][face,spr_toriel_mortified][repeat,y,72][face_stick]"; break; }
+					//Tests various dialogue portrait effects
+					case "soupy": { return "[face,soupy happy][fx,ghost,0,0][fx,ghost,1][fx,move,-20,,0][fx,move,,,,1]There's an option to [c_cyan][slant]hide the dialogue box[/slant][/] if you just want the[face_stick_all][skip][newl][/page]typewriter text.[/page]Very useful for [wheel]UTDR animations![/wheel][delay][newl][face,soupy goodjob][fx,squeeze][shake]I'm so soupyyy!![face_stick]"; break; }
+					//Test the various funnytext
+					case "funnytext": { return "[scale,0.65][icon,funnytext game over][wait,3][newl][/page][scale,0.5][spr_dw_tv_time_its][delay]  [spr_dw_tv_time_t][delay][offset,-50,15][spr_dw_tv_time_v][offsetPop][delay][offset,-30][spr_dw_tv_time_time][delay][newl][/page][scale,0.6][icon,funnytext dark fountain][wait,3][newl][/page][scale,0.65][spr_funnytext_physical_challenges][wait,3][newl][/page][scale,1.3][funnytext_tears][wait,3][newl][/page][scale,1.3][spr_funnytext_win][wait,3][newl][/page][scale,0.4][spr_funnytext_win_big][wait,3][newl][/page][scale,1.45][spr_funnytext_flames][wait,3]"; break; }
+					//Test all the effects
+					case "effects": { return "[wave]Wavy text.[/wave] [wheel]Wheel text.[/wheel] [shake]Shaky text.[/shake] [wobble]Wobbly text.[/wobble] [pulse]Pulse text.[/pulse] [rainbow]Rainbow text.[/rainbow] [slant]Slanted text.[/slant][newl][/page][scale,0.5]Scaled text.[/scale] [cycle,70,150]Color cycling text.[/cycle] [blink]Blink text.[/blink] [alpha,0.5]Different alpha.[/alpha][newl][/page][speed,4]Speedy text test: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"; break; }
+					default: { return "Testing suite ID not found."; }
+				}
+			});
+		#endregion
 	#endregion
 #endregion
 
@@ -314,18 +333,18 @@
 			ui_reset();
 				
 			///@desc Toggle between different exporting types and export the dialogue
-			ui_export = function(type_ = 0, fmax_ = 180) {
+			ui_export = function(type_ = 0, fmax_ = 180, delay_ = 60, quant_ = 1) {
 				ui_tab = -1; ui_visible = false; 
 				if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_equip);
 					
 				switch ( type_ ) {
 					case 0: { screenshot = true; screenshot_stacked = false; } break; //Take single screenshot, no typewriter
 					case 1: { //Record till dialogue ends, typewriter
-						with ( record ) { enabled = true; framesmax = 0; frames = 0; type = 1; }
+						with ( record ) { enabled = true; framesmax = 0; frames = 0; type = 1; delay = delay_; quant = quant_; }
 						dial_text_gif = true;
 					} break;
 					case 2: { //Record for a set timer, no typewriter just animated text
-						with ( record ) { enabled = true; framesmax = fmax_; frames = 0; type = 0; }
+						with ( record ) { enabled = true; framesmax = fmax_; frames = 0; type = 0; quant = quant_; }
 					} break;
 					case 3: { screenshot = true; screenshot_stacked = true; } break; //Take a stack of screenshots, no typewriter
 					case 4: {  } break;
