@@ -12,7 +12,7 @@
 ///@param {real} wrap_ Maximum text on a line before a line break
 function soupy_message(textarr_ = ["Test", "Test 2"], textbutt_ = "OK", width = 620, height = -1, padd_ = 5, snd_ = snd_dimbox, font_ = fnt_determination, func_ = function(){}, allowmultiple_ = false, scribble_ = false, wrap_ = -1) {
 	window_set_cursor(cr_default);
-	if ( !UI_MESSAGE ) { exit; }
+	if ( !allowmultiple_ && !UI_MESSAGE ) { exit; }
 	if ( !is_array(textarr_) ) { textarr_ = string_split(textarr_, "|"); }
 	sfx_play(snd_);
 	var containter_ = new LuiBox({ x: 0, y: 0, }).centerContent().setPositionAbsolute().bringToFront().setFullSize(); //Fullscreen opaque box

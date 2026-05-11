@@ -109,7 +109,7 @@ if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , -1, 0)
 ui_manage(); //Menu handler
 
 #region File Dragging
-	if ( file_dragging ) { //Receive signal for file dragging
+	if ( file_dragging && UI_MESSAGE ) { //Receive signal for file dragging
 		//Portrait
 		if ( bord_visible ) {
 			draw_sprite_stretched_ext(spr_border_dashed, 0, 40, 323, 134, 136, c_yellow, 0.5 + abs(sin(current_time/300)) * 0.5);

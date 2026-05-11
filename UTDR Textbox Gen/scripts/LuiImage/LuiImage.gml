@@ -21,10 +21,12 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 	self.sprite_real_width = 0;
 	self.sprite_real_height = 0;
 	self.aspect = 1;
+	self.updating = false;
 	
 	///@desc Set sprite
 	///@arg {asset.GMSprite} _sprite
 	static setSprite = function(_sprite) {
+		self.updating = true; self.alpha = 0; TweenScript(self, 0, 5, function(){ if ( self.updating ) { self.updating = false; self.alpha = 1; } });
 		self.set(_sprite);
 		return self;
 	}

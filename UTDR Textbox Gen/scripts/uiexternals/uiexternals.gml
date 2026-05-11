@@ -191,3 +191,59 @@ outputLog = "";
 var oLog = file_text_open_write($"{executable_get_directory()}latest_soupy_run.txt");
 file_text_write_string(oLog, global.outputLog);
 file_text_close(oLog);
+
+#region Functions
+	///@desc Returns an external sprite or adds it if it doesn't already exist
+	function external_ensure(name_, fname_, fpath_, type_ = 0, allowmultiple_ = true) {
+		if ( filename_ext(fpath_) != ".png" ) { soupy_message($"\"{fname_}\"|is not allowed to be loaded.|File must be a PNG format.", , 320, , , snd_error, , , true); return -1; }
+		
+		switch ( type_ ) {
+			case 0: { //Face Sprites
+				var spr_ = get_face(name_);
+				if ( spr_ != -1 ) { return spr_; } else {
+					var imgnum = string_between(fname_, "_strip", ".png"); imgnum = imgnum == "" ? 1 : imgnum; //Get the image number if it's a strip file
+					if ( !struct_exists(global.faces_dict, name_) ) { global.faces_dict[$ name_] = {}; } //Create new struct face dictionary
+					with ( global.faces_dict[$ name_] ) {
+						var finalname = string_replace(string_replace(fname_, "_strip", ""), ".png", ""); finalname = string_exclude(finalname, "0123456789");
+
+						self[$ "DEFAULT CUSTOM SOUPY"] = { sprite: sprite_add_ext(fpath_, imgnum, 0, 0, true), expression: finalname, name: fpath_, } //Add sprite and data
+						if ( allowmultiple_ ) { soup_store("allowmultiple"); }
+						soup_store("external face", { myname: name_, id_: "DEFAULT CUSTOM SOUPY", });
+						with ( self[$ "DEFAULT CUSTOM SOUPY"] ) { 
+							self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External face \"{name}\" was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
+							
+							var out_ = $"Added \"{expression}\"|You can now use|[{expression}] and [face,{expression}]|to reference the sprite!|The command was copied to your clipboard.";
+							soup_store_stock("external face", "msg", out_);
+							if ( !scribble_external_sprite_exists(finalname) ) { scribble_external_sprite_add(sprite, finalname); } //Add sprite to Scribble
+							var altname = string_replace(finalname, "spr_", "");
+							if ( !scribble_external_sprite_exists(altname) ) { scribble_external_sprite_add(sprite, altname); } //Add alternative name
+							global.faces_dict_alt[$ name_] = { sprite, expression, name, destroy, } //Create new struct face dictionary
+							clipboard_set_text($"[{expression}][face,{expression}]");
+							return sprite;
+						}
+					}
+				}
+			} break;
+			
+			case 1: { //Border Sprites
+				var spr_ = get_border(name_);
+				if ( spr_ != -1 ) { return spr_; } else {
+					if ( !struct_exists(global.bords_dict, name_) ) { global.bords_dict[$ name_] = {}; } //Create new struct border dictionary
+					var imgnum = string_between(fname_, "_strip", ".png"); imgnum = imgnum == "" ? 1 : imgnum; //Get the image number if it's a strip file
+					with ( global.bords_dict[$ name_] ) {
+						var finalname = string_replace(string_replace(fname_, "_strip", ""), ".png", ""); finalname = string_exclude(finalname, "0123456789");
+
+						self[$ "sprite"] = sprite_add_ext(fpath_, imgnum, 0, 0, true); self[$ "name"] = fpath_; self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External border \"{name}\" was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
+						if ( allowmultiple_ ) { soup_store("allowmultiple"); }
+						soup_store("external border", { myname: name_ });
+							
+						var out_ = $"Added \"{finalname}\"|You can now use|[border,{finalname}]|to reference the sprite!|The command was copied to your clipboard.";
+						soup_store_stock("external border", "msg", out_);
+						global.bords_dict_alt[$ name_] = { sprite, name, destroy } //Create new struct border dictionary
+						clipboard_set_text($"[border,{finalname}]");
+					}
+				}
+			} break;
+		}
+	}
+#endregion

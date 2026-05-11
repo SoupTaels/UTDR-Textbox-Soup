@@ -156,9 +156,15 @@ function ui_manage() {
 								if ( mouse_pressed_right ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw, , , 1.3); dial_text_page = 0; } //Pressed Right
 							}
 							else { within_hover4 = false; }
-							draw_sprite_stretched_ext(spr_pixel, 0, x_ - 22, y_ - 17, 39, 34, c_black, 1); //Outline
-							draw_sprite_stretched(spr_border_undertale, 0, x_ - 20, y_ - 15, 35, 30); //Border
-							draw_sprite_ensure(spr_effects_icons, 12, x_ - abs(sin(current_time/250) ) * 4, y_, -1, yscale_4, 180, within_ ? c_white : c_yellow); //Right Arrow
+							soupyclipm_begin_clip();
+								draw_sprite_stretched_ext(spr_pixel, 0, ( x_ - 22 ) + 13, y_ - 17, 39, 34, c_white, 1);
+							soupyclipm_end_clip();
+							
+							soupyclipm_draw();
+								draw_sprite_stretched_ext(spr_pixel, 0, x_ - 22, y_ - 17, 39, 34, c_black, 1); //Outline
+								draw_sprite_stretched(spr_border_undertale, 0, x_ - 20, y_ - 15, 35, 30); //Border
+								draw_sprite_ensure(spr_effects_icons, 12, x_ - abs(sin(current_time/250) ) * 4, y_, -1, yscale_4, 180, within_ ? c_white : c_yellow); //Right Arrow
+							shader_reset();
 							yscale_4 = lerp(yscale_4, 1, 0.15);
 						}
 					#endregion
@@ -174,9 +180,15 @@ function ui_manage() {
 								if ( mouse_pressed_right ) { if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_bump, , 0.7, 1.5); sfx_play(snd_throw, , , 1.3); dial_text_page = dial_text_page_c - 1; } //Pressed Right
 							}
 							else { within_hover5 = false; }
-							draw_sprite_stretched_ext(spr_pixel, 0, x_ - 15, y_ - 17, 39, 34, c_black, 1); //Outline
-							draw_sprite_stretched(spr_border_undertale, 0, x_ - 13, y_ - 15, 35, 30); //Border
-							draw_sprite_ensure(spr_effects_icons, 12, x_ + abs(sin(current_time/250) ) * 4, y_, , yscale_5, 180, within_ ? c_white : c_yellow); //Right Arrow
+							soupyclipm_begin_clip();
+								draw_sprite_stretched_ext(spr_pixel, 0, x_ - 15, y_ - 17, 24, 34, c_white, 1);
+							soupyclipm_end_clip();
+							
+							soupyclipm_draw();	
+								draw_sprite_stretched_ext(spr_pixel, 0, x_ - 15, y_ - 17, 39, 34, c_black, 1); //Outline
+								draw_sprite_stretched(spr_border_undertale, 0, x_ - 13, y_ - 15, 35, 30); //Border
+								draw_sprite_ensure(spr_effects_icons, 12, x_ + abs(sin(current_time/250) ) * 4, y_, , yscale_5, 180, within_ ? c_white : c_yellow); //Right Arrow
+							shader_reset();
 							yscale_5= lerp(yscale_5, 1, 0.15);
 						}
 					#endregion
@@ -399,7 +411,8 @@ function ui_manage() {
 									new LuiToggleSwitch({ value: soup_checkout("minianim", false), checkbox_spr: spr_gui_icons, checkbox_spr_index: 6, checkbox_clr: c_white, sound_click: snd_bump, sound_click_pitch: 1.3, ease: global.Ease.OutBack, }).bindVariable(global.soupstore, "minianim"),
 								]),
 								new LuiText({ value: "Left Click - Move mini | Right Click (Held) - Delete mini", color: c_gray, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
-								new LuiText({ value: "Note: Mini speeches only show up on the currently highlighted page.", color: c_gray, text_halign: fa_center, text_valign: fa_middle, }),
+								new LuiText({ value: "Note: Mini speeches only show up on the current highlighted page\nand within the dialogue box.", color: c_gray, text_halign: fa_center, text_valign: fa_middle, }),
+								new LuiText({ value: "You can drag a face sprite on here too, btw! New sprites are\nimmediately added.", color: c_gray, text_halign: fa_center, text_valign: fa_middle, }),
 								new LuiButton({ text: "Let's get soupy!!", height: 35, }).addEvent(LUI_EV_CLICK, function(element_) {
 									var txt_ = soup_checkout("minitext", false), spr_ = get_face(soup_checkout("minisprite", false));
 									if ( string_lettersdigits(txt_) == "" ) { SYSTEMUI.ui_paused = false; soupy_message("You haven't even written any|dialogue yet!!", "Go Back", 300, , , snd_error, , , true); exit; }
@@ -407,12 +420,12 @@ function ui_manage() {
 									
 									var struct_ = { text: txt_, face: spr_, index: real(soup_checkout("miniindex", false)), alpha: 1, font: soup_checkout("minifont", false), smooth: soup_checkout("minianim", false), page: SYSTEMUI.dial_text_page, };
 									instance_create_depth(random_range(30, 310), random_range(310, 470), -1, obj_mini, struct_);
-									var maincan = soup_checkout("maincan", false);
+									var maincan = soup_checkout("minimain", false);
 									soup_store_clear(); SYSTEMUI.ui_paused = false; maincan.destroy();
 								}),
 							];
-							var maincan = soupy_popup(miniarr, function() { soup_store_clear(); SYSTEMUI.ui_paused = false; }, "Nevermind", , , , snd_select);
-							soup_store("maincan", maincan);
+							var maincan = soupy_popup(miniarr, function() { soup_store_clear(); SYSTEMUI.ui_paused = false; }, "Nevermind", , , , snd_select, , , 2);
+							soup_store("minimain", maincan);
 						}
 					}
 					else { within_mini = false; }

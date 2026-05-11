@@ -25,13 +25,13 @@ function signal_in(name_, id_ = -1, func_ = function(){})
 ///@param {string} name_ Variable name
 ///@param {any} value_ Data to store in that variable.
 ///@param {bool} ensure_ Whether to make sure this variable doesn't already exist
-function soup_store(name_, value_, ensure_ = false) { if ( ensure_ && !is_undefined(global.soupstore[$ name_]) ) { global.soupstore[$ name_] = value_; } else { global.soupstore[$ name_] = value_; } }
+function soup_store(name_, value_ = true, ensure_ = false) { if ( ensure_ && !is_undefined(global.soupstore[$ name_]) ) { global.soupstore[$ name_] = value_; } else { global.soupstore[$ name_] = value_; } }
 
 ///@desc Adds onto a previously created soupy variable.
 ///@param {string} name_ Previously created soup name
 ///@param {string} key_ New variable to make room for
 ///@param {any} value_ Data to store in that variable.
-function soup_store_stock(name_, key_, value_) { with ( global.soupstore[$ name_] ) { self[$ key_] = value_;  } }
+function soup_store_stock(name_, key_, value_ = true) { with ( global.soupstore[$ name_] ) { self[$ key_] = value_;  } }
 
 ///@desc Retrieves a temp variable in a global struct. Once found, it'll be removed.
 ///@param {string} name_ Variable name
