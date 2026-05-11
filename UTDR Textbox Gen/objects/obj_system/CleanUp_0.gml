@@ -2,6 +2,7 @@
 undo_stack_destroy();
 outlinesoup_cleanup();
 window_set_cursor(cr_default);
+soupyclipm_cleanup();
 soupy_lui.destroy(); 
 
 #region Destroy Faces

@@ -7,7 +7,7 @@ var ww_ = sprite_get_width(face), hh_ = sprite_get_height(face), xx_ = x - ( ww_
 var textx = ( xx_ + ww_ ) + 10, texty = yy_ + hh_, bbox = scrib.get_bbox(textx, texty);
 //draw_rectangle(xx_, yy_, textx + real(bbox.width), texty + ( real(bbox.height)/ 2 ), true);
 var linebox = CleanRectangle(xx_ - 2, yy_ - 2, textx + real(bbox.width) + 2, texty + ( real(bbox.height)/ 2 ) + 2)
-.Blend(c_white, 0).Border(2, near ? c_white : c_gray, 1).Draw();
+.Blend(c_white, 0).Border(2, ( near || drag ) ? c_white : c_gray, 1).Draw();
 
 if ( !destroying ) { exit; }
 var finalx = xx_ - 2, prog_ = Range(soupy_alarm_get("destroy", "timer"), 0, 60, finalx, ( textx + real(bbox.width) + 2 ));

@@ -356,7 +356,80 @@ function ui_manage() {
 					yscale_3 = lerp(yscale_3, 1, 0.15);
 				}
 			#endregion
+			
+			#region Create Mini Face
+				if ( UI_MESSAGE ) {
+					var xx_ = 632, yy_ = 470, within_ = range_within(mouse_x_gui, xx_ - 40, xx_ + 20) && range_within(mouse_y_gui, yy_ - 40, yy_ + 20);
+					if ( variable_instance_get(obj_system, "within_mini") == undefined ) { variable_instance_set(obj_system, "within_mini", false); }
+					if ( variable_instance_get(obj_system, "within_mini_off") == undefined ) { variable_instance_set(obj_system, "within_mini_off", false); }
+					if ( within_ ) {
+						if ( !within_mini ) { within_mini = true; sfx_play(snd_sel_switch); } //Hover
+						if ( mouse_pressed ) { //Pressed
+							sfx_play(snd_select);
+							soup_store("minisprite", -1); soup_store("miniindex", 0); soup_store("minitext", "Text"); soup_store("minianim", false); soup_store("minifont", "fnt_determination");
+							var miniarr = [
+								new LuiText({ value: "Create a mini speech bubble!", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
+									new LuiText({ value: "Sprite:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+									new LuiInput({ value: soup_checkout("minisprite", false), offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).setPadding(20).bindVariable(global.soupstore, "minisprite").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+										var spr_ = soup_checkout("minifind", false), getface = get_face(e_.get()); 
+										spr_.set(getface == -1 ? spr_gui_icons : getface); spr_.subimg = ( getface == -1 ? 3 : 0 );
+									}),
+									new LuiImage({ value: spr_gui_icons, subimg: 3, draw_normal: true, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("minifind", e_); }),
+								]),
+								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
+									new LuiText({ value: "Image Index:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+									new LuiInput({ value: soup_checkout("miniindex", false), offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, }).setPadding(20).bindVariable(global.soupstore, "miniindex").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+										var spr_ = soup_checkout("minifind", false), value = e_.get(); spr_.subimg = real(value == "" ? 0 : value);
+									}),
+								]),
+								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
+									new LuiText({ value: "Text:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+									new LuiInput({ value: soup_checkout("minitext", false), offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).setPadding(20).bindVariable(global.soupstore, "minitext"),
+								]),
+								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
+									new LuiText({ value: "Font:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+									new LuiInput({ value: soup_checkout("minifont", false), offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).setPadding(20).bindVariable(global.soupstore, "minifont").addEvent(LUI_EV_VALUE_UPDATE, function(e_) {
+										var prev_ = soup_checkout("minipreview", false), value = e_.get(); prev_.font = scribble_font_exists(value) ? value : "fnt_determination";
+									}),
+									new LuiText({ value: "AaBbCc", text_halign: fa_center, text_valign: fa_middle, font: soup_checkout("minifont", false), scribbletext: true, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("minipreview", e_); }),
+								]),
+								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
+									new LuiText({ value: "Smooth Animation:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+									new LuiToggleSwitch({ value: soup_checkout("minianim", false), checkbox_spr: spr_gui_icons, checkbox_spr_index: 6, checkbox_clr: c_white, sound_click: snd_bump, sound_click_pitch: 1.3, ease: global.Ease.OutBack, }).bindVariable(global.soupstore, "minianim"),
+								]),
+								new LuiText({ value: "Left Click - Move mini | Right Click (Held) - Delete mini", color: c_gray, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+								new LuiText({ value: "Note: Mini speeches only show up on the currently highlighted page.", color: c_gray, text_halign: fa_center, text_valign: fa_middle, }),
+								new LuiButton({ text: "Let's get soupy!!", height: 35, }).addEvent(LUI_EV_CLICK, function(element_) {
+									var txt_ = soup_checkout("minitext", false), spr_ = get_face(soup_checkout("minisprite", false));
+									if ( string_lettersdigits(txt_) == "" ) { SYSTEMUI.ui_paused = false; soupy_message("You haven't even written any|dialogue yet!!", "Go Back", 300, , , snd_error, , , true); exit; }
+									if ( spr_ == -1 ) { SYSTEMUI.ui_paused = false; soupy_message("Make sure your face sprite|is a valid sprite.", "Go Back", 300, , , snd_error, , , true); exit; }
+									
+									var struct_ = { text: txt_, face: spr_, index: real(soup_checkout("miniindex", false)), alpha: 1, font: soup_checkout("minifont", false), smooth: soup_checkout("minianim", false), page: SYSTEMUI.dial_text_page, };
+									instance_create_depth(random_range(30, 310), random_range(310, 470), -1, obj_mini, struct_);
+									var maincan = soup_checkout("maincan", false);
+									soup_store_clear(); SYSTEMUI.ui_paused = false; maincan.destroy();
+								}),
+							];
+							var maincan = soupy_popup(miniarr, function() { soup_store_clear(); SYSTEMUI.ui_paused = false; }, "Nevermind", , , , snd_select);
+							soup_store("maincan", maincan);
+						}
+					}
+					else { within_mini = false; }
+					within_mini_off = lerp(within_mini_off, within_ ? 15 : 0, 0.30);
 
+					#region Sprites
+						soupyclipm_begin_clip();
+							draw_set_color(c_white); draw_rectangle(590, 430, 639, 479, false);
+						soupyclipm_end_clip();
+
+						soupyclipm_draw();
+							draw_sprite_stretched_ext(spr_border_undertale_outlined, 0, ( xx_ - 17 ) - within_mini_off, ( yy_ - 17 ) - within_mini_off, 50, 50, within_ ? c_yellow : c_white, 1);
+							draw_sprite_ensure(spr_gui_icons, 7, ( xx_ - within_mini_off ) + ( within_ ? 8 : 0 ), ( yy_ - within_mini_off ) + ( within_ ? 8 : 0 ), within_ ? 2 : 1, within_ ? 2 : 1, , within_ ? c_yellow : c_white);
+						shader_reset();
+					#endregion
+				}
+			#endregion
 		} break;
 		
 		case 1: { //Style

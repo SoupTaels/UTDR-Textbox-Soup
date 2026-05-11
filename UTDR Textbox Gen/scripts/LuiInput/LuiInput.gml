@@ -207,7 +207,7 @@ function LuiInput(_params = {}) : LuiBase(_params) constructor {
         var _margin = self.margin;
         var _txt_x = self.x + _margin;
         var _txt_y = self.y + self.height / 2;
-        var _display_text = self.value;
+        var _display_text = string(self.value);
         
         //Masked text (dots)
         if self.is_masked {
@@ -288,7 +288,7 @@ function LuiInput(_params = {}) : LuiBase(_params) constructor {
     });
 	
 	 self.addEvent(LUI_EV_KEYBOARD_RELEASE, function(_e) {
-		sfx_play(_e.type_sfx);
+		if ( window_has_focus() ) { sfx_play(_e.type_sfx); }
     });
     
     self.addEvent(LUI_EV_DESTROY, function(_e) {

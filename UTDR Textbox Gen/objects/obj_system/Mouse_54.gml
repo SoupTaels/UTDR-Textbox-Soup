@@ -1,8 +1,4 @@
 
-var struct_ = { text: "Test text 1, 2, 3", face: get_face("ralsei happy"), index: 0, alpha: 1, font: fnt_determination, smooth: false, page: dial_text_page, };
-instance_create_depth(mouse_x_gui, mouse_y_gui, -1, obj_mini, struct_);
-var struct_ = { text: "aaaaaaaaaaa\naaaaaaaaaaaaaaaaaaaaaaaa\naaaaaaaaaaaaaaaaaaaaaaaaaaaaa\naaaaaaaaaaaaaaaaaaaaaa\naaaaaaaaaaaaaaaaaaaaaaaa\naaaaaaaaaaaaaaaaaaaaaa\naaaaaaaaaaaaaa", face: get_face("ralsei mortified"), index: 0, alpha: 1, font: fnt_determination, smooth: true, page: dial_text_page, };
-instance_create_depth(mouse_x_gui + 50, mouse_y_gui, -1, obj_mini, struct_);
 //var result = get_open_filename_ext("Image File (.PNG Only)|*.png", "", directory_get_pictures_path(), "Select a sprite to import.");
 //FACE_CURRENT = result;
 /*soup_store("rgb r", color_get_red(bord_clr)); soup_store("rgb g", color_get_green(bord_clr)); soup_store("rgb b", color_get_blue(bord_clr));

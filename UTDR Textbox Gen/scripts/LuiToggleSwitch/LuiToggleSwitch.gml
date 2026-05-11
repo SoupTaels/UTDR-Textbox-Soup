@@ -13,6 +13,7 @@ function LuiToggleSwitch(_params = {}) : LuiBase(_params) constructor {
 	self.slider_size = 32;
 	self.slider_xoffset = 0;
 	self.slider_color_value = 0;
+	self.ease = _params[$ "ease"] ?? undefined;
 	
 	///@desc Set display text (render right of element)
 	///@arg {string} _text
@@ -100,13 +101,13 @@ function LuiToggleSwitch(_params = {}) : LuiBase(_params) constructor {
 	self.addEvent(LUI_EV_POSITION_UPDATE, function(_element) {
 		_element._updateSlider();
 	});
-	
+
 	self.addEvent(LUI_EV_VALUE_UPDATE, function(_element) {
 		var _anim_time = 0.2;
 		// Slider animation
 		var _draw_width = min(_element.width, _element.height) * 2;
 		var _target_slider_xoffset = _element.value == false ? 0 : _draw_width - _element.slider_size;
-		_element.main_ui.animate(_element, "slider_xoffset", _target_slider_xoffset, _anim_time);
+		_element.main_ui.animate(_element, "slider_xoffset", _target_slider_xoffset, _anim_time, self.ease);
 		// Slider back color animation
 		var _target_color_value = _element.value == true ? 1 : 0;
 		_element.main_ui.animate(_element, "slider_color_value", _target_color_value, _anim_time);

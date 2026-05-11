@@ -11,7 +11,7 @@ if ( !SYSTEMUI.record.enabled && !SYSTEMUI.screenshot ) {
 	var ww_ = sprite_get_width(face), hh_ = sprite_get_height(face), xx_ = x - ( ww_/ 2 ), yy_ = y - ( hh_/ 2 );
 	var textx = ( xx_ + ww_ ) + 10, texty = yy_ + hh_, bbox = scrib.get_bbox(textx, texty);
 	near = range_within(mouse_x_gui, xx_, textx + real(bbox.width)) && range_within(mouse_y_gui, yy_, texty + ( real(bbox.height)/ 2 )); //If within hitbox range
-	alpha = lerp(alpha, near ? 1 : 0.5, 0.15);
+	alpha = lerp(alpha, ( near || drag ) ? 1 : 0.5, 0.15);
 	
 	if ( mouse_pressed && near ) { sfx_play(snd_enc1); drag = true; } //Pickup and enable dragging
 	else { if ( mouse_released && drag ) { sfx_play(snd_squish); drag = false; } } //Release from pick up state

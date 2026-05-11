@@ -62,16 +62,16 @@
 						]),
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 							new LuiText({ value: "Border outline?", text_halign: fa_center, text_valign: fa_middle }).setTooltip("Should the dialogue box have an outline?\nBorder must be visible.", true),
-							new LuiToggleSwitch({ value: soup_checkout("bordout", false), checkbox_spr: spr_gui_icons, checkbox_spr_index: 6, checkbox_clr: c_white, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordout"),
+							new LuiToggleSwitch({ value: soup_checkout("bordout", false), ease: global.Ease.OutBack, checkbox_spr: spr_gui_icons, checkbox_spr_index: 6, checkbox_clr: c_white, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordout"),
 						]),
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 							new LuiText({ value: "Border visible?", text_halign: fa_center, text_valign: fa_middle }).setTooltip("Should the dialogue box be visible?", true),
-							new LuiToggleSwitch({ value: soup_checkout("bordvisible", false), checkbox_spr: spr_gui_icons, checkbox_spr_index: 6, checkbox_clr: c_white, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordvisible"),
+							new LuiToggleSwitch({ value: soup_checkout("bordvisible", false), ease: global.Ease.OutBack, checkbox_spr: spr_gui_icons, checkbox_spr_index: 6, checkbox_clr: c_white, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordvisible"),
 						]),
 						new LuiButton({ text: "Let's get soupy!!", height: 35, }).addEvent(LUI_EV_CLICK, function(element_) {
 							var stacked_ = soup_checkout("stacked", false), page_ = soup_checkout("pageat", false), out_ = soup_checkout("bordout", false), vis_ = soup_checkout("bordvisible", false), xx_ = soup_checkout("xoff", false), yy_ = soup_checkout("yoff", false);
 							var mainfunc = soup_checkout("export dialogue func", false), maincan = soup_checkout("maincan", false);
-							if ( dial_text == "" ) { SYSTEMUI.ui_paused = false; soupy_message("You haven't even written any|dialogue yet!!", "Go Back", 300, , , snd_error, , , true); exit; }
+							if ( string_lettersdigits(dial_text) == "" ) { SYSTEMUI.ui_paused = false; soupy_message("You haven't even written any|dialogue yet!!", "Go Back", 300, , , snd_error, , , true); exit; }
 							if ( page_ > SYSTEMUI.dial_text_page_c ) { SYSTEMUI.ui_paused = false; soupy_message("Starting page can't be greater|than your page count.", "Go Back", 300, , , snd_error, , , true); exit; } else if ( page_ == "" || page_ == 0 ) { page_ = 1; } 
 							if ( xx_ == "" ) { xx_ = 0; } if ( yy_ == "" ) { yy_ = 0; }
 							
@@ -99,7 +99,7 @@
 						]),
 						new LuiButton({ text: "Next", height: 35, }).addEvent(LUI_EV_CLICK, function(element_) {
 							var maincan = soup_checkout("maincan"), mainfunc = soup_checkout("export dialogue func", false); maincan.destroy(); SYSTEMUI.ui_paused = false;
-							var typewrite = soup_checkout("typewrite", false); soup_store("pageat", dial_text_page + 1); soup_store("bordout", bord_out); soup_store("bordvisible", bord_box_visible); soup_store("timerfor", 180); soup_store("delayb", record.delay); soup_store("quant", record.quant);
+							var typewrite = soup_checkout("typewrite", false); soup_store("pageat", 0); soup_store("bordout", bord_out); soup_store("bordvisible", bord_box_visible); soup_store("timerfor", 180); soup_store("delayb", record.delay); soup_store("quant", record.quant);
 							
 							var exportarr = []; 
 							if ( !typewrite ) {
@@ -118,15 +118,15 @@
 							array_push(exportarr, 
 								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 									new LuiText({ value: "Start at page:", text_halign: fa_center, text_valign: fa_middle }),
-									new LuiInput({ value: soup_checkout("pageat", false), input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "pageat"),
+									new LuiInput({ value: 0, input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "pageat"),
 								]),
 								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 									new LuiText({ value: "Border outline?", text_halign: fa_center, text_valign: fa_middle }).setTooltip("Should the dialogue box have an outline?\nBorder must be visible.", true),
-									new LuiToggleSwitch({ value: soup_checkout("bordout", false), checkbox_spr: spr_gui_icons, checkbox_spr_index: 6, checkbox_clr: c_white, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordout"),
+									new LuiToggleSwitch({ value: soup_checkout("bordout", false), ease: global.Ease.OutBack, checkbox_spr: spr_gui_icons, checkbox_spr_index: 6, checkbox_clr: c_white, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordout"),
 								]),
 								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 									new LuiText({ value: "Border visible?", text_halign: fa_center, text_valign: fa_middle }).setTooltip("Should the dialogue box be visible?", true),
-									new LuiToggleSwitch({ value: soup_checkout("bordvisible", false), checkbox_spr: spr_gui_icons, checkbox_spr_index: 6, checkbox_clr: c_white, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordvisible"),
+									new LuiToggleSwitch({ value: soup_checkout("bordvisible", false), ease: global.Ease.OutBack, checkbox_spr: spr_gui_icons, checkbox_spr_index: 6, checkbox_clr: c_white, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordvisible"),
 								]),
 								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 									new LuiText({ value: "Quantization:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("The amount of processing color quantization will have.\nA value between 0 - 3, full quant to low quant.\nThe lower the number, the smaller the GIF will be\nat the cost of quality and color count.", true),
@@ -136,7 +136,7 @@
 									var typewrite = soup_checkout("typewrite", false), page_ = soup_checkout("pageat", false), out_ = soup_checkout("bordout", false), vis_ = soup_checkout("bordvisible", false), timer_ = soup_checkout("timerfor", false), delay_ = soup_checkout("delayb", false), quant_ = soup_checkout("quant", false);
 									var mainfunc = soup_checkout("export dialogue func", false), maincan = soup_checkout("maincan", false);
 									if ( page_ > SYSTEMUI.dial_text_page_c ) { SYSTEMUI.ui_paused = false; soupy_message("Starting page can't be greater|than your page count.", "Go Back", 300, , , snd_error, , , true); exit; } else if ( page_ == "" || page_ == 0 ) { page_ = 1; }
-									if ( dial_text == "" ) { SYSTEMUI.ui_paused = false; soupy_message("You haven't even written any|dialogue yet!!", "Go Back", 300, , , snd_error, , , true); exit; }
+									if ( string_lettersdigits(dial_text) == "" ) { SYSTEMUI.ui_paused = false; soupy_message("You haven't even written any|dialogue yet!!", "Go Back", 300, , , snd_error, , , true); exit; }
 									quant_ = clamp(quant_, 0, 3);
 						
 									with ( SYSTEMUI ) { dial_text_page = real(page_ - 1); ui_export(typewrite ? 1 : 2, timer_, delay_, quant_); bord_box_visible = vis_; bord_out = out_; }

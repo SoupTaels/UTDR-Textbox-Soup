@@ -17,7 +17,7 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 	self.angle = _params[$ "angle"] ?? 0;
 	self.xscale = _params[$ "xscale"] ?? 1;
 	self.yscale = _params[$ "yscale"] ?? 1;
-	
+
 	self.sprite_real_width = 0;
 	self.sprite_real_height = 0;
 	self.aspect = 1;
@@ -94,7 +94,7 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 			}
 		}
 		else {
-			draw_sprite_ext(self.value, self.subimg, self.x + self.width/2, self.y + self.height/2, self.xscale, self.yscale, self.angle ?? 0, _blend_color, self.alpha); 
+			if ( sprite_exists(self.value) ) { draw_sprite_ext(self.value, self.subimg, self.x + self.width/2, self.y + self.height/2, self.xscale, self.yscale, self.angle ?? 0, _blend_color, self.alpha); }
 		}
 	}
 	
