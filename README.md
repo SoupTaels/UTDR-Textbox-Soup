@@ -16,6 +16,7 @@
 <p align="center"><img src="https://i.imgur.com/46RVcPN.gif"></p>
 <p align="center">Tons of colors and effect presets! Want more effects? How about effects that affect the dialogue portrait? Typewriter mode gotchu covered. Typewriter mode is where the real power of my dialogue generator comes into play!</p>
 <p align="center"><img src="https://i.imgur.com/7nSo9O1.gif"></p>
+<p align="center"><img src="https://i.imgur.com/o1oXkWT.gif"></p>
 <hr />
 <p align="center"><img src="https://i.imgur.com/4msO2cT.gif"></p>
 <p align="center">Custom sprites AND dialogue boxes. Simply drag a sprite onto your desired drop zone and the tool will see if it exists within its database(Included Files). If it doesn't exist, then it'll be added as a new sprite! There's that, as well as...</p>
