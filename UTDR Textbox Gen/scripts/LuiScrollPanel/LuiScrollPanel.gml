@@ -7,10 +7,10 @@ function LuiScrollPanel(_params = {}) : LuiBase(_params) constructor {
 	self.scroll_target_offset_y = 0;
 	self.drag_start_y = -1;
 	self.drag_y = -1;
-	self.scroll_pin_edge_offset = 4;
-	self.scroll_smoothness = 0.02;
-	self.scroll_container = undefined;
-	self.sprite_panel = true;
+	self.scroll_pin_edge_offset = _params[$ "scroll_pin_edge_offset"] ?? 4;
+	self.scroll_smoothness = _params[$ "scroll_smoothness"] ?? 0.02;
+	self.scroll_container = undefined; 
+	self.sprite_panel = _params[$ "sprite_panel"] ?? true;
 	
 	///@desc Change getContainer function for compatibility with setFlex... functions
 	self.getContainer = function() {

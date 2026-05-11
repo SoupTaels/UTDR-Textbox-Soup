@@ -35,7 +35,7 @@
 	dial_updatet = 0; //Dialogue update timer
 	dial_updatet_max = 45; //Dialogue update timer delay
 	dial_text_outline = c_black; //Dialogue Outline Color
-	dial_point_auto = true; //Whether to automatically add points
+	dial_point_auto = false; //Whether to automatically add points
 	dial_point_chr = "*"; //Dialogue Point Character
 	dial_point_clr = c_white; dial_point_clr_anim = c_white; dial_point_clr_anim_alpha = 0; //Dialogue Point Clr and flash color
 	dial_auto_wrap = true; //Whether to automatically wrap dialogue to new lines
@@ -71,6 +71,9 @@
 			if ( !dial_face_keep ) { FACE_CURRENT = dial_face_original[dial_text_page]; } //Switch back to the original face
 			typist_spd = typist_spd_orig; //Switch back to the original typewriter speed
 			dial_face_alpha = 1; dial_face_angle = 0; dial_face_xoff = 0; dial_face_yoff = 0; 
+			
+			if ( !instance_exists(obj_mini) ) { exit; }
+			with ( obj_mini ) { if ( page == other.dial_text_page ) { active = true; TweenFire("$13", $"~{smooth ? "oquad" : "linear"}", "xoff", 30, 0, "alpha", 0, 1); } } 
 		});
 	#endregion
 	
@@ -292,10 +295,10 @@
 		
 		#region Portrait Panel
 			var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
-			soupy_panel_portrait = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_ }); //Start containter
-			soupy_panel_portrait.scroll_pin_edge_offset = 10; soupy_panel_portrait.sprite_panel = false;
+			soupy_panel_portrait = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, }); //Start containter
 		
-				portrait_header_cur_panel = new LuiContainer().setPadding(0).addContent([
+				var panel_base_ = { text: "", color: c_orange, sprite_button: spr_pixel, font: fnt_speech, text_color: c_black, sound_click: snd_enc1, sound_click_pitch: 1.3, };
+				var panel_ = new LuiContainer().setPadding(0).addContent([
 					new LuiText({ value: "Selected Face:" }),
 					new LuiText({ value: "Selected Face:" }),
 					new LuiText({ value: "Selected Face:" }),
@@ -303,7 +306,9 @@
 					new LuiText({ value: "Selected Face:" }),
 					new LuiText({ value: "Selected Face:" }),
 				]);
-				portrait_header_set_panel = new LuiContainer().setPadding(0).addContent([
+				var panel_header_ = new LuiButton(panel_base_).setText("Current Face").setData("header", panel_).setIcon(spr_gui_icons,,, c_black,, 1).addEvent(LUI_EV_CLICK, function(e_) { var header = e_.getData("header"); header.toggleVisible(); }); soupy_panel_portrait.addContent([panel_header_, panel_, ]); //End container
+				
+				var panel_ = new LuiContainer().setPadding(0).addContent([
 					new LuiText({ value: "Selected Face: 2" }),
 					new LuiText({ value: "Selected Face: 2" }),
 					new LuiText({ value: "Selected Face: 2" }),
@@ -311,15 +316,11 @@
 					new LuiText({ value: "Selected Face: 2" }),
 					new LuiText({ value: "Selected Face: 2" }),
 				]);
+				var panel_header_ = new LuiButton(panel_base_).setText("Face Settings").setData("header", panel_).setIcon(spr_gui_icons,,, c_black,, 1).addEvent(LUI_EV_CLICK, function(e_) { var header = e_.getData("header"); header.toggleVisible(); }); soupy_panel_portrait.addContent([panel_header_, panel_, ]); //End container
 		
-				var portrait_header_base = { text: "", color: c_orange, sprite_button: spr_pixel, font: fnt_speech, text_color: c_black, sound_click: snd_enc1, sound_click_pitch: 1.3, };
-				var portrait_header_cur = new LuiButton(portrait_header_base).setIcon(spr_gui_icons,,, c_black,, 1).addEvent(LUI_EV_CLICK, function() { portrait_header_cur_panel.toggleVisible(); }); portrait_header_cur.text = "Current Face";
-				var portrait_header_set = new LuiButton(portrait_header_base).setIcon(spr_gui_icons,,, c_black,, 5).addEvent(LUI_EV_CLICK, function() { portrait_header_set_panel.toggleVisible(); }); portrait_header_set.text = "Face Settings";
-			soupy_panel_portrait.addContent([portrait_header_cur, portrait_header_cur_panel, portrait_header_set, portrait_header_set_panel]); //End container
+			soupy_lui.addContent([soupy_panel_portrait, ]); //Add everything to the main ui
 		#endregion
 
-		soupy_lui.addContent([soupy_panel_portrait, ]); //Add everything to the main ui
-		
 		#region Functions
 			///@desc Show/ hide Lui on appropiate screens.
 			ui_reset = function() {

@@ -144,7 +144,7 @@ draw_sprite_ext(spr_pixel, 0, 0, 0, 640, 480, 0, c_black, fader); //Black fade o
 	}
 #endregion
 
-mouse_debug();
+//mouse_debug();
 //draw_sprite_ensure(get_face("sck", "capn"), current_time/300, 320, 240);
 //draw_sprite_ensure(get_face("undyne", "pissed"), current_time/300, 320 + 40, 240);
 //draw_sprite_ensure(get_face("sans", "funny"), current_time/300, 320 + 80, 240);

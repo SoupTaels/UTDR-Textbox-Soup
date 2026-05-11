@@ -29,6 +29,7 @@ if ( screenshot || record.enabled ) {
 			#endregion (Yes we have to draw it like this)
 		
 			draw_surface_ext(out_surf, 0, 0, 1, 1, 0, c_white, 1); //Our gen result
+			if ( instance_exists(obj_mini) ) { with ( obj_mini ) { draw(); } }
 		surface_reset_target();
 	#endregion
 	
