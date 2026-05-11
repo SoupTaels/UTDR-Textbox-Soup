@@ -7,13 +7,13 @@
 <hr />
 &nbsp;
 &nbsp;
-<p align="center">Features:</p>
+<h1 align="center">Features:</h1>
 <p align="center"><img src="https://i.imgur.com/rV4BRqt.gif"></p>
 <p align="center">Lots of exporting options, including...:</p>
 <p align="center"><img src="https://i.imgur.com/c6C5R6f.gif"></p> <p align="center"><img src="https://i.imgur.com/VPgFsud.gif"></p>
 <hr />
 <p align="center"><img src="https://i.imgur.com/46RVcPN.gif"></p>
-<p align="center">Tons of colors and effect presets! Want more effects? How about effects that affects the dialogue portrait? Typewriter mode gotchu covered.</p>
+<p align="center">Tons of colors and effect presets! Want more effects? How about effects that affect the dialogue portrait? Typewriter mode gotchu covered. Typewriter mode is where the real power of my dialogue generator comes into play!</p>
 <p align="center"><img src="https://i.imgur.com/7nSo9O1.gif"></p>
 <hr />
 <p align="center"><img src="https://i.imgur.com/4msO2cT.gif"></p>
@@ -22,8 +22,6 @@
 <p align="center">Custom fonts?! No way. No way!</p>
 <hr />
 <p align="center"><img src="https://i.imgur.com/fKVKiyF.png"></p>
-<p align="center">Icons within dialogue! You can even add your own custom icons too. For example, the tool includes Tenna's funnytext.</p>
-<video width="320" height="240" autoplay muted>
-  <source src="https://i.imgur.com/YBqZbWN.mp4" type="video/mp4">
-Your browser does not support the video tag.
-</video> 
+<p align="center">Live-updating text. Icons within dialogue! You can even add your own custom icons too. For example, the tool includes Tenna's funnytext.</p>
+<p align="center"><img src="https://github.com/user-attachments/assets/f1e7a6bd-4b67-4d74-899d-aa2f4ceb1ff9"></p>
+<p align="center">And that only scratches the surface. Play around with the settings to tune your dialogue scenes to your liking! </p>
