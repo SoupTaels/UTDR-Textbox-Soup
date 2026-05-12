@@ -51,6 +51,8 @@ outputLog = "";
 			var result = get_face("alphys_depressed_sorry");
 			show_debug_message(result);
 		*/
+		var early_ = asset_get_index(name);
+		if ( early_ != -1 ) { return early_; }
 		if ( expression == -1 ) { //Just proving a name, probably using the quick way to get a sprite
 			var getface = global.faces_dict_alt[$ name], getfacespr = global.faces_dict_alt[$ $"spr_{name}"], name2 = string_replace_all(name, " ", "_"), getfacespr2 = global.faces_dict_alt[$ $"spr_{name2}"];
 			return getface != undefined ? getface[$ return_] : ( getfacespr != undefined ? getfacespr[$ return_] : ( getfacespr2 != undefined ? getfacespr2[$ return_] : -1 ) );
@@ -135,6 +137,7 @@ outputLog = "";
 		///@desc Returns a sprite index from an externally added border sprite.
 		///@param {string} name Border Sprite Name (ex: spr_border_custom_animated, border custom example, border_custom_example_two, etc.)
 		function get_border(name, return_ = "sprite") { 
+			var early_ = asset_get_index(name); if ( early_ != -1 ) { return early_; }
 			var result = global.bords_dict[$ name], result2 = global.bords_dict_alt[$ name];
 			var temp_ = string_replace_all(name, " ", "_"), result3 = global.bords_dict[$ temp_]
 			return !is_undefined(result) ? result[$ return_] : ( !is_undefined(result2) ? result2[$ return_] : ( !is_undefined(result3) ? result3[$ return_] : -1 ) );
@@ -182,6 +185,7 @@ outputLog = "";
 	///@desc Returns a sprite index from an externally added font sprite.
 	///@param {string} name Font Sprite Name (ex: spr_font_custom_example, font custom example two, etc.)
 	function get_font(name, return_ = "font") { 
+		var early_ = asset_get_index(name); if ( early_ != -1 ) { return early_; }
 		var result = global.fonts_dict[$ name], result2 = global.fonts_dict_alt[$ name];
 		var temp_ = string_replace_all(name, " ", "_"), result3 = global.fonts_dict[$ temp_]
 		return !is_undefined(result) ? result[$ return_] : ( !is_undefined(result2) ? result2[$ return_] : ( !is_undefined(result3) ? result3[$ return_] : -1 ) );

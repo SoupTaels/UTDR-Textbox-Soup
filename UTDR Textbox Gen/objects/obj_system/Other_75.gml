@@ -107,7 +107,7 @@ show_debug_message($"File Path: {fpath}\nFile Name: {fname}\nFile Type: {fext}\n
 		if ( async_result[?"event_type"] == "file_drop" && fpath != undefined ) {
 			if ( ui_tab == 0 && soup_checkout("minimain", false) != undefined ) { //On the mini dialogue popup
 				var result = external_ensure(finalname, fname, fpath);
-				if ( !is_undefined(soup_checkout("minimain", false)) ) { if ( result != -1 ) { soup_checkout("minifind", false).setSprite(result); soup_store("minisprite", finalname); } }
+				if ( !is_undefined(soup_checkout("minimain", false)) ) { if ( result != -1 ) { soup_checkout("minifind", false).set(result); soup_checkout("minispritename", false).set(finalname); } }
 			}
 			else { soupy_message("No drop zone detected.", , , , , , , , true); }
 		}

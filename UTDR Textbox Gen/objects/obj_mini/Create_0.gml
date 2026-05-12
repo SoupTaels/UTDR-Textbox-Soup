@@ -17,7 +17,7 @@ near = false;
 destroying = false;
 
 draw = method(self, function() {
-	if ( SYSTEMUI.dial_text_page != page || SYSTEMUI.ui_paused || SYSTEMUI.ui_tab > 0 ) { exit; }
+	if ( SYSTEMUI.dial_text_page != page || SYSTEMUI.ui_paused || SYSTEMUI.ui_tab > 0 || !SYSTEMUI.bord_visible ) { exit; }
 	draw_sprite_ensure(face, index, x + xoff, y, 1, 1, 0, destroying ? c_red : c_white, alpha);
 	var xx = x + ( sprite_get_width(face)/ 2 ) + 10, yy = y - ( sprite_get_height(face)/ 2 );
 	scrib.blend(destroying ? c_red : c_white, alpha).starting_format(font).draw(xx + xoff, yy);

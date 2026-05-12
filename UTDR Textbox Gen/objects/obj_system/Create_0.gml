@@ -1,7 +1,7 @@
 ///@desc Init
 //if ( live_call() ) { return live_result; } 
 #region Dialogue Box
-	outlinesoup_init(, , , , 2); soupyclipm_init();
+	outlinesoup_init(, , , , 2); soupyclipm_init(); display_set_gui_size(640, 480);
 	spr_bord = spr_border_undertale; //Border Sprite
 	bord_clr = c_white; //Border Color
 	bord_out = true; //Whether border should have an outline
@@ -151,6 +151,7 @@
 			scribble_add_macro("newlp", function() { return "\n  "; }); //Newline with no asterisk and it's padded out
 			scribble_add_macro("newla", function() { return "\n* "; }); //Newline with asterisk and a space
 			scribble_add_macro("newl", function() { return chr(10); }); //Newline literal
+			scribble_add_macro("pg", function() { return "[/page]"; }); //Page shorthand
 			scribble_add_macro("wait", function(param) { var real_ = real_ext(param); return $"[delay,{real_ != "" ? real_  * 1000 : 0}]"; }); //Delay tag that converts seconds to milliseconds [wait,1] 
 			scribble_add_macro("repeat", function(phrase_ = "", times_ = 1, startwith_ = "", endwith_ = "") { //Repeats a phrase for a specified time with an optional parameter to end and start it off with another phrase [repeat,phrase,times,startwith,endwith]
 				var real_ = string_digits(times_); if ( real_ == "" ) { return ""; }

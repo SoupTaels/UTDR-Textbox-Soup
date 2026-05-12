@@ -1,6 +1,6 @@
 ///@desc 
 //if ( live_call() ) { return live_result; } 
-if ( SYSTEMUI.ui_paused || SYSTEMUI.ui_tab > 0 ) { exit; }
+if ( SYSTEMUI.ui_paused || SYSTEMUI.ui_tab > 0 || !SYSTEMUI.bord_visible ) { exit; }
 if ( SYSTEMUI.dial_text_page != page ) { active = false; once = false; exit; }
 else { 
 	if ( SYSTEMUI.screenshot ) { active = true; alpha = 1; } //Instantly show for screenshots
@@ -15,7 +15,10 @@ if ( !SYSTEMUI.record.enabled && !SYSTEMUI.screenshot ) {
 	
 	if ( mouse_pressed && near ) { sfx_play(snd_enc1); drag = true; } //Pickup and enable dragging
 	else { if ( mouse_released && drag ) { sfx_play(snd_squish); drag = false; } } //Release from pick up state
+	
 	if ( drag ) { x = lerp(x, mouse_x_gui, 0.3); y = lerp(y, mouse_y_gui, 0.3); } //Follow mouse cursor
+	y = max(y, 300);
+	if ( ( x < 0 || x > 640 || y > 480 ) && !drag ) { x = lerp(x, 300, 0.15); y = lerp(y, 350, 0.15); }
 	
 	if ( mouse_check_right && near ) { //Destroy mini object
 		soupy_alarm("destroy", 60);

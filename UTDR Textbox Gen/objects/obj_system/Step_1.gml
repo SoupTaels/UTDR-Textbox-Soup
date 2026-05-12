@@ -1,7 +1,8 @@
 ///@desc Context Menu, Page Count, Etc.
 //if ( live_call() ) { return live_result; } 
 #region Page Count and Ensure Face
-	if ( !record.enabled && !screenshot ) { dial_text_page_c = string_count("[/page]", dial_text) + 1; dial_text_page = clamp(dial_text_page, 0, dial_text_page_c - 1); }
+	if ( !record.enabled && !screenshot ) { var count_ = string_count("[/page]", dial_text), count_2 = string_count("[pg]", dial_text), finalcount_ = count_ + count_2; 
+		dial_text_page_c = finalcount_ + 1; dial_text_page = clamp(dial_text_page, 0, dial_text_page_c - 1); }
 	
 	if ( dial_text_page_c > 1 ) { //Prevents out of bounds array reads
 		var result = array_length(dial_face);
@@ -50,15 +51,15 @@
 						]),
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 							new LuiText({ value: "Start at page:", text_halign: fa_center, text_valign: fa_middle }),
-							new LuiInput({ value: soup_checkout("pageat", false), input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "pageat"),
+							new LuiInput({ value: soup_checkout("pageat", false), placeholder: $"1 - {dial_text_page_c}", input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "pageat"),
 						]),
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 							new LuiText({ value: "Stack Gap:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("The gap between stacks of dialogue pages.\nOnly affects the dialogue stack option.", true),
-							new LuiInput({ value: soup_checkout("yoff", false), input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "yoff"),
+							new LuiInput({ value: soup_checkout("yoff", false), placeholder: "0 - 10 Recommended", input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "yoff"),
 						]),
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 							new LuiText({ value: "Stack Shift:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("Times to right shift the next dialogue stack by.\nOnly affects the dialogue stack option.", true),
-							new LuiInput({ value: soup_checkout("xoff", false), input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "xoff"),
+							new LuiInput({ value: soup_checkout("xoff", false), placeholder: "0 - 10 Recommended", input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "xoff"),
 						]),
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 							new LuiText({ value: "Border outline?", text_halign: fa_center, text_valign: fa_middle }).setTooltip("Should the dialogue box have an outline?\nBorder must be visible.", true),
@@ -72,6 +73,7 @@
 							var stacked_ = soup_checkout("stacked", false), page_ = soup_checkout("pageat", false), out_ = soup_checkout("bordout", false), vis_ = soup_checkout("bordvisible", false), xx_ = soup_checkout("xoff", false), yy_ = soup_checkout("yoff", false);
 							var mainfunc = soup_checkout("export dialogue func", false), maincan = soup_checkout("maincan", false);
 							if ( string_lettersdigits(dial_text) == "" ) { SYSTEMUI.ui_paused = false; soupy_message("You haven't even written any|dialogue yet!!", "Go Back", 300, , , snd_error, , , true); exit; }
+							if ( string_lettersdigits(page_) == "" ) { page_ = 0; } if ( string_lettersdigits(xx_) == "" ) { xx_ = 0; } if ( string_lettersdigits(yy_) == "" ) { yy_ = 0; }
 							if ( page_ > SYSTEMUI.dial_text_page_c ) { SYSTEMUI.ui_paused = false; soupy_message("Starting page can't be greater|than your page count.", "Go Back", 300, , , snd_error, , , true); exit; } else if ( page_ == "" || page_ == 0 ) { page_ = 1; } 
 							if ( xx_ == "" ) { xx_ = 0; } if ( yy_ == "" ) { yy_ = 0; }
 							
@@ -105,20 +107,20 @@
 							if ( !typewrite ) {
 								array_push(exportarr, new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 									new LuiText({ value: "Record for:", text_halign: fa_center, text_valign: fa_middle }),
-									new LuiInput({ value: soup_checkout("timerfor", false), input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "timerfor"),
+									new LuiInput({ value: soup_checkout("timerfor", false), placeholder: "123456", input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "timerfor"),
 								]));
 							}
 							else {
 								array_push(exportarr, new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 									new LuiText({ value: "Delay between pages:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("How long to wait until the next dialogue page plays out?", true),
-									new LuiInput({ value: soup_checkout("delayb", false), input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "delayb"),
+									new LuiInput({ value: soup_checkout("delayb", false), placeholder: "123456", input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "delayb"),
 								]));
 							}
 							
 							array_push(exportarr, 
 								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 									new LuiText({ value: "Start at page:", text_halign: fa_center, text_valign: fa_middle }),
-									new LuiInput({ value: 0, input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "pageat"),
+									new LuiInput({ value: 0, placeholder: $"1 - {dial_text_page_c}", input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "pageat"),
 								]),
 								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 									new LuiText({ value: "Border outline?", text_halign: fa_center, text_valign: fa_middle }).setTooltip("Should the dialogue box have an outline?\nBorder must be visible.", true),
@@ -130,11 +132,12 @@
 								]),
 								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 									new LuiText({ value: "Quantization:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("The amount of processing color quantization will have.\nA value between 0 - 3, full quant to low quant.\nThe lower the number, the smaller the GIF will be\nat the cost of quality and color count.", true),
-									new LuiInput({ value: soup_checkout("quant", false), input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "quant"),
+									new LuiInput({ value: soup_checkout("quant", false), placeholder: "0 - 3", input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "quant"),
 								]),
 								new LuiButton({ text: "Let's get soupy!!", height: 35, }).addEvent(LUI_EV_CLICK, function(element_) {
 									var typewrite = soup_checkout("typewrite", false), page_ = soup_checkout("pageat", false), out_ = soup_checkout("bordout", false), vis_ = soup_checkout("bordvisible", false), timer_ = soup_checkout("timerfor", false), delay_ = soup_checkout("delayb", false), quant_ = soup_checkout("quant", false);
 									var mainfunc = soup_checkout("export dialogue func", false), maincan = soup_checkout("maincan", false);
+									if ( string_lettersdigits(page_) == "" ) { page_ = 0; } if ( string_lettersdigits(timer_) == "" ) { timer_ = 180; } if ( string_lettersdigits(delay_) == "" ) { delay_ = 60; } if ( string_lettersdigits(quant_) == "" ) { quant_ = 1; }
 									if ( page_ > SYSTEMUI.dial_text_page_c ) { SYSTEMUI.ui_paused = false; soupy_message("Starting page can't be greater|than your page count.", "Go Back", 300, , , snd_error, , , true); exit; } else if ( page_ == "" || page_ == 0 ) { page_ = 1; }
 									if ( string_lettersdigits(dial_text) == "" ) { SYSTEMUI.ui_paused = false; soupy_message("You haven't even written any|dialogue yet!!", "Go Back", 300, , , snd_error, , , true); exit; }
 									quant_ = clamp(quant_, 0, 3);

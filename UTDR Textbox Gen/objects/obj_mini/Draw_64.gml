@@ -2,7 +2,7 @@
 //if ( live_call() ) { return live_result; } 
 draw();
 
-if ( SYSTEMUI.dial_text_page != page || SYSTEMUI.ui_paused || SYSTEMUI.record.enabled || SYSTEMUI.screenshot || SYSTEMUI.ui_tab > 0 ) { exit; }
+if ( SYSTEMUI.dial_text_page != page || SYSTEMUI.ui_paused || SYSTEMUI.record.enabled || SYSTEMUI.screenshot || SYSTEMUI.ui_tab > 0 || !SYSTEMUI.bord_visible ) { exit; }
 var ww_ = sprite_get_width(face), hh_ = sprite_get_height(face), xx_ = x - ( ww_/ 2 ), yy_ = y - ( hh_/ 2 );
 var textx = ( xx_ + ww_ ) + 10, texty = yy_ + hh_, bbox = scrib.get_bbox(textx, texty);
 //draw_rectangle(xx_, yy_, textx + real(bbox.width), texty + ( real(bbox.height)/ 2 ), true);
