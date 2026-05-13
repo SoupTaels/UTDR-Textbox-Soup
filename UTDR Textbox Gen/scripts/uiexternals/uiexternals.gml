@@ -192,9 +192,11 @@ outputLog = "";
 	}
 #endregion
 
-var oLog = file_text_open_write($"{executable_get_directory()}latest_soupy_run.txt");
-file_text_write_string(oLog, global.outputLog);
-file_text_close(oLog);
+#region Log
+	var oLog = file_text_open_write($"{executable_get_directory()}latest_soupy_run.txt");
+	file_text_write_string(oLog, global.outputLog);
+	file_text_close(oLog);
+#endregion
 
 #region Functions
 	///@desc Returns an external sprite or adds it if it doesn't already exist
@@ -210,6 +212,7 @@ file_text_close(oLog);
 					with ( global.faces_dict[$ name_] ) {
 						var finalname = string_replace(string_replace(fname_, "_strip", ""), ".png", ""); finalname = string_exclude(finalname, "0123456789");
 
+						self[$ "NEW SPRITE"] = true; //Mark the sprite as new
 						self[$ "DEFAULT CUSTOM SOUPY"] = { sprite: sprite_add_ext(fpath_, imgnum, 0, 0, true), expression: finalname, name: fpath_, } //Add sprite and data
 						if ( allowmultiple_ ) { soup_store("allowmultiple"); }
 						soup_store("external face", { myname: name_, id_: "DEFAULT CUSTOM SOUPY", });
@@ -249,5 +252,39 @@ file_text_close(oLog);
 				}
 			} break;
 		}
+	}
+		
+	function external_choose_face() {
+		var options_ = [], options_names = struct_get_names(global.faces_dict), options_len = array_length(options_names), options_i = 0;
+		repeat ( options_len ) {
+			var cur_ = options_names[options_i], isnew_ = global.faces_dict[$ cur_][$ "NEW SPRITE"];
+			array_push(options_, 
+				new LuiText({ value: isnew_ != undefined && isnew_ ? $"{cur_} (NEW!)" : cur_, id_: cur_, font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, }).setPadding(5)
+				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
+				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
+				.addEvent(LUI_EV_CLICK, function(element_) { 
+					var get_ = soup_checkout("scrollmain", false), sub_ = soup_checkout("scrollsub", false); if ( !is_undefined(sub_) ) { sub_.destroy(); } 
+					global.faces_dict[$ element_.params.id_][$ "NEW SPRITE"] = false;
+					sfx_play(snd_select);
+					
+					var spr_ = [
+						new LuiText({ value: $"Soupy {random(360)}", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, }),
+						new LuiText({ value: $"Soupy {random(360)}", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, }),
+					];
+					get_.addContent(
+						new LuiScrollPanel({ height: 200, scroll_pin_edge_offset:10, sprite_panel: false, }).addContent(spr_).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollsub", element_); })
+					); 
+				})
+			);
+		options_i++; }
+		
+		var dataarr = [
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiScrollPanel({ height: 200, scroll_pin_edge_offset:10, sprite_panel: false, }).addContent(options_),
+			]).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollmain", element_); }),
+		];
+		
+		soup_store("datafunc", function() { soup_store_clear(); SYSTEMUI.ui_paused = false; });
+		var maincan = soupy_popup(dataarr, soup_checkout("datafunc", false), "Nevermind", , , , snd_select, , , 2); soup_store("datamain", maincan); 
 	}
 #endregion

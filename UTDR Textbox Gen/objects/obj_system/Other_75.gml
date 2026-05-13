@@ -3,10 +3,9 @@
 if ( !ui_visible ) { exit; } //Don't want to allow file dragging while we're exporting
 var async_result = async_load;
 var fpath = async_result[? "filename"], _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
-var fname = filename_name(fpath), fext = filename_ext(fpath);
-var temp_ = string_replace(string_replace(fname, $"_strip", ""), $".png", "");
-var finalname = string_exclude(temp_, "0123456789");
+var fname = filename_name(fpath), fext = filename_ext(fpath), temp_ = string_replace(string_replace(fname, $"_strip", ""), $".png", ""), finalname = string_exclude(temp_, "0123456789");
 show_debug_message($"File Path: {fpath}\nFile Name: {fname}\nFile Type: {fext}\nFinal Name: {finalname}");
+var errorfunc = function (txt_, w_ = undefined) { soupy_message(txt_, , w_, , , , , function() { SYSTEMUI.file_dragging = false; }); }
 
 #region Dropping Files
 	if ( UI_MESSAGE ) {
@@ -25,7 +24,7 @@ show_debug_message($"File Path: {fpath}\nFile Name: {fname}\nFile Type: {fext}\n
 									var fname = element_.getData("fname"), fpath = element_.getData("fpath"), myname = element_.getData("finalname");
 									external_ensure(myname, fname, fpath, , false);
 									get_panel_.container.destroy();
-									SYSTEMUI.ui_paused = false;
+									with ( SYSTEMUI ) { ui_paused = false; file_dragging = false; }
 								});
 							#endregion
 				
@@ -33,7 +32,7 @@ show_debug_message($"File Path: {fpath}\nFile Name: {fname}\nFile Type: {fext}\n
 								var panel_no_ = new LuiButton({ text: "No." }).setData("panel_bg_", panel_bg_).addEvent(LUI_EV_CREATE, function(element_) { sfx_play(snd_equip); }).addEvent(LUI_EV_CLICK, function(element_) {
 									var get_panel_ = element_.getData("panel_bg_");
 									get_panel_.container.destroy(); 
-									SYSTEMUI.ui_paused = false;
+									with ( SYSTEMUI ) { ui_paused = false; file_dragging = false; }
 									sfx_play(snd_cancel);
 								});
 							#endregion
@@ -46,11 +45,11 @@ show_debug_message($"File Path: {fpath}\nFile Name: {fname}\nFile Type: {fext}\n
 						#endregion
 					}
 				}
-				else { soupy_message($"\"{fname}\"|is not allowed to be loaded.|File must be a PNG format.", , 320); }
+				else { errorfunc($"\"{fname}\"|is not allowed to be loaded.|File must be a PNG format.", 320); }
 			}
 			else if ( ui_tab == 0 && ( range_within(mouse_x_gui, 0, 640) && range_within(mouse_y_gui, 120, bord_visible ? 300 : 380) ) ) { //Hovering over the textbox
 				var fext = filename_ext(fpath);
-				if ( fext != ".txt" ) { soupy_message($"\"{fname}\"|is not allowed to be loaded.|File must be a TXT format.", , 320); }
+				if ( fext != ".txt" ) { errorfunc($"\"{fname}\"|is not allowed to be loaded.|File must be a TXT format.", 320); }
 				else { 
 					var result = buffer_load(fpath), txt = buffer_read(result, buffer_text);
 					buffer_delete(result);
@@ -82,7 +81,7 @@ show_debug_message($"File Path: {fpath}\nFile Name: {fname}\nFile Type: {fext}\n
 								var panel_no_ = new LuiButton({ text: "No." }).setData("panel_bg_", panel_bg_).addEvent(LUI_EV_CREATE, function(element_) { sfx_play(snd_equip); }).addEvent(LUI_EV_CLICK, function(element_) {
 									var get_panel_ = element_.getData("panel_bg_");
 									get_panel_.container.destroy(); 
-									SYSTEMUI.ui_paused = false;
+									with ( SYSTEMUI ) { ui_paused = false; file_dragging = false; }
 									sfx_play(snd_cancel);
 								});
 							#endregion
@@ -95,9 +94,9 @@ show_debug_message($"File Path: {fpath}\nFile Name: {fname}\nFile Type: {fext}\n
 						#endregion
 					}
 				}
-				else { soupy_message($"\"{fname}\"|is not allowed to be loaded.|File must be a PNG format.", , 320); }
+				else { errorfunc($"\"{fname}\"|is not allowed to be loaded.|File must be a PNG format.", 320); }
 			}
-			else { soupy_message("No drop zone detected."); }
+			else { errorfunc("No drop zone detected.", 320); }
 		}
 		
 		if ( async_result[?"event_type"] == "file_drag_over" ) { file_dragging = true; if ( !UI_MESSAGE ) { file_dropper_set_effect(file_dropper_effect_none); } } //For dragging files onto the screen
@@ -105,11 +104,11 @@ show_debug_message($"File Path: {fpath}\nFile Name: {fname}\nFile Type: {fext}\n
 	}
 	else {
 		if ( async_result[?"event_type"] == "file_drop" && fpath != undefined ) {
-			if ( ui_tab == 0 && soup_checkout("minimain", false) != undefined ) { //On the mini dialogue popup
+			if ( ui_tab == 0 && soup_checkout("datamain", false) != undefined ) { //On the mini dialogue popup
 				var result = external_ensure(finalname, fname, fpath);
-				if ( !is_undefined(soup_checkout("minimain", false)) ) { if ( result != -1 ) { soup_checkout("minifind", false).set(result); soup_checkout("minispritename", false).set(finalname); } }
+				if ( !is_undefined(soup_checkout("datamain", false)) ) { if ( result != -1 ) { sfx_play(snd_equip); soup_checkout("dataimage", false).set(result); soup_checkout("datainput", false).set(finalname); } }
 			}
-			else { soupy_message("No drop zone detected.", , , , , , , , true); }
+			else { errorfunc("No drop zone detected.", 320); }
 		}
 	}
 #endregion

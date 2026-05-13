@@ -1,5 +1,5 @@
-global.soupsignal = {}
-global.soupstore = {}
+global.soupsignal = {};
+global.soupstore = {}; global.soupstore_global = {};
 
 ///@desc Sends out a signal broadcast for receivers
 ///@param {string} name_ Signal name
@@ -25,29 +25,46 @@ function signal_in(name_, id_ = -1, func_ = function(){})
 ///@param {string} name_ Variable name
 ///@param {any} value_ Data to store in that variable.
 ///@param {bool} ensure_ Whether to make sure this variable doesn't already exist
-function soup_store(name_, value_ = true, ensure_ = false) { if ( ensure_ && !is_undefined(global.soupstore[$ name_]) ) { global.soupstore[$ name_] = value_; } else { global.soupstore[$ name_] = value_; } }
+///@param {bool} global_ Whether to make sure this variable global, meaning it will never get cleared
+function soup_store(name_, value_ = true, ensure_ = false, global_ = false) { 
+	var var_ = global_ ? global.soupstore_global : global.soupstore;
+	if ( ensure_ && !is_undefined(var_[$ name_]) ) { var_[$ name_] = value_; } else { var_[$ name_] = value_; } 
+}
 
 ///@desc Adds onto a previously created soupy variable.
 ///@param {string} name_ Previously created soup name
 ///@param {string} key_ New variable to make room for
 ///@param {any} value_ Data to store in that variable.
-function soup_store_stock(name_, key_, value_ = true) { with ( global.soupstore[$ name_] ) { self[$ key_] = value_;  } }
+///@param {bool} global_ Whether this variable is a global soupy variable
+function soup_store_stock(name_, key_, value_ = true, global_ = false) { 
+	var var_ = global_ ? global.soupstore_global : global.soupstore;
+	with ( var_[$ name_] ) { self[$ key_] = value_;  } 
+}
 
 ///@desc Retrieves a temp variable in a global struct. Once found, it'll be removed.
 ///@param {string} name_ Variable name
 ///@param {bool} remove_ Whether to remove the variable.
-function soup_checkout(name_, remove_ = true) { var result = global.soupstore[$ name_]; if ( remove_ && !is_undefined(global.soupstore[$ name_]) ) { struct_remove(global.soupstore, name_); } return result; }
+///@param {bool} global_ Whether this variable is a global soupy variable
+function soup_checkout(name_, remove_ = true, global_ = false) { 
+	var var_ = global_ ? global.soupstore_global : global.soupstore;
+	var result = var_[$ name_]; if ( remove_ && !is_undefined(var_[$ name_]) ) { struct_remove(var_, name_); } return result; 
+}
 
 ///@desc Same as soup_checkout, but return the async value.
 ///@param {string} name_ Variable name
-function soup_checkout_async(name_) {
+///@param {bool} remove_ Whether to remove the variable.
+function soup_checkout_async(name_, remove_ = true) {
 	var async_result = async_load;
-	if ( async_result[? "id"] == soup_checkout(name_) ) { return async_result[? "value"]; }	
+	if ( async_result[? "id"] == soup_checkout(name_, remove_) ) { return async_result[? "value"]; }	
 }
 
 ///@desc Checks if the specified variable exists within the soup store.
 ///@param {string} name_ Variable name
-function soup_store_exists(name_) { return !is_undefined(global.soupstore[$ name_]); }
+///@param {bool} global_ Whether this variable is a global soupy variable
+function soup_store_exists(name_, global_ = false) { 
+	var var_ = global_ ? global.soupstore_global : global.soupstore;
+	return !is_undefined(var_[$ name_]); 
+}
 
 ///@desc Clear the soup store of any variables.
 function soup_store_clear() { delete global.soupstore; global.soupstore = {}; }

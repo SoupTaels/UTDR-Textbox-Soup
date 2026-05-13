@@ -340,7 +340,7 @@ function ui_manage() {
 				var resettime = 60;
 				if ( bord_visible && FACE_CURRENT != -1 && ( range_within(mouse_x_gui, 40, 174) && range_within(mouse_y_gui, 323, 480) ) && mouse_check_right ) { //Hovering over the dialogue portrait
 					soupy_alarm("removeface", resettime);
-					soupy_alarm_run("removeface", 1, function () { FACE_CURRENT = -1; FACE_ORIGINAL = -1; FACE_PREVIOUS = -1; sfx_play(snd_throw); }); //Timer to clear face
+					soupy_alarm_run("removeface", 1, function () { FACE_CURRENT = -1; FACE_ORIGINAL = -1; FACE_PREVIOUS = -1; sfx_play(snd_hurtpowerful); }); //Timer to clear face
 
 					draw_sprite_stretched_ext(spr_border_undertale, 0, 40, 323, 134, 136, c_red, 0.7); //BG
 					var ringcalc = map_value(soupy_alarm_get("removeface", "timer", false), 0, resettime, 0, 360), textx = 110, texty = 390; //Turn the values of a timer into a range of degrees
@@ -383,16 +383,16 @@ function ui_manage() {
 								new LuiText({ value: "Create a mini speech bubble!", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
 								new LuiRow().setFlexGrow(1).centerContent().addContent([
 									new LuiText({ value: "Sprite:", width: 100, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
-									new LuiInput({ value: soup_checkout("minisprite", false), height: 40, placeholder: "spr_face_test", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "minisprite").addEvent(LUI_EV_CREATE, function(e_) { soup_store("minispritename", e_); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
-										var spr_ = soup_checkout("minifind", false), getface = get_face(e_.get()); 
+									new LuiInput({ value: soup_checkout("minisprite", false), height: 40, placeholder: "spr_face_test", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "minisprite").addEvent(LUI_EV_CREATE, function(e_) { soup_store("datainput", e_); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+										var spr_ = soup_checkout("dataimage", false), getface = get_face(e_.get()); 
 										spr_.set(getface == -1 ? spr_gui_icons : getface); spr_.subimg = ( getface == -1 ? 3 : 0 );
 									}),
-									new LuiImage({ value: spr_gui_icons, subimg: 3, draw_normal: true, }).setSize(70, 70).addEvent(LUI_EV_CREATE, function(e_) { soup_store("minifind", e_); }),
+									new LuiImage({ value: spr_gui_icons, subimg: 3, draw_normal: true, }).setSize(70, 70).addEvent(LUI_EV_CREATE, function(e_) { soup_store("dataimage", e_); }),
 								]),
 								new LuiRow().setFlexGrow(1).centerContent().addContent([
 									new LuiText({ value: "Image Index:", width: 150, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
 									new LuiInput({ value: soup_checkout("miniindex", false), width: 50, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, }).setPadding(20).bindVariable(global.soupstore, "miniindex").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
-										var spr_ = soup_checkout("minifind", false), value = e_.get(); if ( spr_.value != spr_gui_icons ) { spr_.subimg = real(value == "" ? 0 : value); }
+										var spr_ = soup_checkout("dataimage", false), value = e_.get(); if ( spr_.value != spr_gui_icons ) { spr_.subimg = real(value == "" ? 0 : value); }
 									}),
 								]),
 								new LuiRow().setFlexGrow(1).centerContent().addContent([
@@ -421,12 +421,12 @@ function ui_manage() {
 									
 									var struct_ = { text: txt_, face: spr_, index: index_ == "" ? 0 : real(index_), alpha: 1, font: font_, smooth: soup_checkout("minianim", false), page: SYSTEMUI.dial_text_page, };
 									instance_create_depth(random_range(30, 310), random_range(310, 470), -1, obj_mini, struct_);
-									var maincan = soup_checkout("minimain", false);
+									var maincan = soup_checkout("datamain", false);
 									soup_store_clear(); SYSTEMUI.ui_paused = false; maincan.destroy();
 								}),
 							];
 							var maincan = soupy_popup(miniarr, function() { soup_store_clear(); SYSTEMUI.ui_paused = false; }, "Nevermind", , , , snd_select, , , 2);
-							soup_store("minimain", maincan);
+							soup_store("datamain", maincan);
 						}
 					}
 					else { within_mini = false; }

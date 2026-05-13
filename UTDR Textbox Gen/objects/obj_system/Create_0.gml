@@ -301,22 +301,31 @@
 		
 				var panel_base_ = { text: "", color: c_orange, sprite_button: spr_pixel, font: fnt_speech, text_color: c_black, sound_click: snd_enc1, sound_click_pitch: 1.3, };
 				var panel_ = new LuiContainer().setPadding(0).addContent([
-					new LuiText({ value: "Selected Face:" }),
-					new LuiText({ value: "Selected Face:" }),
-					new LuiText({ value: "Selected Face:" }),
-					new LuiText({ value: "Selected Face:" }),
-					new LuiText({ value: "Selected Face:" }),
-					new LuiText({ value: "Selected Face:" }),
+					new LuiRow().setFlexGrow(1).centerContent().addContent([
+						new LuiText({ value: "Sprite:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+						new LuiButton({ text: "Choose...", height: 40, width: 100, }).addEvent(LUI_EV_CLICK, external_choose_face),
+						new LuiInput({ height: 40, placeholder: "or type. (ex: spr_face_test)", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datainput", e_, , true); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+							var spr_ = soup_checkout("dataimage", false, true), getface = get_face(e_.get()); 
+							spr_.set(getface == -1 ? spr_gui_icons : getface); spr_.subimg = ( getface == -1 ? 3 : 0 );
+							FACE_CURRENT = getface; FACE_INTERNAL = e_.get(); if ( getface != -1 ) { sfx_play(snd_updated); }
+						}),
+						new LuiImage({ draw_normal: true, }).setSize(70, 70).addEvent(LUI_EV_CREATE, function(e_) { soup_store("dataimage", e_, , true); }),
+					]),
+					new LuiText({ value: "Selected Face:", font: fnt_speech, }),
+					new LuiText({ value: "Selected Face:", font: fnt_speech, }),
+					new LuiText({ value: "Selected Face:", font: fnt_speech, }),
+					new LuiText({ value: "Selected Face:", font: fnt_speech, }),
+					new LuiText({ value: "Selected Face:", font: fnt_speech, }),
 				]);
 				var panel_header_ = new LuiButton(panel_base_).setText("Current Face").setData("header", panel_).setIcon(spr_gui_icons,,, c_black,, 1).addEvent(LUI_EV_CLICK, function(e_) { var header = e_.getData("header"); header.toggleVisible(); }); soupy_panel_portrait.addContent([panel_header_, panel_, ]); //End container
 				
 				var panel_ = new LuiContainer().setPadding(0).addContent([
-					new LuiText({ value: "Selected Face: 2" }),
-					new LuiText({ value: "Selected Face: 2" }),
-					new LuiText({ value: "Selected Face: 2" }),
-					new LuiText({ value: "Selected Face: 2" }),
-					new LuiText({ value: "Selected Face: 2" }),
-					new LuiText({ value: "Selected Face: 2" }),
+					new LuiText({ value: "Selected Face: 2", font: fnt_speech, }),
+					new LuiText({ value: "Selected Face: 2", font: fnt_speech, }),
+					new LuiText({ value: "Selected Face: 2", font: fnt_speech, }),
+					new LuiText({ value: "Selected Face: 2", font: fnt_speech, }),
+					new LuiText({ value: "Selected Face: 2", font: fnt_speech, }),
+					new LuiText({ value: "Selected Face: 2", font: fnt_speech, }),
 				]);
 				var panel_header_ = new LuiButton(panel_base_).setText("Face Settings").setData("header", panel_).setIcon(spr_gui_icons,,, c_black,, 1).addEvent(LUI_EV_CLICK, function(e_) { var header = e_.getData("header"); header.toggleVisible(); }); soupy_panel_portrait.addContent([panel_header_, panel_, ]); //End container
 		
@@ -332,7 +341,12 @@
 				switch ( ui_tab ) {
 					case 0: { fx = false; } break;
 					case 1: {  } break;
-					case 2: { soupy_panel_portrait.setVisible(true); } break;
+					case 2: { 
+						var input_ = soup_checkout("datainput", false, true), spr_ = soup_checkout("dataimage", false, true);
+						spr_.set(FACE_CURRENT == -1 ? spr_gui_icons : FACE_CURRENT).setSubimg(FACE_CURRENT == -1 ? 3 : 0);
+						input_.set(FACE_CURRENT == -1 ? "" : FACE_INTERNAL);
+						soupy_panel_portrait.setVisible(true); 
+					} break;
 					case 3: {  } break;
 					case 4: {  } break;
 				}
