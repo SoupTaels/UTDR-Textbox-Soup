@@ -1,6 +1,7 @@
 #macro SYSTEMUI obj_system //System object
 #macro UI_MESSAGE !SYSTEMUI.ui_paused //For pausing ui elements
 #macro FACE_CURRENT SYSTEMUI.dial_face[SYSTEMUI.dial_text_page] //Get the current dialogue face
+#macro FACE_INDEX SYSTEMUI.dial_face_index[SYSTEMUI.dial_text_page]
 #macro FACE_ORIGINAL SYSTEMUI.dial_face_original[SYSTEMUI.dial_text_page] //Get the original dialogue face
 #macro FACE_PREVIOUS SYSTEMUI.dial_face_prev[SYSTEMUI.dial_text_page] //Get the previous dialogue face
 #macro FACE_INTERNAL SYSTEMUI.dial_face_name[SYSTEMUI.dial_text_page] //Get the internal name for the current dialogue face

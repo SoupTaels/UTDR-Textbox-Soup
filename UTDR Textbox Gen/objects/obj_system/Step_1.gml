@@ -11,6 +11,7 @@
 			dial_face_prev[dial_text_page_c - 1] = -1; 
 			dial_face_original[dial_text_page_c - 1] = -1; 
 			dial_face_name[dial_text_page_c - 1] = -1; 
+			dial_face_index[dial_text_page_c - 1] = -1; 
 		}
 	}
 #endregion
@@ -63,11 +64,11 @@
 						]),
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 							new LuiText({ value: "Border outline?", text_halign: fa_center, text_valign: fa_middle }).setTooltip("Should the dialogue box have an outline?\nBorder must be visible.", true),
-							new LuiToggleSwitch({ value: soup_checkout("bordout", false), ease: global.Ease.OutBack, checkbox_spr: spr_gui_icons, checkbox_spr_index: 6, checkbox_clr: c_white, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordout"),
+							new LuiToggleSwitch({ value: soup_checkout("bordout", false), ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordout"),
 						]),
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 							new LuiText({ value: "Border visible?", text_halign: fa_center, text_valign: fa_middle }).setTooltip("Should the dialogue box be visible?", true),
-							new LuiToggleSwitch({ value: soup_checkout("bordvisible", false), ease: global.Ease.OutBack, checkbox_spr: spr_gui_icons, checkbox_spr_index: 6, checkbox_clr: c_white, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordvisible"),
+							new LuiToggleSwitch({ value: soup_checkout("bordvisible", false), ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordvisible"),
 						]),
 						new LuiButton({ text: "Let's get soupy!!", height: 35, }).addEvent(LUI_EV_CLICK, function(element_) {
 							var stacked_ = soup_checkout("stacked", false), page_ = soup_checkout("pageat", false), out_ = soup_checkout("bordout", false), vis_ = soup_checkout("bordvisible", false), xx_ = soup_checkout("xoff", false), yy_ = soup_checkout("yoff", false);
@@ -124,11 +125,11 @@
 								]),
 								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 									new LuiText({ value: "Border outline?", text_halign: fa_center, text_valign: fa_middle }).setTooltip("Should the dialogue box have an outline?\nBorder must be visible.", true),
-									new LuiToggleSwitch({ value: soup_checkout("bordout", false), ease: global.Ease.OutBack, checkbox_spr: spr_gui_icons, checkbox_spr_index: 6, checkbox_clr: c_white, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordout"),
+									new LuiToggleSwitch({ value: soup_checkout("bordout", false), ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordout"),
 								]),
 								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 									new LuiText({ value: "Border visible?", text_halign: fa_center, text_valign: fa_middle }).setTooltip("Should the dialogue box be visible?", true),
-									new LuiToggleSwitch({ value: soup_checkout("bordvisible", false), ease: global.Ease.OutBack, checkbox_spr: spr_gui_icons, checkbox_spr_index: 6, checkbox_clr: c_white, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordvisible"),
+									new LuiToggleSwitch({ value: soup_checkout("bordvisible", false), ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordvisible"),
 								]),
 								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 									new LuiText({ value: "Quantization:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("The amount of processing color quantization will have.\nA value between 0 - 3, full quant to low quant.\nThe lower the number, the smaller the GIF will be\nat the cost of quality and color count.", true),

@@ -7,7 +7,7 @@ soupy_lui.update();
 
 #region Animation & Effects
 	#region Animate Face
-		if ( dial_text_gif && dial_face_auto && typist.get_delay_paused() ) { dial_face_index = 0; } //Stop the face from animating if the dialogue is being delayed
+		if ( dial_text_gif && dial_face_auto && typist.get_delay_paused() ) { FACE_INDEX = 0; } //Stop the face from animating if the dialogue is being delayed
 		if ( bord_spd > 0 ) { //Animate the border
 			var amt = sprite_get_number(spr_bord);
 			if ( bord_anim == 0 ) { bord_index += bord_spd mod amt; }

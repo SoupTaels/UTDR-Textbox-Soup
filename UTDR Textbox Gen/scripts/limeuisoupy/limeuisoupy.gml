@@ -64,3 +64,55 @@ function soupy_popup(elementsarr, func_ = function(){}, textbutt_ = "OK", width 
 	SYSTEMUI.ui_paused = true;
 	return containter_;
 }
+
+///@desc Open LimeUI color picker
+function soupy_color_picker(var_, soupyname_) {
+	soup_store("soupyname", soupyname_);
+	soup_store("rgb r", color_get_red(var_)); soup_store("rgb g", color_get_green(var_)); soup_store("rgb b", color_get_blue(var_));
+	var clr = new LuiImage({ value: spr_soul, width: 60, height: 48 }).addEvent(LUI_EV_CREATE, function(element_) { soup_store("element spr", element_); element_.setColor(make_color_rgb(soup_checkout("rgb r", false), soup_checkout("rgb g", false), soup_checkout("rgb b", false))); });
+	var elemarr = [
+		new LuiText({ value: "   <- Your chosen color", text_halign: fa_center, text_valign: fa_middle, scale_x: 2, }).addContent(clr),
+	
+		new LuiSlider({ value: soup_checkout("rgb r", false), min_value: 0, max_value: 255, rounding: true, display_value: true, bar_sprite: spr_pixel, bar_sprite_back: spr_pixel, bar_color: c_maroon, bar_color_back: c_maroon, }).setData("clr", clr).addEvent(LUI_EV_VALUE_UPDATE, function(element_) { 
+			var getclr = element_.getData("clr"), rgbg = soup_checkout("rgb g", false), rgbb = soup_checkout("rgb b", false);
+			soup_store("rgb r", element_.value);
+			getclr.setColor(make_color_rgb(soup_checkout("rgb r", false), rgbg, rgbb));
+		}).addEvent(LUI_EV_CREATE, function(element_) { soup_store("element r", element_); }),
+	
+		new LuiSlider({ value: soup_checkout("rgb g", false), min_value: 0, max_value: 255, rounding: true, display_value: true, bar_sprite: spr_pixel, bar_sprite_back: spr_pixel, bar_color: c_green, bar_color_back: c_green, }).setData("clr", clr).addEvent(LUI_EV_VALUE_UPDATE, function(element_) { 
+			var getclr = element_.getData("clr"), rgbr = soup_checkout("rgb r", false), rgbb = soup_checkout("rgb b", false);
+			soup_store("rgb g", element_.value);
+			getclr.setColor(make_color_rgb(rgbr, soup_checkout("rgb g", false), rgbb));
+		}).addEvent(LUI_EV_CREATE, function(element_) { soup_store("element g", element_); }),
+	
+		new LuiSlider({ value: soup_checkout("rgb b", false), min_value: 0, max_value: 255, rounding: true, display_value: true, bar_sprite: spr_pixel, bar_sprite_back: spr_pixel, bar_color: c_navy, bar_color_back: c_navy, }).setData("clr", clr).addEvent(LUI_EV_VALUE_UPDATE, function(element_) { 
+			var getclr = element_.getData("clr"), rgbr = soup_checkout("rgb r", false), rgbg = soup_checkout("rgb g", false);
+			soup_store("rgb b", element_.value);
+			getclr.setColor(make_color_rgb(rgbr, rgbg, soup_checkout("rgb b", false)));
+		}).addEvent(LUI_EV_CREATE, function(element_) { soup_store("element b", element_); }),
+	
+		new LuiButton({ text: "RANDOMIZE" }).addEvent(LUI_EV_CLICK, function () {
+			soup_store("rgb r", irandom(255)); soup_store("rgb g", irandom(255)); soup_store("rgb b", irandom(255));
+			var rgbr = soup_checkout("element r", false); rgbr.value = soup_checkout("rgb r", false); rgbr.update_values();
+			var rgbg = soup_checkout("element g", false); rgbg.value = soup_checkout("rgb g", false); rgbg.update_values();
+			var rgbb = soup_checkout("element b", false); rgbb.value = soup_checkout("rgb b", false); rgbb.update_values();
+			soup_checkout("element spr", false).setColor(make_color_rgb(soup_checkout("rgb r", false), soup_checkout("rgb g", false), soup_checkout("rgb b", false)));
+			sfx_play(snd_throw, 0, , 1.5);
+		}),
+		new LuiButton({ text: "RESET" }).addEvent(LUI_EV_CLICK, function () {
+			soup_store("rgb r", 255); soup_store("rgb g", 255); soup_store("rgb b", 255);
+			var rgbr = soup_checkout("element r", false); rgbr.value = soup_checkout("rgb r", false); rgbr.update_values();
+			var rgbg = soup_checkout("element g", false); rgbg.value = soup_checkout("rgb g", false); rgbg.update_values();
+			var rgbb = soup_checkout("element b", false); rgbb.value = soup_checkout("rgb b", false); rgbb.update_values();
+			soup_checkout("element spr", false).setColor(make_color_rgb(soup_checkout("rgb r", false), soup_checkout("rgb g", false), soup_checkout("rgb b", false)));
+			sfx_play(snd_hurtpowerful);
+		}),
+	];
+	soupy_popup(elemarr, function() { 
+		var myobj = soup_checkout(soup_checkout("soupyname"), false, true); 
+		myobj.setColor(make_color_rgb(soup_checkout("rgb r"), soup_checkout("rgb g"), soup_checkout("rgb b"))); myobj.set(spr_face_blank); 
+		soup_store_clear(); 
+	}, "SET COLOR!");
+}
+
+function soupy_color_picker_portrait() { soupy_color_picker(SYSTEMUI.dial_face_clr, "datacolor"); }
