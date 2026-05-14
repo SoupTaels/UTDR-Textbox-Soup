@@ -66,5 +66,14 @@ function soup_store_exists(name_, global_ = false) {
 	return !is_undefined(var_[$ name_]); 
 }
 
+///@desc Checks if the specified variable exists within the soup store, otherwise return a default value
+///@param {string} name_ Variable name
+///@param {any} default_ Default value to provide if this doesn't exist
+///@param {bool} global_ Whether this variable is a global soupy variable
+function soup_store_ensure(name_, default_ = false, global_ = false) { 
+	var var_ = global_ ? global.soupstore_global : global.soupstore;
+	return !is_undefined(var_[$ name_]) ? var_[$ name_] : default_; 
+}
+
 ///@desc Clear the soup store of any variables.
 function soup_store_clear() { delete global.soupstore; global.soupstore = {}; }

@@ -39,7 +39,7 @@ if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , -1, 0)
 				var xx_ = ( bordx + ( ( FACE_USING ? 144 : 28 ) + ( dial_point_auto ? 4 : 0 ) ) ) + ( offset_ + dltrn ? 6 : 0 ), yy_ = ( bordy + 29 ) + offset_; //Text X Y
 
 				var ninesl_ = sprite_get_nineslice(spr_bord); 
-				if ( bord_box_visible ) { if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, 1); } else { draw_9slice(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, bord_scale, bord_stretch); } } //Dialogue Box
+				if ( bord_box_visible ) { if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, 1); } else { draw_9slice(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, bord_scale, bord_stretch); } }  //Dialogue Box
 				if ( FACE_USING && ( !dial_text_gif || ( dial_text_gif && typist.get_state() >= 0.01 * typist_spd ) ) ) { draw_sprite_ensure(FACE_CURRENT, dial_face_index, bordx + ( 74 + offset_ ) + dial_face_xoff, bordy + ( 76 + offset_ ) + dial_face_yoff, dial_face_xscale + dial_face_xscale_off, dial_face_yscale + dial_face_yscale_off, dial_face_angle, dial_face_clr, dial_face_alpha); } //Dialogue Face
 				if ( ( FACE_USING && ( !dial_text_gif || ( dial_text_gif && typist.get_state() >= 0.01 * typist_spd ) ) ) && dial_point_clr_anim_alpha > 0 ) { gpu_set_fog(true, dial_point_clr_anim, -16000, 16000); draw_sprite_ensure(FACE_CURRENT, dial_face_index, bordx + ( 74 + offset_ ) + dial_face_xoff, bordy + ( 76 + offset_ ) + dial_face_yoff, dial_face_xscale + dial_face_xscale_off, dial_face_yscale + dial_face_yscale_off, dial_face_angle, c_white, dial_point_clr_anim_alpha); gpu_set_fog(false, 0, 0, 0); } //Dialogue Face Flashing
 			#endregion
@@ -144,7 +144,7 @@ draw_sprite_ext(spr_pixel, 0, 0, 0, 640, 480, 0, c_black, fader); //Black fade o
 	}
 #endregion
 
-//mouse_debug();
+mouse_debug();
 //draw_sprite_ensure(get_face("sck", "capn"), current_time/300, 320, 240);
 //draw_sprite_ensure(get_face("undyne", "pissed"), current_time/300, 320 + 40, 240);
 //draw_sprite_ensure(get_face("sans", "funny"), current_time/300, 320 + 80, 240);

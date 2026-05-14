@@ -12,7 +12,7 @@
 	bord_spd = 0; //Border image speed
 	bord_anim = 1; //Animation type ( 0 - Start over, 1 - Bounce back )
 	bord_anim_track = 0;
-	bord_scale = 1; //Border sprite scale
+	bord_scale = 2; //Border sprite scale
 	bord_stretch = true; //Whether the nineslice border should stretch or tile
 #endregion
 
@@ -291,7 +291,7 @@
 			var soupy_style = new LuiStyle({ padding: 15, gap: 10, color_text: c_white, color_hover: c_yellow, sound_click: snd_select, sound_hover: snd_sel_switch, }) //Main Style
 				.setRenderRegionOffset([10, 10, 10, 10])
 				.setFonts(fnt_determination, fnt_determination, fnt_determination).setColors(, c_orange, #f43e83, #15ee97)
-				.setSprites(spr_border_undertale_outlined, spr_border_undertale_outlined).setSpriteCheckbox(spr_border_undertale, spr_pixel)
+				.setSprites(spr_border_undertale_outlined, spr_border_undertale_outlined).setSpriteCheckbox(spr_border_undertale_outlined, spr_pixel)
 			soupy_lui = new LuiMain().setStyle(soupy_style);
 		#endregion
 		

@@ -378,3 +378,25 @@ function string_delete_at(str, start_, end_) {
 	var correct_ = start_ < end_;
 	return string_delete(str, correct_ ? start_ : end_,  correct_ ? ( end_ - start_ ) : ( start_ - end_ ));
 }
+
+///@desc Checks if the specified variable exists and returns it, otherwise return a default value
+///@param {string} name_ Variable name
+///@param {any} default_ Default value to provide if this doesn't exist
+function ensure_value(var_, default_) {
+	return !is_undefined(var_) ? var_ : default_;
+}
+
+/// @desc Capitalize the first letter of the string
+/// @param {string} str Text string.
+/// @returns {string} 
+function string_upper_first(_str) {
+	var _string = string_lower(_str),
+	_strFinal = "",
+	i = 1, isize = string_length(_str);
+	repeat(isize) {
+		var _char = string_char_at(_string, i);
+		_strFinal += (i == 1) ? string_upper(_char) : _char;
+		++i;
+	}
+	return _strFinal;
+}

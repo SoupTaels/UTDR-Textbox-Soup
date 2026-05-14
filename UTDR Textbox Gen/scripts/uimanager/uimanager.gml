@@ -1,9 +1,9 @@
 #macro SYSTEMUI obj_system //System object
 #macro UI_MESSAGE !SYSTEMUI.ui_paused //For pausing ui elements
-#macro FACE_CURRENT dial_face[dial_text_page] //Get the current dialogue face
-#macro FACE_ORIGINAL dial_face_original[dial_text_page] //Get the original dialogue face
-#macro FACE_PREVIOUS dial_face_prev[dial_text_page] //Get the previous dialogue face
-#macro FACE_INTERNAL dial_face_name[dial_text_page] //Get the internal name for the current dialogue face
+#macro FACE_CURRENT SYSTEMUI.dial_face[SYSTEMUI.dial_text_page] //Get the current dialogue face
+#macro FACE_ORIGINAL SYSTEMUI.dial_face_original[SYSTEMUI.dial_text_page] //Get the original dialogue face
+#macro FACE_PREVIOUS SYSTEMUI.dial_face_prev[SYSTEMUI.dial_text_page] //Get the previous dialogue face
+#macro FACE_INTERNAL SYSTEMUI.dial_face_name[SYSTEMUI.dial_text_page] //Get the internal name for the current dialogue face
 #macro FACE_USING FACE_CURRENT != -1 && FACE_CURRENT != 0 //If the dialogue box will contain a face
 
 #region Default functions for the menu buttons
@@ -312,7 +312,6 @@ function ui_manage() {
 				if ( dial_updatet > 1 && !textinput.ContextMenuIsOpened() ) { //Notification for updating text
 					dial_updatet--;
 					var ringcalc = map_value(dial_updatet, 0, dial_updatet_max, 0, 360), textx = 300, texty = 395; //Turn the values of a timer into a range of degrees
-					draw_sprite_stretched(spr_bord, 0, textx - 110, texty - 20, 250, 40);
 					
 					var ninesl_ = sprite_get_nineslice(spr_bord), off_ = spr_bord == spr_border_deltarune ? 15 : 5; 
 					if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, bord_index, ( textx - 110 ) - off_, ( texty - 20 ) - off_, 250 + ( off_ * 2 ), 40 + ( off_ * 2 ), bord_clr, 1); } else { draw_9slice(spr_bord, bord_index, textx - 110, texty - 20, 250, 40, bord_clr, bord_scale, bord_stretch); } //Dialogue Box

@@ -74,6 +74,7 @@
   ],
   "IncludedFiles":[
     {"$GMIncludedFile":"","%Name":"spr_border_custom_animated_strip4.png","CopyToMask":-1,"filePath":"datafiles/borders","name":"spr_border_custom_animated_strip4.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
+    {"$GMIncludedFile":"","%Name":"spr_border_custom_example_three.png","CopyToMask":-1,"filePath":"datafiles/borders","name":"spr_border_custom_example_three.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"spr_border_custom_example_two.png","CopyToMask":-1,"filePath":"datafiles/borders","name":"spr_border_custom_example_two.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"spr_border_custom_example.png","CopyToMask":-1,"filePath":"datafiles/borders","name":"spr_border_custom_example.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"desktop.ini","CopyToMask":-1,"filePath":"datafiles/faces/alphys","name":"desktop.ini","resourceType":"GMIncludedFile","resourceVersion":"2.0",},

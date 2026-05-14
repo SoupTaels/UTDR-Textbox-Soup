@@ -106,7 +106,7 @@ var errorfunc = function (txt_, w_ = undefined) { soupy_message(txt_, , w_, , , 
 		if ( async_result[?"event_type"] == "file_drop" && fpath != undefined ) {
 			if ( ui_tab == 0 && soup_checkout("datamain", false) != undefined ) { //On the mini dialogue popup
 				var result = external_ensure(finalname, fname, fpath);
-				if ( !is_undefined(soup_checkout("datamain", false)) ) { if ( result != -1 ) { sfx_play(snd_equip); soup_checkout("dataimage", false).set(result); soup_checkout("datainput", false).set(finalname); } }
+				if ( soup_store_exists("datamain") ) { if ( result != -1 ) { sfx_play(snd_equip); soup_checkout("dataimage", false).set(result); soup_checkout("datainput", false).set(finalname); } }
 			}
 			else { errorfunc("No drop zone detected.", 320); }
 		}

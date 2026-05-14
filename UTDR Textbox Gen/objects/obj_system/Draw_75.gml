@@ -15,19 +15,18 @@ if ( screenshot || record.enabled ) {
 				if ( out_ && bord_box_visible ) {
 					var out_thick = 2, offset_ = dltrn ? 8 : 0, offset_w = dltrn ? 15 : 0, offset_h = dltrn ? 16 : 0, bordx = 32 - offset_, bordy = 315 - offset_, bordw = 578 + offset_w, bordh = 152 + offset_w; //Border coords
 					gpu_set_fog(true, c_black, 0, 0); //Draw solid color of sprite
-						draw_sprite_stretched_ext(spr_bord, 0, bordx - out_thick, bordy, bordw, bordh, c_white, 1); //Dialogue Box Left
-						draw_sprite_stretched_ext(spr_bord, 0, bordx + out_thick, bordy, bordw, bordh, c_white, 1); //Dialogue Box Right
-						draw_sprite_stretched_ext(spr_bord, 0, bordx, bordy - out_thick, bordw, bordh, c_white, 1); //Dialogue Box Up
-						draw_sprite_stretched_ext(spr_bord, 0, bordx, bordy + out_thick, bordw, bordh, c_white, 1); //Dialogue Box Down
-				
-						draw_sprite_stretched_ext(spr_bord, 0, bordx - out_thick, bordy - out_thick, bordw, bordh, c_white, 1); //Dialogue Box Left
-						draw_sprite_stretched_ext(spr_bord, 0, bordx - out_thick, bordy + out_thick, bordw, bordh, c_white, 1); //Dialogue Box Right
-						draw_sprite_stretched_ext(spr_bord, 0, bordx + out_thick, bordy - out_thick, bordw, bordh, c_white, 1); //Dialogue Box Up
-						draw_sprite_stretched_ext(spr_bord, 0, bordx + out_thick, bordy + out_thick, bordw, bordh, c_white, 1); //Dialogue Box Down
+						draw_surface_ext(out_surf, -out_thick, 0, 1, 1, 0, c_white, 1); //Dialogue Box Left
+						draw_surface_ext(out_surf, out_thick, 0, 1, 1, 0, c_white, 1); //Dialogue Box Right
+						draw_surface_ext(out_surf, 0, -out_thick, 1, 1, 0, c_white, 1); //Dialogue Box Up
+						draw_surface_ext(out_surf, 0, out_thick, 1, 1, 0, c_white, 1); //Dialogue Box Down
+						
+						draw_surface_ext(out_surf, -out_thick, -out_thick, 1, 1, 0, c_white, 1); //Dialogue Box Up Left
+						draw_surface_ext(out_surf, out_thick, -out_thick, 1, 1, 0, c_white, 1); //Dialogue Box Up Right
+						draw_surface_ext(out_surf, -out_thick, out_thick, 1, 1, 0, c_white, 1); //Dialogue Box Down Left
+						draw_surface_ext(out_surf, out_thick, out_thick, 1, 1, 0, c_white, 1); //Dialogue Box Down Right
 					gpu_set_fog(false, c_white, 0, 0); //Reset effect
 				}
 			#endregion (Yes we have to draw it like this)
-		
 			draw_surface_ext(out_surf, 0, 0, 1, 1, 0, c_white, 1); //Our gen result
 			if ( instance_exists(obj_mini) ) { with ( obj_mini ) { draw(); } }
 		surface_reset_target();

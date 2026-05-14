@@ -45,7 +45,7 @@ function LuiImageButton(_params = {}) : LuiImage(_params) constructor {
 			}
 		}
 		else {
-			draw_sprite_ext(self.value, self.subimg, self.x + self.width/2, self.y + self.height/2, 1, 1, self.params[$ "angle"] ?? 0, _blend_color, self.alpha); 
+			if ( sprite_exists(self.value) ) { draw_sprite_ext(self.value, self.subimg, self.x + self.width/2, self.y + self.height/2, 1, 1, self.params[$ "angle"] ?? 0, _blend_color, self.alpha); }
 		}
 	}
 	

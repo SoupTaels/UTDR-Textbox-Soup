@@ -253,38 +253,60 @@ outputLog = "";
 			} break;
 		}
 	}
-		
+	
+	///@desc Function for choosing an externally added face
 	function external_choose_face() {
 		var options_ = [], options_names = struct_get_names(global.faces_dict), options_len = array_length(options_names), options_i = 0;
-		repeat ( options_len ) {
+		repeat ( options_len ) { //Add available characters to an array
 			var cur_ = options_names[options_i], isnew_ = global.faces_dict[$ cur_][$ "NEW SPRITE"];
 			array_push(options_, 
-				new LuiText({ value: isnew_ != undefined && isnew_ ? $"{cur_} (NEW!)" : cur_, id_: cur_, font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, }).setPadding(5)
+				new LuiText({ value: isnew_ != undefined && isnew_ ? $"{string_upper_first(cur_)} (NEW!)" : string_upper_first(cur_), id_: cur_, font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, }).setPadding(5).setData("chara", cur_)
 				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
 				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
-				.addEvent(LUI_EV_CLICK, function(element_) { 
-					var get_ = soup_checkout("scrollmain", false), sub_ = soup_checkout("scrollsub", false); if ( !is_undefined(sub_) ) { sub_.destroy(); } 
-					global.faces_dict[$ element_.params.id_][$ "NEW SPRITE"] = false;
-					sfx_play(snd_select);
+				.addEvent(LUI_EV_CLICK, function(element_) { //Once clicked on, create new scroll panel and populate it with face sprites
+					var get_ = soup_checkout("scrollmain", false); soup_checkout("scrollsub", false).destroy(); 
+					global.faces_dict[$ element_.params.id_][$ "NEW SPRITE"] = false; sfx_play(snd_select);
 					
-					var spr_ = [
-						new LuiText({ value: $"Soupy {random(360)}", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, }),
-						new LuiText({ value: $"Soupy {random(360)}", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, }),
-					];
-					get_.addContent(
-						new LuiScrollPanel({ height: 200, scroll_pin_edge_offset:10, sprite_panel: false, }).addContent(spr_).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollsub", element_); })
-					); 
+					var spr_ = [], cur_ = element_.getData("chara"), spr_exp = struct_get_names(global.faces_dict[$ cur_]), spr_len = array_length(spr_exp), spr_i = 0;
+					repeat ( spr_len ) {
+						var exp_ = spr_exp[spr_i], finalname = $"spr_{cur_}_{exp_}", myspr = get_face(finalname);
+						if ( exp_ != "NEW SPRITE" ) {
+							array_push(spr_, new LuiImageButton({ value: myspr, draw_normal: true, }).setSize(sprite_get_width(myspr), sprite_get_height(myspr)).setData("face", myspr).setData("facename", finalname).setFlexAlignSelf(flexpanel_align.center).setTooltip($"{finalname}\n[face,{finalname}]", true)
+							.addEvent(LUI_EV_CLICK, function(element_) { sfx_play(snd_updated); FACE_CURRENT = element_.getData("face"); FACE_ORIGINAL = FACE_CURRENT; soup_checkout("datainput", false, true).set(element_.getData("facename")); soup_checkout("dataimage", false, true).set(FACE_CURRENT); soup_checkout("datafunc", false)(); })
+							);
+						}
+					spr_i++; }
+					get_.addContent(new LuiScrollPanel({ height: 400, scroll_pin_edge_offset:10, sprite_panel: false, }).addContent(spr_).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollsub", element_); })); //Add new panel and stash it so we can destroy it later
 				})
 			);
 		options_i++; }
 		
+		#region Add Default Options
+			array_push(options_, new LuiText({ value: "Test Face", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, }).setPadding(5)
+				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
+				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
+				.addEvent(LUI_EV_CLICK, function(element_) { sfx_play(snd_updated); FACE_CURRENT = spr_face_test; FACE_ORIGINAL = FACE_CURRENT; soup_checkout("datainput", false, true).set("spr_face_test"); soup_checkout("dataimage", false, true).set(FACE_CURRENT); soup_checkout("datafunc", false)();})
+			);
+			array_push(options_, new LuiText({ value: "Blank Page Face", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, }).setPadding(5)
+				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
+				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
+				.addEvent(LUI_EV_CLICK, function(element_) { sfx_play(snd_updated); FACE_CURRENT = spr_face_blank; FACE_ORIGINAL = FACE_CURRENT; soup_checkout("datainput", false, true).set("spr_face_blank"); soup_checkout("dataimage", false, true).set(FACE_CURRENT); soup_checkout("datafunc", false)(); })
+			);
+			array_push(options_, new LuiText({ value: "Clear Page Face", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, }).setPadding(5)
+				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_red; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
+				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
+				.addEvent(LUI_EV_CLICK, function(element_) { sfx_play(snd_hurtpowerful); FACE_CURRENT = -1; FACE_ORIGINAL = FACE_CURRENT; soup_checkout("datainput", false, true).set(-1); soup_checkout("dataimage", false, true).set(""); soup_checkout("datafunc", false)(); })
+			);
+		#endregion
+		
 		var dataarr = [
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
-				new LuiScrollPanel({ height: 200, scroll_pin_edge_offset:10, sprite_panel: false, }).addContent(options_),
-			]).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollmain", element_); }),
+				new LuiScrollPanel({ height: 400, scroll_pin_edge_offset:10, sprite_panel: false, }).addContent(options_),
+				new LuiText({ value: $"Select a character!\n\nFaces will show up once\nselected. Then scroll to\nfind the perfect sprite\nfor your dialogue!\n\nThis only adds a face for\nthe current dialogue page.", font: fnt_speech, text_halign: fa_center, text_valign: fa_center, }).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollsub", element_); }),
+			]).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollmain", element_); }), //Stash panel so we can add another panel to this row
 		];
 		
-		soup_store("datafunc", function() { soup_store_clear(); SYSTEMUI.ui_paused = false; });
-		var maincan = soupy_popup(dataarr, soup_checkout("datafunc", false), "Nevermind", , , , snd_select, , , 2); soup_store("datamain", maincan); 
+		soup_store("datafunc", function() { soup_checkout("datamain", false).destroy(); soup_store_clear(); SYSTEMUI.ui_paused = false; });
+		var maincan = soupy_popup(dataarr, function() { soup_store_clear(); SYSTEMUI.ui_paused = false; }, "Nevermind", , , , snd_select, , , 2); soup_store("datamain", maincan); 
 	}
 #endregion
