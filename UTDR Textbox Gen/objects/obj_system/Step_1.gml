@@ -29,7 +29,7 @@
 #endregion
 
 #region Export Dialogue
-	if ( keyboard_check_pressed(vk_escape) && is_undefined(soup_checkout("export dialogue", false)) ) {
+	if ( ( !screenshot && !record.enabled ) && keyboard_check_pressed(vk_escape) && is_undefined(soup_checkout("export dialogue", false)) ) {
 		soup_store("export dialogue", true);
 		soup_store("export dialogue func", function() { soup_store_clear(); SYSTEMUI.ui_paused = false; });
 		

@@ -1,7 +1,7 @@
 ///@desc 
 //if ( live_call() ) { return live_result; } 
-if ( SYSTEMUI.ui_paused || SYSTEMUI.ui_tab > 0 || !SYSTEMUI.bord_visible ) { exit; }
-if ( SYSTEMUI.dial_text_page != page ) { active = false; once = false; exit; }
+if ( SYSTEMUI.ui_paused || SYSTEMUI.ui_tab > 0 || !SYSTEMUI.bord_visible ) { active = false; exit; }
+if ( SYSTEMUI.dial_text_page != page ) { once = false; exit; }
 else { 
 	if ( SYSTEMUI.screenshot ) { active = true; alpha = 1; } //Instantly show for screenshots
 	else if ( SYSTEMUI.record.enabled && SYSTEMUI.record.type == 0 ) { active = true; if ( !once ) { once = true; TweenFire("$13", $"~{smooth ? "oquad" : "linear"}", "xoff", 30, 0, "alpha", 0, 1); } } //Show animation

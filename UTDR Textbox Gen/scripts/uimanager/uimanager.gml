@@ -383,6 +383,7 @@ function ui_manage() {
 								new LuiText({ value: "Create a mini speech bubble!", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
 								new LuiRow().setFlexGrow(1).centerContent().addContent([
 									new LuiText({ value: "Sprite:", width: 100, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+									new LuiButton({ text: "Choose...", height: 40, width: 100, }).addEvent(LUI_EV_CLICK, function(element_) { external_choose_face(true, , false, , false, false); }),
 									new LuiInput({ value: soup_checkout("minisprite", false), height: 40, placeholder: "spr_face_test", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "minisprite").addEvent(LUI_EV_CREATE, function(e_) { soup_store("datainput", e_); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
 										var spr_ = soup_checkout("dataimage", false), getface = get_face(e_.get()); 
 										spr_.set(getface == -1 ? spr_gui_icons : getface); spr_.subimg = ( getface == -1 ? 3 : 0 );

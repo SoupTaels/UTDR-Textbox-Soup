@@ -5,11 +5,11 @@ if ( screenshot || record.enabled ) {
 	var out_ = bord_out; //Whether to save with an outline
 	var folder = "UTDR-SoupGen-Export", fname = $"UTDR_SoupGen_-{current_month}.{current_day}.{current_year}-_{current_hour};{current_minute};{current_second}.{current_time}-", _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
 	var offset_ = dltrn ? 8 : 0, offset_w = dltrn ? 15 : 0, offset_h = dltrn ? 16 : 0, x_ = ( 32 - offset_ ) - ( out_ ? 2 : 0 ), y_ = ( 315 - offset_ ) - ( out_ ? 2 : 0 ), w_ = ( 578 + offset_w ) + ( out_ ? 4 : 0 ), h_ = ( 152 + offset_w ) + ( out_ ? 4 : 0 ); //Border coords
-
+	
 	#region Draw Surface
 		screenshot_surf = surface_create(640, 480);
 		surface_set_target(screenshot_surf);
-			if ( !record.enabled ) { draw_clear_alpha(c_black, 0); } else { draw_clear_alpha(c_lime, 1); }//For borders that aren't perfect rectangles
+			if ( !record.enabled ) { draw_clear_alpha(c_black, 0); } else { draw_clear_alpha(screenshot_back, 1); }//For borders that aren't perfect rectangles
 		
 			#region Dialogue Box Outline
 				if ( out_ && bord_box_visible ) {
@@ -33,9 +33,9 @@ if ( screenshot || record.enabled ) {
 	#endregion
 	
 	#region Function for finishing recording
-		var finish_func = method({folder, _path_separator, fname, record, x_, y_, w_, h_, screenshot_surf }, function(gif_ = true, stack_ = false) { //Finished recording/ screenshotting
+		var finish_func = method({folder, _path_separator, fname, record, x_, y_, w_, h_, screenshot_surf }, function(gif_ = true, stack_ = false, cancel_ = false) { //Finished recording/ screenshotting
 			var fpath_final = $"{executable_get_directory()}{folder}{_path_separator}{fname}_.{gif_ ? "gif" : "png"}";
-			if ( !stack_ ) {
+			if ( !cancel_ ) { if ( !stack_ ) {
 				if ( gif_ ) { record.id_ = gif_save(record.id_, fpath_final); } //Save GIF
 				else { surface_save_part(screenshot_surf, fpath_final, x_, y_, w_, h_); } //Save screenshot
 				
@@ -43,13 +43,23 @@ if ( screenshot || record.enabled ) {
 				execute_shell_simple($"{executable_get_directory()}{folder}", , , 6); //Open the directory (Windows only)
 				execute_shell_simple(fpath_final, , , 6); //Open the image in the PC's default photo viewer (Windows only)
 				clipboard_set_text(fpath_final);
-			}
+			} }
+			else { soup_checkout("export dialogue"); soupy_message("The export operation was canceled.", , 350, , , snd_cancel); if ( record.enabled ) { record.id_ = gif_save(record.id_, $"{directory_get_temporary_path()}soupytemp.gif"); file_delete($"{directory_get_temporary_path()}soupytemp.gif"); } }
 			
 			surface_free(screenshot_surf); screenshot_surf = -1;
 			with ( record ) { frames = 0; framesmax = 0; enabled = false; id_ = -1; }
-			with ( SYSTEMUI ) { dial_text_gif = false; dial_wrap_count = 1; spr_bord = bord_prev; dial_text_page = 0; bord_box_visible = true; ui_tab = 0; ui_visible = true; }
+			with ( SYSTEMUI ) { screenshot = false; screenshot_stacked = false; dial_text_gif = false; dial_wrap_count = 1; spr_bord = bord_prev; dial_text_page = 0; bord_box_visible = true; ui_tab = 0; ui_visible = true; }
 			exit;
 		});
+	#endregion
+	
+	#region Cancel Early
+		if ( soup_store_undefined("doublepress") ) { soup_store("doublepress", 0, , true); }
+		if ( keyboard_check_pressed(vk_escape) ) {
+			if ( soup_checkout("doublepress", false, true) < 1 ) { global.soupstore_global[$ "doublepress"]++; soupy_alarm_set("doublepress", "timer", 15); sfx_play(snd_bump); } else { if ( instance_exists(obj_stacker) ) { obj_stacker.abort = true; instance_destroy(obj_stacker); } finish_func(, , true); soup_store("doublepress", 0, , true); exit; }
+		}
+		soupy_alarm("doublepress", 15);
+		soupy_alarm_run("doublepress", 0, function() { soup_store("doublepress", 0, , true); }); 
 	#endregion
 	
 	if ( screenshot ) { 

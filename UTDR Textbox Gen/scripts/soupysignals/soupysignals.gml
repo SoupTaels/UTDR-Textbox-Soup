@@ -61,7 +61,7 @@ function soup_checkout_async(name_, remove_ = true) {
 ///@desc Checks if the specified variable exists within the soup store.
 ///@param {string} name_ Variable name
 ///@param {bool} global_ Whether this variable is a global soupy variable
-function soup_store_exists(name_, global_ = false) { 
+function soup_store_undefined(name_, global_ = false) {
 	var var_ = global_ ? global.soupstore_global : global.soupstore;
 	return !is_undefined(var_[$ name_]); 
 }

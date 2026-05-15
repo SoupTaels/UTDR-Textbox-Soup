@@ -213,6 +213,7 @@
 	screenshot = false; //Screenshot task
 	screenshot_stacked = false; //Whether dialogue exports are stacked
 	screenshot_surf = -1; //Screenshot surface
+	screenshot_back = c_lime; //Color for GIF background clearing
 	record = { enabled: false, type: 0, frames: 0, framesmax: 0, id_: -1, quant: 1, delay: 60, }; //Whether to record, the type of recording(0 - static, 1 - wait for dialogue to finish), and how long to record for
 	ui_visible = true; //Whether the UI should be visible
 	ui_effoff = 0; //Effects array offset 
