@@ -91,7 +91,7 @@ function soupy_color_picker(var_, soupyname_) {
 			getclr.setColor(make_color_rgb(rgbr, rgbg, soup_checkout("rgb b", false)));
 		}).addEvent(LUI_EV_CREATE, function(element_) { soup_store("element b", element_); }),
 	
-		new LuiButton({ text: "RANDOMIZE" }).addEvent(LUI_EV_CLICK, function () {
+		new LuiButton({ text: "RANDOMIZE", "height": 35, }).addEvent(LUI_EV_CLICK, function () {
 			soup_store("rgb r", irandom(255)); soup_store("rgb g", irandom(255)); soup_store("rgb b", irandom(255));
 			var rgbr = soup_checkout("element r", false); rgbr.value = soup_checkout("rgb r", false); rgbr.update_values();
 			var rgbg = soup_checkout("element g", false); rgbg.value = soup_checkout("rgb g", false); rgbg.update_values();
@@ -99,7 +99,7 @@ function soupy_color_picker(var_, soupyname_) {
 			soup_checkout("element spr", false).setColor(make_color_rgb(soup_checkout("rgb r", false), soup_checkout("rgb g", false), soup_checkout("rgb b", false)));
 			sfx_play(snd_throw, 0, , 1.5);
 		}),
-		new LuiButton({ text: "RESET" }).addEvent(LUI_EV_CLICK, function () {
+		new LuiButton({ text: "RESET", "height": 35, }).addEvent(LUI_EV_CLICK, function () {
 			soup_store("rgb r", 255); soup_store("rgb g", 255); soup_store("rgb b", 255);
 			var rgbr = soup_checkout("element r", false); rgbr.value = soup_checkout("rgb r", false); rgbr.update_values();
 			var rgbg = soup_checkout("element g", false); rgbg.value = soup_checkout("rgb g", false); rgbg.update_values();
