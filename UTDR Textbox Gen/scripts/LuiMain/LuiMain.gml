@@ -351,25 +351,53 @@ function LuiMain() : LuiBase() constructor {
 			if _element.tooltip != "" {
 				var _padding = self.style.padding; //Screen border indentation
 				var _padding_text = self.style.padding; //Text border indentation inside tooltip box
-				draw_set_font(_element.tooltip_font ?? self.style.font_default);
-				var _width = string_width(_element.tooltip) + _padding_text*2;
-				var _height = string_height(_element.tooltip) + _padding_text*2;
-				var _xx = !_element.tooltip_center ? ( device_mouse_x_to_gui(0) + _padding ) : ( ( device_mouse_x_to_gui(0) - _width/ 2) );
-				var _mouse_x = clamp(_xx, _padding, self.width - _width - _padding);
-				var _mouse_y = clamp(device_mouse_y_to_gui(0) + _padding, _padding, self.height - _height - _padding);
-				// Draw tooltip sprite back
-				if !is_undefined(self.style.sprite_tooltip) {
-					draw_sprite_stretched_ext(self.style.sprite_tooltip, 0, _mouse_x, _mouse_y, _width, _height, self.style.color_primary, LUI_FORCE_ALPHA_1 ? 1 : _prev_alpha);
+				
+				if ( !_element.tooltip_scribble ) {
+					draw_set_font(_element.tooltip_font ?? self.style.font_default);
+					var _width = string_width(_element.tooltip) + _padding_text*2;
+					var _height = string_height(_element.tooltip) + _padding_text*2;
+					var _xx = !_element.tooltip_center ? ( device_mouse_x_to_gui(0) + _padding ) : ( ( device_mouse_x_to_gui(0) - _width/ 2) );
+					var _mouse_x = clamp(_xx, _padding, self.width - _width - _padding);
+					var _mouse_y = clamp(device_mouse_y_to_gui(0) + _padding, _padding, self.height - _height - _padding);
+					// Draw tooltip sprite back
+					if !is_undefined(self.style.sprite_tooltip) {
+						draw_sprite_stretched_ext(self.style.sprite_tooltip, 0, _mouse_x, _mouse_y, _width, _height, self.style.color_primary, LUI_FORCE_ALPHA_1 ? 1 : _prev_alpha);
+					}
+					// Draw tooltip sprite border
+					if !is_undefined(self.style.sprite_tooltip_border) {
+						draw_sprite_stretched_ext(self.style.sprite_tooltip_border, 0, _mouse_x, _mouse_y, _width, _height, self.style.color_border, LUI_FORCE_ALPHA_1 ? 1 : _prev_alpha);
+					}
+					// Draw text
+					draw_set_color(self.style.color_text);
+					draw_set_halign(fa_left);
+					draw_set_valign(fa_top);
+					draw_text(_mouse_x + _padding_text, _mouse_y + _padding_text, _element.tooltip);
 				}
-				// Draw tooltip sprite border
-				if !is_undefined(self.style.sprite_tooltip_border) {
-					draw_sprite_stretched_ext(self.style.sprite_tooltip_border, 0, _mouse_x, _mouse_y, _width, _height, self.style.color_border, LUI_FORCE_ALPHA_1 ? 1 : _prev_alpha);
+				else {
+					var tooltip_ = scribble(_element.tooltip).starting_format(_element.tooltip_font ?? self.style.font_default, self.style.color_text);
+					var _width = tooltip_.get_width() + _padding_text*2;
+					var _height = tooltip_.get_height() + _padding_text*2;
+					var _xx = !_element.tooltip_center ? ( device_mouse_x_to_gui(0) + _padding ) : ( ( device_mouse_x_to_gui(0) - _width/ 2) );
+					var _mouse_x = clamp(_xx, _padding, self.width - _width - _padding);
+					var _mouse_y = clamp(device_mouse_y_to_gui(0) + _padding, _padding, self.height - _height - _padding);
+					
+					var bbox_ = tooltip_.get_bbox(_mouse_x + _padding_text, _mouse_y + _padding_text);
+					_width = bbox_.width + _padding_text*2;
+					_height = bbox_.height + _padding_text*2;
+					_mouse_x = clamp(_xx, _padding, self.width - _width - _padding);
+					_mouse_y = clamp(device_mouse_y_to_gui(0) + _padding, _padding, self.height - _height - _padding);
+					
+					// Draw tooltip sprite back
+					if !is_undefined(self.style.sprite_tooltip) {
+						draw_sprite_stretched_ext(self.style.sprite_tooltip, 0, _mouse_x, _mouse_y, _width, _height, self.style.color_primary, LUI_FORCE_ALPHA_1 ? 1 : _prev_alpha);
+					}
+					// Draw tooltip sprite border
+					if !is_undefined(self.style.sprite_tooltip_border) {
+						draw_sprite_stretched_ext(self.style.sprite_tooltip_border, 0, _mouse_x, _mouse_y, _width, _height, self.style.color_border, LUI_FORCE_ALPHA_1 ? 1 : _prev_alpha);
+					}
+					
+					tooltip_.draw(_mouse_x + _padding_text, _mouse_y + _padding_text);
 				}
-				// Draw text
-				draw_set_color(self.style.color_text);
-				draw_set_halign(fa_left);
-				draw_set_valign(fa_top);
-				draw_text(_mouse_x + _padding_text, _mouse_y + _padding_text, _element.tooltip);
 			}
 		}
 		

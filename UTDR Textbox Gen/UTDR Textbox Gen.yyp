@@ -990,6 +990,7 @@
     {"id":{"name":"spr_border_dashed","path":"sprites/spr_border_dashed/spr_border_dashed.yy",},},
     {"id":{"name":"spr_border_deltarune","path":"sprites/spr_border_deltarune/spr_border_deltarune.yy",},},
     {"id":{"name":"spr_border_earthbound","path":"sprites/spr_border_earthbound/spr_border_earthbound.yy",},},
+    {"id":{"name":"spr_border_header","path":"sprites/spr_border_header/spr_border_header.yy",},},
     {"id":{"name":"spr_border_octagon","path":"sprites/spr_border_octagon/spr_border_octagon.yy",},},
     {"id":{"name":"spr_border_plus","path":"sprites/spr_border_plus/spr_border_plus.yy",},},
     {"id":{"name":"spr_border_raised","path":"sprites/spr_border_raised/spr_border_raised.yy",},},

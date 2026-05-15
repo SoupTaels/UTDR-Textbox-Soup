@@ -14,6 +14,8 @@ function LuiSlider(_params = {}) : LuiProgressBar(_params) constructor {
 	self.can_drag = true;
 	self.params = _params; 
 	self.knob_extender = _params[$ "knob_extender"] ?? 1;
+	self.color_text = _params[$ "color_text"] ?? undefined;
+	self.color_text_drag = _params[$ "color_text_drag"] ?? undefined;
 	
 	// Calculate knob width in constructor
 	static _initKnobWidth = function() {
@@ -23,7 +25,7 @@ function LuiSlider(_params = {}) : LuiProgressBar(_params) constructor {
 			self.knob_width = _nineslice_left_right == 0 ? sprite_get_width(self.style.sprite_slider_knob) : _nineslice_left_right;
 		}
 	}
-	
+
 	self.draw = function() {
 		// Calculate colors based on state
 		var _blend_back = self.style.color_back;
@@ -66,7 +68,7 @@ function LuiSlider(_params = {}) : LuiProgressBar(_params) constructor {
 		if !is_undefined(self.style.font_default) {
 			draw_set_font(self.style.font_default);
 		}
-		draw_set_color(_blend_text);
+		draw_set_color(self.is_dragging ? ( self.color_text_drag ?? _blend_text) : ( self.color_text ?? _blend_text));
 		draw_set_halign(fa_center);
 		draw_set_valign(self.is_dragging ? fa_bottom : fa_middle);
 		var _text_x = self.is_dragging ? self.x + self.width * self.bar_value : self.x + self.width div 2;
@@ -117,6 +119,9 @@ function LuiSlider(_params = {}) : LuiProgressBar(_params) constructor {
 		var _new_value = _element._calculateValue((_data.mouse_x - x1) / (x2 - x1) * (_element.max_value - _element.min_value) + _element.min_value);
 		_element.set(_new_value);
 	});
+	
+	self.addEvent(LUI_EV_MOUSE_LEAVE, function(_element, _data) { _element.is_dragging = false; });
+	self.addEvent(LUI_EV_MOUSE_LEFT_RELEASED, function(_element, _data) { _element.is_dragging = false; });
 	
 	update_values = method(self, function () {
 		bar_value = Range(value, min_value, max_value, 0, 1);

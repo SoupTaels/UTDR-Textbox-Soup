@@ -36,7 +36,7 @@ if ( screenshot || record.enabled ) {
 		var finish_func = method({folder, _path_separator, fname, record, x_, y_, w_, h_, screenshot_surf }, function(gif_ = true, stack_ = false) { //Finished recording/ screenshotting
 			var fpath_final = $"{executable_get_directory()}{folder}{_path_separator}{fname}_.{gif_ ? "gif" : "png"}";
 			if ( !stack_ ) {
-				if ( gif_ ) { gif_save(record.id_, fpath_final); } //Save GIF
+				if ( gif_ ) { record.id_ = gif_save(record.id_, fpath_final); } //Save GIF
 				else { surface_save_part(screenshot_surf, fpath_final, x_, y_, w_, h_); } //Save screenshot
 				
 				soupy_message($"{fname}.{gif_ ? "gif" : "png"}[/] [rainbow][wave]saved at[/]| |[c_lime]{fpath_final}![/]| |Your [c_gold]good soup[/] is ready!|The file path was [c_yellow]copied to your clipboard[/] and|the result will open up in your [c_cyan]default image viewer[/].", "I'm so soupy!!", , , , snd_dumbvictory, fnt_abaddon, , , true, 590);

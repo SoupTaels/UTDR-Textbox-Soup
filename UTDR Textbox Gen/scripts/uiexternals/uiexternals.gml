@@ -260,14 +260,17 @@ outputLog = "";
 		repeat ( options_len ) { //Add available characters to an array
 			var cur_ = options_names[options_i], isnew_ = global.faces_dict[$ cur_][$ "NEW SPRITE"];
 			array_push(options_, 
-				new LuiText({ value: isnew_ != undefined && isnew_ ? $"{string_upper_first(cur_)} (NEW!)" : string_upper_first(cur_), id_: cur_, font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, }).setPadding(5).setData("chara", cur_)
+				new LuiText({ value: isnew_ != undefined && isnew_ ? $"{string_upper_first(cur_)} (NEW!)" : string_upper_first(cur_), id_: cur_, font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, color: ( get_face(cur_) != -1 ? c_cyan : c_white ), }).setPadding(5).setData("chara", cur_).setTooltip(get_face(cur_) != -1 ? $"[{cur_}] [rainbow]Added via dragging!" : "", true, , true)
 				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
-				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
+				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = get_face(element_.params.id_) != -1 ? c_cyan : c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
 				.addEvent(LUI_EV_CLICK, function(element_) { //Once clicked on, create new scroll panel and populate it with face sprites
 					var get_ = soup_checkout("scrollmain", false); soup_checkout("scrollsub", false).destroy(); 
 					global.faces_dict[$ element_.params.id_][$ "NEW SPRITE"] = false; sfx_play(snd_select);
 					
-					var spr_ = [], cur_ = element_.getData("chara"), spr_exp = struct_get_names(global.faces_dict[$ cur_]), spr_len = array_length(spr_exp), spr_i = 0;
+					//Exit early if the sprite already exists(for external sprites added through drag & drop)
+					var early_ = get_face(element_.params.id_); if ( sprite_exists(early_) ) { sfx_play(snd_updated); FACE_CURRENT = early_; FACE_ORIGINAL = FACE_CURRENT; soup_checkout("datainput", false, true).set(element_.params.id_); soup_checkout("dataimage", false, true).set(FACE_CURRENT); soup_checkout("datafunc", false)(); exit; }
+					
+					var spr_ = [], cur_ = element_.getData("chara"), spr_exp = struct_get_names(global.faces_dict[$ cur_]), spr_len = array_length(spr_exp), spr_i = 0; //Folders filled with sprites will have their sprites shown here
 					repeat ( spr_len ) {
 						var exp_ = spr_exp[spr_i], finalname = $"spr_{cur_}_{exp_}", myspr = get_face(finalname);
 						if ( exp_ != "NEW SPRITE" ) {
@@ -280,6 +283,14 @@ outputLog = "";
 				})
 			);
 		options_i++; }
+		
+		#region Sort Names Alphabetically
+			array_sort(options_, function(arrcur_, arrnext_) {
+				if ( string_lower(arrcur_.value) < string_lower(arrnext_.value) ) { return -1; }
+				else if ( string_lower(arrcur_.value) > string_lower(arrnext_.value) ) { return 1; }
+				else { return 0; }
+			});
+		#endregion
 		
 		#region Add Default Options
 			array_push(options_, new LuiText({ value: "Test Face", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, }).setPadding(5)
@@ -298,7 +309,7 @@ outputLog = "";
 				.addEvent(LUI_EV_CLICK, function(element_) { sfx_play(snd_hurtpowerful); FACE_CURRENT = -1; FACE_ORIGINAL = FACE_CURRENT; soup_checkout("datainput", false, true).set(-1); soup_checkout("dataimage", false, true).set(""); soup_checkout("datafunc", false)(); })
 			);
 		#endregion
-		
+
 		var dataarr = [
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
 				new LuiScrollPanel({ height: 400, scroll_pin_edge_offset:10, sprite_panel: false, }).addContent(options_),
