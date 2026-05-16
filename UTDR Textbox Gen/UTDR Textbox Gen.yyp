@@ -616,6 +616,7 @@
     {"$GMIncludedFile":"","%Name":"zlib.ndll","CopyToMask":0,"filePath":"datafiles/GMLive","name":"zlib.ndll","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"annoyingdog_strip2.png","CopyToMask":-1,"filePath":"datafiles/icons","name":"annoyingdog_strip2.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"annoyingtem_strip2.png","CopyToMask":-1,"filePath":"datafiles/icons","name":"annoyingtem_strip2.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
+    {"$GMIncludedFile":"","%Name":"gameico.png","CopyToMask":-1,"filePath":"datafiles/icons","name":"gameico.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"gamemaker.png","CopyToMask":-1,"filePath":"datafiles/icons","name":"gamemaker.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"jujugoodpug.png","CopyToMask":-1,"filePath":"datafiles/icons","name":"jujugoodpug.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"soupcan.png","CopyToMask":-1,"filePath":"datafiles/icons","name":"soupcan.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},

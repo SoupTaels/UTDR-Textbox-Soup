@@ -16,11 +16,12 @@ outputLog = "";
 				self[$ faces_emote] = { sprite: sprite_add(faces_cur, imgnum, false, false, 0, 0), expression: faces_emote, name: faces_cur, count: imgnum, } //Add sprite index and expression name to the global face dictonary
 				with ( self[$ faces_emote] ) { 
 					self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External face \"{name}\" was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
-					sprite_set_offset(sprite, sprite_get_width(sprite)/ 2, sprite_get_height(sprite)/ 2); //Center sprite
+					self[$ "size"] = { sprite, width: sprite_get_width(sprite), height: sprite_get_height(sprite), }
+					sprite_set_offset(sprite, size.width/ 2, size.height/ 2); //Center sprite
 					
 					var scrib_ = $"{faces_dir}_{expression}"; scribble_external_sprite_add(sprite, scrib_); //Register sprite with Scribble
 					var altname_ = $"spr_{scrib_}"; if ( !scribble_external_sprite_exists(altname_) ) { scribble_external_sprite_add(sprite, altname_); } //Alternative name
-					global.faces_dict_alt[$ altname_] = { sprite, name: altname_, destroy } //Add sprite index and expression name to the global face alt dictonary
+					global.faces_dict_alt[$ altname_] = { sprite, name: altname_, destroy, size } //Add sprite index and expression name to the global face alt dictonary
 					var out_ = $"Added \"{expression}\" from {name}! | Image number: {count} | Scribble name: {scrib_} | Scribble alt name: {altname_}";
 					show_debug_message(out_); global.outputLog += $"{out_}\n";
 					faces_count++;
@@ -84,7 +85,8 @@ outputLog = "";
 			icons_dict[$ temp_] = { sprite: sprite_add(icons_cur, imgnum, false, false, 0, 0), name: temp_, fname_: icons_cur, count: imgnum, }
 			with ( icons_dict[$ temp_] ) {
 				self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External icon \"{fname_}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
-				sprite_set_offset(sprite, sprite_get_width(sprite)/ 2, sprite_get_height(sprite)/ 2); //Center sprite
+				self[$ "size"] = { sprite, width: sprite_get_width(sprite), height: sprite_get_height(sprite), }
+				sprite_set_offset(sprite, size.width/ 2, size.height/ 2); //Center sprite
 				
 				var out_ = $"Added \"{name}\" from {fname_}! Image Count: {count}";
 				scribble_external_sprite_add(sprite, name);
@@ -93,7 +95,7 @@ outputLog = "";
 				temp_2 = string_replace(string_replace(temp_2, $"_strip", ""), $".png", "");
 				temp_2 = string_exclude(temp_2, "0123456789");
 				if ( !scribble_external_sprite_exists(temp_2) ) { scribble_external_sprite_add(sprite, temp_2); } //alternative
-				global.icons_dict_alt[$ temp_2] = { sprite, name, } //Add sprite index and expression name to the global icon alt dictonary
+				global.icons_dict_alt[$ temp_2] = { sprite, name, size, } //Add sprite index and expression name to the global icon alt dictonary
 				show_debug_message(out_); global.outputLog += $"{out_}\n";
 			}
 		icons_i++; }
@@ -123,13 +125,14 @@ outputLog = "";
 			bords_dict[$ temp_] = { sprite: sprite_add(bords_cur, imgnum, false, false, 0, 0), name: temp_, fname_: bords_cur, count: imgnum, }
 			with ( bords_dict[$ temp_] ) {
 				self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External border \"{fname_}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
-				sprite_set_offset(sprite, sprite_get_width(sprite)/ 2, sprite_get_height(sprite)/ 2); //Center sprite
+				self[$ "size"] = { sprite, width: sprite_get_width(sprite), height: sprite_get_height(sprite), }
+				sprite_set_offset(sprite, size.width/ 2, size.height/ 2); //Center sprite
 				
 				var out_ = $"Added \"{name}\" from {fname_}! | Image Count: {count}";
 				var temp_2 = string_replace(bords_cur, $"borders{_path_separator}", ""); 
 				temp_2 = string_replace(string_replace(temp_2, $"_strip", ""), $".png", "");
 				temp_2 = string_exclude(temp_2, "0123456789");
-				global.bords_dict_alt[$ temp_2] = { sprite, name, } //Add sprite index and expression name to the global icon alt dictonary
+				global.bords_dict_alt[$ temp_2] = { sprite, name, size, } //Add sprite index and expression name to the global icon alt dictonary
 				show_debug_message(out_); global.outputLog += $"{out_}\n";
 			}
 		bords_i++; }

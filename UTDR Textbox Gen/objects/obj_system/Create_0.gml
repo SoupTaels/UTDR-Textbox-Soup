@@ -390,7 +390,7 @@
 			repeat ( 12 ) {
 				soupy_panel_border.addContent([
 					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
-						new LuiText({ value: "Border Panel:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+						new LuiText({ value: "Style Panel:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, truncate: false, }),
 						new LuiButton({ text: "Test Button", height: 40, }),
 					]),
 				]);
@@ -405,7 +405,7 @@
 			repeat ( 12 ) {
 				soupy_panel_style.addContent([
 					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
-						new LuiText({ value: "Style Panel:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+						new LuiText({ value: "Style Panel:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, truncate: false, }),
 						new LuiButton({ text: "Test Button", height: 40, }),
 					]),
 				]);
@@ -416,15 +416,11 @@
 		
 		#region Extra Panel
 			var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
-			soupy_panel_extra = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, }); //Start containter
-			repeat ( 12 ) {
-				soupy_panel_extra.addContent([
-					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
-						new LuiText({ value: "Extra Panel:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
-						new LuiButton({ text: "Test Button", height: 40, }),
-					]),
-				]);
-			}
+			soupy_panel_extra = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, }) //Start containter
+			.addContent([
+				new LuiButton({ text: "So Soupy!!", height: 40, }).addEvent(LUI_EV_CLICK, function() { execute_shell_simple("https://www.youtube.com/watch?v=zbClYRnQQJ0", , , 0); }),
+				new LuiButton({ text: "Credits", height: 40, }).addEvent(LUI_EV_CLICK, soupy_ui_credits),
+			]);
 		
 			soupy_lui.addContent(soupy_panel_extra); //Add everything to the main ui
 		#endregion

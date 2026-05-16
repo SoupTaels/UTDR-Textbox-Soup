@@ -19,6 +19,8 @@ function LuiText(_params = {}) : LuiBase(_params) constructor {
 	self.params = _params;
 	self.scribble_ = _params[$ "scribbletext"] ?? false;
 	self.wraplimit = _params[$ "wraplimit"] ?? -1; self.wrapsep = _params[$ "wrapsep"] ?? 1;
+	self.truncate = _params[$ "truncate"] ?? undefined;
+	self.auto_size = _params[$ "auto_size"] ?? false;
 	
 	///@desc Set text
 	///@arg {string} _text
@@ -53,13 +55,13 @@ function LuiText(_params = {}) : LuiBase(_params) constructor {
 	self.draw = function() {
 		//Set font properties
 		if ( !self.scribble_ ) {
-			if !is_undefined(self.style.font_default) {
-				draw_set_font(self.font ?? self.style.font_default);
-			}
+			
+			draw_set_font(self.font ?? self.style.font_default);
 			draw_set_color(self.color ?? ( !self.deactivated ? self.style.color_text : merge_color(self.style.color_text, c_black, 0.5) ));
 			draw_set_alpha(1);
 			draw_set_halign(self.text_halign);
 			draw_set_valign(self.text_valign);
+			if ( self.auto_size ) { var w_ = string_width(self.value), h_ = string_height(self.value); setSize(w_, h_); }
 		}
 		//Calculate right text align
 		var _txt_x = 0;
@@ -90,7 +92,7 @@ function LuiText(_params = {}) : LuiBase(_params) constructor {
 		if self.value != "" {
 			if ( !self.scribble_ ) { 
 				if !self.scale_to_fit {
-					self._drawTruncatedText(_txt_x + self.xoff, _txt_y + self.yoff, self.value, self.width, self.scale_x, self.scale_y);
+					self._drawTruncatedText(_txt_x + self.xoff, _txt_y + self.yoff, self.value, self.width, self.scale_x, self.scale_y, self.truncate);
 				} else {
 					var _text = self.value;
 					var _xscale = self.width / string_width(_text);

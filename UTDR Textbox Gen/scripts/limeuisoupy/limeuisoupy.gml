@@ -10,7 +10,8 @@
 ///@param {bool} allowmultiple_ Whether to allow multiple popups
 ///@param {bool} scribble_ Whether to render text as a Scribble class (performance penalty)
 ///@param {real} wrap_ Maximum text on a line before a line break
-function soupy_message(textarr_ = ["Test", "Test 2"], textbutt_ = "OK", width = 620, height = -1, padd_ = 5, snd_ = snd_dimbox, font_ = fnt_determination, func_ = function(){}, allowmultiple_ = false, scribble_ = false, wrap_ = -1) {
+///@param {real} heightb Height Button
+function soupy_message(textarr_ = ["Test", "Test 2"], textbutt_ = "OK", width = 620, height = -1, padd_ = 5, snd_ = snd_dimbox, font_ = fnt_determination, func_ = function(){}, allowmultiple_ = false, scribble_ = false, wrap_ = -1, heightb = 35) {
 	window_set_cursor(cr_default);
 	if ( !allowmultiple_ && !UI_MESSAGE ) { exit; }
 	if ( !is_array(textarr_) ) { textarr_ = string_split(textarr_, "|"); }
@@ -22,7 +23,7 @@ function soupy_message(textarr_ = ["Test", "Test 2"], textbutt_ = "OK", width = 
 		array_push(arr_arr, new LuiText({ value: textarr_[arr_i], text_halign: fa_center, text_valign: fa_middle, font: font_, scribbletext: scribble_, wraplimit: wrap_ }).setPadding(padd_));
 	arr_i++; }
 	
-	array_push(arr_arr, new LuiButton({ text: textbutt_, "height": 35, font: font_, }).setData("allowmultiple", allowmultiple_).setData("container", containter_).setData("func", func_).setPadding(padd_)
+	array_push(arr_arr, new LuiButton({ text: textbutt_, "height": heightb, font: font_, }).setData("allowmultiple", allowmultiple_).setData("container", containter_).setData("func", func_).setPadding(padd_)
 	.addEvent(LUI_EV_CLICK, function (element_) { 
 		var allowmultiple = element_.getData("allowmultiple"); SYSTEMUI.ui_paused = allowmultiple;
 		var myfunc = element_.getData("func"); myfunc(); 
@@ -45,14 +46,15 @@ function soupy_message(textarr_ = ["Test", "Test 2"], textbutt_ = "OK", width = 
 ///@param {Asset.GMSound} snd_ Sound
 ///@param {Asset.GMFont} font_ Text Font
 ///@param {bool} allowmultiple_ Whether to allow multiple popups
-function soupy_popup(elementsarr, func_ = function(){}, textbutt_ = "OK", width = 620, height = -1, padd_ = 5, snd_ = snd_dimbox, font_ = fnt_determination, allowmultiple_ = false, gap_ = 5) {
+///@param {real} heightb Height Button
+function soupy_popup(elementsarr, func_ = function(){}, textbutt_ = "OK", width = 620, height = -1, padd_ = 5, snd_ = snd_dimbox, font_ = fnt_determination, allowmultiple_ = false, gap_ = 5, heightb = 35) {
 	window_set_cursor(cr_default);
 	if ( !allowmultiple_ && !UI_MESSAGE ) { exit; }
 	sfx_play(snd_);
 	var containter_ = new LuiBox({ x: 0, y: 0, }).centerContent().setPositionAbsolute().bringToFront().setFullSize(); //Fullscreen opaque box
 	var panel_ = new LuiPanel({ width, height }); //Container 
 	var arr_arr = elementsarr;	
-	array_push(arr_arr, new LuiButton({ text: textbutt_, "height": 35, font: font_, }).setData("allowmultiple", allowmultiple_).setData("container", containter_).setData("func", func_).setPadding(padd_)
+	array_push(arr_arr, new LuiButton({ text: textbutt_, "height": heightb, font: font_, }).setData("allowmultiple", allowmultiple_).setData("container", containter_).setData("func", func_).setPadding(padd_)
 	.addEvent(LUI_EV_CLICK, function (element_) { 
 		var allowmultiple_ = element_.getData("allowmultiple"); SYSTEMUI.ui_paused = allowmultiple_;
 		var myfunc = element_.getData("func"); myfunc();
@@ -123,3 +125,42 @@ function soupy_color_picker(var_, soupyname_) {
 	var maincan = soupy_popup(elemarr, soup_checkout("colormain", false), "SET COLOR!"); soup_store("colorcan", maincan, , true);
 }
 function soupy_color_picker_portrait() { soupy_color_picker(SYSTEMUI.dial_face_clr, "datacolor"); }
+
+function soupy_ui_credits() {
+	var arr_ = [];
+	var credits_add = method({ arr_ }, function(text_ = "", link_ = "", scribble_ = false) {
+		array_push(arr_, new LuiText({ scribbletext: scribble_, value: text_, text_halign: fa_center, text_valign: fa_middle, font: fnt_abaddon, color: c_white, xoff: 0, y: 10 }).setData("link", link_).setTooltip(link_, true, fnt_abaddon).setPadding(5)
+		.addEvent(LUI_EV_CLICK, function(element_) { var link_ = element_.getData("link"); if ( link_ != "" ) { sfx_play(snd_select); execute_shell_simple(link_, , , 0); } })
+		.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { var link_ = element_.getData("link"); if ( link_ != "" ) { element_.color = c_cyan; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); } })
+		.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); }));
+	});
+	
+	var ico_ = get_icon("gameico", "size"); array_push(arr_, new LuiImage({ value: ico_.sprite, }).setFlexAlignSelf(flexpanel_align.center).setSize(ico_.width * 3, ico_.height * 3)); 
+	credits_add("[scale,2]UTDR [c_gold]SoupGen[/c] [c_red]BETA[/c] v0.0.1", , true);
+	credits_add();
+	credits_add("[c_yellow][wobble]Credits:", , true);
+	credits_add(".+\\/\\/\\_______________________________________________/\\/\\/+.");
+	credits_add();
+	credits_add("Scribble, Clean Shapes, Gumshoe: [slant][c_gold]JujuAdams", "https://github.com/JujuAdams", true);
+	credits_add("GMLive, ExecuteShellSimple, FileDropper: [slant][c_gold]YellowAfterlife", "https://yal.cc/", true);
+	credits_add("TweenGMX: [slant][c_gold]stephenloney", "https://stephenloney.com/", true);
+	credits_add("Undo Stack: [slant][c_gold]alphish-creature(Alice)", "https://github.com/Alphish", true);
+	credits_add("LimeUI: [slant][c_gold]Limekys", "https://github.com/Limekys", true);
+	credits_add("Quill: [slant][c_gold]RefresherTowelGames", "https://github.com/RefresherTowel", true);
+	credits_add("DialogModule, FileManager: [slant][c_gold]Samuel Venable", "https://itch.io/profile/samuel-venable", true);
+	credits_add("Accurate Determination, Sans, and Papyrus fonts: [slant][c_gold]emihead", "https://twitter.com/emihead", true);
+	credits_add("Undertale, Deltarune: [slant][c_gold]Toby Fox[/] [annoyingdog,0,0.15], [slant][c_gold]Temmie Chang[/] [annoyingtem,0,0.15]", "https://undertale.com/about/", true);
+	credits_add("Made in [slant][c_gold]GameMaker[/] [scale,0.15][gamemaker][/]", "https://gamemaker.io/", true);
+	credits_add();
+	credits_add("Huge thanks to [rainbow][wheel]Juju Adams[/][wheel] [scale,0.3][jujugoodpug][/] especially as this wouldn't\nhave been possible without his tools!", , true);
+	credits_add();
+	credits_add("Happy generating by yours truly, [slant][c_gold]Soup Taels!", "https://souptaels.carrd.co/", true);
+	array_push(arr_, new LuiRow().setFlexJustifyContent(flexpanel_justify.center).addContent([
+		new LuiImage({ value: spr_soul, color: #ed4577, draw_normal: true, y: 10 }).setSize(20, 16).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 1, 0.15, , 1.3); element_.main_ui.animate(element_, "yscale", 1, 0.15, , 1.3); sfx_play(snd_bump); }),
+		new LuiImage({ value: get_icon("tinysoupy"), draw_normal: true, y: 10 }).setSize(19, 19).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 1, 0.15, , 0.5); element_.main_ui.animate(element_, "yscale", 1, 0.15, , 1.5); sfx_play(snd_squish); }),
+		new LuiImage({ value: spr_soul, color: #ed4577, draw_normal: true, y: 10 }).setSize(20, 16).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 1, 0.15, , 1.3); element_.main_ui.animate(element_, "yscale", 1, 0.15, , 1.3); sfx_play(snd_bump); }),
+	]));
+
+	var maincan = new LuiScrollPanel({ sprite_panel: false, scroll_slider_width: 10, height: 390, }).addContent(arr_);
+	soupy_popup([ maincan, ], , "What lovely people!", , 460, , snd_chest, fnt_abaddon, , , 40); //Credits with clickable text links
+}

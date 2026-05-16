@@ -1082,13 +1082,13 @@ function LuiBase(_params = {}) constructor {
 	
 	///@desc Draw text fit to width
 	///@ignore
-	static _drawTruncatedText = function(_x, _y, _string, _width = infinity, _xscale = 1, _yscale = 1) {
+	static _drawTruncatedText = function(_x, _y, _string, _width = infinity, _xscale = 1, _yscale = 1, _cutoff = true) {
 		// Calculate initial text width
 		var _str_to_draw = _string;
 		var _str_width = string_width(_str_to_draw);
 		
 		// Check if the text needs to be truncated
-		if (_str_width > _width) {
+		if ( _cutoff &&_str_width > _width ) {
 			// Calculate the width of "..." once, to use in our calculations
 			var _ellipsis = "...";
 			var _ellipsis_width = string_width(_ellipsis);
