@@ -69,7 +69,14 @@ function soupy_popup(elementsarr, func_ = function(){}, textbutt_ = "OK", width 
 function soupy_color_picker(var_, soupyname_) {
 	soup_store("soupyname", soupyname_);
 	soup_store("rgb r", color_get_red(var_)); soup_store("rgb g", color_get_green(var_)); soup_store("rgb b", color_get_blue(var_));
-	var clr = new LuiImage({ value: spr_soul, width: 60, height: 48 }).addEvent(LUI_EV_CREATE, function(element_) { soup_store("element spr", element_); element_.setColor(make_color_rgb(soup_checkout("rgb r", false), soup_checkout("rgb g", false), soup_checkout("rgb b", false))); });
+	var clr = new LuiImage({ value: spr_soul, width: 60, height: 48 }).setTooltip("Don't want to use the sliders?\nClick here to open a color picker instead.", true).addEvent(LUI_EV_CREATE, function(element_) { soup_store("element spr", element_); element_.setColor(make_color_rgb(soup_checkout("rgb r", false), soup_checkout("rgb g", false), soup_checkout("rgb b", false))); });
+	clr.addEvent(LUI_EV_CLICK, function () { //Open color picker
+		sfx_play(snd_bump);
+		var result = get_color_ext(c_white, "Pick a new color!"); if ( result < 0 ) { result = c_white; } 
+		soup_store("rgb r", color_get_red(result)); soup_store("rgb g", color_get_green(result)); soup_store("rgb b", color_get_blue(result));
+		soup_checkout("colormain")(); soup_checkout("colorcan", true, true).destroy(); SYSTEMUI.ui_paused = false; sfx_play(snd_equip2, , , 1.3);
+	});
+	
 	var elemarr = [
 		new LuiText({ value: "   <- Your chosen color", text_halign: fa_center, text_valign: fa_middle, scale_x: 2, }).addContent(clr),
 	
@@ -108,10 +115,11 @@ function soupy_color_picker(var_, soupyname_) {
 			sfx_play(snd_hurtpowerful);
 		}),
 	];
-	soupy_popup(elemarr, function() { 
+	soup_store("colormain", function() { 
 		var myobj = soup_checkout(soup_checkout("soupyname"), false, true); 
 		myobj.setColor(make_color_rgb(soup_checkout("rgb r"), soup_checkout("rgb g"), soup_checkout("rgb b"))); myobj.set(spr_face_blank); 
 		soup_store_clear(); 
-	}, "SET COLOR!");
+	});
+	var maincan = soupy_popup(elemarr, soup_checkout("colormain", false), "SET COLOR!"); soup_store("colorcan", maincan, , true);
 }
 function soupy_color_picker_portrait() { soupy_color_picker(SYSTEMUI.dial_face_clr, "datacolor"); }

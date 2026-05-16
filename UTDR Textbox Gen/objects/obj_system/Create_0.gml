@@ -374,24 +374,73 @@
 				]);
 				var panel_header_ = new LuiButton(panel_base_).setText("Global Face Settings").setTooltip("These settings affect [wave][c_red]all[/] dialogue portraits.", true, , true).setData("header", panel_).setIcon(spr_gui_icons,,, c_black,, 5).addEvent(LUI_EV_CLICK, function(e_) { var header = e_.getData("header"); header.toggleVisible(); }); soupy_panel_portrait.addContent([panel_header_, panel_, ]); //End container
 		
-			soupy_lui.addContent([soupy_panel_portrait, ]); //Add everything to the main ui
+			soupy_lui.addContent(soupy_panel_portrait); //Add everything to the main ui
+		#endregion
+		
+		#region Border Panel
+			var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
+			soupy_panel_border = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, }); //Start containter
+			repeat ( 12 ) {
+				soupy_panel_border.addContent([
+					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
+						new LuiText({ value: "Border Panel:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+						new LuiButton({ text: "Test Button", height: 40, }),
+					]),
+				]);
+			}
+		
+			soupy_lui.addContent(soupy_panel_border); //Add everything to the main ui
+		#endregion
+		
+		#region Style Panel
+			var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
+			soupy_panel_style = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, }); //Start containter
+			repeat ( 12 ) {
+				soupy_panel_style.addContent([
+					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
+						new LuiText({ value: "Style Panel:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+						new LuiButton({ text: "Test Button", height: 40, }),
+					]),
+				]);
+			}
+		
+			soupy_lui.addContent(soupy_panel_style); //Add everything to the main ui
+		#endregion
+		
+		#region Extra Panel
+			var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
+			soupy_panel_extra = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, }); //Start containter
+			repeat ( 12 ) {
+				soupy_panel_extra.addContent([
+					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
+						new LuiText({ value: "Extra Panel:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+						new LuiButton({ text: "Test Button", height: 40, }),
+					]),
+				]);
+			}
+		
+			soupy_lui.addContent(soupy_panel_extra); //Add everything to the main ui
 		#endregion
 
 		#region Functions
 			///@desc Show/ hide Lui on appropiate screens.
 			ui_reset = function() {
-				if ( soupy_panel_portrait.visible ) { soupy_panel_portrait.setVisible(false); }
+				if ( soupy_panel_portrait.visible ) { soupy_panel_portrait.hide(false); }
+				if ( soupy_panel_border.visible ) { soupy_panel_border.hide(false); }
+				if ( soupy_panel_style.visible ) { soupy_panel_style.hide(false); }
+				if ( soupy_panel_extra.visible ) { soupy_panel_extra.hide(false); }
 				
 				var fx = true;
 				switch ( ui_tab ) {
 					case 0: { fx = false; } break;
-					case 1: {  } break;
-					case 2: { soupy_panel_portrait.setVisible(true); } break;
-					case 3: {  } break;
-					case 4: {  } break;
+					case 1: { soupy_panel_style.show(true); } break;
+					case 2: { soupy_panel_portrait.show(true); } break;
+					case 3: { soupy_panel_border.show(true); } break;
+					case 4: { soupy_panel_extra.show(true); } break;
 				}
 				if ( fx && bord_visible ) { sfx_play(snd_enc1, 0, , 0.7); bord_visible = false; }
 				else if ( !fx && !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; }
+				soupy_lui.update();
 			}
 			ui_reset();
 				

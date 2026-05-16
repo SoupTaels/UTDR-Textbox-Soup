@@ -446,35 +446,5 @@ function ui_manage() {
 				}
 			#endregion
 		} break;
-		
-		case 1: { //Style
-			var txt_ = scribble($"Style Tab")
-							.align(fa_center, fa_middle)
-							.scale(3)
-							.draw(320, 220);
-		} break;
-		
-		case 2: { //Face
-
-		} break;
-		
-		case 3: { //Border
-			var txt_ = scribble("Border Tab")
-							.align(fa_center, fa_middle)
-							.scale(3)
-							.draw(320, 220);
-							
-			/*var bord_ = asset_get_index("border_custom_example");
-			if ( bord_ != -1 ) { draw_nineslice(bord_, 230, 112, mouse_x_gui, mouse_y_gui); }*/
-		} break;
-		
-		case 4: { //About
-			scribble_anim_wheel(3, SCRIBBLE_DEFAULT_WHEEL_FREQUENCY, SCRIBBLE_DEFAULT_WHEEL_SPEED);
-			var txt_ = scribble("[rainbow][wheel]So soupy!!")
-							.align(fa_center, fa_middle)
-							.scale(3)
-							.draw(320, 220);
-			scribble_anim_wheel(SCRIBBLE_DEFAULT_WHEEL_SIZE, SCRIBBLE_DEFAULT_WHEEL_FREQUENCY, SCRIBBLE_DEFAULT_WHEEL_SPEED);
-		} break;
 	}
 }
