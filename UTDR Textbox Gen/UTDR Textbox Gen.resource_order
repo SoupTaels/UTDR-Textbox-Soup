@@ -326,8 +326,9 @@
     {"name":"spr_pixel","order":2,"path":"sprites/spr_pixel/spr_pixel.yy",},
     {"name":"spr_reference_1","order":1,"path":"sprites/spr_reference_1/spr_reference_1.yy",},
     {"name":"spr_reference_2","order":2,"path":"sprites/spr_reference_2/spr_reference_2.yy",},
-    {"name":"spr_reference_3","order":5,"path":"sprites/spr_reference_3/spr_reference_3.yy",},
-    {"name":"spr_soul","order":4,"path":"sprites/spr_soul/spr_soul.yy",},
-    {"name":"spr_testbg","order":3,"path":"sprites/spr_testbg/spr_testbg.yy",},
+    {"name":"spr_reference_3","order":3,"path":"sprites/spr_reference_3/spr_reference_3.yy",},
+    {"name":"spr_reference_4","order":4,"path":"sprites/spr_reference_4/spr_reference_4.yy",},
+    {"name":"spr_soul","order":6,"path":"sprites/spr_soul/spr_soul.yy",},
+    {"name":"spr_testbg","order":5,"path":"sprites/spr_testbg/spr_testbg.yy",},
   ],
 }

@@ -1010,6 +1010,7 @@
     {"id":{"name":"spr_reference_1","path":"sprites/spr_reference_1/spr_reference_1.yy",},},
     {"id":{"name":"spr_reference_2","path":"sprites/spr_reference_2/spr_reference_2.yy",},},
     {"id":{"name":"spr_reference_3","path":"sprites/spr_reference_3/spr_reference_3.yy",},},
+    {"id":{"name":"spr_reference_4","path":"sprites/spr_reference_4/spr_reference_4.yy",},},
     {"id":{"name":"spr_reference","path":"sprites/spr_reference/spr_reference.yy",},},
     {"id":{"name":"spr_soul","path":"sprites/spr_soul/spr_soul.yy",},},
     {"id":{"name":"spr_testbg","path":"sprites/spr_testbg/spr_testbg.yy",},},

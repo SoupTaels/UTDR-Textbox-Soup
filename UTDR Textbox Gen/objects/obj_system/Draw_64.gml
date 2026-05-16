@@ -1,5 +1,5 @@
 ///@desc Draw Dialogue Things
-//if ( live_call() ) { return live_result; } 
+if ( live_call() ) { return live_result; } 
 if ( dial_text_page >= dial_text_page_c ) { exit; } //Prevents the stack export from going out of bounds
 #region UI Borders and Buttons
 	if ( ui_visible ) {
@@ -28,7 +28,7 @@ if ( dial_text_page >= dial_text_page_c ) { exit; } //Prevents the stack export 
 	}
 #endregion
 
-if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , -1, 0); } //Reference image
+if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , 0, 0); } //Reference image
 
 #region Dialogue Box, Text, Face, etc.
 	if ( bord_visible ) {
@@ -36,7 +36,7 @@ if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , -1, 0)
 			#region Dialogue Box
 				var dltrn = spr_bord == spr_border_deltarune; //Check if our border is Deltarune
 				var offset_ = dltrn ? 8 : 0, offset_w = dltrn ? 15 : 0, offset_h = dltrn ? 16 : 0, bordx = 32 - offset_, bordy = 315 - offset_, bordw = 578 + offset_w, bordh = 152 + offset_w; //Border coords
-				var xx_ = ( bordx + ( ( FACE_USING ? 144 : 28 ) + ( dial_point_auto ? 4 : 0 ) ) ) + ( offset_ + dltrn ? 6 : 0 ), yy_ = ( bordy + 29 ) + offset_; //Text X Y
+				var xx_ = ( bordx + ( ( FACE_USING ? 144 : 28 ) + ( dial_point_auto ? 4 : 0 ) ) ) + ( offset_ + dltrn ? 6 : 0 ), yy_ = ( bordy + 24 ) + offset_; //Text X Y
 
 				var ninesl_ = sprite_get_nineslice(spr_bord); 
 				if ( bord_box_visible ) { if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, 1); } else { draw_9slice(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, bord_scale, bord_stretch); } }  //Dialogue Box
@@ -46,7 +46,7 @@ if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , -1, 0)
 
 			#region Dialogue Text
 				if ( dial_text != "" && dial_text != chr(0) ) { //No need to draw blank text
-					var line_sp = dial_text_line_spacing != -1 ? dial_text_line_spacing : "130%";
+					var line_sp = dial_text_line_spacing != -1 ? dial_text_line_spacing : "129%";
 					#region Dialogue Text Shadow
 						if ( dial_text_shdw ) {
 							var scrib_dial_shdw = scribble(dial_text) 

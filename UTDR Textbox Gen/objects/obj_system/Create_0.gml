@@ -17,16 +17,23 @@
 #endregion
 
 #region Dialogue Text
-	var i = 0, str = "fnt_determination|fnt_determination_nomono|fnt_speech|fnt_damage|fnt_tiny|fnt_sans|fnt_papyrus|fnt_abaddon|fnt_arial|fnt_pixel", arr = string_split(str, "|"), len = array_length(arr);
-	repeat (  len ) {
-		var cur_ = arr[i];
-		scribble_font_bake_outline_and_shadow(cur_, $"{cur_}_outline", 0, 0, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
-		var h_ = scribble_glyph_get(cur_, "W", SCRIBBLE_GLYPH.FONT_HEIGHT), x_ = scribble_glyph_get(cur_, "A", SCRIBBLE_GLYPH.LEFT_OFFSET);
-		scribble_glyph_set($"{cur_}_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, h_); scribble_glyph_set($"{cur_}_outline", all, SCRIBBLE_GLYPH.LEFT_OFFSET, x_);
-	i++; }
+	#region Adjust Fonts
+		var i = 0, str = "fnt_determination|fnt_determination_nomono|fnt_speech|fnt_damage|fnt_tiny|fnt_sans|fnt_papyrus|fnt_abaddon|fnt_arial|fnt_pixel", arr = string_split(str, "|"), len = array_length(arr);
+		repeat (  len ) {
+			var cur_ = arr[i];
+			scribble_font_bake_outline_and_shadow(cur_, $"{cur_}_outline", 0, 0, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
+			var h_ = scribble_glyph_get(cur_, "W", SCRIBBLE_GLYPH.FONT_HEIGHT), x_ = scribble_glyph_get(cur_, "A", SCRIBBLE_GLYPH.LEFT_OFFSET);
+			scribble_glyph_set($"{cur_}_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, h_); scribble_glyph_set($"{cur_}_outline", all, SCRIBBLE_GLYPH.LEFT_OFFSET, x_);
+		i++; }
 	
-	scribble_glyph_set("fnt_sans", all, SCRIBBLE_GLYPH.X_OFFSET, -0.5); scribble_glyph_set("fnt_sans", all, SCRIBBLE_GLYPH.Y_OFFSET, 1.5);
-	scribble_glyph_set("fnt_sans_outline", all, SCRIBBLE_GLYPH.X_OFFSET, -1.5); scribble_glyph_set("fnt_sans_outline", all, SCRIBBLE_GLYPH.Y_OFFSET, 0.5);
+		scribble_glyph_set("fnt_sans", all, SCRIBBLE_GLYPH.Y_OFFSET, 1); scribble_glyph_set("fnt_sans", all, SCRIBBLE_GLYPH.FONT_HEIGHT, 14);
+		scribble_glyph_set("fnt_sans_outline", all, SCRIBBLE_GLYPH.Y_OFFSET, 0); scribble_glyph_set("fnt_sans_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, 14);
+		scribble_glyph_set("fnt_papyrus", all, SCRIBBLE_GLYPH.Y_OFFSET, -1); scribble_glyph_set("fnt_papyrus", all, SCRIBBLE_GLYPH.FONT_HEIGHT, 14);
+		scribble_glyph_set("fnt_papyrus_outline", all, SCRIBBLE_GLYPH.Y_OFFSET, -2); scribble_glyph_set("fnt_papyrus_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, 14);
+		scribble_glyph_set("fnt_determination", all, SCRIBBLE_GLYPH.X_OFFSET, 0); scribble_glyph_set("fnt_determination", "!", SCRIBBLE_GLYPH.X_OFFSET, 1);
+		scribble_glyph_set("fnt_determination_outline", all, SCRIBBLE_GLYPH.X_OFFSET, -1); scribble_glyph_set("fnt_determination_outline", "!", SCRIBBLE_GLYPH.X_OFFSET, 0);
+		//I'm so happy Deltarune doesn't introduce new fonts cause fuck this honestly. Never want to do this again.
+	#endregion
 	
 	dial_text = ""; //Dialogue Text
 	dial_font = "fnt_determination"; //Dialogue Font
