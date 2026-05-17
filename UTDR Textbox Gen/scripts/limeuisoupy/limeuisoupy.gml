@@ -109,7 +109,8 @@ function soupy_color_picker(var_, soupyname_) {
 			sfx_play(snd_throw, 0, , 1.5);
 		}),
 		new LuiButton({ text: "RESET", "height": 35, }).addEvent(LUI_EV_CLICK, function () {
-			soup_store("rgb r", 255); soup_store("rgb g", 255); soup_store("rgb b", 255);
+			var def_ = soup_checkout(soup_checkout("soupyname", false), false, true).color_default;
+			soup_store("rgb r", color_get_red(def_)); soup_store("rgb g", color_get_green(def_)); soup_store("rgb b", color_get_blue(def_));
 			var rgbr = soup_checkout("element r", false); rgbr.value = soup_checkout("rgb r", false); rgbr.update_values();
 			var rgbg = soup_checkout("element g", false); rgbg.value = soup_checkout("rgb g", false); rgbg.update_values();
 			var rgbb = soup_checkout("element b", false); rgbb.value = soup_checkout("rgb b", false); rgbb.update_values();
@@ -125,6 +126,7 @@ function soupy_color_picker(var_, soupyname_) {
 	var maincan = soupy_popup(elemarr, soup_checkout("colormain", false), "SET COLOR!"); soup_store("colorcan", maincan, , true);
 }
 function soupy_color_picker_portrait() { soupy_color_picker(SYSTEMUI.dial_face_clr, "datacolor"); }
+function soupy_color_picker_gifcolor() { soupy_color_picker(SYSTEMUI.screenshot_back, "datagifcolor"); }
 
 function soupy_ui_credits() {
 	var arr_ = [];

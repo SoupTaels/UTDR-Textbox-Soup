@@ -17,6 +17,7 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 	self.angle = _params[$ "angle"] ?? 0;
 	self.xscale = _params[$ "xscale"] ?? 1;
 	self.yscale = _params[$ "yscale"] ?? 1;
+	self.color_default = self.color_blend;
 
 	self.sprite_real_width = 0;
 	self.sprite_real_height = 0;
