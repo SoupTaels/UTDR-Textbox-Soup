@@ -326,7 +326,7 @@
 							var input_ = soup_checkout("datainput", false, true), spr_ = soup_checkout("dataimage", false, true);
 							spr_.set(FACE_CURRENT == -1 ? spr_gui_icons : FACE_CURRENT).setSubimg(FACE_CURRENT == -1 ? 3 : 0).setColor(SYSTEMUI.dial_face_clr);
 							input_.set(FACE_CURRENT == -1 ? "" : FACE_INTERNAL); 
-						}),
+						}).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 1, 0.15, , 0.7); element_.main_ui.animate(element_, "yscale", 1, 0.15, , 1.3); sfx_play(snd_squish); }),
 					]),
 					
 					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image index
@@ -344,7 +344,7 @@
 					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a color
 						new LuiText({ value: "Color:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the color of every dialogue portrait.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[effect,color,R,G,B,time]", true, , true),
 						new LuiButton({ text: "Pick...", height: 40, }).addEvent(LUI_EV_CLICK, soupy_color_picker_portrait),
-						new LuiImage({ value: spr_face_test, draw_normal: true, }).setSize(70, 70).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datacolor", e_, , true); })
+						new LuiImage({ value: spr_face_test, draw_normal: true, }).setSize(70, 70).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datacolor", e_, , true); }).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 1, 0.15, , 0.7); element_.main_ui.animate(element_, "yscale", 1, 0.15, , 1.3); sfx_play(snd_squish); })
 						.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.dial_face_clr = e_.color_blend; e_.set(spr_face_test); soup_checkout("dataimage", false, true).setColor(e_.color_blend); audio_stop_sound(snd_equip2); sfx_play(snd_equip2, , , 1.3); }),
 					]),
 					
@@ -472,4 +472,21 @@
 			}
 		#endregion
 	#endregion
+#endregion
+
+#region Error Handling
+	errname = $"{directory_get_temporary_path()}error_log.soupy";
+
+	exception_unhandled_handler(function(err_) {
+		var errlog = $"Error: {err_.longMessage}\nStack Trace: {err_.stacktrace}";
+		show_debug_message($"--------------------------------------------------------------\nAn error has occured: {errlog}\n--------------------------------------------------------------\n\n");
+			
+		//Write the exception struct to a file
+		var buff = buffer_create(string_byte_length(errlog), buffer_grow, 1); //Create a buffer with the size of the error message string, fixed with an aligment of 1
+		buffer_write(buff, buffer_text, errlog); //Save the json to the new buffer..
+		buffer_save(buff, errname); //Save the buffer to a new file of specified name
+		buffer_delete(buff); //Delete buffer to prevent memory leaks
+		
+		game_restart_alt();
+	});
 #endregion

@@ -74,6 +74,7 @@
     {"name":"TGMX_Terms_of_Use","order":1,"path":"notes/TGMX_Terms_of_Use/TGMX_Terms_of_Use.yy",},
     {"name":"TGMX_Update_Log","order":2,"path":"notes/TGMX_Update_Log/TGMX_Update_Log.yy",},
     {"name":"ctrl_UndoStack","order":2,"path":"objects/ctrl_UndoStack/ctrl_UndoStack.yy",},
+    {"name":"obj_errhandler","order":3,"path":"objects/obj_errhandler/obj_errhandler.yy",},
     {"name":"obj_gmlive","order":6,"path":"objects/obj_gmlive/obj_gmlive.yy",},
     {"name":"obj_mini","order":2,"path":"objects/obj_mini/obj_mini.yy",},
     {"name":"obj_quill_core","order":2,"path":"objects/obj_quill_core/obj_quill_core.yy",},

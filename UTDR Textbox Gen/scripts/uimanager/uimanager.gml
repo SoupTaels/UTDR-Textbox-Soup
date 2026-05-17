@@ -6,6 +6,7 @@
 #macro FACE_PREVIOUS obj_system.dial_face_prev[obj_system.dial_text_page] //Get the previous dialogue face
 #macro FACE_INTERNAL obj_system.dial_face_name[obj_system.dial_text_page] //Get the internal name for the current dialogue face
 #macro FACE_USING FACE_CURRENT != -1 && FACE_CURRENT != 0 //If the dialogue box will contain a face
+#macro LAST_SAVED $"{executable_get_directory()}latest_soupy_last_typed.soupy" //Last text we typed
 
 #region Default functions for the menu buttons
 	function on_enter_() { if ( SYSTEMUI.ui_tab != id_ ) { sfx_play(snd_sel_switch); TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } }
@@ -13,6 +14,7 @@
 	function on_click_() { if ( SYSTEMUI.ui_tab != id_ ) { sfx_play(snd_select); SYSTEMUI.ui_tab = id_; on_reset_(); } else { sfx_play(snd_bump, , , random_range(0.8, 1.2)); } }
 	function on_hover_() { window_set_cursor(cr_drag); }
 	function on_reset_() { 
+		if ( !instance_exists(SYSTEMUI) ) { exit; }
 		SYSTEMUI.ui_reset();
 		
 		var i = 0;
@@ -44,7 +46,7 @@ function TextChange(txt, point) : UndoableChange() constructor { //Handle undo/ 
 		dial_text = other.mytxt; 
 		textinput.SetValue(dial_text);
 		
-		var lasttyped = file_text_open_write($"{executable_get_directory()}latest_soupy_last_typed.txt");
+		var lasttyped = file_text_open_write(LAST_SAVED);
 		file_text_write_string(lasttyped, dial_text); //Save what the user last typed
 		file_text_close(lasttyped);
 		
