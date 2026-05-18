@@ -186,8 +186,8 @@ function filename_dir_name(_file) {
 	var _dir = filename_dir(_file), _dirName = "";
 	var isize = string_length(_dir), i = isize;
 	repeat(isize) {
-		var _char = string_char_at(_dir, i), _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
-		if ( _char == _path_separator ) {
+		var _char = string_char_at(_dir, i);
+		if ( _char == PATHSEP ) {
 		_dirName = string_copy(_dir, i + 1, string_length(_dir) - i);
 		break;
 	}

@@ -10,6 +10,9 @@ function LuiImageButton(_params = {}) : LuiImage(_params) constructor {
 	self.params = _params;
 	self.draw_normal = _params[$ "draw_normal"] ?? false;
 	self.color_hover = _params[$ "color_hover"];
+	self.subimg = _params[$ "subimg"] ?? 0;
+	self.imgspd = _params[$ "imgspd"] ?? 0;
+	self.step = function () { if ( imgspd > 0 ) { self.updateMainUiSurface(); } }
 	self.draw = function() {
 		//Calculate fit size
 		var _width = self.width;
@@ -34,6 +37,7 @@ function LuiImageButton(_params = {}) : LuiImage(_params) constructor {
 			_blend_color = merge_color(_blend_color, c_black, 0.5);
 		}
 		//Draw sprite button
+		if ( self.imgspd > 0 ) { self.subimg += self.imgspd; }
 		if ( !self.draw_normal ) {
 			var _sprite_render_function = self.style.sprite_render_function ?? draw_sprite_stretched_ext;
 			if !is_undefined(self.value) && sprite_exists(self.value) {

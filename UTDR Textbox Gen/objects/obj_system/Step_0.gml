@@ -11,9 +11,10 @@ soupy_lui.update();
 #region Animation & Effects
 	#region Animate Face
 		if ( dial_text_gif && dial_face_auto && typist.get_delay_paused() ) { FACE_INDEX = 0; } //Stop the face from animating if the dialogue is being delayed
+		if ( !dial_face_auto ) { var amt = sprite_get_number(FACE_CURRENT); FACE_INDEX += FACE_SPEED; if ( FACE_INDEX >= amt ) { FACE_INDEX = 0; } } //Animate the portrait sprite
 		if ( bord_spd > 0 ) { //Animate the border
 			var amt = sprite_get_number(spr_bord);
-			if ( bord_anim == 0 ) { bord_index += bord_spd mod amt; }
+			if ( bord_anim == 0 ) { bord_index += bord_spd; if ( bord_index >= amt ) { bord_index = 0; } }
 			else { 
 				if ( !bord_anim_track ) { bord_index += bord_spd mod amt; if ( round(bord_index) >= amt) { bord_anim_track = true; } }
 				else { bord_index -= bord_spd; if ( round(bord_index) <= 0) { bord_anim_track = false; } }

@@ -77,7 +77,7 @@
 			if ( dial_face_auto ) { FACE_INDEX = 0; }
 			if ( !dial_face_keep ) { FACE_CURRENT = dial_face_original[dial_text_page]; } //Switch back to the original face
 			typist_spd = typist_spd_orig; //Switch back to the original typewriter speed
-			dial_face_alpha = 1; dial_face_angle = 0; dial_face_xoff = 0; dial_face_yoff = 0; 
+			dial_face_alpha = 1; dial_face_angle = 0; dial_face_xoff = 0; dial_face_yoff = 0; dial_face_xscale_off = 0; dial_face_yscale_off = 0;
 			
 			if ( !instance_exists(obj_mini) ) { exit; }
 			with ( obj_mini ) { if ( page == other.dial_text_page ) { active = true; TweenFire("$13", $"~{smooth ? "oquad" : "linear"}", "xoff", 30, 0, "alpha", 0, 1); } } 
@@ -90,11 +90,16 @@
 				FACE_PREVIOUS = FACE_CURRENT; //Get the previous face
 				FACE_CURRENT = get_face(param[0], array_length(param) > 1 ? param[1] : -1);
 				if ( FACE_USING ) { FACE_INTERNAL = param[0]; }
+				FACE_INDEX = array_length(param) > 2 && real_ext(param[2]) != "" ? real_ext(param[2]) : ( array_length(param) > 3 && real_ext(param[3]) != "" && bool(real_ext(param[3])) ? sprite_get_number(FACE_CURRENT) - 1 : 0 );
 			});
-			scribble_typists_add_event("face_orig", function(_, param) { FACE_ORIGINAL = get_face(param[0], array_length(param) > 1 ? param[1] : -1); }); //Change the original previous face to a new 
+			scribble_typists_add_event("face_orig", function(_, param) { //Change the original previous face to a new 
+				FACE_ORIGINAL = get_face(param[0], array_length(param) > 1 ? param[1] : -1);
+				FACE_INDEX = array_length(param) > 2 && real_ext(param[2]) != "" ? real_ext(param[2]) : ( array_length(param) > 3 && real_ext(param[3]) != "" && bool(real_ext(param[3])) ? sprite_get_number(FACE_CURRENT) - 1 : 0 );
+			});
 			scribble_typists_add_event("face_prev", function(_, param) { FACE_CURRENT = FACE_PREVIOUS; }); //Change the face back to the previous face
-			scribble_typists_add_event("face_auto", function(_, param) { dial_face_auto = bool(string_letters(param[0])); }); //Switch the automatically animation of the face
+			scribble_typists_add_event("face_auto", function(_, param) { dial_face_auto = bool(string_letters(param[0])); }); //Switch the automatic animation of the face
 			scribble_typists_add_event("face_index", function(_, param) { FACE_INDEX = real(string_digits(param[0])); }); //Change the index of the face(if dial_face_auto is off), for sprites with more sprites and expressions
+			scribble_typists_add_event("face_speed", function(_, param) { var value_ = real_ext(param[0]); FACE_SPEED = value_ == "" ? 0 : value_; }); //Change the speed of the face(if dial_face_auto is off), for sprites with more sprites and expressions
 			scribble_typists_add_event("border", function(_, param) { //Switch to a new border sprite
 				var bord_ = get_border(param[0]);
 				spr_bord = bord_ != -1 ? bord_ : spr_border_undertale;
@@ -117,8 +122,8 @@
 		#region Face Effects
 			var efxfunc = function(_, param) { //Play an effect
 				var len = array_length(param);
-				var delayfunc = function () { SYSTEMUI.typist.pause(); TweenScript(SYSTEMUI, 0, 2, function () { SYSTEMUI.typist.unpause(); }); }
-				switch ( param[0] ) {
+				var delayfunc = function () { SYSTEMUI.typist.pause(); TweenScript(SYSTEMUI, 0, 1.01, function () { SYSTEMUI.typist.unpause(); }); }
+				switch ( string_lower(param[0]) ) {
 					case "squash": case "squish": { TweenFire("$15", "~oquad", "dial_face_xscale_off", 0.3, 0, "dial_face_yscale_off", -0.3, 0); delayfunc(); } break; //Squish the face 
 					case "squeeze": case "stretch": { TweenFire("$15", "~oquad", "dial_face_xscale_off", -0.3, 0, "dial_face_yscale_off", 0.3, 0); delayfunc(); } break; //Squeeze the face
 					case "flash": { //Make the face flash a color [effect,flash,r,g,b,frames]
@@ -135,8 +140,12 @@
 						var getamt = real_ext(len > 1 ? param[1] : "0"), time_ = real_ext(len > 2 ? param[2] : "30");
 						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", "dial_face_alpha>", getamt != "" ? getamt : 0); delayfunc();
 					} break;
+					case "index": case "frame": case "img": { //Make the face's sprite index go to the specified target number [fx,index,#,frames]
+						var getamt = real_ext(len > 1 ? param[1] : sprite_get_number(FACE_CURRENT) - 1), time_ = real_ext(len > 2 ? param[2] : "30");
+						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", TPArray(SYSTEMUI.dial_face_index, SYSTEMUI.dial_text_page), FACE_INDEX, getamt == "" ? sprite_get_number(FACE_CURRENT) - 1 : getamt); delayfunc();
+					} break;
 					case "rotate": case "rot": case "angle": { //Make the face rotate to the specified target number [effect,rotate,#,frames,issmooth]
-						var getamt = real_ext(len > 1 ? param[1] : "360"), time_ = real_ext(len > 2 ? param[2] : "30"), smooth_ = real_ext(len > 3 ? param[3] : "0"); smooth_ = smooth_ != "" ? bool(smooth_) : false;
+						var getamt = real_ext(len > 1 ? param[1] : "359"), time_ = real_ext(len > 2 ? param[2] : "30"), smooth_ = real_ext(len > 3 ? param[3] : "0"); smooth_ = smooth_ != "" ? bool(smooth_) : false;
 						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", $"~{!smooth_? "linear" : "oquad"}", "dial_face_angle>", getamt != "" ? getamt : 0); delayfunc();
 					} break;
 					case "scale": case "size": { //Make the face scale to the specified target number [effect,scale,#,#,frames,issmooth]
@@ -148,7 +157,7 @@
 						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", $"~{!smooth_? "linear" : "oquad"}", "dial_face_xoff>", getamt != "" ? getamt : 0, "dial_face_yoff>", getamt2 != "" ? getamt2 : 0); delayfunc();
 					} break;
 					case "shake": case "rumble": { //Make the shake in place for some time [effect,shake,x,y,frames,intensity]
-						var x_ = real_ext(len > 1 ? param[1] : "0"), y_ = real_ext(len > 2 ? param[2] : "0"), time_ = real_ext(len > 3 ? param[3] : 10), off_ = real_ext(len > 4 ? param[4] : 2)
+						var x_ = real_ext(len > 1 ? param[1] : "0"), y_ = real_ext(len > 2 ? param[2] : "0"), time_ = real_ext(len > 3 ? param[3] : 5), off_ = real_ext(len > 4 ? param[4] : 2)
 						 x_ = x_ != "" ? bool(x_) : false; y_ = y_ != "" ? bool(y_) : false;
 						 soupy_alarm_set("face shaker", "timer", time_);
 						soup_store("face shaker", { x_, y_, time_, off_ }); delayfunc();
@@ -159,7 +168,8 @@
 		#endregion
 		
 		#region Macros
-			scribble_add_macro("icon", function(param) { var result = get_icon(param) return result != -1 ? $"[{result}]" : ""; }); //Icon helper tag [icon,funnytext game over]
+			scribble_add_macro("icon", function(param, index_ = 0, spd_ = 1) { var result = get_icon(param) return result != -1 ? $"[{result},{index_},{spd_}]" : ""; }); //Icon helper tag [icon,funnytext game over]
+			scribble_add_macro("face_spr", function(name_, expression_ = -1, index_ = 0, spd_ = 1) { var result = get_face(name_, expression_) return result != -1 ? $"[{result},{index_},{spd_}]" : ""; }); //Icon helper tag [face_spr,toriel happy]
 			scribble_add_macro("newlp", function() { return "\n  "; }); //Newline with no asterisk and it's padded out
 			scribble_add_macro("newla", function() { return "\n* "; }); //Newline with asterisk and a space
 			scribble_add_macro("newl", function() { return chr(10); }); //Newline literal
@@ -204,6 +214,7 @@
 	dial_face_prev[dial_text_page] = -1; //Previous Dial Face
 	dial_face_original[dial_text_page] = -1; //Original Dial Face
 	dial_face_auto = true; //Whether to automatically animate the sprite when dialogue is typing
+	dial_face_spd[dial_text_page] = 0; //Dialogue face speed
 	dial_face_clr = c_white; //Dialogue Face Clr
 	dial_face_name[dial_text_page] = -1; //Dialogue Portrait Internal Name
 	dial_face_keep = true; //Whether to always keep the last dialogue face or reset back to the original face
@@ -330,12 +341,23 @@
 					]),
 					
 					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image index
-						new LuiText({ value: "Image Index:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the image number of the\ncurrent dialogue portrait displaying.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[face_index,#]", true, , true),
-						new LuiInput({ height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, }).addEvent(LUI_EV_SHOW, function(e_) { e_.set(FACE_INDEX); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+						new LuiText({ value: "Image Index:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the image number of the\ncurrent dialogue portrait displaying.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[face_index,#]\n[c_yellow][slant]Sync With Dialogue[/] will be switched [c_red]off[/].", true, , true),
+						new LuiInput({ height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, }).addEvent(LUI_EV_SHOW, function(e_) { e_.set(FACE_CURRENT != -1 ? FACE_INDEX : 0); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
 							if ( dial_text_gif ) { exit; }
 							var spr_ = soup_checkout("dataimage", false, true), var value_ = e_.get(), index_ = real(value_ == "" ? 0 : value_);
 							if ( spr_.get() != spr_gui_icons ) { spr_.setSubimg(index_); FACE_INDEX = index_; }
-						}),
+							if ( dial_face_auto && soup_checkout("triggered") != undefined ) { dial_face_auto = false; }
+						}).addEvent(LUI_EV_CLICK, function(e_) { soup_store("triggered"); }),
+					]),
+					
+					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image speed
+						new LuiText({ value: "Image Speed:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the animation speed of the\ncurrent dialogue portrait displaying.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[face_speed,#]\n[c_yellow][slant]Sync With Dialogue[/] will be switched [c_red]off[/].", true, , true),
+						new LuiInput({ height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_SHOW, function(e_) { e_.set(FACE_CURRENT != -1 ? FACE_SPEED : 0); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+							if ( dial_text_gif ) { exit; }
+							var spr_ = soup_checkout("dataimage", false, true), var value_ = real_ext(e_.get()), index_ = value_ == "" ? 0 : value_;
+							if ( spr_.get() != spr_gui_icons ) { spr_.imgspd = index_; FACE_SPEED = index_; }
+							if ( dial_face_auto && soup_checkout("triggered") != undefined ) { dial_face_auto = false; }
+						}).addEvent(LUI_EV_CLICK, function(e_) { soup_store("triggered"); }),
 					]),
 				]);
 				var panel_header_ = new LuiButton(panel_base_).setText("Current Face Settings").setTooltip("These settings only affect the dialogue\nportrait on the [wave][c_cyan]current highlighted page.", true, , true).setData("header", panel_).setIcon(spr_gui_icons,,, c_black,, 1).addEvent(LUI_EV_CLICK, function(e_) { var header = e_.getData("header"); header.toggleVisible(); }); soupy_panel_portrait.addContent([panel_header_, panel_, ]); //End container
@@ -426,12 +448,13 @@
 				]),
 				
 				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image scale
-					new LuiText({ value: "Update Delay:", width: 130, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes how long it takes for the generator\nto update your output text.\n[c_yellow]Lower values and frequent updating may cause\nlag or other unexpected issues.", true, , true),
+					new LuiText({ value: "Update Delay:", width: 130, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("( - n# (45 recommended))\nChanges how long it takes for the generator\nto update your output text.\n[c_yellow]Lower values and frequent updating may cause\nlag or other unexpected issues.", true, , true),
 					new LuiInput({ value: dial_updatet_max, height: 40, placeholder: "1 - n# (45 recommended)", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, }).bindVariable(self, "dial_updatet_max").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
 						var get_ = e_.get(), value_ = real(get_ == "" ? 45 : get_); SYSTEMUI.dial_updatet_max = value_;
 					}),
 				]),
 				
+				new LuiButton({ text: "Help Guide", height: 40, }).addEvent(LUI_EV_CLICK, function() { execute_shell_simple("https://rentry.co/utdrsoupguides", , , 0); }),
 				new LuiButton({ text: "So Soupy!!", height: 40, }).addEvent(LUI_EV_CLICK, function() { execute_shell_simple("https://www.youtube.com/watch?v=zbClYRnQQJ0", , , 0); }),
 				new LuiButton({ text: "Credits", height: 40, }).addEvent(LUI_EV_CLICK, soupy_ui_credits),
 			]);

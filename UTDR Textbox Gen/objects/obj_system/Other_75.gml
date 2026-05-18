@@ -2,7 +2,7 @@
 //if ( live_call() ) { return live_result; }
 if ( !ui_visible ) { exit; } //Don't want to allow file dragging while we're exporting
 var async_result = async_load;
-var fpath = async_result[? "filename"], _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
+var fpath = async_result[? "filename"];
 var fname = filename_name(fpath), fext = filename_ext(fpath), temp_ = string_replace(string_replace(fname, $"_strip", ""), $".png", ""), finalname = string_exclude(temp_, "0123456789");
 show_debug_message($"File Path: {fpath}\nFile Name: {fname}\nFile Type: {fext}\nFinal Name: {finalname}");
 var errorfunc = function (txt_, w_ = undefined) { soupy_message(txt_, , w_, , , , , function() { SYSTEMUI.file_dragging = false; }); }

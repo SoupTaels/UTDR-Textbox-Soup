@@ -1,12 +1,14 @@
 #macro SYSTEMUI obj_system //System object
 #macro UI_MESSAGE !SYSTEMUI.ui_paused //For pausing ui elements
 #macro FACE_CURRENT obj_system.dial_face[obj_system.dial_text_page] //Get the current dialogue face
-#macro FACE_INDEX obj_system.dial_face_index[obj_system.dial_text_page]
+#macro FACE_INDEX obj_system.dial_face_index[obj_system.dial_text_page] //Get the current dialogue face index
+#macro FACE_SPEED obj_system.dial_face_spd[obj_system.dial_text_page] //Get the current dialogue face speed
 #macro FACE_ORIGINAL obj_system.dial_face_original[obj_system.dial_text_page] //Get the original dialogue face
 #macro FACE_PREVIOUS obj_system.dial_face_prev[obj_system.dial_text_page] //Get the previous dialogue face
 #macro FACE_INTERNAL obj_system.dial_face_name[obj_system.dial_text_page] //Get the internal name for the current dialogue face
 #macro FACE_USING FACE_CURRENT != -1 && FACE_CURRENT != 0 //If the dialogue box will contain a face
 #macro LAST_SAVED $"{executable_get_directory()}latest_soupy_last_typed.soupy" //Last text we typed
+#macro PATHSEP (( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ) ? "\\"  :  "/") //Get platform-dependant path
 
 #region Default functions for the menu buttons
 	function on_enter_() { if ( SYSTEMUI.ui_tab != id_ ) { sfx_play(snd_sel_switch); TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } }

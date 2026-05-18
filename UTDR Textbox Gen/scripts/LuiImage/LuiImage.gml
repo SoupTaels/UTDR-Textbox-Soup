@@ -15,6 +15,7 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 	self.maintain_aspect = _params[$ "maintain_aspect"] ?? true;
 	self.draw_normal = _params[$ "draw_normal"] ?? false;
 	self.angle = _params[$ "angle"] ?? 0;
+	self.imgspd = _params[$ "imgspd"] ?? 0;
 	self.xscale = _params[$ "xscale"] ?? 1;
 	self.yscale = _params[$ "yscale"] ?? 1;
 	self.color_default = self.color_blend;
@@ -69,6 +70,8 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 		}
 	}
 	
+	self.step = function () { if ( imgspd > 0 ) { self.updateMainUiSurface(); } }
+	
 	self.draw = function() {
 		//Calculate fit size
 		var _width = self.width;
@@ -86,6 +89,7 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 			_blend_color = merge_color(_blend_color, c_black, 0.5);
 		}
 		//Draw sprite
+		if ( self.imgspd > 0 ) { self.subimg += self.imgspd; }
 		if ( !self.draw_normal ) {
 			var _sprite_render_function = self.style.sprite_render_function ?? draw_sprite_stretched_ext;
 			if !is_undefined(self.value) && sprite_exists(self.value) {

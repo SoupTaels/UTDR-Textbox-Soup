@@ -3,12 +3,12 @@ outputLog = "";
 	faces_dict = {};
 	faces_dict_alt = {};
 	
-	var findfaces = gumshoe("faces", ".png"), faces_i = 0, faces_count = 0, faces_len = array_length(findfaces), _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
+	var findfaces = gumshoe("faces", ".png"), faces_i = 0, faces_count = 0, faces_len = array_length(findfaces);
 	repeat ( faces_len ) {
 		var faces_cur = findfaces[faces_i]; //Current face we're looking at
 		var faces_dir = filename_dir_name(faces_cur); //Get directory name
 		if ( !struct_exists(global.faces_dict, faces_dir) ) { global.faces_dict[$ faces_dir] = {}; } //Create new struct face dictionary
-			var temp_ = string_replace(faces_cur, $"faces{_path_separator}{faces_dir}{_path_separator}", ""); //Remove faces/(folder name)/
+			var temp_ = string_replace(faces_cur, $"faces{PATHSEP}{faces_dir}{PATHSEP}", ""); //Remove faces/(folder name)/
 			var imgnum = string_between(temp_, "_strip", ".png"); imgnum = imgnum == "" ? 1 : real(imgnum); //Get the image number if it's a strip file
 			var faces_emote = string_exclude(string_replace(string_replace(string_replace(temp_, $"_strip", ""), $"spr_{faces_dir}_", ""), ".png", ""), "1234567890"); //Get face expression
 			
@@ -54,7 +54,7 @@ outputLog = "";
 		*/
 		var early_ = asset_get_index(name);
 		if ( early_ != -1 ) { return early_; }
-		if ( expression == -1 ) { //Just proving a name, probably using the quick way to get a sprite
+		if ( expression == -1 || string_letters(expression) == "" ) { //Just proving a name, probably using the quick way to get a sprite
 			var getface = global.faces_dict_alt[$ name], getfacespr = global.faces_dict_alt[$ $"spr_{name}"], name2 = string_replace_all(name, " ", "_"), getfacespr2 = global.faces_dict_alt[$ $"spr_{name2}"];
 			return getface != undefined ? getface[$ return_] : ( getfacespr != undefined ? getfacespr[$ return_] : ( getfacespr2 != undefined ? getfacespr2[$ return_] : -1 ) );
 		}
@@ -73,11 +73,11 @@ outputLog = "";
 		icons_dict = {};
 		icons_dict_alt = {};
 	
-		var findicons = gumshoe("icons", ".png"), icons_i = 0, icons_len = array_length(findicons), _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
+		var findicons = gumshoe("icons", ".png"), icons_i = 0, icons_len = array_length(findicons);
 		repeat ( icons_len ) {
 			var icons_cur = findicons[icons_i]; //Current icon we're looking at
 		
-			var temp_ = string_replace(icons_cur, $"icons{_path_separator}", ""); 
+			var temp_ = string_replace(icons_cur, $"icons{PATHSEP}", ""); 
 			var imgnum = string_between(temp_, "_strip", ".png"); imgnum = imgnum == "" ? 1 : real(imgnum); //Get the image number if it's a strip file
 			temp_ = string_replace(string_replace(string_replace(temp_, $"spr_", ""), $"_strip", ""), $".png", "");
 			temp_ = string_exclude(temp_, "0123456789");
@@ -91,7 +91,7 @@ outputLog = "";
 				var out_ = $"Added \"{name}\" from {fname_}! Image Count: {count}";
 				scribble_external_sprite_add(sprite, name);
 				
-				var temp_2 = string_replace(icons_cur, $"icons{_path_separator}", ""); 
+				var temp_2 = string_replace(icons_cur, $"icons{PATHSEP}", ""); 
 				temp_2 = string_replace(string_replace(temp_2, $"_strip", ""), $".png", "");
 				temp_2 = string_exclude(temp_2, "0123456789");
 				if ( !scribble_external_sprite_exists(temp_2) ) { scribble_external_sprite_add(sprite, temp_2); } //alternative
@@ -113,11 +113,11 @@ outputLog = "";
 		bords_dict = {};
 		bords_dict_alt = {};
 	
-		var findbords = gumshoe("borders", ".png"), bords_i = 0, bords_len = array_length(findbords), _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
+		var findbords = gumshoe("borders", ".png"), bords_i = 0, bords_len = array_length(findbords);
 		repeat ( bords_len ) {
 			var bords_cur = findbords[bords_i]; //Current border we're looking at
 		
-			var temp_ = string_replace(bords_cur, $"borders{_path_separator}", ""); 
+			var temp_ = string_replace(bords_cur, $"borders{PATHSEP}", ""); 
 			var imgnum = string_between(temp_, "_strip", ".png"); imgnum = imgnum == "" ? 1 : real(imgnum); //Get the image number if it's a strip file
 			temp_ = string_replace(string_replace(string_replace(temp_, $"spr_", ""), $"_strip", ""), $".png", "");
 			temp_ = string_exclude(temp_, "0123456789");
@@ -129,7 +129,7 @@ outputLog = "";
 				sprite_set_offset(sprite, size.width/ 2, size.height/ 2); //Center sprite
 				
 				var out_ = $"Added \"{name}\" from {fname_}! | Image Count: {count}";
-				var temp_2 = string_replace(bords_cur, $"borders{_path_separator}", ""); 
+				var temp_2 = string_replace(bords_cur, $"borders{PATHSEP}", ""); 
 				temp_2 = string_replace(string_replace(temp_2, $"_strip", ""), $".png", "");
 				temp_2 = string_exclude(temp_2, "0123456789");
 				global.bords_dict_alt[$ temp_2] = { sprite, name, size, } //Add sprite index and expression name to the global icon alt dictonary
@@ -148,7 +148,7 @@ outputLog = "";
 	#endregion
 	
 	#region Reference Image
-		var _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/", fname = $"reference{_path_separator}reference_image.png", fnamedebug = string_replace(fname, $"reference{_path_separator}", "");
+		var fname = $"reference{PATHSEP}reference_image.png", fnamedebug = string_replace(fname, $"reference{PATHSEP}", "");
 		global.refimg = -1; if ( file_exists(fname) ) { global.refimg = sprite_add_ext(fname, 1, 0, 0, true); show_debug_message($"Added \"{fnamedebug}\" from {fname}!"); }
 	#endregion
 #endregion
@@ -157,11 +157,11 @@ outputLog = "";
 	fonts_dict = {};
 	fonts_dict_alt = {};
 	
-	var findfonts = gumshoe("fonts", ".png"), fonts_i = 0, fonts_len = array_length(findfonts), _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
+	var findfonts = gumshoe("fonts", ".png"), fonts_i = 0, fonts_len = array_length(findfonts);
 	repeat ( fonts_len ) {
 		var fonts_cur = findfonts[fonts_i]; //Current font we're looking at
 		
-		var temp_ = string_replace(fonts_cur, $"fonts{_path_separator}", ""); 
+		var temp_ = string_replace(fonts_cur, $"fonts{PATHSEP}", ""); 
 		var imgnum = string_between(temp_, "_strip", ".png"); imgnum = imgnum == "" ? 1 : real(imgnum); //Get the image number if it's a strip file
 		temp_ = string_replace(string_replace(string_replace(temp_, $"spr_", ""), $"_strip", ""), $".png", "");
 		temp_ = string_exclude(temp_, "0123456789");
@@ -171,7 +171,7 @@ outputLog = "";
 			self[$ "font"] = font_add_sprite(sprite, ord("!"), false, 0); //Add as an actual font
 			self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; font_delete(font); delete font; font = -1; show_debug_message($"External font \"{fname_}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
 			
-			var temp_2 = string_replace(fonts_cur, $"fonts{_path_separator}", ""); 
+			var temp_2 = string_replace(fonts_cur, $"fonts{PATHSEP}", ""); 
 			temp_2 = string_replace(string_replace(temp_2, $"_strip", ""), $".png", "");
 			temp_2 = string_exclude(temp_2, "0123456789");
 	
@@ -279,6 +279,7 @@ outputLog = "";
 							array_push(spr_, new LuiImageButton({ value: myspr, draw_normal: true, }).setSize(sprite_get_width(myspr), sprite_get_height(myspr)).setData("face", myspr).setData("facename", finalname).setFlexAlignSelf(flexpanel_align.center).setTooltip($"{finalname}\n[face,{finalname}]", true)
 							.setData("inputsoup_", element_.getData("inputsoup_")).setData("inputglobal_", element_.getData("inputglobal_")).setData("imagesoup_", element_.getData("imagesoup_")).setData("imageglobal_", element_.getData("imageglobal_")).setData("clear_", element_.getData("clear_"))
 							.addEvent(LUI_EV_CLICK, function(element_) { sfx_play(snd_updated); if ( element_.getData("clear_") ) { FACE_CURRENT = element_.getData("face"); FACE_ORIGINAL = FACE_CURRENT; } soup_checkout(element_.getData("inputsoup_"), false, element_.getData("inputglobal_")).set(element_.getData("facename")); soup_checkout(element_.getData("imagesoup_"), false, element_.getData("imageglobal_")).set(element_.getData("face")); soup_checkout("datafunc", false)(); })
+							.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { if ( sprite_get_number(element_.get()) > 1 ) { element_.imgspd = 0.15; } }).addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.imgspd = 0; element_.subimg = 0; })
 							);
 						}
 					spr_i++; }

@@ -3,7 +3,7 @@
 if ( screenshot || record.enabled ) { 
 	var dltrn = spr_bord == spr_border_deltarune; //Check if our border is Deltarune
 	var out_ = bord_out; //Whether to save with an outline
-	var folder = "UTDR-SoupGen-Export", fname = $"UTDR_SoupGen_-{current_month}.{current_day}.{current_year}-_{current_hour};{current_minute};{current_second}.{current_time}-", _is_microsoft = ( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ), _path_separator = _is_microsoft? "\\"  :  "/";
+	var folder = "UTDR-SoupGen-Export", fname = $"UTDR_SoupGen_-{current_month}.{current_day}.{current_year}-_{current_hour}.{current_minute}.{current_second}.{current_time}-";
 	var offset_ = dltrn ? 8 : 0, offset_w = dltrn ? 15 : 0, offset_h = dltrn ? 16 : 0, x_ = ( 32 - offset_ ) - ( out_ ? 2 : 0 ), y_ = ( 315 - offset_ ) - ( out_ ? 2 : 0 ), w_ = ( 578 + offset_w ) + ( out_ ? 4 : 0 ), h_ = ( 152 + offset_w ) + ( out_ ? 4 : 0 ); //Border coords
 	
 	#region Draw Surface
@@ -33,8 +33,8 @@ if ( screenshot || record.enabled ) {
 	#endregion
 	
 	#region Function for finishing recording
-		var finish_func = method({folder, _path_separator, fname, record, x_, y_, w_, h_, screenshot_surf }, function(gif_ = true, stack_ = false, cancel_ = false) { //Finished recording/ screenshotting
-			var fpath_final = $"{executable_get_directory()}{folder}{_path_separator}{fname}_.{gif_ ? "gif" : "png"}";
+		var finish_func = method({folder, fname, record, x_, y_, w_, h_, screenshot_surf }, function(gif_ = true, stack_ = false, cancel_ = false) { //Finished recording/ screenshotting
+			var fpath_final = $"{executable_get_directory()}{folder}{PATHSEP}{fname}_.{gif_ ? "gif" : "png"}";
 			if ( !cancel_ ) { if ( !stack_ ) {
 				if ( gif_ ) { record.id_ = gif_save(record.id_, fpath_final); } //Save GIF
 				else { surface_save_part(screenshot_surf, fpath_final, x_, y_, w_, h_); } //Save screenshot
@@ -44,7 +44,7 @@ if ( screenshot || record.enabled ) {
 				execute_shell_simple(fpath_final, , , 6); //Open the image in the PC's default photo viewer (Windows only)
 				clipboard_set_text(fpath_final);
 			} }
-			else { soup_checkout("export dialogue"); soupy_message("The export operation was canceled.", , 350, , , snd_cancel); if ( record.enabled ) { record.id_ = gif_save(record.id_, $"{directory_get_temporary_path()}soupytemp.gif"); file_delete($"{directory_get_temporary_path()}soupytemp.gif"); } }
+			else { soup_checkout("export dialogue"); soupy_message("The export operation was canceled.", , 350, , , snd_cancel, , function(){ TweenScript(SYSTEMUI, 0, 2, function(){ soup_store_clear(); }); }); if ( record.enabled ) { record.id_ = gif_save(record.id_, $"{directory_get_temporary_path()}soupytemp.gif"); file_delete($"{directory_get_temporary_path()}soupytemp.gif"); } }
 			
 			surface_free(screenshot_surf); screenshot_surf = -1;
 			with ( record ) { frames = 0; framesmax = 0; enabled = false; id_ = -1; }
@@ -67,7 +67,7 @@ if ( screenshot || record.enabled ) {
 		else {
 			if ( dial_text_page < dial_text_page_c ) { //Create sprite from surface, then push them to the stack
 				with ( obj_stacker ) {
-					if ( soupstack_path == "" ) { var fpath_final = $"{executable_get_directory()}{folder}{_path_separator}{fname}_.png"; soupstack_path = fpath_final; soupstack_fname = fname; soupstack_folder = folder; }
+					if ( soupstack_path == "" ) { var fpath_final = $"{executable_get_directory()}{folder}{PATHSEP}{fname}_.png"; soupstack_path = fpath_final; soupstack_fname = fname; soupstack_folder = folder; }
 					array_push(soupstack_spr, sprite_create_from_surface(other.screenshot_surf, x_, y_, w_, h_, false, false, 0, 0));
 				}
 				dial_text_page++; sfx_play(snd_equip2); 

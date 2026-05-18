@@ -11,7 +11,8 @@
 			dial_face_prev[dial_text_page_c - 1] = -1; 
 			dial_face_original[dial_text_page_c - 1] = -1; 
 			dial_face_name[dial_text_page_c - 1] = -1; 
-			dial_face_index[dial_text_page_c - 1] = -1; 
+			dial_face_index[dial_text_page_c - 1] = 0; 
+			dial_face_spd[dial_text_page_c - 1] = 0; 
 		}
 	}
 #endregion
