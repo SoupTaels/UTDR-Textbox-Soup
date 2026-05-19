@@ -134,6 +134,9 @@
   "sdfSpread":8,
   "size":24.0,
   "styleName":"Regular",
+  "tags":[
+    "fonts",
+  ],
   "textureGroupId":{
     "name":"Default",
     "path":"texturegroups/Default",

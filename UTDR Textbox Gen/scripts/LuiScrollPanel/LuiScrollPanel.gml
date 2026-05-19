@@ -12,6 +12,7 @@ function LuiScrollPanel(_params = {}) : LuiBase(_params) constructor {
 	self.scroll_container = undefined; 
 	self.sprite_panel = _params[$ "sprite_panel"] ?? true;
 	self.scroll_slider_width = _params[$ "scroll_slider_width"] ?? undefined;
+	self.sound_right = _params[$ "sound_right"] ?? -1; self.sound_right_g = _params[$ "sound_right_g"] ?? 1; self.sound_right_p = _params[$ "sound_right_p"] ?? 1;
 	
 	///@desc Change getContainer function for compatibility with setFlex... functions
 	self.getContainer = function() {
@@ -129,5 +130,11 @@ function LuiScrollPanel(_params = {}) : LuiBase(_params) constructor {
 		if !is_undefined(_element.scroll_container) {
 			_element.scroll_container.destroy();
 		}
+	});
+	
+	self.addEvent(LUI_EV_CLICK_R, function(_element) {
+		var btm = -(_element.scroll_container.height - _element.height);
+		_element.scroll_target_offset_y = _element.scroll_target_offset_y == btm ? 0 : btm;
+		sfx_play(_element.sound_right, , _element.sound_right_g, _element.sound_right_p)
 	});
 }

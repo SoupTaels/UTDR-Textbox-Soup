@@ -63,7 +63,7 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 	
 	///@ignore
 	static _calcSpriteSize = function() {
-		if !is_undefined(self.value) && sprite_exists(self.value) {
+		if ( !is_undefined(self.value) && self.value != -1 && self.value != "" && sprite_exists(self.value) ) {
 			self.sprite_real_width = sprite_get_width(self.value);
 			self.sprite_real_height = sprite_get_height(self.value);
 			self.aspect = self.sprite_real_width / self.sprite_real_height;
@@ -90,18 +90,18 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 		}
 		//Draw sprite
 		if ( self.imgspd > 0 ) { self.subimg += self.imgspd; }
-		if ( !self.draw_normal ) {
-			var _sprite_render_function = self.style.sprite_render_function ?? draw_sprite_stretched_ext;
-			if !is_undefined(self.value) && sprite_exists(self.value) {
-				_sprite_render_function(self.value, self.subimg, 
-											floor(self.x + self.width/2 - _width/2) - self.xscale, 
-											floor(self.y + self.height/2 - _height/2) - self.yscale, 
-											_width + ( self.xscale * 2 ), _height + ( self.yscale * 2 ), 
-											_blend_color, self.alpha);
+		if ( !is_undefined(self.value) && self.value != -1 && self.value != "" && sprite_exists(self.value) ) {
+			if ( !self.draw_normal ) {
+				var _sprite_render_function = self.style.sprite_render_function ?? draw_sprite_stretched_ext;
+					_sprite_render_function(self.value, self.subimg, 
+												floor(self.x + self.width/2 - _width/2) - self.xscale, 
+												floor(self.y + self.height/2 - _height/2) - self.yscale, 
+												_width + ( self.xscale * 2 ), _height + ( self.yscale * 2 ), 
+												_blend_color, self.alpha);
 			}
-		}
-		else {
-			if ( sprite_exists(self.value) ) { draw_sprite_ext(self.value, self.subimg, self.x + self.width/2, self.y + self.height/2, self.xscale, self.yscale, self.angle ?? 0, _blend_color, self.alpha); }
+			else {
+				draw_sprite_ext(self.value, self.subimg, self.x + self.width/2, self.y + self.height/2, self.xscale, self.yscale, self.angle ?? 0, _blend_color, self.alpha);
+			}
 		}
 	}
 	

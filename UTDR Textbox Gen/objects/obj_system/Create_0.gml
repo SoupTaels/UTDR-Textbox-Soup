@@ -226,7 +226,7 @@
 	dial_face_xoff = 0; dial_face_yoff = 0; //Dialogue Face X & Y offset, for animation
 #endregion
 
-#region UI
+#region Engine UI
 	fader = 1; TweenFire("$10", "+10", "fader>", 0); //Black overlay
 	ui_tab = 0; //Current Tab (0 - Dialogue, 1 - Face, 2 - Border, 3 - About)
 	screenshot = false; //Screenshot task
@@ -310,221 +310,245 @@
 				.on_blur();
 			#endregion
 	#endregion
-	
-	#region Menu Sections
-		#region Init Style
-			var soupy_style = new LuiStyle({ padding: 15, gap: 10, color_text: c_white, color_hover: c_yellow, sound_click: snd_select, sound_hover: snd_sel_switch, }) //Main Style
-				.setRenderRegionOffset([10, 10, 10, 10])
-				.setFonts(fnt_determination, fnt_determination, fnt_determination).setColors(, c_orange, #f43e83, #15ee97)
-				.setSprites(spr_border_undertale_outlined, spr_border_undertale_outlined).setSpriteCheckbox(spr_border_undertale_outlined, spr_pixel)
-			soupy_lui = new LuiMain().setStyle(soupy_style);
-		#endregion
-		
-		#region Portrait Panel
-			var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
-			soupy_panel_portrait = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, }); //Start containter
-		
-				var panel_base_ = { text: "", color: c_orange, sprite_button: spr_border_header, height: 40, font: fnt_speech, text_color: c_black, sound_click: snd_enc1, sound_click_pitch: 1.3, };
-				var panel_ = new LuiContainer().setPadding(0).addContent([
-					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
-						new LuiText({ value: "Sprite:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the portrait sprite.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[face,character,expression][/]\nor [c_yellow][[face,filename][/]. Set to [c_red]-1[/] for no\ndialogue portrait.", true, , true),
-						new LuiButton({ text: "Choose...", height: 40, width: 100, }).addEvent(LUI_EV_CLICK, external_choose_face),
-						new LuiInput({ height: 40, placeholder: "or type. (ex: spr_face_test)", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datainput", e_, , true); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
-							var spr_ = soup_checkout("dataimage", false, true), getface = get_face(e_.get()); 
-							spr_.set(getface == -1 ? spr_gui_icons : getface); spr_.subimg = ( getface == -1 ? 3 : 0 );
-							FACE_CURRENT = getface; FACE_INTERNAL = e_.get(); if ( getface != -1 ) { sfx_play(snd_updated); }
-						}),
-						new LuiImage({ draw_normal: true, }).setSize(70, 70).addEvent(LUI_EV_CREATE, function(e_) { soup_store("dataimage", e_, , true); }).addEvent(LUI_EV_SHOW, function(e_) { 
-							var input_ = soup_checkout("datainput", false, true), spr_ = soup_checkout("dataimage", false, true);
-							spr_.set(FACE_CURRENT == -1 ? spr_gui_icons : FACE_CURRENT).setSubimg(FACE_CURRENT == -1 ? 3 : 0).setColor(SYSTEMUI.dial_face_clr);
-							input_.set(FACE_CURRENT == -1 ? "" : FACE_INTERNAL); 
-						}).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 1, 0.15, , 0.7); element_.main_ui.animate(element_, "yscale", 1, 0.15, , 1.3); sfx_play(snd_squish); }),
-					]),
-					
-					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image index
-						new LuiText({ value: "Image Index:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the image number of the\ncurrent dialogue portrait displaying.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[face_index,#]\n[c_yellow][slant]Sync With Dialogue[/] will be switched [c_red]off[/].", true, , true),
-						new LuiInput({ height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, }).addEvent(LUI_EV_SHOW, function(e_) { e_.set(FACE_CURRENT != -1 ? FACE_INDEX : 0); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
-							if ( dial_text_gif ) { exit; }
-							var spr_ = soup_checkout("dataimage", false, true), var value_ = e_.get(), index_ = real(value_ == "" ? 0 : value_);
-							if ( spr_.get() != spr_gui_icons ) { spr_.setSubimg(index_); FACE_INDEX = index_; }
-							if ( dial_face_auto && soup_checkout("triggered") != undefined ) { dial_face_auto = false; }
-						}).addEvent(LUI_EV_CLICK, function(e_) { soup_store("triggered"); }),
-					]),
-					
-					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image speed
-						new LuiText({ value: "Image Speed:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the animation speed of the\ncurrent dialogue portrait displaying.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[face_speed,#]\n[c_yellow][slant]Sync With Dialogue[/] will be switched [c_red]off[/].", true, , true),
-						new LuiInput({ height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_SHOW, function(e_) { e_.set(FACE_CURRENT != -1 ? FACE_SPEED : 0); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
-							if ( dial_text_gif ) { exit; }
-							var spr_ = soup_checkout("dataimage", false, true), var value_ = real_ext(e_.get()), index_ = value_ == "" ? 0 : value_;
-							if ( spr_.get() != spr_gui_icons ) { spr_.imgspd = index_; FACE_SPEED = index_; }
-							if ( dial_face_auto && soup_checkout("triggered") != undefined ) { dial_face_auto = false; }
-						}).addEvent(LUI_EV_CLICK, function(e_) { soup_store("triggered"); }),
-					]),
-				]);
-				var panel_header_ = new LuiButton(panel_base_).setText("Current Face Settings").setTooltip("These settings only affect the dialogue\nportrait on the [wave][c_cyan]current highlighted page.", true, , true).setData("header", panel_).setIcon(spr_gui_icons,,, c_black,, 1).addEvent(LUI_EV_CLICK, function(e_) { var header = e_.getData("header"); header.toggleVisible(); }); soupy_panel_portrait.addContent([panel_header_, panel_, ]); //End container
-				
-				var panel_ = new LuiContainer().setPadding(0).addContent([
-					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a color
-						new LuiText({ value: "Color:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the color of every dialogue portrait.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[effect,color,R,G,B,time]", true, , true),
-						new LuiButton({ text: "Pick...", height: 40, }).addEvent(LUI_EV_CLICK, soupy_color_picker_portrait),
-						new LuiImage({ value: spr_face_test, draw_normal: true, }).setSize(70, 70).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datacolor", e_, , true); }).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 1, 0.15, , 0.7); element_.main_ui.animate(element_, "yscale", 1, 0.15, , 1.3); sfx_play(snd_squish); })
-						.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.dial_face_clr = e_.color_blend; e_.set(spr_face_test); soup_checkout("dataimage", false, true).setColor(e_.color_blend); audio_stop_sound(snd_equip2); sfx_play(snd_equip2, , , 1.3); }),
-					]),
-					
-					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image scale
-						new LuiText({ value: "Scale:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the scale of every dialogue portrait.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[effect,scale,X,Y,frames,issmooth]", true, , true),
-						new LuiInput({ value: "2", height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, }).bindVariable(self, "dial_face_xscale").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
-							var get_ = e_.get(), value_ = real(get_ == "" ? 2 : get_); SYSTEMUI.dial_face_xscale = value_; SYSTEMUI.dial_face_yscale = value_;
-						}),
-					]),
-					
-					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image angle
-						new LuiText({ value: "Angle:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the angle of every dialogue portrait.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[effect,rotate,#,frames,issmooth]", true, , true),
-						new LuiSlider({ min_value: 0, color_text: c_black, color_text_drag: c_white, max_value: 360, rounding: true, display_value: true, bar_sprite: spr_border_header, bar_sprite_back: spr_border_header, }).bindVariable(self, "dial_face_angle").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
-							var value_ = real(e_.get()); SYSTEMUI.dial_face_angle = value_; soup_checkout("dataimage", false, true).angle = value_;
-						}),
-					]),
-					
-					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image alpha
-						new LuiText({ value: "Opacity:", width: 85, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the alpha of every dialogue portrait.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[effect,fade,#,frames]", true, , true),
-						new LuiSlider({ value: dial_face_alpha, min_value: 0, color_text: c_black, color_text_drag: c_white, max_value: 1, rounding: false, display_value: true, bar_sprite: spr_border_header, bar_sprite_back: spr_border_header, }).bindVariable(self, "dial_face_alpha").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
-							var value_ = real(e_.get()); SYSTEMUI.dial_face_alpha = value_; soup_checkout("dataimage", false, true).alpha = value_;
-						}),
-					]),
-					
-					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Animate with dialogue
-						new LuiText({ value: "Sync with dialogue:", width: 185, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether to animate the face while\ndialogue is typing out.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[face_auto,\"true\" or \"false\"]", true, , true),
-						new LuiToggleSwitch({ value: dial_face_auto, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "dial_face_auto"),
-					]),
-					
-					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Keep original dialogue face
-						new LuiText({ value: "Keep previous face:", width: 185, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether to always keep the last dialogue face\nor reset back to the original face.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[face_orig,character,expression]", true, , true),
-						new LuiToggleSwitch({ value: dial_face_keep, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "dial_face_keep"),
-					]),
-				]);
-				var panel_header_ = new LuiButton(panel_base_).setText("Global Face Settings").setTooltip("These settings affect [wave][c_red]all[/] dialogue portraits.", true, , true).setData("header", panel_).setIcon(spr_gui_icons,,, c_black,, 5).addEvent(LUI_EV_CLICK, function(e_) { var header = e_.getData("header"); header.toggleVisible(); }); soupy_panel_portrait.addContent([panel_header_, panel_, ]); //End container
-		
-			soupy_lui.addContent(soupy_panel_portrait); //Add everything to the main ui
-		#endregion
-		
-		#region Border Panel
-			var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
-			soupy_panel_border = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, }) //Start containter
-			.addContent([
-				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
-					new LuiText({ value: "Sprite:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the border sprite.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[border,sprite name][/].", true, , true),
-					new LuiButton({ text: "Choose...", height: 40, width: 100, }).addEvent(LUI_EV_CLICK, external_choose_border),
-					new LuiInput({ height: 40, placeholder: "or type. (ex: spr_border_deltarune)", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datainputB", e_, , true); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
-						var spr_ = soup_checkout("dataimageB", false, true), getface = get_border(e_.get()); 
-						spr_.set(getface == -1 ? spr_border_undertale : getface); spr_.subimg = SYSTEMUI.bord_index;
-						SYSTEMUI.spr_bord = (getface == -1 ? spr_border_undertale : getface); SYSTEMUI.bord_prev = SYSTEMUI.spr_bord; bord_name = (getface == -1 ? "spr_border_undertale" : e_.get()); if ( getface != -1 ) { sfx_play(snd_updated); }
-					}),
-					new LuiImage({ maintain_aspect: false, xscale: 0, yscale: 0, }).setSize(70, 70).addEvent(LUI_EV_CREATE, function(e_) { soup_store("dataimageB", e_, , true); }).addEvent(LUI_EV_SHOW, function(e_) { 
-						var input_ = soup_checkout("datainputB", false, true), spr_ = soup_checkout("dataimageB", false, true);
-						spr_.set(SYSTEMUI.spr_bord).setSubimg(SYSTEMUI.bord_index).setColor(SYSTEMUI.bord_clr);
-						input_.set(bord_name); 
-					}).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 0, 0.15, , 5); element_.main_ui.animate(element_, "yscale", 0, 0.15, , 5); sfx_play(snd_squish); }),
-				]),
-			]);
-			//repeat ( 12 ) {
-			//	soupy_panel_border.addContent([
-			//		new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
-			//			new LuiText({ value: "Style Panel:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, truncate: false, }),
-			//			new LuiButton({ text: "Test Button", height: 40, }),
-			//		]),
-			//	]);
-			//}
-		
-			soupy_lui.addContent(soupy_panel_border); //Add everything to the main ui
-		#endregion
-		
-		#region Style Panel
-			var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
-			soupy_panel_style = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, }); //Start containter
-			repeat ( 12 ) {
-				soupy_panel_style.addContent([
-					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
-						new LuiText({ value: "Style Panel:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, truncate: false, }),
-						new LuiButton({ text: "Test Button", height: 40, }),
-					]),
-				]);
-			}
-		
-			soupy_lui.addContent(soupy_panel_style); //Add everything to the main ui
-		#endregion
-		
-		#region Extra Panel
-			var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
-			soupy_panel_extra = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, }) //Start containter
-			.addContent([
-				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a color
-					new LuiText({ value: "GIF BG Color:", width: 130, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the color of the [c_lime]green screen[/] for GIFs.\nGIFs don't support transparency, so this is needed.", true, , true),
-					new LuiButton({ text: "Pick...", height: 40, }).addEvent(LUI_EV_CLICK, soupy_color_picker_gifcolor),
-					new LuiImage({ value: spr_pixel, maintain_aspect: false, color: screenshot_back }).setSize(80, 40).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datagifcolor", e_, , true); }).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 1, 0.15, , 0.7); element_.main_ui.animate(element_, "yscale", 1, 0.15, , 1.3); sfx_play(snd_squish); })
-					.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { e_.set(spr_pixel); SYSTEMUI.screenshot_back = e_.color_blend; audio_stop_sound(snd_equip2); sfx_play(snd_equip2, , , 1.3); }),
-				]),
-				
-				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image scale
-					new LuiText({ value: "Update Delay:", width: 130, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("( - n# (45 recommended))\nChanges how long it takes for the generator\nto update your output text.\n[c_yellow]Lower values and frequent updating may cause\nlag or other unexpected issues.", true, , true),
-					new LuiInput({ value: dial_updatet_max, height: 40, placeholder: "1 - n# (45 recommended)", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, }).bindVariable(self, "dial_updatet_max").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
-						var get_ = e_.get(), value_ = real(get_ == "" ? 45 : get_); SYSTEMUI.dial_updatet_max = value_;
-					}),
-				]),
-				
-				new LuiButton({ text: "Help Guide", height: 40, }).addEvent(LUI_EV_CLICK, function() { execute_shell_simple("https://rentry.co/utdrsoupguides", , , 0); }),
-				new LuiButton({ text: "So Soupy!!", height: 40, }).addEvent(LUI_EV_CLICK, function() { execute_shell_simple("https://www.youtube.com/watch?v=zbClYRnQQJ0", , , 0); }),
-				new LuiButton({ text: "Credits", height: 40, }).addEvent(LUI_EV_CLICK, soupy_ui_credits),
-			]);
-		
-			soupy_lui.addContent(soupy_panel_extra); //Add everything to the main ui
-		#endregion
+#endregion
 
-		#region Functions
-			///@desc Show/ hide Lui on appropiate screens.
-			ui_reset = function() {
-				if ( soupy_panel_portrait.visible ) { soupy_panel_portrait.hide(false); }
-				if ( soupy_panel_border.visible ) { soupy_panel_border.hide(false); }
-				if ( soupy_panel_style.visible ) { soupy_panel_style.hide(false); }
-				if ( soupy_panel_extra.visible ) { soupy_panel_extra.hide(false); }
-				
-				var fx = true;
-				switch ( ui_tab ) {
-					case 0: { fx = false; } break;
-					case 1: { soupy_panel_style.show(true); } break;
-					case 2: { soupy_panel_portrait.show(true); } break;
-					case 3: { soupy_panel_border.show(true); } break;
-					case 4: { soupy_panel_extra.show(true); } break;
-				}
-				if ( fx && bord_visible ) { sfx_play(snd_enc1, 0, , 0.7); bord_visible = false; }
-				else if ( !fx && !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; }
-				soupy_lui.update();
-			}
-			ui_reset();
-				
-			///@desc Toggle between different exporting types and export the dialogue
-			ui_export = function(type_ = 0, fmax_ = 180, delay_ = 60, quant_ = 1, xoff_ = 0, yoff_ = 0) {
-				ui_tab = -1; ui_visible = false; 
-				if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_equip);
+#region Menu Sections
+	#region Init Style
+		var soupy_style = new LuiStyle({ padding: 15, gap: 10, color_text: c_white, color_hover: c_yellow, sound_click: snd_select, sound_hover: snd_sel_switch, }) //Main Style
+			.setRenderRegionOffset([10, 10, 10, 10])
+			.setFonts(fnt_determination, fnt_determination, fnt_determination).setColors(, c_orange, #f43e83, #15ee97)
+			.setSprites(spr_border_undertale_outlined, spr_border_undertale_outlined).setSpriteCheckbox(spr_border_undertale_outlined, spr_pixel)
+		soupy_lui = new LuiMain().setStyle(soupy_style);
+	#endregion
+		
+	#region Portrait Panel
+		var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
+		soupy_panel_portrait = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, sound_right: snd_throw, }); //Start containter
+		
+			var panel_base_ = { text: "", color: c_orange, sprite_button: spr_border_header, height: 40, font: fnt_speech, text_color: c_black, sound_click: snd_enc1, sound_click_pitch: 1.3, };
+			var panel_ = new LuiContainer().setPadding(0).addContent([
+				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
+					new LuiText({ value: "Sprite:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the portrait sprite.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[face,character,expression][/]\nor [c_yellow][[face,filename][/]. Set to [c_red]-1[/] for no\ndialogue portrait.", true, , true),
+					new LuiButton({ text: "Choose...", height: 40, width: 100, }).addEvent(LUI_EV_CLICK, external_choose_face),
+					new LuiInput({ height: 40, placeholder: "or type. (ex: spr_face_test)", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datainput", e_, , true); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+						var spr_ = soup_checkout("dataimage", false, true), getface = get_face(e_.get()); 
+						spr_.set(getface == -1 ? spr_gui_icons : getface); spr_.subimg = ( getface == -1 ? 3 : 0 );
+						FACE_CURRENT = getface; FACE_INTERNAL = e_.get(); if ( getface != -1 ) { sfx_play(snd_updated); }
+					}),
+					new LuiImage({ draw_normal: true, }).setSize(70, 70).addEvent(LUI_EV_CREATE, function(e_) { soup_store("dataimage", e_, , true); }).addEvent(LUI_EV_SHOW, function(e_) { 
+						var input_ = soup_checkout("datainput", false, true), spr_ = soup_checkout("dataimage", false, true);
+						spr_.set(FACE_CURRENT == -1 ? spr_gui_icons : FACE_CURRENT).setSubimg(FACE_CURRENT == -1 ? 3 : 0).setColor(SYSTEMUI.dial_face_clr);
+						input_.set(FACE_CURRENT == -1 ? "" : FACE_INTERNAL); 
+					}).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 1, 0.15, , 0.7); element_.main_ui.animate(element_, "yscale", 1, 0.15, , 1.3); sfx_play(snd_squish); })
+					   .addEvent(LUI_EV_CLICK_R, function(element_) {
+							var input_ = soup_checkout("datainput", false, true), spr_ = soup_checkout("dataimage", false, true);
+							if ( spr_.get() != spr_gui_icons && input_.get() != "" ) { spr_.set(spr_gui_icons).setSubimg(3).setColor(SYSTEMUI.dial_face_clr); input_.set(""); sfx_play(snd_hurtpowerful); }
+						}),
+				]),
 					
-				switch ( type_ ) {
-					case 0: { screenshot = true; screenshot_stacked = false; } break; //Take single screenshot, no typewriter
-					case 1: { //Record till dialogue ends, typewriter
-						with ( record ) { enabled = true; framesmax = 0; frames = 0; type = 1; delay = delay_; quant = quant_; }
-						dial_text_gif = true;
-					} break;
-					case 2: { //Record for a set timer, no typewriter just animated text
-						with ( record ) { enabled = true; framesmax = fmax_; frames = 0; type = 0; quant = quant_; }
-					} break;
-					case 3: { //Take a stack of screenshots, no typewriter
-						var offstruct = {
-							soupstack_yoff: yoff_, //Gap between dialogue box sprites
-							soupstack_xoff: xoff_, //Shift the dialogue boxes to the right by this amount
-						}
-						screenshot = true; screenshot_stacked = true; instance_create_depth(0, 0, 0, obj_stacker, offstruct); 
-					} break;
-				}
+				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image index
+					new LuiText({ value: "Image Index:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the image number of the\ncurrent dialogue portrait displaying.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[face_index,#][/].\n[c_yellow][slant]Sync With Dialogue[/] will be switched [c_red]off[/].", true, , true),
+					new LuiInput({ height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, }).addEvent(LUI_EV_SHOW, function(e_) { e_.set(FACE_CURRENT != -1 ? FACE_INDEX : 0); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+						if ( dial_text_gif ) { exit; }
+						var spr_ = soup_checkout("dataimage", false, true), var value_ = e_.get(), index_ = real(value_ == "" ? 0 : value_);
+						if ( spr_.get() != spr_gui_icons ) { spr_.setSubimg(index_); FACE_INDEX = index_; }
+						if ( dial_face_auto && soup_checkout("triggered") != undefined ) { dial_face_auto = false; }
+					}).addEvent(LUI_EV_CLICK, function(e_) { soup_store("triggered"); }),
+				]),
+					
+				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image speed
+					new LuiText({ value: "Image Speed:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the animation speed of the\ncurrent dialogue portrait displaying.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[face_speed,#][/].\n[c_yellow][slant]Sync With Dialogue[/] will be switched [c_red]off[/].", true, , true),
+					new LuiInput({ height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_SHOW, function(e_) { e_.set(FACE_CURRENT != -1 ? FACE_SPEED : 0); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+						if ( dial_text_gif ) { exit; }
+						var spr_ = soup_checkout("dataimage", false, true), var value_ = real_ext(e_.get()), index_ = value_ == "" ? 0 : value_;
+						if ( spr_.get() != spr_gui_icons ) { spr_.imgspd = index_; FACE_SPEED = index_; }
+						if ( dial_face_auto && soup_checkout("triggered") != undefined ) { dial_face_auto = false; }
+					}).addEvent(LUI_EV_CLICK, function(e_) { soup_store("triggered"); }),
+				]),
+			]);
+			var panel_header_ = new LuiButton(panel_base_).setText("Current Face Settings").setTooltip("These settings only affect the dialogue\nportrait on the [wave][c_cyan]current highlighted page.", true, , true).setData("header", panel_).setIcon(spr_gui_icons,,, c_black,, 1).addEvent(LUI_EV_CLICK, function(e_) { var header = e_.getData("header"); header.toggleVisible(); }); soupy_panel_portrait.addContent([panel_header_, panel_, ]); //End container
+				
+			var panel_ = new LuiContainer().setPadding(0).addContent([
+				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a color
+					new LuiText({ value: "Color:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the color of every dialogue portrait.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[effect,color,R,G,B,time]", true, , true),
+					new LuiButton({ text: "Pick...", height: 40, }).addEvent(LUI_EV_CLICK, soupy_color_picker_portrait),
+					new LuiImage({ value: spr_face_test, draw_normal: true, }).setSize(70, 70).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datacolor", e_, , true); }).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 1, 0.15, , 0.7); element_.main_ui.animate(element_, "yscale", 1, 0.15, , 1.3); sfx_play(snd_squish); })
+					.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.dial_face_clr = e_.color_blend; e_.set(spr_face_test); soup_checkout("dataimage", false, true).setColor(e_.color_blend); audio_stop_sound(snd_equip2); sfx_play(snd_equip2, , , 1.3); }),
+				]),
+					
+				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image scale
+					new LuiText({ value: "Scale:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the scale of every dialogue portrait.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[effect,scale,X,Y,frames,issmooth]", true, , true),
+					new LuiInput({ value: "2", height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, }).bindVariable(self, "dial_face_xscale").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+						var get_ = e_.get(), value_ = real(get_ == "" ? 2 : get_); SYSTEMUI.dial_face_xscale = value_; SYSTEMUI.dial_face_yscale = value_;
+					}),
+				]),
+					
+				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image angle
+					new LuiText({ value: "Angle:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the angle of every dialogue portrait.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[effect,rotate,#,frames,issmooth]", true, , true),
+					new LuiSlider({ min_value: 0, color_text: c_black, color_text_drag: c_white, max_value: 360, rounding: true, display_value: true, bar_sprite: spr_border_header, bar_sprite_back: spr_border_header, }).bindVariable(self, "dial_face_angle").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+						var value_ = real(e_.get()); SYSTEMUI.dial_face_angle = value_; soup_checkout("dataimage", false, true).angle = value_;
+					}),
+				]),
+					
+				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image alpha
+					new LuiText({ value: "Opacity:", width: 85, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the alpha of every dialogue portrait.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[effect,fade,#,frames]", true, , true),
+					new LuiSlider({ value: dial_face_alpha, min_value: 0, color_text: c_black, color_text_drag: c_white, max_value: 1, rounding: false, display_value: true, bar_sprite: spr_border_header, bar_sprite_back: spr_border_header, }).bindVariable(self, "dial_face_alpha").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+						var value_ = real(e_.get()); SYSTEMUI.dial_face_alpha = value_; soup_checkout("dataimage", false, true).alpha = value_;
+					}),
+				]),
+					
+				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Animate with dialogue
+					new LuiText({ value: "Sync with dialogue:", width: 185, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether to animate the face while\ndialogue is typing out.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[face_auto,\"true\" or \"false\"]", true, , true),
+					new LuiToggleSwitch({ value: dial_face_auto, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "dial_face_auto"),
+				]),
+					
+				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Keep original dialogue face
+					new LuiText({ value: "Keep previous face:", width: 185, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether to always keep the last dialogue face\nor reset back to the original face.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[face_orig,character,expression]", true, , true),
+					new LuiToggleSwitch({ value: dial_face_keep, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "dial_face_keep"),
+				]),
+			]);
+			var panel_header_ = new LuiButton(panel_base_).setText("Global Face Settings").setTooltip("These settings affect [wave][c_red]all[/] dialogue portraits.", true, , true).setData("header", panel_).setIcon(spr_gui_icons,,, c_black,, 5).addEvent(LUI_EV_CLICK, function(e_) { var header = e_.getData("header"); header.toggleVisible(); }); soupy_panel_portrait.addContent([panel_header_, panel_, ]); //End container
+		
+		soupy_lui.addContent(soupy_panel_portrait); //Add everything to the main ui
+	#endregion
+		
+	#region Border Panel
+		var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
+		soupy_panel_border = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, sound_right: snd_throw, }) //Start containter
+		.addContent([
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
+				new LuiText({ value: "Sprite:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the border sprite.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[border,sprite name][/].", true, , true),
+				new LuiButton({ text: "Choose...", height: 40, width: 100, }).addEvent(LUI_EV_CLICK, external_choose_border),
+				new LuiInput({ value: sprite_get_name(SYSTEMUI.spr_bord), height: 40, placeholder: "or type. (ex: spr_border_deltarune)", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datainputB", e_, , true); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+					var spr_ = soup_checkout("dataimageB", false, true), getface = get_border(e_.get()); 
+					spr_.set(getface == -1 ? spr_border_undertale : getface); spr_.subimg = SYSTEMUI.bord_index;
+					SYSTEMUI.spr_bord = (getface == -1 ? spr_border_undertale : getface); SYSTEMUI.bord_prev = SYSTEMUI.spr_bord; bord_name = (getface == -1 ? "spr_border_undertale" : e_.get()); if ( getface != -1 ) { sfx_play(snd_updated); }
+				}),
+				new LuiImage({ maintain_aspect: false, xscale: 0, yscale: 0, }).setSize(70, 70).addEvent(LUI_EV_CREATE, function(e_) { soup_store("dataimageB", e_, , true); }).addEvent(LUI_EV_SHOW, function(e_) { 
+					var input_ = soup_checkout("datainputB", false, true), spr_ = soup_checkout("dataimageB", false, true);
+					spr_.set(SYSTEMUI.spr_bord).setSubimg(SYSTEMUI.bord_index).setColor(SYSTEMUI.bord_clr);
+					input_.set(bord_name); 
+				}).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 0, 0.15, , 5); element_.main_ui.animate(element_, "yscale", 0, 0.15, , 5); sfx_play(snd_squish); })
+				.addEvent(LUI_EV_CLICK_R, function(element_) {
+					var input_ = soup_checkout("datainputB", false, true), spr_ = soup_checkout("dataimageB", false, true);
+					if ( spr_.get() != spr_border_undertale && input_.get() != "spr_border_undertale" ) { spr_.set(spr_border_undertale).setColor(SYSTEMUI.dial_face_clr); input_.set("spr_border_undertale"); sfx_play(snd_hurtpowerful); }
+				}),
+			]),
+		]);
+		//repeat ( 12 ) {
+		//	soupy_panel_border.addContent([
+		//		new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
+		//			new LuiText({ value: "Style Panel:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, truncate: false, }),
+		//			new LuiButton({ text: "Test Button", height: 40, }),
+		//		]),
+		//	]);
+		//}
+		
+		soupy_lui.addContent(soupy_panel_border); //Add everything to the main ui
+	#endregion
+		
+	#region Style Panel
+		var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
+		soupy_panel_style = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, sound_right: snd_throw, }) //Start containter
+		.addContent([
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
+				new LuiText({ value: "Font:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the dialogue font.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[font name](ex: [[fnt_sans])[/].", true, , true),
+				new LuiButton({ text: "Choose...", height: 40, width: 100, }).addEvent(LUI_EV_CLICK, external_choose_font),
+				new LuiInput({ value: dial_font, height: 40, placeholder: "or type. (ex: fnt_determination)", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datainputS", e_, , true); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+					var prev_ = soup_checkout("datafont", false, true), value = e_.get(); prev_.font = scribble_font_exists(value) ? value : "fnt_determination";
+					SYSTEMUI.dial_font = prev_.font; audio_stop_sound(snd_updated); sfx_play(snd_updated);
+				}),
+				new LuiText({ value: "AaBbCc", width: 100, text_halign: fa_center, text_valign: fa_middle, font: dial_font, scribbletext: true, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datafont", e_, , true); })
+				.addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "yoff", 0, 1, global.Ease.OutElastic, 10); sfx_play(snd_squish); })
+				.addEvent(LUI_EV_CLICK_R, function(element_) {
+					var input_ = soup_checkout("datainputS", false, true), spr_ = soup_checkout("datafont", false, true);
+					if ( spr_.font != "fnt_determination" && input_.get() != "" ) { spr_.font = "fnt_determination"; input_.set(""); sfx_play(snd_hurtpowerful); sfx_play(snd_updated); }
+				}),
+			]),
+		]);
+		//repeat ( 12 ) {
+		//	soupy_panel_style.addContent([
+		//		new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
+		//			new LuiText({ value: "Style Panel:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, truncate: false, }),
+		//			new LuiButton({ text: "Test Button", height: 40, }),
+		//		]),
+		//	]);
+		//}
+		
+		soupy_lui.addContent(soupy_panel_style); //Add everything to the main ui
+	#endregion
+		
+	#region Extra Panel
+		var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
+		soupy_panel_extra = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, sound_right: snd_throw, }) //Start containter
+		.addContent([
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a color
+				new LuiText({ value: "GIF BG Color:", width: 130, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the color of the [c_lime]green screen[/] for GIFs.\nGIFs don't support transparency, so this is needed.", true, , true),
+				new LuiButton({ text: "Pick...", height: 40, }).addEvent(LUI_EV_CLICK, soupy_color_picker_gifcolor),
+				new LuiImage({ value: spr_pixel, maintain_aspect: false, color: screenshot_back }).setSize(80, 40).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datagifcolor", e_, , true); }).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 0, 1, global.Ease.OutElastic, 10); element_.main_ui.animate(element_, "yscale", 0, 1, global.Ease.OutElastic, 5); sfx_play(snd_squish); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { e_.set(spr_pixel); SYSTEMUI.screenshot_back = e_.color_blend; audio_stop_sound(snd_equip2); sfx_play(snd_equip2, , , 1.3); }),
+			]),
+				
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image scale
+				new LuiText({ value: "Update Delay:", width: 130, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("( - n# (45 recommended))\nChanges how long it takes for the generator\nto update your output text.\n[c_yellow]Lower values and frequent updating may cause\nlag or other unexpected issues.", true, , true),
+				new LuiInput({ value: dial_updatet_max, height: 40, placeholder: "1 - n# (45 recommended)", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, }).bindVariable(self, "dial_updatet_max").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+					var get_ = e_.get(), value_ = real(get_ == "" ? 45 : get_); SYSTEMUI.dial_updatet_max = value_;
+				}),
+			]),
+				
+			new LuiButton({ text: "Help Guide", height: 40, }).addEvent(LUI_EV_CLICK, function() { execute_shell_simple("https://rentry.co/utdrsoupguides", , , 0); }),
+			new LuiButton({ text: "So Soupy!!", height: 40, }).addEvent(LUI_EV_CLICK, function() { execute_shell_simple("https://www.youtube.com/watch?v=zbClYRnQQJ0", , , 0); }),
+			new LuiButton({ text: "Credits", height: 40, }).addEvent(LUI_EV_CLICK, soupy_ui_credits),
+		]);
+		
+		soupy_lui.addContent(soupy_panel_extra); //Add everything to the main ui
+	#endregion
+
+	#region Functions
+		///@desc Show/ hide Lui on appropiate screens.
+		ui_reset = function() {
+			if ( soupy_panel_portrait.visible ) { soupy_panel_portrait.hide(false); }
+			if ( soupy_panel_border.visible ) { soupy_panel_border.hide(false); }
+			if ( soupy_panel_style.visible ) { soupy_panel_style.hide(false); }
+			if ( soupy_panel_extra.visible ) { soupy_panel_extra.hide(false); }
+				
+			var fx = true;
+			switch ( ui_tab ) {
+				case 0: { fx = false; } break;
+				case 1: { soupy_panel_style.show(true); } break;
+				case 2: { soupy_panel_portrait.show(true); } break;
+				case 3: { soupy_panel_border.show(true); } break;
+				case 4: { soupy_panel_extra.show(true); } break;
 			}
-		#endregion
+			if ( fx && bord_visible ) { sfx_play(snd_enc1, 0, , 0.7); bord_visible = false; }
+			else if ( !fx && !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; }
+			soupy_lui.update();
+		}
+		ui_reset();
+				
+		///@desc Toggle between different exporting types and export the dialogue
+		ui_export = function(type_ = 0, fmax_ = 180, delay_ = 60, quant_ = 1, xoff_ = 0, yoff_ = 0) {
+			ui_tab = -1; ui_visible = false; 
+			if ( !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; } sfx_play(snd_equip);
+					
+			switch ( type_ ) {
+				case 0: { screenshot = true; screenshot_stacked = false; } break; //Take single screenshot, no typewriter
+				case 1: { //Record till dialogue ends, typewriter
+					with ( record ) { enabled = true; framesmax = 0; frames = 0; type = 1; delay = delay_; quant = quant_; }
+					dial_text_gif = true;
+				} break;
+				case 2: { //Record for a set timer, no typewriter just animated text
+					with ( record ) { enabled = true; framesmax = fmax_; frames = 0; type = 0; quant = quant_; }
+				} break;
+				case 3: { //Take a stack of screenshots, no typewriter
+					var offstruct = {
+						soupstack_yoff: yoff_, //Gap between dialogue box sprites
+						soupstack_xoff: xoff_, //Shift the dialogue boxes to the right by this amount
+					}
+					screenshot = true; screenshot_stacked = true; instance_create_depth(0, 0, 0, obj_stacker, offstruct); 
+				} break;
+			}
+		}
 	#endregion
 #endregion
 

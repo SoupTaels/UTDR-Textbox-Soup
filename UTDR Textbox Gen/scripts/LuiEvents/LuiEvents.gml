@@ -4,6 +4,9 @@
 #macro LUI_EV_MOUSE_LEFT "mouse_left" // Triggered while the left mouse button is held on the element
 #macro LUI_EV_MOUSE_LEFT_PRESSED "mouse_left_pressed" // Triggered once when the left mouse button is pressed
 #macro LUI_EV_MOUSE_LEFT_RELEASED "mouse_left_released" // Triggered once when the left mouse button is released
+#macro LUI_EV_MOUSE_RIGHT "mouse_right" // Triggered while the left mouse button is held on the element
+#macro LUI_EV_MOUSE_RIGHT_PRESSED "mouse_right_pressed" // Triggered once when the left mouse button is pressed
+#macro LUI_EV_MOUSE_RIGHT_RELEASED "mouse_right_released" // Triggered once when the left mouse button is released
 #macro LUI_EV_MOUSE_WHEEL "mouse_wheel" // Triggered when the mouse wheel is scrolled
 #macro LUI_EV_MOUSE_ENTER "mouse_enter" // Triggered once when the mouse enters the element
 #macro LUI_EV_MOUSE_LEAVE "mouse_leave" // Triggered once when the mouse leaves the element
@@ -17,6 +20,10 @@
 #macro LUI_EV_HIDE "hide" // Triggered when the element becomes invisible
 #macro LUI_EV_SIZE_UPDATE "size_update" // Triggered when the element changes its size
 #macro LUI_EV_DRAGGING "dragging" // Triggered while the element is being dragged (returns the structure with the new coordinates of the element or mouse)
+#macro LUI_EV_DRAGGING_R "dragging_r" // Triggered while the element is being dragged (returns the structure with the new coordinates of the element or mouse)
 #macro LUI_EV_DRAG_START "drag_start" // Triggered once when dragging starts
+#macro LUI_EV_DRAG_START_R "drag_start_r" // Triggered once when dragging starts
 #macro LUI_EV_DRAG_END "drag_end" // Triggered once when dragging ends
+#macro LUI_EV_DRAG_END_R "drag_end_r" // Triggered once when dragging ends
 #macro LUI_EV_CLICK "click" // Triggered when the element is clicked (full press-release cycle)
+#macro LUI_EV_CLICK_R "click_r" // Triggered when the element is clicked (full press-release cycle)

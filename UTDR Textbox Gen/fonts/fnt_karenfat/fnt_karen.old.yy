@@ -1,11 +1,11 @@
 {
   "$GMFont":"",
-  "%Name":"fnt_arial",
+  "%Name":"fnt_impact",
   "AntiAlias":0,
   "applyKerning":0,
   "ascender":14,
   "ascenderOffset":0,
-  "bold":true,
+  "bold":false,
   "canGenerateBitmap":true,
   "charset":0,
   "first":0,
@@ -189,7 +189,7 @@
   "last":0,
   "lineHeight":18,
   "maintainGms1Font":false,
-  "name":"fnt_arial",
+  "name":"fnt_impact",
   "parent":{
     "name":"Fonts",
     "path":"folders/Fonts.yy",
@@ -206,9 +206,6 @@
   "sdfSpread":8,
   "size":12.0,
   "styleName":"Regular",
-  "tags":[
-    "fonts",
-  ],
   "textureGroupId":{
     "name":"Default",
     "path":"texturegroups/Default",

@@ -159,6 +159,15 @@ outputLog = "";
 #region Add Custom Fonts
 	fonts_dict = {};
 	fonts_dict_alt = {};
+	fonts_dict_list = [];
+	
+	#region Add built-in fonts to a list
+		var fonts_ = tag_get_assets("fonts"), fonts_len = array_length(fonts_), fonts_i = 0;
+		repeat ( fonts_len ) {
+			var cur_ = fonts_[fonts_i];
+			fonts_dict_list[fonts_i] = cur_;
+		fonts_i++; }
+	#endregion
 	
 	var findfonts = gumshoe("fonts", ".png"), fonts_i = 0, fonts_len = array_length(findfonts);
 	repeat ( fonts_len ) {
@@ -171,9 +180,10 @@ outputLog = "";
 		
 		fonts_dict[$ temp_] = { sprite: sprite_add(fonts_cur, imgnum, false, false, 0, 0), name: temp_, fname_: fonts_cur, count: imgnum, }
 		with ( fonts_dict[$ temp_] ) {
+			array_push(global.fonts_dict_list, name); //Add custom font to array list
 			self[$ "font"] = font_add_sprite(sprite, ord("!"), false, 0); //Add as an actual font
 			self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; font_delete(font); delete font; font = -1; show_debug_message($"External font \"{fname_}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
-			
+
 			var temp_2 = string_replace(fonts_cur, $"fonts{PATHSEP}", ""); 
 			temp_2 = string_replace(string_replace(temp_2, $"_strip", ""), $".png", "");
 			temp_2 = string_exclude(temp_2, "0123456789");
@@ -260,6 +270,32 @@ outputLog = "";
 					}
 				}
 			} break;
+			
+			case 2: { //Font Sprites
+				var spr_ = get_font(name_);
+				if ( spr_ != -1 ) { return spr_; } else {
+					if ( !struct_exists(global.fonts_dict, name_) ) { global.fonts_dict[$ name_] = {}; } //Create new struct font dictionary
+					var imgnum = string_between(fname_, "_strip", ".png"); imgnum = imgnum == "" ? 1 : imgnum; //Get the image number if it's a strip file
+					global.fonts_dict[$ name_] = { sprite: sprite_add(fpath_, imgnum, false, false, 0, 0), name: name_, fname_: filename_name(fpath_), count: imgnum, }
+					with ( global.fonts_dict[$ name_] ) {
+						self[$ "NEW SPRITE"] = true; self[$ "NEW EXTERNALLY"] = true;//Mark the sprite as new and added externally
+						array_push(global.fonts_dict_list, name_); //Add custom font to array list
+						self[$ "font"] = font_add_sprite(sprite, ord("!"), false, 0); //Add as an actual font
+						self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; font_delete(font); delete font; font = -1; show_debug_message($"External font \"{fname_}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
+						self[$ "size"] = { sprite, width: sprite_get_width(sprite), height: sprite_get_height(sprite), }
+						
+						global.fonts_dict_alt[$ name] = { sprite, font, name, } //Add sprite index and expression name to the global icon alt dictonary
+						var getfont = asset_get_name(sprite);
+						scribble_font_rename(getfont, name); //Let us use the font's filename instead of whatever name gamemaker generated for us
+						scribble_font_bake_outline_and_shadow(name, $"{name}_outline", 0, 0, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
+						scribble_glyph_set($"{name}_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, scribble_glyph_get(name, "W", SCRIBBLE_GLYPH.FONT_HEIGHT));
+						var out_ = $"Added \"{name}\"|You can now use|[{name}]|to reference the font!|The command was copied to your clipboard.";
+						TweenScript(SYSTEMUI, 0, 2, soupy_message, out_, , , , , snd_sparkle2);
+						clipboard_set_text($"[{name}]");
+						return font;
+					}
+				}
+			} break;
 		}
 	}
 	
@@ -270,7 +306,7 @@ outputLog = "";
 		repeat ( options_len ) { //Add available characters to an array
 			var cur_ = options_names[options_i], isnew_ = global.faces_dict[$ cur_][$ "NEW SPRITE"];
 			array_push(options_, 
-				new LuiText({ value: isnew_ != undefined && isnew_ ? $"{string_upper_first(cur_)} (NEW!)" : string_upper_first(cur_), id_: cur_, font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, color: ( get_face(cur_) != -1 ? c_cyan : c_white ), }).setPadding(5).setData("chara", cur_).setTooltip(get_face(cur_) != -1 ? $"[{cur_},0,0.15] [rainbow]Added via dragging!" : "", true, , true)
+				new LuiText({ value: isnew_ != undefined && isnew_ ? $"{string_upper_first(cur_)} (NEW!)" : string_upper_first(cur_), id_: cur_, font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, color: ( get_face(cur_) != -1 ? c_cyan : c_white ), }).setPadding(5).setData("chara", cur_).setTooltip(get_face(cur_) != -1 ? $"[{cur_},0,0.15] [rainbow]Unique and recent!" : "", true, , true)
 				.setData("inputsoup_", inputsoup_).setData("inputglobal_", inputglobal_).setData("imagesoup_", imagesoup_).setData("imageglobal_", imageglobal_).setData("clear_", clear_)
 				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
 				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = get_face(element_.params.id_) != -1 ? c_cyan : c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
@@ -291,7 +327,7 @@ outputLog = "";
 							);
 						}
 					spr_i++; }
-					get_.addContent(new LuiScrollPanel({ height: 400, scroll_pin_edge_offset:10, sprite_panel: false, }).addContent(spr_).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollsub", element_); })); //Add new panel and stash it so we can destroy it later
+					get_.addContent(new LuiScrollPanel({ height: 400, scroll_pin_edge_offset:10, sprite_panel: false, sound_right: snd_throw, }).addContent(spr_).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollsub", element_); })); //Add new panel and stash it so we can destroy it later
 				})
 			);
 		options_i++; }
@@ -317,31 +353,31 @@ outputLog = "";
 				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
 				.addEvent(LUI_EV_CLICK, function(element_) { sfx_play(snd_updated); if ( element_.getData("clear_") ) { FACE_CURRENT = spr_face_blank; FACE_ORIGINAL = FACE_CURRENT; } soup_checkout(element_.getData("inputsoup_"), false, element_.getData("inputglobal_")).set("spr_face_blank"); soup_checkout(element_.getData("imagesoup_"), false, element_.getData("imageglobal_")).set(element_.getData("face")); soup_checkout("datafunc", false)(); })
 			);
-			array_push(options_, new LuiText({ value: "Add From File...", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, }).setPadding(5)
+			array_push(options_, new LuiText({ value: "Add From File... [->]", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, color: c_yellow, }).setPadding(5)
 				.setData("inputsoup_", inputsoup_).setData("inputglobal_", inputglobal_).setData("imagesoup_", imagesoup_).setData("imageglobal_", imageglobal_).setData("clear_", clear_)
-				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
-				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
+				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_orange; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
+				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
 				.addEvent(LUI_EV_CLICK, function(element_) { 
 					sfx_play(snd_equip); 
 					var result = get_open_filename_ext("Image File (.PNG Only)|*.png", "", directory_get_pictures_path(), "Select a sprite to import."), myname_;
-					if ( result == -1 || result == "" ) { result = spr_face_test; myname_ = "spr_face_test"; } else { myname_ = string_exclude(string_replace(string_replace(filename_name(result), "_strip", ""), ".png", ""), "0123456789"); result = external_ensure(myname_, filename_name(result), result, , SYSTEMUI.ui_tab == 0 ? true : false); }
+					if ( result == -1 || result == "" ) { result = -1; myname_ = ""; } else { myname_ = string_exclude(string_replace(string_replace(filename_name(result), "_strip", ""), ".png", ""), "0123456789"); result = external_ensure(myname_, filename_name(result), result, , SYSTEMUI.ui_tab == 0 ? true : false); }
 					if ( element_.getData("clear_") ) { FACE_CURRENT = result; FACE_ORIGINAL = FACE_CURRENT; } 
 					soup_checkout(element_.getData("inputsoup_"), false, element_.getData("inputglobal_")).set(myname_); 
 					soup_checkout(element_.getData("imagesoup_"), false, element_.getData("imageglobal_")).set(result); 
 					soup_checkout("datafunc", false)();
 				})
 			);
-			array_push(options_, new LuiText({ value: "Clear Page Face", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, }).setPadding(5)
+			array_push(options_, new LuiText({ value: "Clear Page Face", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, color: c_red, }).setPadding(5)
 				.setData("inputsoup_", inputsoup_).setData("inputglobal_", inputglobal_).setData("imagesoup_", imagesoup_).setData("imageglobal_", imageglobal_).setData("clear_", clear_)
-				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_red; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
-				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
+				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_orange; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
+				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_red; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
 				.addEvent(LUI_EV_CLICK, function(element_) { sfx_play(snd_hurtpowerful); if ( element_.getData("clear_") ) { FACE_CURRENT = -1; FACE_ORIGINAL = FACE_CURRENT; } soup_checkout(element_.getData("inputsoup_"), false, element_.getData("inputglobal_")).set(-1); soup_checkout(element_.getData("imagesoup_"), false, element_.getData("imageglobal_")).set(""); soup_checkout("datafunc", false)(); })
 			);
 		#endregion
 
 		var dataarr = [
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
-				new LuiScrollPanel({ height: 400, scroll_pin_edge_offset:10, sprite_panel: false, }).addContent(options_),
+				new LuiScrollPanel({ height: 400, scroll_pin_edge_offset:10, sprite_panel: false, sound_right: snd_throw, }).addContent(options_),
 				new LuiText({ value: $"Select a character!\n\nFaces will show up once\nselected. Then scroll to\nfind the perfect sprite\nfor your dialogue!\n\nThis only adds a face for\nthe current dialogue page.", font: fnt_speech, text_halign: fa_center, text_valign: fa_center, }).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollsub", element_); }),
 			]).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollmain", element_); }), //Stash panel so we can add another panel to this row
 		];
@@ -374,9 +410,9 @@ outputLog = "";
 		#endregion
 		
 		#region Add Default Options
-			array_push(options_, new LuiText({ value: "Add From File...", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, }).setPadding(5)
-				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
-				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
+			array_push(options_, new LuiText({ value: "Add From File... [->]", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, color: c_yellow, }).setPadding(5)
+				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_orange; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
+				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
 				.addEvent(LUI_EV_CLICK, function(element_) { 
 					sfx_play(snd_equip); 
 					var result = get_open_filename_ext("Image File (.PNG Only)|*.png", "", directory_get_pictures_path(), "Select a sprite to import."), myname_;
@@ -389,8 +425,54 @@ outputLog = "";
 		
 		var dataarr = [
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
-				new LuiScrollPanel({ height: 400, scroll_pin_edge_offset:10, sprite_panel: false, }).addContent(options_),
+				new LuiScrollPanel({ height: 400, scroll_pin_edge_offset:10, sprite_panel: false, sound_right: snd_throw, }).addContent(options_),
 				new LuiText({ value: $"Select a dialogue border!\nThis is the box displayed\naround your text.\nSome are animated!\nScroll to find your perfect\nsprite for your dialogue!", font: fnt_speech, text_halign: fa_center, text_valign: fa_center, }).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollsub", element_); }),
+			]).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollmain", element_); }), //Stash panel so we can add another panel to this row
+		];
+		
+		soup_store("datafunc", function() { soup_checkout("choosemain", false).destroy(); soup_store_clear(); SYSTEMUI.ui_paused = false; });
+		var maincan = soupy_popup(dataarr, function() { soup_store_clear(); SYSTEMUI.ui_paused = false; }, "Nevermind", , , , snd_select, , , 2); soup_store("choosemain", maincan); 
+	}
+	
+	///@desc Function for choosing an externally added font
+	function external_choose_font() {
+		#region Add bundled fonts
+			var options_ = [], fonts_len = array_length(global.fonts_dict_list), fonts_i = 0;
+			repeat ( fonts_len ) {
+				var cur_ = global.fonts_dict_list[fonts_i];
+				options_[fonts_i] = new LuiText({ value: $"{cur_} (AaBbCc)", id_: cur_, font: cur_, text_halign: fa_center, text_valign: fa_middle, color: c_white, isnew: false, scribbletext: true, })
+					.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; element_.value = $"[wheel]{element_.value}"; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
+					.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = element_.color_o; element_.value = string_replace(element_.value, "[wheel]", ""); element_.main_ui.animate(element_, "xoff", 0, 0.15); })
+					.addEvent(LUI_EV_CLICK, function(e_) { 
+						var myname = e_.params.id_, fonts_ = global.fonts_dict[$ myname];
+						if ( !is_undefined(fonts_) ) { fonts_[$ "NEW SPRITE"] = false; } sfx_play(snd_select);
+						soup_checkout("datainputS", false, true).set(myname); soup_checkout("datafont", false, true).font = myname; soup_checkout("datafunc", false)();
+					})
+					.addEvent(LUI_EV_CREATE, function(e_) { 
+						var result = global.fonts_dict[$ e_.params.id_]; 
+						e_.isnew = ( result != undefined && result[$ "NEW SPRITE"] != undefined && result[$ "NEW SPRITE"] ); if ( e_.isnew ) { e_.value = $"{e_.value} (NEW!)"; }
+						if ( result != undefined && result[$ "NEW EXTERNALLY"] != undefined ) { e_.color = c_cyan; e_[$ "color_o"] = c_cyan; e_.setTooltip("[rainbow]Unique and recent!", true, , true); } else { e_[$ "color_o"] = c_white; }
+					})
+			fonts_i++; }
+		#endregion
+		
+		#region Add Default Options
+			array_push(options_, new LuiText({ value: "Add From File... [->]", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, color: c_yellow, }).setPadding(5)
+				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_orange; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
+				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
+				.addEvent(LUI_EV_CLICK, function(element_) { 
+					sfx_play(snd_equip); 
+					var result = get_open_filename_ext("GameMaker Strip (_strip#.PNG Only)|*.png", "", directory_get_pictures_path(), "Select a spritefont to import."), myname_;
+					if ( result == -1 || result == "" ) { result = "fnt_determination"; myname_ = result; } else { myname_ = string_exclude(string_replace(string_replace(string_replace(filename_name(result), "spr_", ""), "_strip", ""), ".png", ""), "0123456789"); result = external_ensure(myname_, filename_name(result), result, 2, false); }
+					soup_checkout("datainputS", false, true).set(myname_); soup_checkout("datafont", false, true).font = myname_; soup_checkout("datafunc", false)(); sfx_play(snd_updated); 
+				})
+			);
+		#endregion
+		
+		var dataarr = [
+			new LuiColumn().setFlexGrow(1).centerContent().addContent([
+				new LuiScrollPanel({ height: 360, sprite_panel: false, sound_right: snd_throw, }).addContent(options_),
+				new LuiText({ value: $"Select a dialogue font! This is the style your dialogue text\nwill be rendered with. Find your perfect font to use!", y: -10, font: fnt_speech, text_halign: fa_center, text_valign: fa_center, }).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollsub", element_); }),
 			]).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollmain", element_); }), //Stash panel so we can add another panel to this row
 		];
 		

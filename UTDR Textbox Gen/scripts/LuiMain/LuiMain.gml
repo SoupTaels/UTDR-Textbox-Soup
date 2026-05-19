@@ -126,7 +126,7 @@ function LuiMain() : LuiBase() constructor {
 			var _previous_hovered_element = self.topmost_hovered_element;
 			
 			// Prioritize dragging element if it exists and mouse is held
-			if (!is_undefined(self.dragging_element) && mouse_check_button(mb_left)) {
+			if (!is_undefined(self.dragging_element) && ( mouse_check_button(mb_left) || mouse_check_button(mb_right) )) {
 				self.topmost_hovered_element = self.dragging_element;
 			} else {
 				self.topmost_hovered_element = self._getTopmostElement(_mouse_x, _mouse_y);
@@ -171,6 +171,29 @@ function LuiMain() : LuiBase() constructor {
 					}
 					self.updateMainUiSurface();
 				}
+				if (mouse_check_button_pressed(mb_right)) {
+					self.topmost_hovered_element.is_pressed = true;
+					self.topmost_hovered_element._dispatchEvent(LUI_EV_MOUSE_RIGHT_PRESSED);
+					// Set focus on element
+					if self.element_in_focus != self.topmost_hovered_element {
+						// Remove focus from previous element
+						if !is_undefined(self.element_in_focus) {
+							self.element_in_focus.removeFocus();
+							self.element_in_focus = undefined;
+						}
+						self.topmost_hovered_element.setFocus();
+						self.element_in_focus = self.topmost_hovered_element;
+					}
+					// Set dragging element
+					if (self.topmost_hovered_element.can_drag) {
+						self.topmost_hovered_element.is_dragging = true;
+						self.topmost_hovered_element.drag_offset_x = _mouse_x - self.topmost_hovered_element.x;
+						self.topmost_hovered_element.drag_offset_y = _mouse_y - self.topmost_hovered_element.y;
+						self.dragging_element = self.topmost_hovered_element;
+						self.topmost_hovered_element._dispatchEvent(LUI_EV_DRAG_START_R);
+					}
+					self.updateMainUiSurface();
+				}
 				
 				// Handle on mouse left
 				if (mouse_check_button(mb_left)) {
@@ -182,6 +205,20 @@ function LuiMain() : LuiBase() constructor {
 						var _new_y = _mouse_y - self.topmost_hovered_element.drag_offset_y;
 						if self.prev_mouse_x != _mouse_x || self.prev_mouse_y != _mouse_y {
 							self.topmost_hovered_element._dispatchEvent(LUI_EV_DRAGGING, { new_x : _new_x, new_y : _new_y, mouse_x : _mouse_x, mouse_y : _mouse_y });
+						}
+						self.prev_mouse_x = _mouse_x;
+						self.prev_mouse_y = _mouse_y;
+					}
+				}
+				if (mouse_check_button(mb_right)) {
+					// Call LUI_EV_MOUSE_LEFT event
+					self.topmost_hovered_element._dispatchEvent(LUI_EV_MOUSE_RIGHT);
+					// Call LUI_EV_DRAGGING event
+					if (self.topmost_hovered_element.can_drag && !is_undefined(self.dragging_element)) {
+						var _new_x = _mouse_x - self.topmost_hovered_element.drag_offset_x;
+						var _new_y = _mouse_y - self.topmost_hovered_element.drag_offset_y;
+						if self.prev_mouse_x != _mouse_x || self.prev_mouse_y != _mouse_y {
+							self.topmost_hovered_element._dispatchEvent(LUI_EV_DRAGGING_R, { new_x : _new_x, new_y : _new_y, mouse_x : _mouse_x, mouse_y : _mouse_y });
 						}
 						self.prev_mouse_x = _mouse_x;
 						self.prev_mouse_y = _mouse_y;
@@ -208,13 +245,32 @@ function LuiMain() : LuiBase() constructor {
 					}
 					self.updateMainUiSurface();
 				}
+				if (mouse_check_button_released(mb_right)) {
+					self.topmost_hovered_element._dispatchEvent(LUI_EV_MOUSE_RIGHT_RELEASED);
+					if (self.topmost_hovered_element.is_pressed) {
+                        self.topmost_hovered_element._dispatchEvent(LUI_EV_CLICK_R);
+                    }
+					self.topmost_hovered_element.is_pressed = false;
+					// Clear dragging
+					if !is_undefined(self.dragging_element) {
+						self.dragging_element.is_dragging = false;
+						self.dragging_element._dispatchEvent(LUI_EV_DRAG_END_R);
+						self.dragging_element = undefined;
+					}
+					// Remove focus from element if clicking outside
+					if !is_undefined(self.element_in_focus) && self.element_in_focus != self.topmost_hovered_element {
+						self.element_in_focus.removeFocus();
+						self.element_in_focus = undefined;
+					}
+					self.updateMainUiSurface();
+				}
 				if (mouse_wheel_down() || mouse_wheel_up()) {
 					self.topmost_hovered_element._dispatchEvent(LUI_EV_MOUSE_WHEEL);
 				}
 			} else {
 				// Remove focus from element
 				if !is_undefined(self.element_in_focus) {
-					if (mouse_check_button_pressed(mb_left) || mouse_check_button_released(mb_left)) {
+					if ( mouse_check_button_pressed(mb_left) || mouse_check_button_released(mb_left) ) || ( mouse_check_button_pressed(mb_right) || mouse_check_button_released(mb_right) ) {
 						self.element_in_focus.removeFocus();
 						self.element_in_focus.is_pressed = false;
 						self.element_in_focus = undefined;
