@@ -94,9 +94,9 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 			var _sprite_render_function = self.style.sprite_render_function ?? draw_sprite_stretched_ext;
 			if !is_undefined(self.value) && sprite_exists(self.value) {
 				_sprite_render_function(self.value, self.subimg, 
-											floor(self.x + self.width/2 - _width/2), 
-											floor(self.y + self.height/2 - _height/2), 
-											_width, _height, 
+											floor(self.x + self.width/2 - _width/2) - self.xscale, 
+											floor(self.y + self.height/2 - _height/2) - self.yscale, 
+											_width + ( self.xscale * 2 ), _height + ( self.yscale * 2 ), 
 											_blend_color, self.alpha);
 			}
 		}

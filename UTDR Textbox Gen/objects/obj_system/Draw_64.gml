@@ -146,7 +146,7 @@ draw_sprite_ext(spr_pixel, 0, 0, 0, 640, 480, 0, c_black, fader); //Black fade o
 		}
 		else { draw_text_transformed(320, 260, $"(Page: {dial_text_page + 1}/ {dial_text_page_c})", 2, 2, 0); } //Show current page and total page count
 		
-		draw_format("right", , fnt_determination); draw_text(635, 5, $"(Press ESC to cancel)"); //Cancel text
+		draw_format("right", , fnt_determination); draw_text(635, 5, $"(Double-press ESC to cancel)"); //Cancel text
 	}
 #endregion
 

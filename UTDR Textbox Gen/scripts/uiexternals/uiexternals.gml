@@ -112,6 +112,7 @@ outputLog = "";
 	#region Borders
 		bords_dict = {};
 		bords_dict_alt = {};
+		bords_dict_raw = {};
 	
 		var findbords = gumshoe("borders", ".png"), bords_i = 0, bords_len = array_length(findbords);
 		repeat ( bords_len ) {
@@ -127,12 +128,14 @@ outputLog = "";
 				self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External border \"{fname_}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
 				self[$ "size"] = { sprite, width: sprite_get_width(sprite), height: sprite_get_height(sprite), }
 				sprite_set_offset(sprite, size.width/ 2, size.height/ 2); //Center sprite
+				asset_add_tags(sprite, "borders", asset_sprite);
 				
 				var out_ = $"Added \"{name}\" from {fname_}! | Image Count: {count}";
 				var temp_2 = string_replace(bords_cur, $"borders{PATHSEP}", ""); 
 				temp_2 = string_replace(string_replace(temp_2, $"_strip", ""), $".png", "");
 				temp_2 = string_exclude(temp_2, "0123456789");
-				global.bords_dict_alt[$ temp_2] = { sprite, name, size, } //Add sprite index and expression name to the global icon alt dictonary
+				global.bords_dict_alt[$ temp_2] = { sprite, name, size, } //Add sprite index and expression name to the global border alt dictonary
+				global.bords_dict_raw[$ string(sprite)] = { sprite, name, size, } //Add sprite index and expression name to the global border raw dictonary
 				show_debug_message(out_); global.outputLog += $"{out_}\n";
 			}
 		bords_i++; }
@@ -140,8 +143,8 @@ outputLog = "";
 		///@desc Returns a sprite index from an externally added border sprite.
 		///@param {string} name Border Sprite Name (ex: spr_border_custom_animated, border custom example, border_custom_example_two, etc.)
 		function get_border(name, return_ = "sprite") { 
-			var early_ = asset_get_index(name); if ( early_ != -1 ) { return early_; }
-			var result = global.bords_dict[$ name], result2 = global.bords_dict_alt[$ name];
+			var early_ = asset_get_index(name); if ( early_ != -1 ) { return !is_undefined(global.bords_dict_raw[$ name]) ? global.bords_dict_raw[$ name][$ return_] : early_; }
+			var result = global.bords_dict[$ name], result2 = global.bords_dict_alt[$ name], result4 = global.bords_dict_raw[$ name];
 			var temp_ = string_replace_all(name, " ", "_"), result3 = global.bords_dict[$ temp_]
 			return !is_undefined(result) ? result[$ return_] : ( !is_undefined(result2) ? result2[$ return_] : ( !is_undefined(result3) ? result3[$ return_] : -1 ) );
 		}
@@ -242,13 +245,18 @@ outputLog = "";
 					with ( global.bords_dict[$ name_] ) {
 						var finalname = string_replace(string_replace(fname_, "_strip", ""), ".png", ""); finalname = string_exclude(finalname, "0123456789");
 
-						self[$ "sprite"] = sprite_add_ext(fpath_, imgnum, 0, 0, true); self[$ "name"] = fpath_; self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External border \"{name}\" was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
+						self[$ "NEW SPRITE"] = true; //Mark the sprite as new
+						self[$ "sprite"] = sprite_add_ext(fpath_, imgnum, 0, 0, true); self[$ "name"] = name_; self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External border \"{name}\" was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
+						self[$ "size"] = { sprite, width: sprite_get_width(sprite), height: sprite_get_height(sprite), }
+						asset_add_tags(sprite, "borders", asset_sprite);
 						if ( allowmultiple_ ) { TweenScript(SYSTEMUI, 0, 1, soup_store, "allowmultiple"); }
 							
 						var out_ = $"Added \"{finalname}\"|You can now use|[border,{finalname}]|to reference the sprite!|The command was copied to your clipboard.";
 						TweenScript(SYSTEMUI, 0, 1, soup_store, "external border", { myname: name_, msg: out_}); 
-						global.bords_dict_alt[$ name_] = { sprite, name, destroy } //Create new struct border dictionary
+						global.bords_dict_alt[$ name_] = { sprite, name, size, } //Add sprite index and expression name to the global border alt dictonary
+						global.bords_dict_raw[$ string(sprite)] = { sprite, name, size, } //Add sprite index and expression name to the global border raw dictonary
 						clipboard_set_text($"[border,{finalname}]");
+						return sprite;
 					}
 				}
 			} break;
@@ -316,7 +324,7 @@ outputLog = "";
 				.addEvent(LUI_EV_CLICK, function(element_) { 
 					sfx_play(snd_equip); 
 					var result = get_open_filename_ext("Image File (.PNG Only)|*.png", "", directory_get_pictures_path(), "Select a sprite to import."), myname_;
-					if ( result == -1 ) { result = spr_face_test; myname_ = "spr_face_test"; } else { myname_ = string_exclude(string_replace(string_replace(filename_name(result), "_strip", ""), ".png", ""), "0123456789"); result = external_ensure(myname_, filename_name(result), result, , SYSTEMUI.ui_tab == 0 ? true : false); }
+					if ( result == -1 || result == "" ) { result = spr_face_test; myname_ = "spr_face_test"; } else { myname_ = string_exclude(string_replace(string_replace(filename_name(result), "_strip", ""), ".png", ""), "0123456789"); result = external_ensure(myname_, filename_name(result), result, , SYSTEMUI.ui_tab == 0 ? true : false); }
 					if ( element_.getData("clear_") ) { FACE_CURRENT = result; FACE_ORIGINAL = FACE_CURRENT; } 
 					soup_checkout(element_.getData("inputsoup_"), false, element_.getData("inputglobal_")).set(myname_); 
 					soup_checkout(element_.getData("imagesoup_"), false, element_.getData("imageglobal_")).set(result); 
@@ -340,5 +348,53 @@ outputLog = "";
 
 		soup_store("datafunc", method({ clear_, }, function() { soup_checkout("choosemain", false).destroy(); if ( clear_ ) { soup_store_clear(); SYSTEMUI.ui_paused = false; } }));
 		var maincan = soupy_popup(dataarr, method({ clear_ }, function() { if ( clear_ ) { soup_store_clear();  SYSTEMUI.ui_paused = false; } }), "Nevermind", , , , snd_select, , multiple_, 2); soup_store("choosemain", maincan); 
+	}
+	
+	///@desc Function for choosing an externally added border
+	function external_choose_border() {
+		#region Add All Borders
+			var options_ = [], bords_ = tag_get_assets("borders"), bords_len = array_length(bords_), bords_i = 0;
+			repeat ( bords_len ) {
+				var cur_ = bords_[bords_i], myspr = get_border(asset_get_index(cur_)), myname = get_border(asset_get_index(cur_), "name");
+				array_push(options_, 
+					new LuiImageButton({ value: myspr, maintain_aspect: false, id_: string_letters(myname) != "" ? myname : sprite_get_name(myname), isnew: false }).setSize(70, 70).setFlexAlignSelf(flexpanel_align.center)
+					.addEvent(LUI_EV_MOUSE_ENTER, function(e_) { if ( sprite_get_number(e_.get()) > 1 ) { e_.imgspd = 0.15; } }).addEvent(LUI_EV_MOUSE_LEAVE, function(e_) { e_.imgspd = 0; e_.subimg = 0; })
+					.addEvent(LUI_EV_CREATE, function(e_) { 
+						var myname = e_.params.id_, result = get_border(myname, "NEW SPRITE"), text_ = $"[border,{myname}]";
+						if ( asset_get_index(result) == -1 ) { e_.params.isnew = ( result != undefined && result ) ? true : false; if ( e_.params.isnew ) { text_ = $"[border,{myname}] (NEW!)"; } }
+						e_.setTooltip(text_);
+					})
+					.addEvent(LUI_EV_CLICK, function(e_) { 
+						var myname = e_.params.id_, bord_ = global.bords_dict[$ myname];
+						if ( !is_undefined(bord_) ) { bord_[$ "NEW SPRITE"] = false; }
+						sfx_play(snd_updated); soup_checkout("datainputB", false, true).set(myname); soup_checkout("dataimageB", false, true).set(e_.get()); soup_checkout("datafunc", false)();
+					})
+				);
+			bords_i++; }
+		#endregion
+		
+		#region Add Default Options
+			array_push(options_, new LuiText({ value: "Add From File...", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, }).setPadding(5)
+				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
+				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
+				.addEvent(LUI_EV_CLICK, function(element_) { 
+					sfx_play(snd_equip); 
+					var result = get_open_filename_ext("Image File (.PNG Only)|*.png", "", directory_get_pictures_path(), "Select a sprite to import."), myname_;
+					if ( result == -1 || result == "" ) { result = spr_border_undertale; myname_ = "spr_border_undertale"; } else { myname_ = string_exclude(string_replace(string_replace(filename_name(result), "_strip", ""), ".png", ""), "0123456789"); result = external_ensure(myname_, filename_name(result), result, 1, false); }
+					SYSTEMUI.spr_bord = result; SYSTEMUI.bord_name = myname_; SYSTEMUI.bord_prev = SYSTEMUI.spr_bord;
+					sfx_play(snd_updated); soup_checkout("datainputB", false, true).set(myname_); soup_checkout("dataimageB", false, true).set(result); soup_checkout("datafunc", false)();
+				})
+			);
+		#endregion
+		
+		var dataarr = [
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiScrollPanel({ height: 400, scroll_pin_edge_offset:10, sprite_panel: false, }).addContent(options_),
+				new LuiText({ value: $"Select a dialogue border!\nThis is the box displayed\naround your text.\nSome are animated!\nScroll to find your perfect\nsprite for your dialogue!", font: fnt_speech, text_halign: fa_center, text_valign: fa_center, }).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollsub", element_); }),
+			]).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollmain", element_); }), //Stash panel so we can add another panel to this row
+		];
+		
+		soup_store("datafunc", function() { soup_checkout("choosemain", false).destroy(); soup_store_clear(); SYSTEMUI.ui_paused = false; });
+		var maincan = soupy_popup(dataarr, function() { soup_store_clear(); SYSTEMUI.ui_paused = false; }, "Nevermind", , , , snd_select, , , 2); soup_store("choosemain", maincan); 
 	}
 #endregion

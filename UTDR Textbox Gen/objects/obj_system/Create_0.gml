@@ -3,6 +3,7 @@
 #region Dialogue Box
 	outlinesoup_init(, , , , 2); soupyclipm_init(); display_set_gui_size(640, 480);
 	spr_bord = spr_border_undertale; //Border Sprite
+	bord_name = "spr_border_undertale"; //Border internal name
 	bord_clr = c_white; //Border Color
 	bord_out = true; //Whether border should have an outline
 	bord_prev = spr_bord; //Previous border
@@ -408,15 +409,31 @@
 		
 		#region Border Panel
 			var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
-			soupy_panel_border = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, }); //Start containter
-			repeat ( 12 ) {
-				soupy_panel_border.addContent([
-					new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
-						new LuiText({ value: "Style Panel:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, truncate: false, }),
-						new LuiButton({ text: "Test Button", height: 40, }),
-					]),
-				]);
-			}
+			soupy_panel_border = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, }) //Start containter
+			.addContent([
+				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
+					new LuiText({ value: "Sprite:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the border sprite.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[border,sprite name][/].", true, , true),
+					new LuiButton({ text: "Choose...", height: 40, width: 100, }).addEvent(LUI_EV_CLICK, external_choose_border),
+					new LuiInput({ height: 40, placeholder: "or type. (ex: spr_border_deltarune)", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datainputB", e_, , true); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+						var spr_ = soup_checkout("dataimageB", false, true), getface = get_border(e_.get()); 
+						spr_.set(getface == -1 ? spr_border_undertale : getface); spr_.subimg = SYSTEMUI.bord_index;
+						SYSTEMUI.spr_bord = (getface == -1 ? spr_border_undertale : getface); SYSTEMUI.bord_prev = SYSTEMUI.spr_bord; bord_name = (getface == -1 ? "spr_border_undertale" : e_.get()); if ( getface != -1 ) { sfx_play(snd_updated); }
+					}),
+					new LuiImage({ maintain_aspect: false, xscale: 0, yscale: 0, }).setSize(70, 70).addEvent(LUI_EV_CREATE, function(e_) { soup_store("dataimageB", e_, , true); }).addEvent(LUI_EV_SHOW, function(e_) { 
+						var input_ = soup_checkout("datainputB", false, true), spr_ = soup_checkout("dataimageB", false, true);
+						spr_.set(SYSTEMUI.spr_bord).setSubimg(SYSTEMUI.bord_index).setColor(SYSTEMUI.bord_clr);
+						input_.set(bord_name); 
+					}).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 0, 0.15, , 5); element_.main_ui.animate(element_, "yscale", 0, 0.15, , 5); sfx_play(snd_squish); }),
+				]),
+			]);
+			//repeat ( 12 ) {
+			//	soupy_panel_border.addContent([
+			//		new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
+			//			new LuiText({ value: "Style Panel:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, truncate: false, }),
+			//			new LuiButton({ text: "Test Button", height: 40, }),
+			//		]),
+			//	]);
+			//}
 		
 			soupy_lui.addContent(soupy_panel_border); //Add everything to the main ui
 		#endregion
