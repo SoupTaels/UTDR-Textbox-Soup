@@ -11,15 +11,15 @@
 	bord_box_visible = true; //Whether the dialogue box is visible
 	bord_index = 0; //Border image index
 	bord_spd = 0; //Border image speed
-	bord_anim = 1; //Animation type ( 0 - Start over, 1 - Bounce back )
+	bord_anim = true; //Animation type ( 0 - Start over, 1 - Bounce back )
 	bord_anim_track = 0;
 	bord_scale = 2; //Border sprite scale
-	bord_stretch = true; //Whether the nineslice border should stretch or tile
+	bord_stretch = false; //Whether the nineslice border should stretch or tile
 #endregion
 
 #region Dialogue Text
 	#region Adjust Fonts
-		var i = 0, str = "fnt_determination|fnt_determination_nomono|fnt_speech|fnt_damage|fnt_tiny|fnt_sans|fnt_papyrus|fnt_abaddon|fnt_arial|fnt_pixel", arr = string_split(str, "|"), len = array_length(arr);
+		var i = 0, arr = tag_get_assets("fonts"), len = array_length(arr);
 		repeat (  len ) {
 			var cur_ = arr[i];
 			scribble_font_bake_outline_and_shadow(cur_, $"{cur_}_outline", 0, 0, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
@@ -120,11 +120,11 @@
 			scribble_typists_add_event("speed_pop", function(_, param) { typist_spd = typist_spd_orig; }); //Changes the typist speed back to the default
 		#endregion
 		
-		#region Face Effects
+		#region Face & Border Effects
 			var efxfunc = function(_, param) { //Play an effect
 				var len = array_length(param);
 				var delayfunc = function () { SYSTEMUI.typist.pause(); TweenScript(SYSTEMUI, 0, 1.01, function () { SYSTEMUI.typist.unpause(); }); }
-				switch ( string_lower(param[0]) ) {
+				switch ( string_lower(string_trim(param[0])) ) {
 					case "squash": case "squish": { TweenFire("$15", "~oquad", "dial_face_xscale_off", 0.3, 0, "dial_face_yscale_off", -0.3, 0); delayfunc(); } break; //Squish the face 
 					case "squeeze": case "stretch": { TweenFire("$15", "~oquad", "dial_face_xscale_off", -0.3, 0, "dial_face_yscale_off", 0.3, 0); delayfunc(); } break; //Squeeze the face
 					case "flash": { //Make the face flash a color [effect,flash,r,g,b,frames]
@@ -136,6 +136,11 @@
 						var getclr = real_ext(len > 1 ? param[1] : "255"), getclr2 = real_ext(len > 2 ? param[2] : "255"), getclr3 = real_ext(len > 3 ? param[3] : "255"), time_ = real_ext(len > 4 ? param[4] : "15");
 						var myclr = make_color_rgb(getclr != "" ? getclr : 255, getclr2 != "" ? getclr2 : 255, getclr3 != "" ? getclr3 : 255);
 						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 15}", TPCol("dial_face_clr"), dial_face_clr, myclr); delayfunc();
+					} break;
+					case "colorborder": case "blendborder": { //Make the border blend to a different [effect,colorblend,r,g,b,frames]
+						var getclr = real_ext(len > 1 ? param[1] : "255"), getclr2 = real_ext(len > 2 ? param[2] : "255"), getclr3 = real_ext(len > 3 ? param[3] : "255"), time_ = real_ext(len > 4 ? param[4] : "15");
+						var myclr = make_color_rgb(getclr != "" ? getclr : 255, getclr2 != "" ? getclr2 : 255, getclr3 != "" ? getclr3 : 255);
+						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 15}", TPCol("bord_clr"), bord_clr, myclr); delayfunc();
 					} break;
 					case "fade": case "ghost": case "opacity": { //Make the face fade out to the specified target number [effect,fade,#,frames]
 						var getamt = real_ext(len > 1 ? param[1] : "0"), time_ = real_ext(len > 2 ? param[2] : "30");
@@ -175,7 +180,7 @@
 			scribble_add_macro("newla", function() { return "\n* "; }); //Newline with asterisk and a space
 			scribble_add_macro("newl", function() { return chr(10); }); //Newline literal
 			scribble_add_macro("pg", function() { return "[/page]"; }); //Page shorthand
-			scribble_add_macro("wait", function(param) { var real_ = real_ext(param); return $"[delay,{real_ != "" ? real_  * 1000 : 0}]"; }); //Delay tag that converts seconds to milliseconds [wait,1] 
+			scribble_add_macro("wait", function(param = 1) { var real_ = real_ext(param); return $"[delay,{real_ != "" ? real_  * 1000 : 0}]"; }); //Delay tag that converts seconds to milliseconds [wait,1] 
 			scribble_add_macro("repeat", function(phrase_ = "", times_ = 1, startwith_ = "", endwith_ = "") { //Repeats a phrase for a specified time with an optional parameter to end and start it off with another phrase [repeat,phrase,times,startwith,endwith]
 				var real_ = string_digits(times_); if ( real_ == "" ) { return ""; }
 				var string_ = "";
@@ -350,7 +355,7 @@
 					new LuiText({ value: "Image Index:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the image number of the\ncurrent dialogue portrait displaying.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[face_index,#][/].\n[c_yellow][slant]Sync With Dialogue[/] will be switched [c_red]off[/].", true, , true),
 					new LuiInput({ height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, }).addEvent(LUI_EV_SHOW, function(e_) { e_.set(FACE_CURRENT != -1 ? FACE_INDEX : 0); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
 						if ( dial_text_gif ) { exit; }
-						var spr_ = soup_checkout("dataimage", false, true), var value_ = e_.get(), index_ = real(value_ == "" ? 0 : value_);
+						var spr_ = soup_checkout("dataimage", false, true), value_ = e_.get(), index_ = real(value_ == "" ? 0 : value_);
 						if ( spr_.get() != spr_gui_icons ) { spr_.setSubimg(index_); FACE_INDEX = index_; }
 						if ( dial_face_auto && soup_checkout("triggered") != undefined ) { dial_face_auto = false; }
 					}).addEvent(LUI_EV_CLICK, function(e_) { soup_store("triggered"); }),
@@ -360,7 +365,7 @@
 					new LuiText({ value: "Image Speed:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the animation speed of the\ncurrent dialogue portrait displaying.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[face_speed,#][/].\n[c_yellow][slant]Sync With Dialogue[/] will be switched [c_red]off[/].", true, , true),
 					new LuiInput({ height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_SHOW, function(e_) { e_.set(FACE_CURRENT != -1 ? FACE_SPEED : 0); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
 						if ( dial_text_gif ) { exit; }
-						var spr_ = soup_checkout("dataimage", false, true), var value_ = real_ext(e_.get()), index_ = value_ == "" ? 0 : value_;
+						var spr_ = soup_checkout("dataimage", false, true), value_ = real_ext(e_.get()), index_ = value_ == "" ? 0 : value_;
 						if ( spr_.get() != spr_gui_icons ) { spr_.imgspd = index_; FACE_SPEED = index_; }
 						if ( dial_face_auto && soup_checkout("triggered") != undefined ) { dial_face_auto = false; }
 					}).addEvent(LUI_EV_CLICK, function(e_) { soup_store("triggered"); }),
@@ -424,25 +429,62 @@
 					spr_.set(getface == -1 ? spr_border_undertale : getface); spr_.subimg = SYSTEMUI.bord_index;
 					SYSTEMUI.spr_bord = (getface == -1 ? spr_border_undertale : getface); SYSTEMUI.bord_prev = SYSTEMUI.spr_bord; bord_name = (getface == -1 ? "spr_border_undertale" : e_.get()); if ( getface != -1 ) { sfx_play(snd_updated); }
 				}),
-				new LuiImage({ maintain_aspect: false, xscale: 0, yscale: 0, }).setSize(70, 70).addEvent(LUI_EV_CREATE, function(e_) { soup_store("dataimageB", e_, , true); }).addEvent(LUI_EV_SHOW, function(e_) { 
-					var input_ = soup_checkout("datainputB", false, true), spr_ = soup_checkout("dataimageB", false, true);
-					spr_.set(SYSTEMUI.spr_bord).setSubimg(SYSTEMUI.bord_index).setColor(SYSTEMUI.bord_clr);
+				new LuiImage({ value: SYSTEMUI.spr_bord, maintain_aspect: false, xscale: 0, yscale: 0, }).setSize(70, 70).addEvent(LUI_EV_CREATE, function(e_) { soup_store("dataimageB", e_, , true); e_.bounce = SYSTEMUI.bord_anim; }).addEvent(LUI_EV_SHOW, function(e_) { 
+					var input_ = soup_checkout("datainputB", false, true);
+					e_.set(SYSTEMUI.spr_bord).setSubimg(SYSTEMUI.bord_index).setColor(SYSTEMUI.bord_clr);
 					input_.set(bord_name); 
 				}).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 0, 0.15, , 5); element_.main_ui.animate(element_, "yscale", 0, 0.15, , 5); sfx_play(snd_squish); })
-				.addEvent(LUI_EV_CLICK_R, function(element_) {
-					var input_ = soup_checkout("datainputB", false, true), spr_ = soup_checkout("dataimageB", false, true);
-					if ( spr_.get() != spr_border_undertale && input_.get() != "spr_border_undertale" ) { spr_.set(spr_border_undertale).setColor(SYSTEMUI.dial_face_clr); input_.set("spr_border_undertale"); sfx_play(snd_hurtpowerful); }
+				   .addEvent(LUI_EV_VALUE_UPDATE, function(e_) { sfx_play(snd_equip2, , , 1.3); TweenScript(SYSTEMUI, 0, 2, function() { var e_ = soup_checkout("dataimageB", false, true); e_.set(SYSTEMUI.spr_bord); }); SYSTEMUI.bord_clr = e_.color_blend; }).addEvent(LUI_EV_CLICK_R, function(e_) {
+					var input_ = soup_checkout("datainputB", false, true); SYSTEMUI.spr_bord = spr_border_undertale; SYSTEMUI.bord_prev = SYSTEMUI.spr_bord;
+					input_.set("spr_border_undertale"); audio_stop_sound(snd_updated); sfx_play(snd_hurtpowerful);
 				}),
 			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a color
+				new LuiText({ value: "Color:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the color of the dialogue border.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[fx,colorborder,r,g,b,frames][/].", true, , true),
+				new LuiButton({ text: "Pick...", height: 40, }).addEvent(LUI_EV_CLICK, soupy_color_picker_border),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image index
+				new LuiText({ value: "Image Index:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the image number of the\ndialogue border.", true, , true),
+				new LuiInput({ value: bord_index, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(floor(SYSTEMUI.bord_index)); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+					var result = e_.get(); SYSTEMUI.bord_index = real(result == "" ? 0 : result);
+					soup_checkout("dataimageB", false, true).setSubimg(SYSTEMUI.bord_index);
+				}),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image speed
+				new LuiText({ value: "Image Speed:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the animation speed of the\ndialogue border.", true, , true),
+				new LuiInput({ value: bord_spd, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.bord_spd); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+					var spr_ = soup_checkout("dataimageB", false, true), value_ = real_ext(e_.get()), index_ = value_ == "" ? 0 : value_; spr_.imgspd = index_; SYSTEMUI.bord_spd = index_;
+				}),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image scale
+				new LuiText({ value: "Scale:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the scale of dialogue borders.\nOnly applies to [c_yellow]custom dialogue borders[/].", true, , true),
+				new LuiInput({ value: bord_scale, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.bord_scale); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+					var spr_ = soup_checkout("dataimageB", false, true), value_ = real_ext(e_.get()), index_ = value_ == "" ? 2 : value_; SYSTEMUI.bord_scale = index_;
+				}),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Nine slice
+				new LuiText({ value: "Nine Stretch:", width: 120, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether [c_yellow]custom borders[/] should stretch\nto fill space instead of tiling.", true, , true),
+				new LuiToggleSwitch({ value: bord_stretch, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "bord_stretch"),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Animation bounce back
+				new LuiText({ value: "Bounce Back:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether dialogue borders should reverse its\nanimation once their animation ends.", true, , true),
+				new LuiToggleSwitch({ value: bord_anim, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "bord_anim").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { soup_checkout("dataimageB", false, true).bounce = e_.get(); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Visbility
+				new LuiText({ value: "Visible:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+				new LuiToggleSwitch({ value: bord_anim, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "bord_box_visible").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { soup_checkout("dataimageB", false, true).setAlpha(e_.get()); }),
+			])
 		]);
-		//repeat ( 12 ) {
-		//	soupy_panel_border.addContent([
-		//		new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
-		//			new LuiText({ value: "Style Panel:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, truncate: false, }),
-		//			new LuiButton({ text: "Test Button", height: 40, }),
-		//		]),
-		//	]);
-		//}
 		
 		soupy_lui.addContent(soupy_panel_border); //Add everything to the main ui
 	#endregion
@@ -462,18 +504,22 @@
 				.addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "yoff", 0, 1, global.Ease.OutElastic, 10); sfx_play(snd_squish); })
 				.addEvent(LUI_EV_CLICK_R, function(element_) {
 					var input_ = soup_checkout("datainputS", false, true), spr_ = soup_checkout("datafont", false, true);
-					if ( spr_.font != "fnt_determination" && input_.get() != "" ) { spr_.font = "fnt_determination"; input_.set(""); sfx_play(snd_hurtpowerful); sfx_play(snd_updated); }
+					if ( spr_.font != "fnt_determination" && input_.get() != "" ) { spr_.font = "fnt_determination"; input_.set(""); sfx_play(snd_hurtpowerful); audio_stop_sound(snd_updated); }
 				}),
 			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image speed
+				new LuiText({ value: "Text Scale:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the scale of dialogue text.", true, , true),
+				new LuiInput({ value: dial_text_scale, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.dial_text_scale); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value_ = real_ext(e_.get()), index_ = value_ == "" ? 2 : value_; SYSTEMUI.dial_text_scale = index_; }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image speed
+				new LuiText({ value: "Line Spacing:", width: 120, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the gap between lines of dialogue.\nIs the line gap too big/ small for your font?\nChange this setting to your liking!\nUse -1 or leave blank to reset.", true, , true),
+				new LuiInput({ value: dial_text_line_spacing, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.dial_text_line_spacing); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value_ = real_ext(e_.get()), index_ = value_ == "" ? -1 : value_; SYSTEMUI.dial_text_line_spacing = index_; }),
+			]),
 		]);
-		//repeat ( 12 ) {
-		//	soupy_panel_style.addContent([
-		//		new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
-		//			new LuiText({ value: "Style Panel:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, truncate: false, }),
-		//			new LuiButton({ text: "Test Button", height: 40, }),
-		//		]),
-		//	]);
-		//}
 		
 		soupy_lui.addContent(soupy_panel_style); //Add everything to the main ui
 	#endregion

@@ -23,7 +23,9 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 	self.sprite_real_width = 0;
 	self.sprite_real_height = 0;
 	self.aspect = 1;
+	self.bounce = false;
 	self.updating = false;
+	self.anim_track = false;
 	
 	///@desc Set sprite
 	///@arg {asset.GMSprite} _sprite
@@ -70,7 +72,17 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 		}
 	}
 	
-	self.step = function () { if ( imgspd > 0 ) { self.updateMainUiSurface(); } }
+	self.step = function () { 
+		if ( self.imgspd > 0 ) {
+			var amt = sprite_get_number(self.value);
+			if ( !self.bounce ) { self.subimg += self.imgspd; if ( self.subimg >= amt ) { self.subimg = 0; } }
+			else { 
+				if ( !self.anim_track ) { self.subimg += self.imgspd mod amt; if ( round(self.subimg) >= amt) { self.anim_track = true; } }
+				else { self.subimg -= self.imgspd; if ( round(self.subimg) <= 0) { self.anim_track = false; } }
+			}
+			self.updateMainUiSurface();
+		};
+	}
 	
 	self.draw = function() {
 		//Calculate fit size
@@ -89,7 +101,6 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 			_blend_color = merge_color(_blend_color, c_black, 0.5);
 		}
 		//Draw sprite
-		if ( self.imgspd > 0 ) { self.subimg += self.imgspd; }
 		if ( !is_undefined(self.value) && self.value != -1 && self.value != "" && sprite_exists(self.value) ) {
 			if ( !self.draw_normal ) {
 				var _sprite_render_function = self.style.sprite_render_function ?? draw_sprite_stretched_ext;

@@ -104,6 +104,7 @@ function LuiText(_params = {}) : LuiBase(_params) constructor {
 			else {
 				var text_ = scribble(self.value)
 				.align(self.text_halign, self.text_valign)
+				.scale(( scale_x + scale_y )/ 2)
 				.starting_format(self.font ?? self.style.font_default, self.color ?? ( !self.deactivated ? self.style.color_text : merge_color(self.style.color_text, c_black, 0.5) ))
 				.wrap(self.wraplimit)
 				.draw(_txt_x + self.xoff, _txt_y + self.yoff);

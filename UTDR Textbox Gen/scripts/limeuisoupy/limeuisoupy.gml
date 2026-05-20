@@ -127,6 +127,7 @@ function soupy_color_picker(var_, soupyname_) {
 }
 function soupy_color_picker_portrait() { soupy_color_picker(SYSTEMUI.dial_face_clr, "datacolor"); }
 function soupy_color_picker_gifcolor() { soupy_color_picker(SYSTEMUI.screenshot_back, "datagifcolor"); }
+function soupy_color_picker_border() { soupy_color_picker(SYSTEMUI.bord_clr, "dataimageB"); }
 
 function soupy_ui_credits() {
 	var arr_ = [];

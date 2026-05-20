@@ -8,13 +8,15 @@ soupy_panel_style.setHeight(340 + ui_tab_yoff);
 soupy_panel_extra.setHeight(340 + ui_tab_yoff);
 soupy_lui.update();
 
+if ( dial_text_outline != -1 && !string_search(dial_font, "outline", true) ) { dial_text_outline = -1; } //Remove outline color if we're not using an outline font
+
 #region Animation & Effects
 	#region Animate Face
 		if ( dial_text_gif && dial_face_auto && typist.get_delay_paused() ) { FACE_INDEX = 0; } //Stop the face from animating if the dialogue is being delayed
 		if ( !dial_face_auto ) { var amt = sprite_get_number(FACE_CURRENT); FACE_INDEX += FACE_SPEED; if ( FACE_INDEX >= amt ) { FACE_INDEX = 0; } } //Animate the portrait sprite
 		if ( bord_spd > 0 ) { //Animate the border
 			var amt = sprite_get_number(spr_bord);
-			if ( bord_anim == 0 ) { bord_index += bord_spd; if ( bord_index >= amt ) { bord_index = 0; } }
+			if ( !bord_anim ) { bord_index += bord_spd; if ( bord_index >= amt ) { bord_index = 0; } }
 			else { 
 				if ( !bord_anim_track ) { bord_index += bord_spd mod amt; if ( round(bord_index) >= amt) { bord_anim_track = true; } }
 				else { bord_index -= bord_spd; if ( round(bord_index) <= 0) { bord_anim_track = false; } }
@@ -35,7 +37,7 @@ soupy_lui.update();
 #endregion
 
 #region BG
-	if ( ui_visible ) {
+	if ( ui_visible && !sprite_exists(global.refimg) ) {
 		var bg = layer_exists("bg3d") ? layer_get_id("bg3d") : layer_create(99, "bg3d"), _fx = layer_get_fx("bg3d"), _params; //Doesn't exist? Create it! Else, get the id.
 		if ( _fx == -1 ) { //Doesn't exist? Create it with default values
 			_fx = fx_create("_filter_parallax");

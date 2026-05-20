@@ -14,6 +14,7 @@ if ( dial_text_page >= dial_text_page_c ) { exit; } //Prevents the stack export 
 		#endregion
 		
 		#region Menu Buttons
+			if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , 0, 0); } //Reference image
 			var i = 0, count_ = array_length(butt);
 			repeat ( count_ ) { 
 				butt[i].update();
@@ -27,8 +28,6 @@ if ( dial_text_page >= dial_text_page_c ) { exit; } //Prevents the stack export 
 		#endregion
 	}
 #endregion
-
-if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , 0, 0); } //Reference image
 
 #region Dialogue Box, Text, Face, etc.
 	if ( bord_visible ) {
@@ -150,7 +149,7 @@ draw_sprite_ext(spr_pixel, 0, 0, 0, 640, 480, 0, c_black, fader); //Black fade o
 	}
 #endregion
 
-mouse_debug();
+//mouse_debug();
 //draw_sprite_ensure(get_face("sck", "capn"), current_time/300, 320, 240);
 //draw_sprite_ensure(get_face("undyne", "pissed"), current_time/300, 320 + 40, 240);
 //draw_sprite_ensure(get_face("sans", "funny"), current_time/300, 320 + 80, 240);
