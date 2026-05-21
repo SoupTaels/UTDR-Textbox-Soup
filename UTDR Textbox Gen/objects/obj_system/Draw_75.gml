@@ -48,7 +48,7 @@ if ( screenshot || record.enabled ) {
 			
 			surface_free(screenshot_surf); screenshot_surf = -1;
 			with ( record ) { frames = 0; framesmax = 0; enabled = false; id_ = -1; }
-			with ( SYSTEMUI ) { screenshot = false; screenshot_stacked = false; dial_text_gif = false; dial_wrap_count = 1; spr_bord = bord_prev; dial_text_page = 0; bord_box_visible = true; ui_tab = 0; ui_visible = true; }
+			with ( SYSTEMUI ) { screenshot = false; screenshot_stacked = false; dial_text_gif = false; dial_wrap_count = 1; spr_bord = bord_prev; dial_text_page = 0; bord_box_visible = true; ui_tab = soup_checkout("tablast", , true); ui_visible = true; ui_reset(); }
 			exit;
 		});
 	#endregion
@@ -89,7 +89,7 @@ if ( screenshot || record.enabled ) {
 			if ( state_ < 1 || ( state_ >= 1 && record.frames < record.delay ) ) { record_func(); } //If we're still typing, keep recording
 			if ( state_ >= 1 ) { //If we stopped typing
 				if ( record.frames < record.delay ) { record.frames++; exit; } //Delay before moving on
-				else { if ( dial_text_page < dial_text_page_c - 1 ) { record.frames = 0; dial_text_page++; sfx_play(snd_equip); exit; } else { finish_func(); } } //Either go to the next page or stop recording
+				else { if ( dial_text_page < dial_text_page_c - 1 ) { record.frames = 0; point_visible = false; dial_text_page++; sfx_play(snd_equip); exit; } else { finish_func(); } } //Either go to the next page or stop recording
 			}
 		}
 	}

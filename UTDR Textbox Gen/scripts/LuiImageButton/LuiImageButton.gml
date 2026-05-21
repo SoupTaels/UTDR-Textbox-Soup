@@ -11,8 +11,24 @@ function LuiImageButton(_params = {}) : LuiImage(_params) constructor {
 	self.draw_normal = _params[$ "draw_normal"] ?? false;
 	self.color_hover = _params[$ "color_hover"];
 	self.subimg = _params[$ "subimg"] ?? 0;
+	self.angle = _params[$ "angle"] ?? 0;
 	self.imgspd = _params[$ "imgspd"] ?? 0;
-	self.step = function () { if ( imgspd > 0 ) { self.updateMainUiSurface(); } }
+	self.xscale = _params[$ "xscale"] ?? 1;
+	self.yscale = _params[$ "yscale"] ?? 1;
+	self.color_default = self.color_blend;
+	self.bounce = false;
+	self.anim_track = false;
+	self.step = function () { 
+		if ( self.imgspd > 0 ) {
+			var amt = sprite_get_number(self.value);
+			if ( !self.bounce ) { self.subimg += self.imgspd; if ( self.subimg >= amt ) { self.subimg = 0; } }
+			else { 
+				if ( !self.anim_track ) { self.subimg += self.imgspd mod amt; if ( round(self.subimg) >= amt) { self.anim_track = true; } }
+				else { self.subimg -= self.imgspd; if ( round(self.subimg) <= 0) { self.anim_track = false; } }
+			}
+			self.updateMainUiSurface();
+		};
+	}
 	self.draw = function() {
 		//Calculate fit size
 		var _width = self.width;
@@ -37,18 +53,17 @@ function LuiImageButton(_params = {}) : LuiImage(_params) constructor {
 			_blend_color = merge_color(_blend_color, c_black, 0.5);
 		}
 		//Draw sprite button
-		if ( self.imgspd > 0 ) { self.subimg += self.imgspd; }
 		if ( !is_undefined(self.value) && self.value != -1 && self.value != "" && sprite_exists(self.value) ) {
 			if ( !self.draw_normal ) {
 				var _sprite_render_function = self.style.sprite_render_function ?? draw_sprite_stretched_ext;
 					_sprite_render_function(self.value, self.subimg, 
-												floor(self.x + self.width/2 - _width/2), 
-												floor(self.y + self.height/2 - _height/2), 
-												_width, _height, 
+												floor(self.x + self.width/2 - _width/2) - self.xscale, 
+												floor(self.y + self.height/2 - _height/2) - self.yscale, 
+												_width + ( self.xscale * 2 ), _height + ( self.yscale * 2 ), 
 												_blend_color, self.alpha);
 			}
 			else {
-				draw_sprite_ext(self.value, self.subimg, self.x + self.width/2, self.y + self.height/2, 1, 1, self.params[$ "angle"] ?? 0, _blend_color, self.alpha);
+				draw_sprite_ext(self.value, self.subimg, self.x + self.width/2, self.y + self.height/2, self.xscale, self.yscale, self.angle ?? 0, _blend_color, self.alpha);
 			}
 		}
 	}

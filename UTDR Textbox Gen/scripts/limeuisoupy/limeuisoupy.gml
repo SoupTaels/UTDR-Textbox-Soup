@@ -46,6 +46,7 @@ function soupy_message(textarr_ = ["Test", "Test 2"], textbutt_ = "OK", width = 
 ///@param {Asset.GMSound} snd_ Sound
 ///@param {Asset.GMFont} font_ Text Font
 ///@param {bool} allowmultiple_ Whether to allow multiple popups
+///@param {real} gap_ Gap
 ///@param {real} heightb Height Button
 function soupy_popup(elementsarr, func_ = function(){}, textbutt_ = "OK", width = 620, height = -1, padd_ = 5, snd_ = snd_dimbox, font_ = fnt_determination, allowmultiple_ = false, gap_ = 5, heightb = 35) {
 	window_set_cursor(cr_default);
@@ -69,6 +70,7 @@ function soupy_popup(elementsarr, func_ = function(){}, textbutt_ = "OK", width 
 
 ///@desc Open LimeUI color picker
 function soupy_color_picker(var_, soupyname_) {
+	if ( !soup_store_undefined("colorhistory", true) ) { soup_store("colorhistory", [], , true); }
 	soup_store("soupyname", soupyname_);
 	soup_store("rgb r", color_get_red(var_)); soup_store("rgb g", color_get_green(var_)); soup_store("rgb b", color_get_blue(var_));
 	var clr = new LuiImage({ value: spr_soul, width: 60, height: 48 }).setTooltip("Don't want to use the sliders?\nClick here to open a color picker instead.", true).addEvent(LUI_EV_CREATE, function(element_) { soup_store("element spr", element_); element_.setColor(make_color_rgb(soup_checkout("rgb r", false), soup_checkout("rgb g", false), soup_checkout("rgb b", false))); });
@@ -99,7 +101,31 @@ function soupy_color_picker(var_, soupyname_) {
 			soup_store("rgb b", element_.value);
 			getclr.setColor(make_color_rgb(rgbr, rgbg, soup_checkout("rgb b", false)));
 		}).addEvent(LUI_EV_CREATE, function(element_) { soup_store("element b", element_); }),
+	];
 	
+	#region Color History
+		var hist_ = soup_checkout("colorhistory", false, true), hist_len = array_length(hist_), hist_i = 0, hist_clrs = [];
+		if ( hist_len > 0 ) {
+			repeat ( hist_len ) {
+			var cur_ = hist_[hist_i];
+				array_push(hist_clrs, new LuiImageButton({ value: spr_pixel, maintain_aspect: false, color: cur_ }).setSize(20, 20)
+				.addEvent(LUI_EV_CLICK, function (e_) {
+					soup_store("rgb r", color_get_red(e_.color_blend)); soup_store("rgb g", color_get_green(e_.color_blend)); soup_store("rgb b", color_get_blue(e_.color_blend));
+					var rgbr = soup_checkout("element r", false); rgbr.value = soup_checkout("rgb r", false); rgbr.update_values();
+					var rgbg = soup_checkout("element g", false); rgbg.value = soup_checkout("rgb g", false); rgbg.update_values();
+					var rgbb = soup_checkout("element b", false); rgbb.value = soup_checkout("rgb b", false); rgbb.update_values();
+					soup_checkout("element spr", false).setColor(make_color_rgb(soup_checkout("rgb r", false), soup_checkout("rgb g", false), soup_checkout("rgb b", false)));
+					e_.main_ui.animate(e_, "xscale", 0, 1, global.Ease.OutElastic, 4); e_.main_ui.animate(e_, "yscale", 0, 1, global.Ease.OutElastic, -2);
+					sfx_play(snd_bump, , , 1.3);
+				}) );
+			hist_i++; }
+		
+			array_push(elemarr, new LuiRow().setFlexGrow(1).centerContent().addContent(hist_clrs));
+		}
+	#endregion
+	
+	#region Add Default Options
+	array_push(elemarr, 
 		new LuiButton({ text: "RANDOMIZE", "height": 35, }).addEvent(LUI_EV_CLICK, function () {
 			soup_store("rgb r", irandom(255)); soup_store("rgb g", irandom(255)); soup_store("rgb b", irandom(255));
 			var rgbr = soup_checkout("element r", false); rgbr.value = soup_checkout("rgb r", false); rgbr.update_values();
@@ -117,10 +143,14 @@ function soupy_color_picker(var_, soupyname_) {
 			soup_checkout("element spr", false).setColor(make_color_rgb(soup_checkout("rgb r", false), soup_checkout("rgb g", false), soup_checkout("rgb b", false)));
 			sfx_play(snd_hurtpowerful);
 		}),
-	];
+	);
+	#endregion
+	
 	soup_store("colormain", function() { 
 		var myobj = soup_checkout(soup_checkout("soupyname"), false, true); 
-		myobj.setColor(make_color_rgb(soup_checkout("rgb r"), soup_checkout("rgb g"), soup_checkout("rgb b"))); myobj.set(spr_face_blank); 
+		myobj.setColor(make_color_rgb(soup_checkout("rgb r"), soup_checkout("rgb g"), soup_checkout("rgb b"))); myobj.set(spr_face_blank);
+		var hist_ = soup_checkout("colorhistory", false, true), hist_len = array_length(hist_);
+		if ( hist_len < 15 ) { if ( !array_contains(hist_, myobj.color_blend) ) { array_push(hist_, myobj.color_blend); } } else { array_delete(hist_, 0, 1); array_push(hist_, myobj.color_blend); } //Add color to history
 		soup_store_clear(); 
 	});
 	var maincan = soupy_popup(elemarr, soup_checkout("colormain", false), "SET COLOR!"); soup_store("colorcan", maincan, , true);
@@ -128,6 +158,9 @@ function soupy_color_picker(var_, soupyname_) {
 function soupy_color_picker_portrait() { soupy_color_picker(SYSTEMUI.dial_face_clr, "datacolor"); }
 function soupy_color_picker_gifcolor() { soupy_color_picker(SYSTEMUI.screenshot_back, "datagifcolor"); }
 function soupy_color_picker_border() { soupy_color_picker(SYSTEMUI.bord_clr, "dataimageB"); }
+function soupy_color_picker_asterisk() { soupy_color_picker(SYSTEMUI.dial_point_clr, "dataasterisk"); }
+function soupy_color_picker_textc() { soupy_color_picker(SYSTEMUI.dial_text_c, "datatextc"); } function soupy_color_picker_textcout() { soupy_color_picker(SYSTEMUI.dial_text_outline, "datatextcout"); }
+function soupy_color_picker_shadow() { soupy_color_picker(SYSTEMUI.dial_text_shdw_clr, "datashadow"); }
 
 function soupy_ui_credits() {
 	var arr_ = [];

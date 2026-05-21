@@ -8,7 +8,9 @@
 #macro FACE_INTERNAL obj_system.dial_face_name[obj_system.dial_text_page] //Get the internal name for the current dialogue face
 #macro FACE_USING FACE_CURRENT != -1 && FACE_CURRENT != 0 //If the dialogue box will contain a face
 #macro LAST_SAVED $"{executable_get_directory()}latest_soupy_last_typed.soupy" //Last text we typed
+#macro AUTO_ASTERISK ( obj_system.dial_point_auto && string_trim(obj_system.dial_point_chr) != "" ) //Whether to enable auto-asterisk
 #macro PATHSEP (( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ) ? "\\"  :  "/") //Get platform-dependant path
+#macro PREF_SOUP $"{executable_get_directory()}soupy_preferences.soupy" //Settings to save
 
 #region Default functions for the menu buttons
 	function on_enter_() { if ( SYSTEMUI.ui_tab != id_ ) { sfx_play(snd_sel_switch); TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } }
@@ -261,7 +263,7 @@ function ui_manage() {
 					var butt_data = { x: 160 + ( 27 * colors_i ), y: 70, sprite: spr_color_button, draw_nine: false, leeway: 3, color_butt: colors_get[$ colors_cur], color_butt_hover: merge_color(colors_get[$ colors_cur], color_get_value(colors_get[$ colors_cur]) > 150 ? c_black : c_white, 0.3), on_click: method({ colors_cur }, function () { SYSTEMUI.butt_func(colors_cur, true); }), on_click_right: method({ colors_cur }, function () { 
 						sfx_play(snd_equip2, , , 1.5); 
 						var clrget = SYSTEMUI.colors_get[$ colors_cur];
-						if ( SYSTEMUI.dial_text_outline != clrget ) { if ( !string_search(SYSTEMUI.dial_font, "_outline", true) ) { SYSTEMUI.dial_font = $"{SYSTEMUI.dial_font}_outline" } SYSTEMUI.dial_text_outline = clrget; } //Switching to a new color? Change the text outline, otherwise disable text outline
+						if ( SYSTEMUI.dial_text_outline != clrget ) { if ( !string_search(SYSTEMUI.dial_font, "_outline", true) ) { SYSTEMUI.dial_font = $"{SYSTEMUI.dial_font}_outline"; } SYSTEMUI.dial_text_outline = clrget; } //Switching to a new color? Change the text outline, otherwise disable text outline
 						else { SYSTEMUI.dial_font = string_replace(SYSTEMUI.dial_font, "_outline", ""); SYSTEMUI.dial_text_outline = -1; }
 					}) };
 					

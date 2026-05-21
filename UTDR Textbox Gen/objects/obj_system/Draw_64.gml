@@ -33,7 +33,7 @@ if ( dial_text_page >= dial_text_page_c ) { exit; } //Prevents the stack export 
 	if ( bord_visible ) {
 		var dltrn = spr_bord == spr_border_deltarune; //Check if our border is Deltarune
 		var offset_ = dltrn ? 8 : 0, offset_w = dltrn ? 15 : 0, offset_h = dltrn ? 16 : 0, bordx = 32 - offset_, bordy = 315 - offset_, bordw = 578 + offset_w, bordh = 152 + offset_w; //Border coords
-		var xx_ = ( bordx + ( ( FACE_USING ? 144 : 28 ) + ( dial_point_auto ? 4 : 0 ) ) ) + ( offset_ + dltrn ? 6 : 0 ), yy_ = ( bordy + 24 ) + offset_; //Text X Y
+		var xx_ = ( bordx + ( ( FACE_USING ? 144 : 28 ) + ( AUTO_ASTERISK ? 4 : 0 ) ) ) + ( offset_ + dltrn ? 6 : 0 ), yy_ = ( bordy + 24 ) + offset_; //Text X Y
 
 		var ninesl_ = sprite_get_nineslice(spr_bord); 
 		if ( bord_box_visible ) { if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, 1); } else { draw_9slice(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, bord_scale, bord_stretch); } } //Dialogue Box Clone(to work around alpha transparency issues)
@@ -48,19 +48,10 @@ if ( dial_text_page >= dial_text_page_c ) { exit; } //Prevents the stack export 
 			#region Dialogue Text
 				if ( dial_text != "" && dial_text != chr(0) ) { //No need to draw blank text
 					var line_sp = dial_text_line_spacing != -1 ? dial_text_line_spacing : "129%";
-					#region Dialogue Text Shadow
-						if ( dial_text_shdw ) {
-							var scrib_dial_shdw = scribble(dial_text) 
-								.starting_format(dial_font, dial_text_shdw_clr).scale(dial_text_scale)
-								.page(dial_text_page).line_spacing(line_sp).wrap(dial_auto_wrap ? 580 - xx_ : -1)
-								scrib_dial_shdw.draw(dial_point_auto ? ( xx_ + dial_text_shdw_thick ) + 28 : xx_ + dial_text_shdw_thick, yy_ + dial_text_shdw_thick, dial_text_gif ? typist : undefined);
-						}
-					#endregion
-			
 					#region Actual Text
-						var tx_x = dial_point_auto ? xx_ + 28 : xx_, wrapcalc = dial_auto_wrap ? 580 - xx_ : -1;
+						var tx_x = AUTO_ASTERISK ? xx_ + 28 : xx_, wrapcalc = dial_auto_wrap ? 580 - xx_ : -1;
 						var scrib_dial = scribble(dial_text) //Dialogue Text
-							.starting_format(dial_font, c_white).scale(dial_text_scale).outline(dial_text_outline)
+							.starting_format(dial_font, dial_text_c).scale(dial_text_scale).outline(dial_text_outline).shadow(dial_text_shdw_clr, dial_text_shdw)
 							.allow_line_data_getter().allow_glyph_data_getter()
 							.line_spacing(line_sp).page(dial_text_page).wrap(wrapcalc)
 							if ( record.enabled || screenshot ) { dial_text_page_c = scrib_dial.get_page_count(); }
@@ -68,23 +59,15 @@ if ( dial_text_page >= dial_text_page_c ) { exit; } //Prevents the stack export 
 					#endregion
 
 					#region Dialogue Auto Point
-						if ( dial_point_auto ) {
+						if ( AUTO_ASTERISK ) {
 							var linec = dial_text_gif ? dial_wrap_count : scrib_dial.get_line_count(dial_text_page);
 							var i = 0; repeat ( linec ) {
 								var lined = scrib_dial.get_line_data(i, dial_text_page), chr_ = chr(scrib_dial.get_glyph_data(lined.glyph_start, dial_text_page).unicode);
-								if ( lined.forced_break && ( chr_ != chr(10) && chr_ != chr(0) && chr_ != "" && chr_ != " " ) && ( !dial_text_gif || typist.get_state() >= 0.01 * typist_spd ) ) { //Don't show anything if the line only contains an newline literal
-									#region Dialogue Asterisk Shadow
-										if ( dial_text_shdw ) { 
-											var scrib_point_shdw = scribble(dial_point_chr, "point_shdw") //Dialogue Point
-												.starting_format(dial_font, dial_text_shdw_clr).scale(dial_text_scale)
-												scrib_point_shdw.draw(( xx_ + dial_text_shdw_thick ) - 4, ( yy_ + lined.y ) + dial_text_shdw_thick);
-										}
-									#endregion
-								
+								if ( lined.forced_break && ( chr_ != chr(10) && chr_ != chr(0) && chr_ != "" && chr_ != " " ) && ( !dial_text_gif || point_visible ) ) { //Don't show anything if the line only contains an newline literal
 									#region Actual Asterisk
 										var p_x = xx_ - 4, p_y = yy_ + lined.y;
 										var scrib_point = scribble(dial_point_chr) //Dialogue Point
-											.starting_format(dial_font, dial_point_clr).scale(dial_text_scale).outline(dial_text_outline)
+											.starting_format(dial_font, dial_point_clr).scale(dial_text_scale).outline(dial_text_outline).shadow(dial_text_shdw_clr, dial_text_shdw)
 											.allow_line_data_getter()
 											scrib_point.draw(p_x, p_y);
 									#endregion
