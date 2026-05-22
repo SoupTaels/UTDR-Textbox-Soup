@@ -107,11 +107,12 @@
 			if ( dial_face_auto ) { FACE_INDEX = 0; }
 			if ( !dial_face_keep ) { FACE_CURRENT = dial_face_original[dial_text_page]; } //Switch back to the original face
 			typist_spd = typist_spd_orig; //Switch back to the original typewriter speed
-			dial_face_alpha = 1; dial_face_angle = 0; dial_face_xoff = 0; dial_face_yoff = 0; dial_face_xscale_off = 0; dial_face_yscale_off = 0;
 			
 			if ( !instance_exists(obj_mini) ) { exit; }
 			with ( obj_mini ) { if ( page == other.dial_text_page ) { active = true; TweenFire("$13", $"~{smooth ? "oquad" : "linear"}", "xoff", 30, 0, "alpha", 0, 1); } } 
 		});
+		
+		typist_reset = function () { dial_face_angle = dial_face_angle_orig; dial_face_alpha = dial_face_alpha_orig; dial_face_xoff = 0; dial_face_yoff = 0; dial_face_xscale_off = 0; dial_face_yscale_off = 0; }
 	#endregion
 	
 	#region Typist Events
@@ -261,6 +262,9 @@
 	dial_face_alpha = 1; //Dialogue Face Alpha
 	dial_face_xoff = 0; dial_face_yoff = 0; //Dialogue Face X & Y offset, for animation
 	dial_face_anim = 2; //How many letters should pass before animating the face?
+	
+	dial_face_alpha_orig = dial_face_alpha;  //Original alpha to revert back to
+	dial_face_angle_orig = dial_face_angle;  //Original angle to revert back to
 #endregion
 
 #region Engine UI
@@ -428,15 +432,15 @@
 					
 				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image angle
 					new LuiText({ value: "Angle:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the angle of every dialogue portrait.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[effect,rotate,#,frames,issmooth]", true, , true),
-					new LuiSlider({ min_value: 0, color_text: c_black, color_text_drag: c_white, max_value: 360, rounding: true, display_value: true, bar_sprite: spr_border_header, bar_sprite_back: spr_border_header, }).bindVariable(self, "dial_face_angle").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
-						var value_ = real(e_.get()); SYSTEMUI.dial_face_angle = value_; soup_checkout("dataimage", false, true).angle = value_;
+					new LuiSlider({ min_value: 0, color_text: c_black, color_text_drag: c_white, max_value: 360, rounding: true, display_value: true, bar_sprite: spr_border_header, bar_sprite_back: spr_border_header, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.dial_face_angle); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+						var value_ = real(e_.get()); SYSTEMUI.dial_face_angle = value_; SYSTEMUI.dial_face_angle_orig = SYSTEMUI.dial_face_angle; soup_checkout("dataimage", false, true).angle = value_;
 					}),
 				]),
 					
 				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image alpha
 					new LuiText({ value: "Opacity:", width: 85, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the alpha of every dialogue portrait.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[effect,fade,#,frames]", true, , true),
-					new LuiSlider({ value: dial_face_alpha, min_value: 0, color_text: c_black, color_text_drag: c_white, max_value: 1, rounding: false, display_value: true, bar_sprite: spr_border_header, bar_sprite_back: spr_border_header, }).bindVariable(self, "dial_face_alpha").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
-						var value_ = real(e_.get()); SYSTEMUI.dial_face_alpha = value_; soup_checkout("dataimage", false, true).alpha = value_;
+					new LuiSlider({ value: dial_face_alpha, min_value: 0, color_text: c_black, color_text_drag: c_white, max_value: 1, rounding: false, display_value: true, bar_sprite: spr_border_header, bar_sprite_back: spr_border_header, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.dial_face_alpha); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+						var value_ = real(e_.get()); SYSTEMUI.dial_face_alpha = value_; SYSTEMUI.dial_face_alpha_orig = SYSTEMUI.dial_face_alpha; soup_checkout("dataimage", false, true).angle = value_;
 					}),
 				]),
 					

@@ -91,7 +91,7 @@ if ( screenshot || record.enabled ) {
 			if ( state_ < 1 || ( state_ >= 1 && record.frames < record.delay ) ) { record_func(); } //If we're still typing, keep recording
 			if ( state_ >= 1 ) { //If we stopped typing
 				if ( record.frames < record.delay ) { record.frames++; exit; } //Delay before moving on
-				else { if ( dial_text_page < dial_text_page_c - 1 ) { record.frames = 0; point_visible = false; dial_text_page++; sfx_play(snd_equip); exit; } else { finish_func(); } } //Either go to the next page or stop recording
+				else { if ( dial_text_page < dial_text_page_c - 1 ) { record.frames = 0; point_visible = false; typist_reset(); dial_text_page++; sfx_play(snd_equip); exit; } else { finish_func(); } } //Either go to the next page or stop recording
 			}
 		}
 	}
