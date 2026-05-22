@@ -48,8 +48,8 @@
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 							new LuiImageButton({ value: spr_export_icons, maintain_aspect: false, }).setSize(130, 130).setTooltip("Export just a standalone image of the chosen page.", true).addEvent(LUI_EV_CREATE, function(element_) { soup_store("export 1", element_); })
 								.addEvent(LUI_EV_CLICK, function(element_) { soup_store("stacked", false); var option_ = soup_checkout("export 2", false); option_.setColor(#524664); element_.setColor(c_white); }),
-							new LuiImageButton({ value: spr_export_icons, subimg: 1, maintain_aspect: false, }).setSize(130, 130).setTooltip("Export all your pages as one big stack.", true).addEvent(LUI_EV_CREATE, function(element_) { soup_store("export 2", element_); element_.setColor(#524664); soup_store("stacked", false); })
-								.addEvent(LUI_EV_CLICK, function(element_) { soup_store("stacked", true); var option_ = soup_checkout("export 1", false); option_.setColor(#524664); element_.setColor(c_white); }),
+							new LuiImageButton({ value: spr_export_icons, subimg: 1, maintain_aspect: false, }).setSize(130, 130).setTooltip($"Export all your pages as one big stack.{global.pref.sizematters ? "\n[c_red]Disabled while [c_yellow]Bigger Resolution[c_red] is enabled." : ""}", true, , true).addEvent(LUI_EV_CREATE, function(element_) { soup_store("export 2", element_); element_.setColor(#524664); soup_store("stacked", false); })
+								.addEvent(LUI_EV_CLICK, function(element_) { if ( global.pref.sizematters ) { sfx_play(snd_error); exit; } soup_store("stacked", true); var option_ = soup_checkout("export 1", false); option_.setColor(#524664); element_.setColor(c_white); }),
 						]),
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 							new LuiText({ value: "Start at page:", text_halign: fa_center, text_valign: fa_middle }),

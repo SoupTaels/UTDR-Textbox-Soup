@@ -5,29 +5,31 @@ if ( screenshot || record.enabled ) {
 	var out_ = bord_out; //Whether to save with an outline
 	var folder = "UTDR-SoupGen-Export", fname = $"UTDR_SoupGen_-{current_month}.{current_day}.{current_year}-_{current_hour}.{current_minute}.{current_second}.{current_time}-";
 	var offset_ = dltrn ? 8 : 0, offset_w = dltrn ? 15 : 0, offset_h = dltrn ? 16 : 0, x_ = ( 32 - offset_ ) - ( out_ ? 2 : 0 ), y_ = ( 315 - offset_ ) - ( out_ ? 2 : 0 ), w_ = ( 578 + offset_w ) + ( out_ ? 4 : 0 ), h_ = ( 152 + offset_w ) + ( out_ ? 4 : 0 ); //Border coords
+	if ( global.pref.sizematters ) { offset_ = 0; offset_w = 0; offset_h = 0; x_ = 0; y_ = 0; w_ = 640; h_ = 480; }
 	
 	#region Draw Surface
 		screenshot_surf = surface_create(640, 480);
 		surface_set_target(screenshot_surf);
+			var myy = ( global.pref.sizematters && global.pref.sizematterstop ) ? ( -305 + ( global.pref.anyborder ? abs(bord_yoff) : 0 ) ) : ( global.pref.sizematters ? 5 : 0 );
 			if ( !record.enabled ) { draw_clear_alpha(c_black, 0); } else { draw_clear_alpha(screenshot_back, 1); }//For borders that aren't perfect rectangles
 		
 			#region Dialogue Box Outline
 				if ( out_ && bord_box_visible ) {
 					var out_thick = 2, offset_ = dltrn ? 8 : 0, offset_w = dltrn ? 15 : 0, offset_h = dltrn ? 16 : 0, bordx = 32 - offset_, bordy = 315 - offset_, bordw = 578 + offset_w, bordh = 152 + offset_w; //Border coords
 					gpu_set_fog(true, c_black, 0, 0); //Draw solid color of sprite
-						draw_surface_ext(out_surf, -out_thick, 0, 1, 1, 0, c_white, 1); //Dialogue Box Left
-						draw_surface_ext(out_surf, out_thick, 0, 1, 1, 0, c_white, 1); //Dialogue Box Right
-						draw_surface_ext(out_surf, 0, -out_thick, 1, 1, 0, c_white, 1); //Dialogue Box Up
-						draw_surface_ext(out_surf, 0, out_thick, 1, 1, 0, c_white, 1); //Dialogue Box Down
+						draw_surface_ext(out_surf, - out_thick, myy, 1, 1, 0, c_white, 1); //Dialogue Box Left
+						draw_surface_ext(out_surf, out_thick, myy, 1, 1, 0, c_white, 1); //Dialogue Box Right
+						draw_surface_ext(out_surf, 0, myy - out_thick, 1, 1, 0, c_white, 1); //Dialogue Box Up
+						draw_surface_ext(out_surf, 0, myy + out_thick, 1, 1, 0, c_white, 1); //Dialogue Box Down
 						
-						draw_surface_ext(out_surf, -out_thick, -out_thick, 1, 1, 0, c_white, 1); //Dialogue Box Up Left
-						draw_surface_ext(out_surf, out_thick, -out_thick, 1, 1, 0, c_white, 1); //Dialogue Box Up Right
-						draw_surface_ext(out_surf, -out_thick, out_thick, 1, 1, 0, c_white, 1); //Dialogue Box Down Left
-						draw_surface_ext(out_surf, out_thick, out_thick, 1, 1, 0, c_white, 1); //Dialogue Box Down Right
+						draw_surface_ext(out_surf, -out_thick, myy - out_thick, 1, 1, 0, c_white, 1); //Dialogue Box Up Left
+						draw_surface_ext(out_surf, out_thick, myy - out_thick, 1, 1, 0, c_white, 1); //Dialogue Box Up Right
+						draw_surface_ext(out_surf,  -out_thick, myy + out_thick, 1, 1, 0, c_white, 1); //Dialogue Box Down Left
+						draw_surface_ext(out_surf, out_thick, myy + out_thick, 1, 1, 0, c_white, 1); //Dialogue Box Down Right
 					gpu_set_fog(false, c_white, 0, 0); //Reset effect
 				}
 			#endregion (Yes we have to draw it like this)
-			draw_surface_ext(out_surf, 0, 0, 1, 1, 0, c_white, 1); //Our gen result
+			draw_surface_ext(out_surf, 0, myy, 1, 1, 0, c_white, 1); //Our gen result
 			if ( instance_exists(obj_mini) ) { with ( obj_mini ) { draw(); } }
 		surface_reset_target();
 	#endregion
@@ -76,7 +78,7 @@ if ( screenshot || record.enabled ) {
 		}
 	}
 	else if ( record.enabled ) {
-		var record_func = method({ record, screenshot_surf, x_, y_, w_, h_, typist }, function(init_ = false) { if ( init_ ) { record.id_ = gif_open(w_, h_); typist.reset(); } else { var debug = gif_add_surface(record.id_, screenshot_surf, 2, x_, y_, record.quant); } });
+		var record_func = method({ record, screenshot_surf, screenshot_back, x_, y_, w_, h_, typist }, function(init_ = false) { if ( init_ ) { record.id_ = gif_open(w_, h_, screenshot_back); typist.reset(); } else { var debug = gif_add_surface(record.id_, screenshot_surf, 2, x_, y_, record.quant); } });
 		if ( record.type == 0 ) { //No typing animation
 			if ( record.frames == 0 ) { record_func(true); record.frames++; sfx_play(snd_equip); exit; } //Enable GIF recording
 			else { 

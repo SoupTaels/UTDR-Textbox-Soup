@@ -1,5 +1,6 @@
 ///@desc Init
 //if ( live_call() ) { return live_result; } 
+
 #region Loading Preferences
 	if ( file_exists(PREF_SOUP) ) {
 		var buff_ = buffer_load(PREF_SOUP), data_ = buffer_read(buff_, buffer_text), pref_ = undefined;
@@ -9,6 +10,9 @@
 		if ( is_struct(pref_) ) {
 			var get_ = pref_[$ "firsttime"]; global.pref.firsttime = !is_undefined(get_) ? get_ : true;
 			var get_ = pref_[$ "shadowoff"]; global.pref.shadowoff = !is_undefined(get_) ? abs(round(get_)) : 1;
+			var get_ = pref_[$ "killaudio"]; global.pref.killaudio = !is_undefined(get_) ? get_ : false;
+			var get_ = pref_[$ "sizematters"]; global.pref.sizematters = !is_undefined(get_) ? get_ : false;
+			var get_ = pref_[$ "sizematterstop"]; global.pref.sizematterstop = !is_undefined(get_) ? get_ : false;
 		}
 	}
 #endregion
@@ -28,6 +32,9 @@
 	bord_anim_track = 0;
 	bord_scale = 2; //Border sprite scale
 	bord_stretch = false; //Whether the nineslice border should stretch or tile
+	bord_xoff = 0; //Arb Border X off
+	bord_yoff = 0; //Arb Border Y off
+	bord_angle = 0; //Arb Border Angle
 #endregion
 
 #region Dialogue Text
@@ -68,6 +75,8 @@
 	dial_text_page_c = 0; //Amount of pages in a dialogue sequence
 	dial_text_line_spacing = -1; //Spacing between lines. -1 for auto.
 	point_visible = false; //Whether the auto-points are visible
+	dial_text_xoff = 0; //Offset X Text
+	dial_text_yoff = 0; //Offset Y Text
 	
 	#region Typist
 		typist = scribble_typist(); //Dialogue Engine
@@ -222,6 +231,8 @@
 					case "stack": { return "[repeat,test[newl][/page]test2[newl][/page]test3[newl][/page]test4[newl][/page]test5[newl][/page]test6[newl][/page]test7[newl][/page]test8[newl][/page]test9,5]"; break; }
 					//Test overloading the dialogue stack
 					case "overload": { return "[test,stack][/page][test,stack]"; break; }
+					
+					case "basic": { return "Test text 1, 2, 3.[newl]Test text 4, 5, 6.[newl]Test text 7, 8, 9.[/page][c_red]Test text 1, 2, 3.[newl]Test text 4, 5, 6.[newl]Test text 7, 8, 9."; break; }
 					default: { return "Testing suite ID not found."; }
 				}
 			});
@@ -498,7 +509,7 @@
 			]),
 			
 			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Nine slice
-				new LuiText({ value: "Nine Stretch:", width: 120, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether [c_yellow]custom borders[/] should stretch\nto fill space instead of tiling.", true, , true),
+				new LuiText({ value: "Nine Stretch:", width: 120, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether [c_yellow]custom borders[/] should stretch\nto fill space instead of tiling.\n[c_red]Not applicable[/] for [c_yellow][slant]arbitrary borders[/].", true, , true),
 				new LuiToggleSwitch({ value: bord_stretch, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "bord_stretch"),
 			]),
 			
@@ -510,7 +521,43 @@
 			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Visbility
 				new LuiText({ value: "Visible:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
 				new LuiToggleSwitch({ value: bord_anim, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "bord_box_visible").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { soup_checkout("dataimageB", false, true).setAlpha(e_.get()); }),
-			])
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Arbitrary Border:", width: 160, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether to allow borders of [slant]any\narbitrary size and customization[/].\nThis means [c_red]nineslice is disabled[/] and\nyou'll need to provide a border sprite\nof exact size. This will also enable\n[c_yellow]Bigger Resolution[/].\nJust make sure your border isn't cluttering\nUI elements or else [shake]you won't be able to see!", true, , true),
+				new LuiToggleSwitch({ value: global.pref.anyborder, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "anyborder").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.bord_scale = e_.get() ? 1 : 2; global.pref.sizematters = true; SYSTEMUI.save_pref(); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image scale
+				new LuiText({ value: "Text X Off:", width: 130, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Offset dialogue text on the x axis.\nEspecially useful for [c_yellow][slant]arbitrary borders[/].", true, , true),
+				new LuiInput({ value: dial_text_xoff, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.dial_text_xoff); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value_ = real_ext(e_.get()), index_ = value_ == "" ? 0 : value_; SYSTEMUI.dial_text_xoff = index_; }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image scale
+				new LuiText({ value: "Text Y Off:", width: 130, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Offset dialogue text on the y axis.\nEspecially useful for [c_yellow][slant]arbitrary borders[/].", true, , true),
+				new LuiInput({ value: dial_text_yoff, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.dial_text_yoff); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value_ = real_ext(e_.get()), index_ = value_ == "" ? 0 : value_; SYSTEMUI.dial_text_yoff = index_; }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image scale
+				new LuiText({ value: "Border X Off:", width: 150, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Offset [c_yellow][slant]arbitrary borders[/] on the x axis.", true, , true),
+				new LuiInput({ value: bord_xoff, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.bord_xoff); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value_ = real_ext(e_.get()), index_ = value_ == "" ? 0 : value_; SYSTEMUI.bord_xoff = index_; }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image scale
+				new LuiText({ value: "Border Y Off:", width: 150, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Offset [c_yellow][slant]arbitrary borders[/] on the y axis.", true, , true),
+				new LuiInput({ value: bord_yoff, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.bord_yoff); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value_ = real_ext(e_.get()), index_ = value_ == "" ? 0 : value_; SYSTEMUI.bord_yoff = index_; }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image angle
+				new LuiText({ value: "Border Angle:", width: 150, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Change the rotation of [c_yellow][slant]arbitrary borders[/].", true, , true),
+				new LuiSlider({ min_value: 0, color_text: c_black, color_text_drag: c_white, max_value: 360, rounding: true, display_value: true, bar_sprite: spr_border_header, bar_sprite_back: spr_border_header, }).bindVariable(self, "bord_angle").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+					//var value_ = real(e_.get()); SYSTEMUI.bord_angle = value_;
+				}),
+			]),
 		]);
 		
 		soupy_lui.addContent(soupy_panel_border); //Add everything to the main ui
@@ -629,6 +676,21 @@
 				}),
 			]),
 				
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Mute Audio:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Disable all sound effects.", true, , true),
+				new LuiToggleSwitch({ value: global.pref.killaudio, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "killaudio").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Bigger Resolution:", width: 170, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Export all dialogue in UTDR's native resolution of 640x480.\nHelpful for [c_yellow][slant]arbitrary borders[/] as your sprites may get\ncut off on export if you import a border of an unusual size.", true, , true),
+				new LuiToggleSwitch({ value: global.pref.sizematters, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "sizematters").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "To The Top:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("If [c_yellow]Bigger Resolution is true[/], then this will\nsend the dialogue box to the top.", true, , true),
+				new LuiToggleSwitch({ value: global.pref.sizematterstop, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "sizematterstop").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
+			]),
+			
 			new LuiButton({ text: "Help Guide", height: 40, }).addEvent(LUI_EV_CLICK, function() { execute_shell_simple("https://rentry.co/utdrsoupguides", , , 0); }),
 			new LuiButton({ text: "So Soupy!!", height: 40, }).addEvent(LUI_EV_CLICK, function() { execute_shell_simple("https://www.youtube.com/watch?v=zbClYRnQQJ0", , , 0); }),
 			new LuiButton({ text: "Credits", height: 40, }).addEvent(LUI_EV_CLICK, soupy_ui_credits),
@@ -705,11 +767,15 @@
 #region First Time
 	var txt_ = "Ayy! Welcome to [wheel][c_gold]UTDR SoupGen![/]|I see that it's your first time booting this up.|I would recommend [c_yellow]reading the|[c_yellow]help guide before you continue[/].|SoupGen got a [slant]lot[/] of power to it compared|to your average UTDR textbox generator,|so do familarize yourself with what all you can do!| |With that being said, [wave][c_lime]I hope you enjoy|this beta release!";
 	
-	var save_ = function () {
-		global.pref.firsttime = false;
+	save_pref = function () {
 		var data_ = json_stringify(global.pref);
 		var buff_ = buffer_create(string_byte_length(data_), buffer_fixed, 1);
 		buffer_write(buff_, buffer_text, data_); buffer_save(buff_, PREF_SOUP); buffer_delete(buff_);
+	}
+	
+	var save_ = function () {
+		global.pref.firsttime = false;
+		SYSTEMUI.save_pref();
 		execute_shell_simple("https://rentry.co/utdrsoupguides", , , 0);
 	}
 	

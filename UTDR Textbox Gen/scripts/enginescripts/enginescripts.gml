@@ -14,7 +14,7 @@ randomize();
 	#macro mouse_pressed_right device_mouse_check_button_pressed(0, mb_right)
 	#macro mouse_released_right device_mouse_check_button_released(0, mb_right)
 	// flip this value to 0 to disable GMLive!
-	#macro live_enabled 1
+	#macro live_enabled 0
 #endregion
 
 ///@desc Shorthand function for make_color_rgb,
@@ -275,7 +275,7 @@ function draw_sprite_outline(sprite_ = sprite_index, index_ = image_index, x_ = 
 }
 
 ///@desc Shorthand for audio_play_sound()
-function sfx_play(snd, loop = false, gain = 1, pitch = 1) { if ( snd == -1 || snd == undefined ) { exit; } return audio_play_sound(snd, 0, loop, gain, , pitch); }
+function sfx_play(snd, loop = false, gain = 1, pitch = 1) { if ( global.pref.killaudio || snd == -1 || snd == undefined ) { exit; } return audio_play_sound(snd, 0, loop, gain, , pitch); }
 
 ///@desc Removes anything that isn't a number or decimal point
 function string_digits_ext(str){
@@ -306,7 +306,8 @@ function first_decimal(string_) {
 function real_ext(string_) {
 	string_ = string_digits_ext(string_);
 	string_ = first_decimal(string_);
-	return ( string_ != "" && string_ != "-" && string_ != "." ) ? real(string_) : "";
+	try { string_ = real(string_); } catch ( err_ ) { string_ = string_digits(string_); }
+	return ( string_digits(string_) != "" ) ? real(string_) : "";
 }
 
 ///@desc Makes a copy of a string, but excluding characters in a character exclusion string. Optionally can replace those characters with another character.

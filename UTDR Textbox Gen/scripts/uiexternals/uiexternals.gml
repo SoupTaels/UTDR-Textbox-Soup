@@ -2,6 +2,10 @@ outputLog = "";
 pref = {
 	firsttime: true, //Whether it's the first time this tool has been launched
 	shadowoff: 1, //Text shadow offset
+	killaudio: false, //Whether the tool should make sound
+	sizematters: false, //Whether the tool should export dialogue with a resolution of 640x480
+	sizematterstop: false, //Whether to send the dialogue box to the top
+	anyborder: false, //Whether to allow any arbitrary border
 }
 #region Add External Faces
 	faces_dict = {};
@@ -131,7 +135,7 @@ pref = {
 			with ( bords_dict[$ temp_] ) {
 				self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External border \"{fname_}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
 				self[$ "size"] = { sprite, width: sprite_get_width(sprite), height: sprite_get_height(sprite), }
-				sprite_set_offset(sprite, size.width/ 2, size.height/ 2); //Center sprite
+				//sprite_set_offset(sprite, size.width/ 2, size.height/ 2); //Center sprite
 				asset_add_tags(sprite, "borders", asset_sprite);
 				
 				var out_ = $"Added \"{name}\" from {fname_}! | Image Count: {count}";
