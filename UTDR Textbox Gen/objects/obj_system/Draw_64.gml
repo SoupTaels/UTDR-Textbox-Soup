@@ -1,5 +1,5 @@
 ///@desc Draw Dialogue Things
-//if ( live_call() ) { return live_result; } 
+if ( live_call() ) { return live_result; } 
 if ( dial_text_page >= dial_text_page_c ) { exit; } //Prevents the stack export from going out of bounds
 #region UI Borders and Buttons
 	if ( ui_visible ) {
@@ -126,9 +126,9 @@ ui_manage(); //Menu handler
 	
 		//Textbox
 		if ( ui_tab == 0 ) {
-			draw_sprite_stretched_ext(spr_border_dashed, 0, 35, 135, 605 - 35, bord_visible ? 285 - 135 : 235, c_cyan, 0.5 + abs(sin(current_time/300)) * 0.5);
+			draw_sprite_stretched_ext(spr_border_dashed, 0, 35, 135, 605 - 35, bord_visible ? 150 : 300, c_cyan, 0.5 + abs(sin(current_time/300)) * 0.5);
 			draw_format("center", "center", fnt_speech, c_cyan);
-			draw_text(320, bord_visible ? 210 : 255,  "Drag your text document here to copy over its contents!\n(.TXT ONLY)");
+			draw_text(320, bord_visible ? 210 : 290,  "Drag your text document here to copy over its contents!\n(.TXT ONLY)");
 		}
 	}
 #endregion

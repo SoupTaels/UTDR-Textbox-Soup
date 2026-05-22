@@ -70,7 +70,11 @@ if ( dial_text_outline != -1 && !string_search(dial_font, "outline", true) ) { d
 	}
 #endregion
 
-#region Fullscreen, Debug
-	if ( keyboard_check_pressed(vk_f2) ) { event_perform(ev_create, 0); }
+#region Fullscreen, Effects
+	//if ( keyboard_check_pressed(vk_f2) ) { event_perform(ev_create, 0); }
+	if ( mouse_pressed || mouse_pressed_right ) {
+		instance_create_depth(mouse_x_gui, mouse_y_gui, -1, obj_particle, { sprite_index: spr_spark, image_speed: 0.50, follow: true, offx: -15, });
+		instance_create_depth(mouse_x_gui, mouse_y_gui, -1, obj_particle, { sprite_index: spr_spark, image_speed: 0.50, image_xscale: -1, follow: true, offx: 25, });
+	}
 	if ( keyboard_check_pressed(vk_f4) ) { window_set_fullscreen( !window_get_fullscreen() ); sfx_play(snd_equip2); }
 #endregion

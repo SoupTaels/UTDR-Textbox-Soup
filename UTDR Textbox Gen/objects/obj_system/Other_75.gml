@@ -47,13 +47,14 @@ var errorfunc = function (txt_, w_ = undefined) { soupy_message(txt_, , w_, , , 
 				}
 				else { errorfunc($"\"{fname}\"|is not allowed to be loaded.|File must be a PNG format.", 320); }
 			}
-			else if ( ui_tab == 0 && ( range_within(mouse_x_gui, 0, 640) && range_within(mouse_y_gui, 120, bord_visible ? 300 : 380) ) ) { //Hovering over the textbox
+			else if ( ui_tab == 0 && ( range_within(mouse_x_gui, 0, 640) && range_within(mouse_y_gui, 120, bord_visible ? 300 : 480) ) ) { //Hovering over the textbox
 				var fext = filename_ext(fpath);
 				if ( fext != ".txt" ) { errorfunc($"\"{fname}\"|is not allowed to be loaded.|File must be a TXT format.", 320); }
 				else { 
 					var result = buffer_load(fpath), txt = buffer_read(result, buffer_text);
 					buffer_delete(result);
 					dial_text_page = 0;
+					if ( string_length(txt) >= 1000 ) { txt = string_copy(txt, 1, 1000); soupy_message("You imported a text file that was|too big for this tool to handle,|so we only copied 1,000 characters.", , 320, , , snd_error, , function() { SYSTEMUI.file_dragging = false; }); }
 					textinput.SetValue(txt);
 					SYSTEMUI.dial_updatet = 1;
 					sfx_play(snd_equip2);

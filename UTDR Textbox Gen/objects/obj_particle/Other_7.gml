@@ -1,0 +1,2 @@
+///@desc 
+instance_destroy();

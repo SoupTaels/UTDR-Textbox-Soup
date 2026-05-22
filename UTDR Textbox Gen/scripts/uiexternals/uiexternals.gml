@@ -1,4 +1,5 @@
 outputLog = "";
+outputLogSkipped = "";
 pref = {
 	firsttime: true, //Whether it's the first time this tool has been launched
 	shadowoff: 1, //Text shadow offset
@@ -13,28 +14,54 @@ pref = {
 	
 	var findfaces = gumshoe("faces", ".png"), faces_i = 0, faces_count = 0, faces_len = array_length(findfaces);
 	repeat ( faces_len ) {
-		var faces_cur = findfaces[faces_i]; //Current face we're looking at
+		var faces_cur = findfaces[faces_i]; //Current face path we're looking at
 		var faces_dir = filename_dir_name(faces_cur); //Get directory name
-		if ( !struct_exists(global.faces_dict, faces_dir) ) { global.faces_dict[$ faces_dir] = {}; } //Create new struct face dictionary
+		if ( faces_dir != "" ) { //Not trying to load a file outside a folder
+			if ( !struct_exists(global.faces_dict, faces_dir) ) { global.faces_dict[$ faces_dir] = {}; } //Create new struct face dictionary
 			var temp_ = string_replace(faces_cur, $"faces{PATHSEP}{faces_dir}{PATHSEP}", ""); //Remove faces/(folder name)/
 			var imgnum = string_between(temp_, "_strip", ".png"); imgnum = imgnum == "" ? 1 : real(imgnum); //Get the image number if it's a strip file
 			var faces_emote = string_exclude(string_replace(string_replace(string_replace(temp_, $"_strip", ""), $"spr_{faces_dir}_", ""), ".png", ""), "1234567890"); //Get face expression
-			
-			with ( global.faces_dict[$ faces_dir] ) {
-				self[$ faces_emote] = { sprite: sprite_add(faces_cur, imgnum, false, false, 0, 0), expression: faces_emote, name: faces_cur, count: imgnum, } //Add sprite index and expression name to the global face dictonary
-				with ( self[$ faces_emote] ) { 
-					self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External face \"{name}\" was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
-					self[$ "size"] = { sprite, width: sprite_get_width(sprite), height: sprite_get_height(sprite), }
-					sprite_set_offset(sprite, size.width/ 2, size.height/ 2); //Center sprite
+			if ( faces_emote != "" ) { //Filename isn't just numbers
+				with ( global.faces_dict[$ faces_dir] ) {
+					if ( is_undefined(self[$ faces_emote]) ) { //If this dictonary doesn't already exist
+					self[$ faces_emote] = { sprite: sprite_add(faces_cur, imgnum, false, false, 0, 0), expression: faces_emote, name: faces_cur, count: imgnum, } //Add sprite index and expression name to the global face dictonary
+						with ( self[$ faces_emote] ) { 
+							self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External face \"{name}\" was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
+							self[$ "size"] = { sprite, width: sprite_get_width(sprite), height: sprite_get_height(sprite), }
+							sprite_set_offset(sprite, size.width/ 2, size.height/ 2); //Center sprite
 					
-					var scrib_ = $"{faces_dir}_{expression}"; scribble_external_sprite_add(sprite, scrib_); //Register sprite with Scribble
-					var altname_ = $"spr_{scrib_}"; if ( !scribble_external_sprite_exists(altname_) ) { scribble_external_sprite_add(sprite, altname_); } //Alternative name
-					global.faces_dict_alt[$ altname_] = { sprite, name: altname_, destroy, size } //Add sprite index and expression name to the global face alt dictonary
-					var out_ = $"Added \"{expression}\" from {name}! | Image number: {count} | Scribble name: {scrib_} | Scribble alt name: {altname_}";
-					show_debug_message(out_); global.outputLog += $"{out_}\n";
-					faces_count++;
+							var scrib_ = $"{faces_dir}_{expression}"; scribble_external_sprite_add(sprite, scrib_); //Register sprite with Scribble
+							var altname_ = $"spr_{scrib_}"; if ( !scribble_external_sprite_exists(altname_) ) { scribble_external_sprite_add(sprite, altname_); } //Alternative name
+							global.faces_dict_alt[$ altname_] = { sprite, name: altname_, destroy, size } //Add sprite index and expression name to the global face alt dictonary
+							var out_ = $"Added \"{expression}\" from {name}! | Image number: {count} | Scribble name: {scrib_} | Scribble alt name: {altname_}";
+							show_debug_message(out_); global.outputLog += $"{out_}\n";
+							faces_count++;
+						}
+					}
+					else { 
+						var out_ = $"Tried to load a sprite that already exists({faces_cur})! Skipping..."; 
+						show_debug_message(out_); global.outputLog += $"{out_}\n"; 
+				
+						var out_ = $"|Tried to load a sprite that already exists|({faces_cur})! Skipped...|Remove duplicates before trying again!|"; 
+						global.outputLogSkipped += out_; 
+					}
 				}
 			}
+			else { 
+				var out_ = $"Tried to load a sprite with an invalid name({faces_cur})! Skipping..."; 
+				show_debug_message(out_); global.outputLog += $"{out_}\n"; 
+				
+				var out_ = $"|Tried to load a sprite with an invalid filename|({faces_cur})! Skipped...|Make sure you properly name your files! (No numbers besides _stripN.png)|"; 
+				global.outputLogSkipped += out_; 
+			}
+		}
+		else { 
+			var out_ = $"Tried to load a sprite outside of a folder({faces_cur})! Skipping..."; 
+			show_debug_message(out_); global.outputLog += $"{out_}\n"; 
+				
+			var out_ = $"|Tried to load a sprite outside of a folder|({faces_cur})! Skipped...|Face sprites for auto-loading should have all their faces in their own folders!|"; 
+			global.outputLogSkipped += out_; 
+		}
 	faces_i++; }
 	var out_ = $"Over {faces_count} external faces were loaded!";
 	show_debug_message(out_); global.outputLog += $"{out_}\n";
@@ -89,22 +116,39 @@ pref = {
 			var imgnum = string_between(temp_, "_strip", ".png"); imgnum = imgnum == "" ? 1 : real(imgnum); //Get the image number if it's a strip file
 			temp_ = string_replace(string_replace(string_replace(temp_, $"spr_", ""), $"_strip", ""), $".png", "");
 			temp_ = string_exclude(temp_, "0123456789");
-		
-			icons_dict[$ temp_] = { sprite: sprite_add(icons_cur, imgnum, false, false, 0, 0), name: temp_, fname_: icons_cur, count: imgnum, }
-			with ( icons_dict[$ temp_] ) {
-				self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External icon \"{fname_}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
-				self[$ "size"] = { sprite, width: sprite_get_width(sprite), height: sprite_get_height(sprite), }
-				sprite_set_offset(sprite, size.width/ 2, size.height/ 2); //Center sprite
+			if ( temp_ != "" ) {
+				if ( is_undefined(icons_dict[$ temp_]) ) {
+					icons_dict[$ temp_] = { sprite: sprite_add(icons_cur, imgnum, false, false, 0, 0), name: temp_, fname_: icons_cur, count: imgnum, }
+					with ( icons_dict[$ temp_] ) {
+						self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External icon \"{fname_}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
+						self[$ "size"] = { sprite, width: sprite_get_width(sprite), height: sprite_get_height(sprite), }
+						sprite_set_offset(sprite, size.width/ 2, size.height/ 2); //Center sprite
 				
-				var out_ = $"Added \"{name}\" from {fname_}! Image Count: {count}";
-				scribble_external_sprite_add(sprite, name);
+						var out_ = $"Added \"{name}\" from {fname_}! Image Count: {count}";
+						scribble_external_sprite_add(sprite, name);
 				
-				var temp_2 = string_replace(icons_cur, $"icons{PATHSEP}", ""); 
-				temp_2 = string_replace(string_replace(temp_2, $"_strip", ""), $".png", "");
-				temp_2 = string_exclude(temp_2, "0123456789");
-				if ( !scribble_external_sprite_exists(temp_2) ) { scribble_external_sprite_add(sprite, temp_2); } //alternative
-				global.icons_dict_alt[$ temp_2] = { sprite, name, size, } //Add sprite index and expression name to the global icon alt dictonary
-				show_debug_message(out_); global.outputLog += $"{out_}\n";
+						var temp_2 = string_replace(icons_cur, $"icons{PATHSEP}", ""); 
+						temp_2 = string_replace(string_replace(temp_2, $"_strip", ""), $".png", "");
+						temp_2 = string_exclude(temp_2, "0123456789");
+						if ( !scribble_external_sprite_exists(temp_2) ) { scribble_external_sprite_add(sprite, temp_2); } //alternative
+						global.icons_dict_alt[$ temp_2] = { sprite, name, size, } //Add sprite index and expression name to the global icon alt dictonary
+						show_debug_message(out_); global.outputLog += $"{out_}\n";
+					}
+				}
+				else { 
+					var out_ = $"Tried to load a sprite that already exists({icons_cur})! Skipping..."; 
+					show_debug_message(out_); global.outputLog += $"{out_}\n"; 
+				
+					var out_ = $"|Tried to load a sprite that already exists|({icons_cur})! Skipped...|Remove duplicates before trying again!|"; 
+					global.outputLogSkipped += out_; 
+				}
+			}
+			else { 
+				var out_ = $"Tried to load a sprite with an invalid name({icons_cur})! Skipping..."; 
+				show_debug_message(out_); global.outputLog += $"{out_}\n"; 
+				
+				var out_ = $"|Tried to load a sprite with an invalid filename|({icons_cur})! Skipped...|Make sure you properly name your files! (No numbers besides _stripN.png)|"; 
+				global.outputLogSkipped += out_; 
 			}
 		icons_i++; }
 		
@@ -131,20 +175,38 @@ pref = {
 			temp_ = string_replace(string_replace(string_replace(temp_, $"spr_", ""), $"_strip", ""), $".png", "");
 			temp_ = string_exclude(temp_, "0123456789");
 		
-			bords_dict[$ temp_] = { sprite: sprite_add(bords_cur, imgnum, false, false, 0, 0), name: temp_, fname_: bords_cur, count: imgnum, }
-			with ( bords_dict[$ temp_] ) {
-				self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External border \"{fname_}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
-				self[$ "size"] = { sprite, width: sprite_get_width(sprite), height: sprite_get_height(sprite), }
-				//sprite_set_offset(sprite, size.width/ 2, size.height/ 2); //Center sprite
-				asset_add_tags(sprite, "borders", asset_sprite);
+			if ( temp_ != "" ) {
+				if ( is_undefined(bords_dict[$ temp_]) ) {
+					bords_dict[$ temp_] = { sprite: sprite_add(bords_cur, imgnum, false, false, 0, 0), name: temp_, fname_: bords_cur, count: imgnum, }
+					with ( bords_dict[$ temp_] ) {
+						self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External border \"{fname_}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
+						self[$ "size"] = { sprite, width: sprite_get_width(sprite), height: sprite_get_height(sprite), }
+						//sprite_set_offset(sprite, size.width/ 2, size.height/ 2); //Center sprite
+						asset_add_tags(sprite, "borders", asset_sprite);
 				
-				var out_ = $"Added \"{name}\" from {fname_}! | Image Count: {count}";
-				var temp_2 = string_replace(bords_cur, $"borders{PATHSEP}", ""); 
-				temp_2 = string_replace(string_replace(temp_2, $"_strip", ""), $".png", "");
-				temp_2 = string_exclude(temp_2, "0123456789");
-				global.bords_dict_alt[$ temp_2] = { sprite, name, size, } //Add sprite index and expression name to the global border alt dictonary
-				global.bords_dict_raw[$ string(sprite)] = { sprite, name, size, } //Add sprite index and expression name to the global border raw dictonary
-				show_debug_message(out_); global.outputLog += $"{out_}\n";
+						var out_ = $"Added \"{name}\" from {fname_}! | Image Count: {count}";
+						var temp_2 = string_replace(bords_cur, $"borders{PATHSEP}", ""); 
+						temp_2 = string_replace(string_replace(temp_2, $"_strip", ""), $".png", "");
+						temp_2 = string_exclude(temp_2, "0123456789");
+						global.bords_dict_alt[$ temp_2] = { sprite, name, size, } //Add sprite index and expression name to the global border alt dictonary
+						global.bords_dict_raw[$ string(sprite)] = { sprite, name, size, } //Add sprite index and expression name to the global border raw dictonary
+						show_debug_message(out_); global.outputLog += $"{out_}\n";
+					}
+				}
+				else { 
+					var out_ = $"Tried to load a sprite that already exists({bords_cur})! Skipping..."; 
+					show_debug_message(out_); global.outputLog += $"{out_}\n"; 
+				
+					var out_ = $"|Tried to load a sprite that already exists|({bords_cur})! Skipped...|Remove duplicates before trying again!|"; 
+					global.outputLogSkipped += out_; 
+				}
+			}
+			else { 
+				var out_ = $"Tried to load a sprite with an invalid name({bords_cur})! Skipping..."; 
+				show_debug_message(out_); global.outputLog += $"{out_}\n"; 
+				
+				var out_ = $"|Tried to load a sprite with an invalid filename|({bords_cur})! Skipped...|Make sure you properly name your files! (No numbers besides _stripN.png)|"; 
+				global.outputLogSkipped += out_; 
 			}
 		bords_i++; }
 		
@@ -186,25 +248,43 @@ pref = {
 		temp_ = string_replace(string_replace(string_replace(temp_, $"spr_", ""), $"_strip", ""), $".png", "");
 		temp_ = string_exclude(temp_, "0123456789");
 		
-		fonts_dict[$ temp_] = { sprite: sprite_add(fonts_cur, imgnum, false, false, 0, 0), name: temp_, fname_: fonts_cur, count: imgnum, }
-		with ( fonts_dict[$ temp_] ) {
-			array_push(global.fonts_dict_list, name); //Add custom font to array list
-			self[$ "font"] = font_add_sprite(sprite, ord("!"), false, 0); //Add as an actual font
-			self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; font_delete(font); delete font; font = -1; show_debug_message($"External font \"{fname_}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
+		if ( temp_ != "" ) {
+			if ( is_undefined(fonts_dict[$ temp_]) ) { 
+				fonts_dict[$ temp_] = { sprite: sprite_add(fonts_cur, imgnum, false, false, 0, 0), name: temp_, fname_: fonts_cur, count: imgnum, }
+				with ( fonts_dict[$ temp_] ) {
+					array_push(global.fonts_dict_list, name); //Add custom font to array list
+					self[$ "font"] = font_add_sprite(sprite, ord("!"), false, 0); //Add as an actual font
+					self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; font_delete(font); delete font; font = -1; show_debug_message($"External font \"{fname_}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
 
-			var temp_2 = string_replace(fonts_cur, $"fonts{PATHSEP}", ""); 
-			temp_2 = string_replace(string_replace(temp_2, $"_strip", ""), $".png", "");
-			temp_2 = string_exclude(temp_2, "0123456789");
+					var temp_2 = string_replace(fonts_cur, $"fonts{PATHSEP}", ""); 
+					temp_2 = string_replace(string_replace(temp_2, $"_strip", ""), $".png", "");
+					temp_2 = string_exclude(temp_2, "0123456789");
 	
-			global.fonts_dict_alt[$ temp_2] = { sprite, font, name, } //Add sprite index and expression name to the global icon alt dictonary
-			var getfont = asset_get_name(sprite);
-			scribble_font_rename(getfont, name); //Let us use the font's filename instead of whatever name gamemaker generated for us
-			scribble_font_bake_outline_and_shadow(name, $"{name}_s", global.pref.shadowoff, global.pref.shadowoff, SCRIBBLE_OUTLINE.NO_OUTLINE, 0, false);
-			scribble_font_bake_outline_and_shadow(name, $"{name}_outline", global.pref.shadowoff, global.pref.shadowoff, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
-			scribble_font_delete(name); scribble_font_rename($"{name}_s", name);
-			scribble_glyph_set($"{name}_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, scribble_glyph_get(name, "W", SCRIBBLE_GLYPH.FONT_HEIGHT));
-			var out_ = $"Added \"{name}\" and outline variant from {fname_}! Renamed custom font from {getfont} to {global.fonts_dict_alt[$ temp_2].name} for use with Scribble.\nImage Count: {count}";
-			show_debug_message(out_); global.outputLog += $"{out_}\n";
+					global.fonts_dict_alt[$ temp_2] = { sprite, font, name, } //Add sprite index and expression name to the global icon alt dictonary
+					var getfont = asset_get_name(sprite);
+					scribble_font_rename(getfont, name); //Let us use the font's filename instead of whatever name gamemaker generated for us
+					scribble_font_bake_outline_and_shadow(name, $"{name}_s", global.pref.shadowoff, global.pref.shadowoff, SCRIBBLE_OUTLINE.NO_OUTLINE, 0, false);
+					scribble_font_bake_outline_and_shadow(name, $"{name}_outline", global.pref.shadowoff, global.pref.shadowoff, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
+					scribble_font_delete(name); scribble_font_rename($"{name}_s", name);
+					scribble_glyph_set($"{name}_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, scribble_glyph_get(name, "W", SCRIBBLE_GLYPH.FONT_HEIGHT));
+					var out_ = $"Added \"{name}\" and outline variant from {fname_}! Renamed custom font from {getfont} to {global.fonts_dict_alt[$ temp_2].name} for use with Scribble.\nImage Count: {count}";
+					show_debug_message(out_); global.outputLog += $"{out_}\n";
+				}
+			}
+			else { 
+				var out_ = $"Tried to load a sprite that already exists({fonts_cur})! Skipping..."; 
+				show_debug_message(out_); global.outputLog += $"{out_}\n"; 
+				
+				var out_ = $"|Tried to load a sprite that already exists|({fonts_cur})! Skipped...|Remove duplicates before trying again!|"; 
+				global.outputLogSkipped += out_; 
+			}
+		}
+		else { 
+			var out_ = $"Tried to load a sprite with an invalid name({fonts_cur})! Skipping..."; 
+			show_debug_message(out_); global.outputLog += $"{out_}\n"; 
+				
+			var out_ = $"|Tried to load a sprite with an invalid filename|({fonts_cur})! Skipped...|Make sure you properly name your files! (No numbers besides _stripN.png)|"; 
+			global.outputLogSkipped += out_; 
 		}
 	fonts_i++; }
 	

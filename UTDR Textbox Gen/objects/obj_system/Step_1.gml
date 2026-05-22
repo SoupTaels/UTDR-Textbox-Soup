@@ -94,16 +94,16 @@
 				soup_store("maincan", maincan);
 			}),
 			
-			new LuiButton({ text: "Animated", height: 35, }).setTooltip("Your dialogue will be typed out, recorded, and exported as a GIF.", true).addEvent(LUI_EV_CLICK, function(element_) {
+			new LuiButton({ text: "Animated", height: 35, }).setTooltip("Your dialogue will be animated and recorded as a GIF.", true).addEvent(LUI_EV_CLICK, function(element_) {
 				var maincan = soup_checkout("maincan"), mainfunc = soup_checkout("export dialogue func", false); maincan.destroy(); SYSTEMUI.ui_paused = false;
 				
 				#region Animation Button Function
 					var exportarr = [
 						new LuiText({ value: "Select your animated export type:", text_halign: fa_center, text_valign: fa_middle }),
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
-							new LuiImageButton({ value: spr_export_icons, subimg: 2, maintain_aspect: false, }).setSize(130, 130).setTooltip("Enable the typewriter and watch\nas your dialogue plays out in sequence!", true).addEvent(LUI_EV_CREATE, function(element_) { soup_store("export 1", element_); })
+							new LuiImageButton({ value: spr_export_icons, subimg: 2, maintain_aspect: false, }).setSize(130, 130).setTooltip("Leverage the power of Typewriter Mode, enable it,\nand watch as your dialogue plays out in sequence!", true).addEvent(LUI_EV_CREATE, function(element_) { soup_store("export 1", element_); })
 								.addEvent(LUI_EV_CLICK, function(element_) { soup_store("typewrite", true); var option_ = soup_checkout("export 2", false); option_.setColor(#524664); element_.setColor(c_white); }),
-							new LuiImageButton({ value: spr_export_icons, subimg: 3, maintain_aspect: false, }).setSize(130, 130).setTooltip("Animate the current page for a select amount of time.", true).addEvent(LUI_EV_CREATE, function(element_) { soup_store("export 2", element_); element_.setColor(#524664); soup_store("typewrite", true); })
+							new LuiImageButton({ value: spr_export_icons, subimg: 3, maintain_aspect: false, }).setSize(130, 130).setTooltip("Animate the current page for a select amount of time.\nNo Typewriter Mode.", true).addEvent(LUI_EV_CREATE, function(element_) { soup_store("export 2", element_); element_.setColor(#524664); soup_store("typewrite", true); })
 								.addEvent(LUI_EV_CLICK, function(element_) { soup_store("typewrite", false); var option_ = soup_checkout("export 1", false); option_.setColor(#524664); element_.setColor(c_white); }),
 						]),
 						new LuiButton({ text: "Next", height: 35, }).addEvent(LUI_EV_CLICK, function(element_) {
@@ -113,13 +113,13 @@
 							var exportarr = []; 
 							if ( !typewrite ) {
 								array_push(exportarr, new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
-									new LuiText({ value: "Record for:", text_halign: fa_center, text_valign: fa_middle }),
+									new LuiText({ value: "Record for:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("The amount of frames per seconds to record for.\n[c_yellow]60[/] = [c_lime]1 second[/], [c_yellow]30[/] = [c_lime]0.5 seconds[/], [c_yellow]120[/] = [c_lime]2 seconds[/], etc.", true, , true),
 									new LuiInput({ value: soup_checkout("timerfor", false), placeholder: "123456", input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "timerfor"),
 								]));
 							}
 							else {
 								array_push(exportarr, new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
-									new LuiText({ value: "Delay between pages:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("How long to wait until the next dialogue page plays out?", true),
+									new LuiText({ value: "Delay between pages:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("How long to wait until the next dialogue page plays out?\nThis is measured in frames per second.\n[c_yellow]60[/] = [c_lime]1 second[/], [c_yellow]30[/] = [c_lime]0.5 seconds[/], [c_yellow]120[/] = [c_lime]2 seconds[/], etc.", true, , true),
 									new LuiInput({ value: soup_checkout("delayb", false), placeholder: "123456", input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "delayb"),
 								]));
 							}

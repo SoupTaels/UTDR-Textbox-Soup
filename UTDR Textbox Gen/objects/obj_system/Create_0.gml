@@ -446,6 +446,7 @@
 					}),
 				]),
 					
+				new LuiHorizontalRule({ height: 5, }),
 				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Animate with dialogue
 					new LuiText({ value: "Sync with dialogue:", width: 185, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether to animate the face while\ndialogue is typing out.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[face_auto,\"true\" or \"false\"]", true, , true),
 					new LuiToggleSwitch({ value: dial_face_auto, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "dial_face_auto"),
@@ -529,6 +530,7 @@
 				new LuiToggleSwitch({ value: bord_anim, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "bord_box_visible").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { soup_checkout("dataimageB", false, true).setAlpha(e_.get()); }),
 			]),
 			
+			new LuiHorizontalRule({ height: 5, }),
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
 				new LuiText({ value: "Arbitrary Border:", width: 160, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether to allow borders of [slant]any\narbitrary size and customization[/].\nThis means [c_red]nineslice is disabled[/] and\nyou'll need to provide a border sprite\nof exact size. This will also enable\n[c_yellow]Bigger Resolution[/].\nJust make sure your border isn't cluttering\nUI elements or else [shake]you won't be able to see!", true, , true),
 				new LuiToggleSwitch({ value: global.pref.anyborder, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "anyborder").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.bord_scale = e_.get() ? 1 : 2; global.pref.sizematters = true; SYSTEMUI.save_pref(); }),
@@ -631,6 +633,7 @@
 				new LuiToggleSwitch({ value: dial_auto_wrap, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "dial_auto_wrap"),
 			]),
 			
+			new LuiHorizontalRule({ height: 5, }),
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
 				new LuiText({ value: "Auto Asterisk:", width: 130, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether to automatically add asterisks\nat the start of text.\nTurning this off means [c_yellow]you'll have\nto manually add asterisks yourself.", true, , true),
 				new LuiToggleSwitch({ value: dial_point_auto, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "dial_point_auto"),
@@ -648,6 +651,7 @@
 				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { e_.set(spr_pixel); SYSTEMUI.dial_point_clr = e_.color_blend; audio_stop_sound(snd_equip2); sfx_play(snd_equip2, , , 1.3); }).addEvent(LUI_EV_CLICK_R, function(e_) { if ( e_.color_blend == c_white ) { exit; } e_.main_ui.animate(e_, "xscale", 0, 1, global.Ease.OutElastic, 10); e_.main_ui.animate(e_, "yscale", 0, 1, global.Ease.OutElastic, 5); e_.setColor(c_white); SYSTEMUI.dial_point_clr = c_white; sfx_play(snd_hurtpowerful); }),
 			]),
 			
+			new LuiHorizontalRule({ height: 5, }),
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
 				new LuiText({ value: "Text Shadow:", width: 130, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether text should cast a shadow.", true, , true),
 				new LuiToggleSwitch({ value: dial_text_shdw, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "dial_text_shdw"),
@@ -668,11 +672,15 @@
 		var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
 		soupy_panel_extra = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, sound_right: snd_throw, }) //Start containter
 		.addContent([
+			new LuiText({ value: "Trying to export your dialogue?", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+			new LuiText({ value: "Press either ESCAPE, F1, or END!", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+			
+			new LuiHorizontalRule({ height: 5, }),
 			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a color
 				new LuiText({ value: "GIF BG Color:", width: 130, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the color of the [c_lime]green screen[/] for GIFs.\nGIFs don't support transparency, so this is needed.", true, , true),
 				new LuiButton({ text: "Pick...", height: 40, }).addEvent(LUI_EV_CLICK, soupy_color_picker_gifcolor),
 				new LuiImage({ value: spr_pixel, maintain_aspect: false, color: screenshot_back }).setSize(80, 40).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datagifcolor", e_, , true); }).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 0, 1, global.Ease.OutElastic, 10); element_.main_ui.animate(element_, "yscale", 0, 1, global.Ease.OutElastic, 5); sfx_play(snd_squish); })
-				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { e_.set(spr_pixel); SYSTEMUI.screenshot_back = e_.color_blend; audio_stop_sound(snd_equip2); sfx_play(snd_equip2, , , 1.3); }).addEvent(LUI_EV_CLICK_R, function(e_) { if ( e_.color_blend == c_white ) { exit; } e_.main_ui.animate(e_, "xscale", 0, 1, global.Ease.OutElastic, 10); e_.main_ui.animate(e_, "yscale", 0, 1, global.Ease.OutElastic, 5); e_.setColor(c_lime); SYSTEMUI.screenshot_back = c_lime; sfx_play(snd_hurtpowerful); }),
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { e_.set(spr_pixel); SYSTEMUI.screenshot_back = e_.color_blend; audio_stop_sound(snd_equip2); sfx_play(snd_equip2, , , 1.3); }).addEvent(LUI_EV_CLICK_R, function(e_) { if ( e_.color_blend == c_lime ) { exit; } e_.main_ui.animate(e_, "xscale", 0, 1, global.Ease.OutElastic, 10); e_.main_ui.animate(e_, "yscale", 0, 1, global.Ease.OutElastic, 5); e_.setColor(c_lime); SYSTEMUI.screenshot_back = c_lime; sfx_play(snd_hurtpowerful); }),
 			]),
 				
 			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image scale
@@ -700,7 +708,7 @@
 			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
 				new LuiText({ value: "Editor Font:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the textbox editor font.", true, , true),
 				new LuiButton({ text: "Choose...", height: 40, width: 100, }).addEvent(LUI_EV_CLICK, external_choose_font),
-				new LuiInput({ value: ui_mainfont, height: 40, placeholder: "or type. (ex: fnt_determination)", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datainputbox", e_, , true); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+				new LuiInput({ value: font_get_name(ui_mainfont), height: 40, placeholder: "or type. (ex: fnt_determination)", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datainputbox", e_, , true); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
 					var prev_ = soup_checkout("datafontbox", false, true), value = e_.get(); prev_.font = scribble_font_exists(value) ? value : "fnt_speech";
 					audio_stop_sound(snd_updated); sfx_play(snd_updated);
 					SYSTEMUI.ui_mainfont = asset_get_index(prev_.font);
@@ -714,6 +722,7 @@
 				}),
 			]),
 			
+			new LuiHorizontalRule({ height: 5, }),
 			new LuiButton({ text: "Help Guide", height: 40, }).addEvent(LUI_EV_CLICK, function() { execute_shell_simple("https://rentry.co/utdrsoupguides", , , 0); }),
 			new LuiButton({ text: "So Soupy!!", height: 40, }).addEvent(LUI_EV_CLICK, function() { execute_shell_simple("https://www.youtube.com/watch?v=zbClYRnQQJ0", , , 0); }),
 			new LuiButton({ text: "Credits", height: 40, }).addEvent(LUI_EV_CLICK, soupy_ui_credits),
@@ -788,7 +797,7 @@
 #endregion
 
 #region First Time
-	var txt_ = "Ayy! Welcome to [wheel][c_gold]UTDR SoupGen![/]|I see that it's your first time booting this up.|I would recommend [c_yellow]reading the|[c_yellow]help guide before you continue[/].|SoupGen got a [slant]lot[/] of power to it compared|to your average UTDR textbox generator,|so do familarize yourself with what all you can do!| |With that being said, [wave][c_lime]I hope you enjoy|this beta release!";
+	var txt_ = "Ayy! Welcome to [wheel][c_gold]UTDR SoupGen![/]|I see that it's your first time booting this up.|I would recommend [c_yellow]reading the|[c_yellow]help guide before you continue[/].|SoupGen got a [slant]lot[/] of power to it compared|to your average UTDR textbox generator,|so do familarize yourself with what all you can do!| |With that being said, [wave][c_lime]I hope you enjoy|this beta release!| |Once you're done, just press ESC for export options!";
 	
 	save_pref = function () {
 		var data_ = json_stringify(global.pref);
@@ -803,4 +812,24 @@
 	}
 	
 	if ( global.pref.firsttime ) { soupy_message(txt_, "Let's get soupy!", 480, , , snd_dimbox, fnt_abaddon, save_, , true, , , fa_top); }
+#endregion
+
+#region Errors with Auto-loading
+	if ( global.outputLogSkipped != "" ) {
+		var result = string_split(global.outputLogSkipped, "|"), result_len = array_length(result), result_i = 0, arr_ = [];
+		repeat ( result_len ) {
+			var cur_ = result[result_i];
+			array_push(arr_,  new LuiText({ value: cur_, text_halign: fa_center, text_valign: fa_middle, font: fnt_abaddon, color: c_white, xoff: 0, y: 10 }));
+		result_i++; }
+	
+		array_push(arr_,  new LuiText({ value: "These sprites were not loaded due to\neither incorrect filenames or file structure.", text_halign: fa_center, text_valign: fa_middle, font: fnt_abaddon, color: c_white, xoff: 0, y: 10 }));
+		array_push(arr_,  new LuiText({ value: "If you need help, please refer to the SoupGen guide. (Click me!)", text_halign: fa_center, text_valign: fa_middle, font: fnt_abaddon, color: c_white, xoff: 0, y: 10 })
+			.addEvent(LUI_EV_CLICK, function(element_) { sfx_play(snd_select); execute_shell_simple("https://rentry.co/utdrsoupguides", , , 0); })
+			.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_gold; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
+			.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
+		);
+	
+		var maincan = new LuiScrollPanel({ sprite_panel: false, scroll_slider_width: 10, height: 390, }).addContent(arr_);
+		soupy_popup([ maincan, ], , "Oh no!", , 460, , snd_error, fnt_abaddon, global.pref.firsttime ? true : false, 0, 40); 
+	}
 #endregion
