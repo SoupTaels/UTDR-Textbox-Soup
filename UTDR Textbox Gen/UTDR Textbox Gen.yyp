@@ -790,6 +790,7 @@
     {"id":{"name":"fnt_abaddon","path":"fonts/fnt_abaddon/fnt_abaddon.yy",},},
     {"id":{"name":"fnt_arial","path":"fonts/fnt_arial/fnt_arial.yy",},},
     {"id":{"name":"fnt_damage","path":"fonts/fnt_damage/fnt_damage.yy",},},
+    {"id":{"name":"fnt_determination_multilang","path":"fonts/fnt_determination_multilang/fnt_determination_multilang.yy",},},
     {"id":{"name":"fnt_determination_nomono","path":"fonts/fnt_determination_nomono/fnt_determination_nomono.yy",},},
     {"id":{"name":"fnt_determination","path":"fonts/fnt_determination/fnt_determination.yy",},},
     {"id":{"name":"fnt_fibberish","path":"fonts/fnt_fibberish/fnt_fibberish.yy",},},

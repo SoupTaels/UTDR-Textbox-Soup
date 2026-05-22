@@ -72,6 +72,10 @@
 							new LuiText({ value: "Border visible?", text_halign: fa_center, text_valign: fa_middle }).setTooltip("Should the dialogue box be visible?", true),
 							new LuiToggleSwitch({ value: soup_checkout("bordvisible", false), ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordvisible"),
 						]),
+						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
+							new LuiText({ value: "Filename:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("The name to save the result as.\nLeave blank to use a soupy filename.", true),
+							new LuiInput({ value: SYSTEMUI.file_newname, height: 35, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(SYSTEMUI, "file_newname"),
+						]),
 						new LuiButton({ text: "Let's get soupy!!", height: 35, }).addEvent(LUI_EV_CLICK, function(element_) {
 							var stacked_ = soup_checkout("stacked", false), page_ = soup_checkout("pageat", false), out_ = soup_checkout("bordout", false), vis_ = soup_checkout("bordvisible", false), xx_ = soup_checkout("xoff", false), yy_ = soup_checkout("yoff", false);
 							var mainfunc = soup_checkout("export dialogue func", false), maincan = soup_checkout("maincan", false);
@@ -86,7 +90,7 @@
 					];
 				#endregion
 					
-				var maincan = soupy_popup(exportarr, mainfunc, "Nevermind", 300, , , snd_select);
+				var maincan = soupy_popup(exportarr, mainfunc, "Nevermind", 300, , , snd_select, , , 0);
 				soup_store("maincan", maincan);
 			}),
 			
@@ -136,6 +140,10 @@
 								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 									new LuiText({ value: "Quantization:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("The amount of processing color quantization will have.\nA value between 0 - 3, full quant to low quant.\nThe lower the number, the smaller the GIF will be\nat the cost of quality and color count.", true),
 									new LuiInput({ value: soup_checkout("quant", false), placeholder: "0 - 3", input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "quant"),
+								]),
+								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
+									new LuiText({ value: "Filename:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("The name to save the result as.\nLeave blank to use a soupy filename.", true),
+									new LuiInput({ value: SYSTEMUI.file_newname, height: 35, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(SYSTEMUI, "file_newname"),
 								]),
 								new LuiButton({ text: "Let's get soupy!!", height: 35, }).addEvent(LUI_EV_CLICK, function(element_) {
 									var typewrite = soup_checkout("typewrite", false), page_ = soup_checkout("pageat", false), out_ = soup_checkout("bordout", false), vis_ = soup_checkout("bordvisible", false), timer_ = soup_checkout("timerfor", false), delay_ = soup_checkout("delayb", false), quant_ = soup_checkout("quant", false);

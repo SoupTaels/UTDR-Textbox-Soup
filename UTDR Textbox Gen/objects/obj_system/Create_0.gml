@@ -105,7 +105,7 @@
 		});
 		typist.function_on_complete(function() { //Function to run once the dialogue is complete
 			if ( dial_face_auto ) { FACE_INDEX = 0; }
-			if ( !dial_face_keep ) { FACE_CURRENT = dial_face_original[dial_text_page]; } //Switch back to the original face
+			if ( !dial_face_keep ) { FACE_CURRENT = FACE_ORIGINAL; } //Switch back to the original face
 			typist_spd = typist_spd_orig; //Switch back to the original typewriter speed
 			
 			if ( !instance_exists(obj_mini) ) { exit; }
@@ -280,6 +280,8 @@
 	ui_tab_yoff = 0; //Y offset for the orange and white borders
 	ui_paused = false; //Whether to freeze ui elements
 	file_dragging = false; //Whether a file is being dragged on screen.
+	file_newname = ""; //New name for the file
+	ui_mainfont = fnt_speech;
 	
 	#region Main Menu Buttons
 		var i = 0, spr_ = spr_border_octagon, x_ = 320, y_ = 12, clr_ = c_orange, padd_ = 14;
@@ -307,7 +309,7 @@
 				quill_soup_inactive.textbox.text_col = #9d8cbb; quill_soup_inactive.textbox.placeholder_col = #9d8cbb; quill_soup_inactive.textbox.line_highlight_a = 0;
 				quill_soup_inactive.skins.prim_bg_idle_col = #524271; quill_soup_inactive.skins.prim_bg_active_col = #292138; quill_soup_inactive.skins.prim_bg_hover_col = #625279; quill_soup_inactive.skins.prim_border_thickness = 0;
 				quill_soup_inactive.scrollbar.border_col = #9d8cbb; quill_soup_inactive.scrollbar.border_a = 1; quill_soup_inactive.scrollbar.track_col = #9d8cbb; quill_soup_inactive.scrollbar.track_a = 1; quill_soup_inactive.scrollbar.thumb_idle_col = #d6b5dd; quill_soup_inactive.scrollbar.thumb_idle_a = 1;
-			
+				quill_soup_inactive.fonts.mainfont = SYSTEMUI.ui_mainfont;
 				QuillSetTheme(quill_soup_inactive);
 			})
 			.OnFocus(function() { //Theme for activity
@@ -317,7 +319,7 @@
 				quill_soup_active.scrollbar.thumb_active_col = #9a89b8; quill_soup_active.scrollbar.thumb_active_a = 1; quill_soup_active.scrollbar.track_col = #503f6e; quill_soup_active.scrollbar.track_a = 1; quill_soup_active.scrollbar.border_col = #503f6e; quill_soup_active.scrollbar.border_a = 1;
 				quill_soup_active.selection.bg_col = #d6b5dd; 
 				quill_soup_active.menu.item_hover_col = #9d8cbb; quill_soup_active.menu.bg_spr = spr_border_undertale; quill_soup_active.menu.prim_bg_col = c_white; quill_soup_active.menu.prim_bg_a = 1; quill_soup_active.menu.prim_border_col = c_black; quill_soup_active.menu.text_col = c_white; quill_soup_active.menu.sep_col = #9d8cbb; quill_soup_active.menu.disabled_text_col = #625279; quill_soup_active.menu.sep_h = 3; quill_soup_active.menu.pad_x = 10; quill_soup_active.menu.pad_y = 20; quill_soup_active.menu.item_hover_a = 1; quill_soup_active.menu.prim_padd = 2; quill_soup_active.menu.min_w = 200;
-			
+				quill_soup_active.fonts.mainfont = SYSTEMUI.ui_mainfont;
 				QuillSetTheme(quill_soup_active);
 			})
 			
@@ -693,6 +695,23 @@
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
 				new LuiText({ value: "To The Top:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("If [c_yellow]Bigger Resolution is true[/], then this will\nsend the dialogue box to the top.", true, , true),
 				new LuiToggleSwitch({ value: global.pref.sizematterstop, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "sizematterstop").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
+				new LuiText({ value: "Editor Font:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the textbox editor font.", true, , true),
+				new LuiButton({ text: "Choose...", height: 40, width: 100, }).addEvent(LUI_EV_CLICK, external_choose_font),
+				new LuiInput({ value: ui_mainfont, height: 40, placeholder: "or type. (ex: fnt_determination)", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datainputbox", e_, , true); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+					var prev_ = soup_checkout("datafontbox", false, true), value = e_.get(); prev_.font = scribble_font_exists(value) ? value : "fnt_speech";
+					audio_stop_sound(snd_updated); sfx_play(snd_updated);
+					SYSTEMUI.ui_mainfont = asset_get_index(prev_.font);
+					SYSTEMUI.textinput.SetFont(SYSTEMUI.ui_mainfont);
+				}),
+				new LuiText({ value: "AaBbCc", width: 100, text_halign: fa_center, text_valign: fa_middle, font: dial_font, scribbletext: true, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datafontbox", e_, , true); })
+				.addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "yoff", 0, 1, global.Ease.OutElastic, 10); sfx_play(snd_squish); })
+				.addEvent(LUI_EV_CLICK_R, function(element_) {
+					var input_ = soup_checkout("datainputbox", false, true), spr_ = soup_checkout("datafontbox", false, true);
+					if ( spr_.font != "fnt_speech" && input_.get() != "" ) { spr_.font = "fnt_speech"; input_.set(""); sfx_play(snd_hurtpowerful); audio_stop_sound(snd_updated); }
+				}),
 			]),
 			
 			new LuiButton({ text: "Help Guide", height: 40, }).addEvent(LUI_EV_CLICK, function() { execute_shell_simple("https://rentry.co/utdrsoupguides", , , 0); }),

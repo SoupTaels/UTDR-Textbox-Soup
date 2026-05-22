@@ -340,6 +340,14 @@ pref = {
 							);
 						}
 					spr_i++; }
+					
+					#region Sort Names Alphabetically
+						array_sort(spr_, function(arrcur_, arrnext_) {
+							if ( string_lower(arrcur_.value) < string_lower(arrnext_.value) ) { return -1; }
+							else if ( string_lower(arrcur_.value) > string_lower(arrnext_.value) ) { return 1; }
+							else { return 0; }
+						});
+					#endregion
 					get_.addContent(new LuiScrollPanel({ height: 400, scroll_pin_edge_offset:10, sprite_panel: false, sound_right: snd_throw, }).addContent(spr_).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollsub", element_); })); //Add new panel and stash it so we can destroy it later
 				})
 			);
@@ -459,7 +467,7 @@ pref = {
 					.addEvent(LUI_EV_CLICK, function(e_) { 
 						var myname = e_.params.id_, fonts_ = global.fonts_dict[$ myname];
 						if ( !is_undefined(fonts_) ) { fonts_[$ "NEW SPRITE"] = false; } sfx_play(snd_select);
-						soup_checkout("datainputS", false, true).set(myname); soup_checkout("datafont", false, true).font = myname; soup_checkout("datafunc", false)();
+						soup_checkout(SYSTEMUI.ui_tab != 4 ? "datainputS" : "datainputbox", false, true).set(myname); soup_checkout(SYSTEMUI.ui_tab != 4 ? "datafont" : "datafontbox", false, true).font = myname; soup_checkout("datafunc", false)();
 					})
 					.addEvent(LUI_EV_CREATE, function(e_) { 
 						var result = global.fonts_dict[$ e_.params.id_]; 
@@ -467,6 +475,14 @@ pref = {
 						if ( result != undefined && result[$ "NEW EXTERNALLY"] != undefined ) { e_.color = c_cyan; e_[$ "color_o"] = c_cyan; e_.setTooltip("[rainbow]Unique and recent!", true, , true); } else { e_[$ "color_o"] = c_white; }
 					})
 			fonts_i++; }
+		#endregion
+		
+		#region Sort Names Alphabetically
+			array_sort(options_, function(arrcur_, arrnext_) {
+				if ( string_lower(arrcur_.value) < string_lower(arrnext_.value) ) { return -1; }
+				else if ( string_lower(arrcur_.value) > string_lower(arrnext_.value) ) { return 1; }
+				else { return 0; }
+			});
 		#endregion
 		
 		#region Add Default Options
@@ -477,7 +493,7 @@ pref = {
 					sfx_play(snd_equip); 
 					var result = get_open_filename_ext("GameMaker Strip (_strip#.PNG Only)|*.png", "", directory_get_pictures_path(), "Select a spritefont to import."), myname_;
 					if ( result == -1 || result == "" ) { result = "fnt_determination"; myname_ = result; } else { myname_ = string_exclude(string_replace(string_replace(string_replace(filename_name(result), "spr_", ""), "_strip", ""), ".png", ""), "0123456789"); result = external_ensure(myname_, filename_name(result), result, 2, false); }
-					soup_checkout("datainputS", false, true).set(myname_); soup_checkout("datafont", false, true).font = myname_; soup_checkout("datafunc", false)(); sfx_play(snd_updated); 
+					soup_checkout(SYSTEMUI.ui_tab != 4 ? "datainputS" : "datainputbox", false, true).set(myname_); soup_checkout(SYSTEMUI.ui_tab != 4 ? "datafont" : "datafontbox", false, true).font = myname_; soup_checkout("datafunc", false)(); sfx_play(snd_updated); 
 				})
 			);
 		#endregion

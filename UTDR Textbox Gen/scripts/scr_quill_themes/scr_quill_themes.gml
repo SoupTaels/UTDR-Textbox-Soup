@@ -81,13 +81,14 @@ function QuillSubtheme() constructor {
 // The same goes for each of the subthemes, if you create a new font subtheme, it must inherit
 // from the QuillFontSubtheme, and so on for all the subtheme types.
 function QuillFontSubtheme() : QuillSubtheme() constructor {
-	body = fnt_speech;
-	code = fnt_speech;
-	label = fnt_speech;
-	menu = fnt_speech;
-	editor_title = fnt_speech;
-	editor_body = fnt_speech;
-	validation = fnt_speech;
+	mainfont = fnt_speech;
+	body = mainfont;
+	code = mainfont;
+	label = mainfont;
+	menu = mainfont;
+	editor_title = mainfont;
+	editor_body = mainfont;
+	validation = mainfont;
 }
 
 function QuillTextboxSubtheme() : QuillSubtheme() constructor {

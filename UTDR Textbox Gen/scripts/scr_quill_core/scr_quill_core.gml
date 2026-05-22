@@ -384,7 +384,7 @@ function __QuillCore() constructor {
 	/// @ignore
 	static __BuildResolvedStyleForTb = function(_tb) {
 		
-		static __fonts_keys = ["body", "code", "label", "menu", "editor_title", "editor_body", "validation"];
+		static __fonts_keys = ["mainfont", "body", "code", "label", "menu", "editor_title", "editor_body", "validation"];
 		static __tb_keys = [
 		"pad_l", "pad_t", "pad_r", "pad_b",
 		"text_col", "text_a",
