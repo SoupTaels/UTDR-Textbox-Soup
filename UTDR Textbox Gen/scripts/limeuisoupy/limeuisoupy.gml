@@ -161,6 +161,7 @@ function soupy_color_picker_border() { soupy_color_picker(SYSTEMUI.bord_clr, "da
 function soupy_color_picker_asterisk() { soupy_color_picker(SYSTEMUI.dial_point_clr, "dataasterisk"); }
 function soupy_color_picker_textc() { soupy_color_picker(SYSTEMUI.dial_text_c, "datatextc"); } function soupy_color_picker_textcout() { soupy_color_picker(SYSTEMUI.dial_text_outline, "datatextcout"); }
 function soupy_color_picker_shadow() { soupy_color_picker(SYSTEMUI.dial_text_shdw_clr, "datashadow"); }
+function soupy_color_picker_gradient() { soupy_color_picker(SYSTEMUI.dial_gradient_clr, "datagradient"); }
 
 function soupy_ui_credits() {
 	var arr_ = [];

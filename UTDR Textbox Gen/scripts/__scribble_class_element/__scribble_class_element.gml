@@ -499,11 +499,11 @@ function __scribble_class_element(_string, _unique_id) constructor
         return self;
     }
     
-    static pin_guide_width = function(_width)
+    static pin_guide_width = function(_width, _height = -1)
     {
         if (__wrap_apply
         ||  (__wrap_max_width != _width)
-        ||  (__wrap_max_height != -1)
+        ||  (__wrap_max_height != _height)
         ||  __wrap_per_char
         ||  __wrap_no_pages
         ||  (__wrap_max_scale != 1))
@@ -514,7 +514,7 @@ function __scribble_class_element(_string, _unique_id) constructor
             
             __wrap_apply      = false; //Turn off wrapping entirely
             __wrap_max_width  = _width;
-            __wrap_max_height = -1;
+            __wrap_max_height = _height;
             __wrap_per_char   = false;
             __wrap_no_pages   = false;
             __wrap_max_scale  = 1;

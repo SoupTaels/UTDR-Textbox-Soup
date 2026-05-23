@@ -11,7 +11,7 @@ if ( screenshot || record.enabled ) {
 		screenshot_surf = surface_create(640, 480);
 		surface_set_target(screenshot_surf);
 			var myy = ( global.pref.sizematters && global.pref.sizematterstop ) ? ( -305 + ( global.pref.anyborder ? abs(bord_yoff) : 0 ) ) : ( global.pref.sizematters ? 5 : 0 );
-			if ( !record.enabled ) { draw_clear_alpha(c_black, 0); } else { draw_clear_alpha(screenshot_back, 1); }//For borders that aren't perfect rectangles
+			if ( !record.enabled ) { draw_clear_alpha(c_black, 0); } else { draw_clear_alpha(screenshot_back, 0); }//For borders that aren't perfect rectangles
 		
 			#region Dialogue Box Outline
 				if ( out_ && bord_box_visible ) {
@@ -50,7 +50,7 @@ if ( screenshot || record.enabled ) {
 			
 			surface_free(screenshot_surf); screenshot_surf = -1;
 			with ( record ) { frames = 0; framesmax = 0; enabled = false; id_ = -1; }
-			with ( SYSTEMUI ) { file_newname = ""; screenshot = false; screenshot_stacked = false; dial_text_gif = false; dial_wrap_count = 1; spr_bord = bord_prev; dial_text_page = 0; bord_box_visible = true; ui_tab = soup_checkout("tablast", , true); ui_visible = true; ui_reset(); }
+			with ( SYSTEMUI ) { typist_reset(); file_newname = ""; screenshot = false; screenshot_stacked = false; dial_text_gif = false; dial_wrap_count = 1; spr_bord = bord_prev; dial_text_page = 0; bord_box_visible = true; ui_tab = soup_checkout("tablast", , true); ui_visible = true; ui_reset(); }
 			exit;
 		});
 	#endregion

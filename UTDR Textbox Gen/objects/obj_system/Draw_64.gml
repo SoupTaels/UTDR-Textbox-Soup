@@ -1,6 +1,6 @@
 ///@desc Draw Dialogue Things
 if ( live_call() ) { return live_result; } 
-if ( dial_text_page >= dial_text_page_c ) { exit; } //Prevents the stack export from going out of bounds
+if ( dial_text_page > dial_text_page_c - 1 && screenshot_stacked ) { exit; } //Prevents the stack export from going out of bounds
 #region UI Borders and Buttons
 	if ( ui_visible ) {
 		#region Orange and White Border
@@ -44,7 +44,7 @@ if ( dial_text_page >= dial_text_page_c ) { exit; } //Prevents the stack export 
 	if ( bord_visible ) {
 		var dltrn = spr_bord == spr_border_deltarune; //Check if our border is Deltarune
 		var offset_ = dltrn ? 8 : 0, offset_w = dltrn ? 15 : 0, offset_h = dltrn ? 16 : 0, bordx = 32 - offset_, bordy = 315 - offset_, bordw = 578 + offset_w, bordh = 152 + offset_w; //Border coords
-		var xx_ = ( bordx + ( ( FACE_USING ? 144 : 28 ) + ( AUTO_ASTERISK ? 4 : 0 ) ) ) + ( offset_ + dltrn ? 6 : 0 ), yy_ = ( bordy + 24 ) + offset_; //Text X Y
+		var xx_ = ( bordx + ( ( FACE_USING ? ( dial_text_halign == 0 ? 144 : 28 ) : 28 ) + ( AUTO_ASTERISK ? 4 : 0 ) ) ) + ( offset_ + dltrn ? 6 : 0 ), yy_ = ( bordy + 24 ) + offset_; //Text X Y
 
 		var ninesl_ = sprite_get_nineslice(spr_bord); 
 		if ( bord_box_visible ) { //Dialogue Box Clone(for transparency issues)
@@ -66,12 +66,14 @@ if ( dial_text_page >= dial_text_page_c ) { exit; } //Prevents the stack export 
 				if ( dial_text != "" && dial_text != chr(0) ) { //No need to draw blank text
 					var line_sp = dial_text_line_spacing != -1 ? dial_text_line_spacing : 36;
 					#region Actual Text
-						var tx_x = AUTO_ASTERISK ? xx_ + 28 : xx_, wrapcalc = dial_auto_wrap ? 580 - xx_ : -1;
+						var tx_x = AUTO_ASTERISK ? xx_ + 28 : xx_, wrapcalc = dial_auto_wrap ? ( 590 - xx_ ) : -1;
+						var align_ = scribble_alignment(dial_text_halign, dial_text_valign);
 						var scrib_dial = scribble(dial_text) //Dialogue Text
-							.starting_format(dial_font, dial_text_c).scale(dial_text_scale).outline(dial_text_outline).shadow(dial_text_shdw_clr, dial_text_shdw)
-							.allow_line_data_getter().allow_glyph_data_getter()
-							.line_spacing(line_sp).page(dial_text_page).wrap(wrapcalc)
-							if ( record.enabled || screenshot ) { dial_text_page_c = scrib_dial.get_page_count(); }
+							dial_text_page_c = scrib_dial.get_page_count();
+							dial_text_page = clamp(dial_text_page, 0, dial_text_page_c - 1);
+							scrib_dial.starting_format(dial_font, dial_text_c).scale(dial_text_scale).outline(dial_text_outline).shadow(dial_text_shdw_clr, dial_text_shdw)
+							.allow_line_data_getter().allow_glyph_data_getter().right_to_left(dial_rtl).gradient(dial_gradient_clr, dial_gradient)
+							.line_spacing(line_sp).page(dial_text_page).wrap(wrapcalc, dial_auto_page ? 110 : -1).align(align_.h, align_.v)
 							scrib_dial.draw(tx_x + dial_text_xoff, yy_ + dial_text_yoff, dial_text_gif ? typist : undefined);
 					#endregion
 
@@ -84,7 +86,7 @@ if ( dial_text_page >= dial_text_page_c ) { exit; } //Prevents the stack export 
 									#region Actual Asterisk
 										var p_x = xx_ - 4, p_y = yy_ + lined.y;
 										var scrib_point = scribble(dial_point_chr) //Dialogue Point
-											.starting_format(dial_font, dial_point_clr).scale(dial_text_scale).outline(dial_text_outline).shadow(dial_text_shdw_clr, dial_text_shdw)
+											.starting_format(dial_font, dial_point_clr).scale(dial_text_scale).outline(dial_text_outline).shadow(dial_text_shdw_clr, dial_text_shdw).gradient(dial_gradient_clr, dial_gradient)
 											.allow_line_data_getter()
 											scrib_point.draw(p_x + dial_text_xoff, p_y + dial_text_yoff);
 									#endregion

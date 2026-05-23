@@ -8,9 +8,29 @@
 #macro FACE_INTERNAL obj_system.dial_face_name[obj_system.dial_text_page] //Get the internal name for the current dialogue face
 #macro FACE_USING FACE_CURRENT != -1 && FACE_CURRENT != 0 //If the dialogue box will contain a face
 #macro LAST_SAVED $"{executable_get_directory()}latest_soupy_last_typed.soupy" //Last text we typed
-#macro AUTO_ASTERISK ( obj_system.dial_point_auto && string_trim(obj_system.dial_point_chr) != "" ) //Whether to enable auto-asterisk
+#macro AUTO_ASTERISK ( ( obj_system.dial_text_halign == 0 && obj_system.dial_text_valign == 0 ) && obj_system.dial_point_auto && string_trim(obj_system.dial_point_chr) != "" ) //Whether to enable auto-asterisk
 #macro PATHSEP (( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ) ? "\\"  :  "/") //Get platform-dependant path
 #macro PREF_SOUP $"{executable_get_directory()}soupy_preferences.soupy" //Settings to save
+
+///@desc Help Scribble with how to align the text
+function scribble_alignment(halign_ = 0, valign_ = 0) {
+	var align_ = { h: halign_, v: valign_, };
+	switch ( halign_ ) {
+		case 0: case "0": case "left": case "begin": case "start":				{ align_.h = "pin_left"; } break;
+		case 1: case "1": case "center": case "centre": case "middle":	{ align_.h = "pin_center"; } break;
+		case 2: case "2": case "right": case "end":										{ align_.h = "pin_right"; } break;
+		default: { align_.h = "pin_left"; } break;
+	}
+	
+	switch ( valign_ ) {
+		case 0: case "0": case "top": case "up":											{ align_.v = "pin_top"; } break;
+		case 1: case "1": case "center": case "centre": case "middle":	{ align_.v = "pin_middle"; } break;
+		case 2: case "2": case "bottom": case "down":								{ align_.v = "pin_bottom"; } break;
+		default: { align_.v = "pin_top"; } break;
+	}
+	
+	return align_;
+}
 
 #region Default functions for the menu buttons
 	function on_enter_() { if ( SYSTEMUI.ui_tab != id_ ) { sfx_play(snd_sel_switch); TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } }

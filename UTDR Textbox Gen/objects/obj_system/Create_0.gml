@@ -66,7 +66,7 @@
 	dial_updatet = 0; //Dialogue update timer
 	dial_updatet_max = 45; //Dialogue update timer delay
 	dial_text_outline = c_black; //Dialogue Outline Color
-	dial_point_auto = true; //Whether to automatically add points
+	dial_point_auto = false; //Whether to automatically add points
 	dial_point_chr = "*"; //Dialogue Point Character
 	dial_point_clr = c_white; dial_point_clr_anim = c_white; dial_point_clr_anim_alpha = 0; //Dialogue Point Clr and flash color
 	dial_auto_wrap = true; //Whether to automatically wrap dialogue to new lines
@@ -77,6 +77,14 @@
 	point_visible = false; //Whether the auto-points are visible
 	dial_text_xoff = 0; //Offset X Text
 	dial_text_yoff = 0; //Offset Y Text
+	dial_text_halign = 0; //Text H alignment
+	dial_text_valign = 0; //Text V alignment
+	dial_auto_page = false; //Whether to automatically add new pages when text height overflows
+	dial_rtl = false; //Right-to-left text
+	dial_gradient = false; //Text gradient
+	dial_gradient_orig = dial_gradient; //Text gradient original
+	dial_gradient_clr = c_white; //Text gradient color
+	dial_gradient_clr_orig = dial_gradient_clr; //Text original gradient color
 	
 	#region Typist
 		typist = scribble_typist(); //Dialogue Engine
@@ -112,7 +120,12 @@
 			with ( obj_mini ) { if ( page == other.dial_text_page ) { active = true; TweenFire("$13", $"~{smooth ? "oquad" : "linear"}", "xoff", 30, 0, "alpha", 0, 1); } } 
 		});
 		
-		typist_reset = function () { dial_face_angle = dial_face_angle_orig; dial_face_alpha = dial_face_alpha_orig; dial_face_xoff = 0; dial_face_yoff = 0; dial_face_xscale_off = 0; dial_face_yscale_off = 0; }
+		typist_reset = function () { dial_gradient = dial_gradient_orig; dial_gradient_clr = dial_gradient_clr_orig; dial_face_angle = dial_face_angle_orig; dial_face_alpha = dial_face_alpha_orig; dial_face_xoff = 0; dial_face_yoff = 0; dial_face_xscale_off = 0; dial_face_yscale_off = 0; } //Function to reset portrait modifications after dialogue finishes
+		
+		#region Ease Builder
+			typist_ease = { type: SCRIBBLE_EASE.LINEAR, x: 0, y: 0, xscale: 1, yscale: 1, angle: 0, alpha: 1, };
+			typist.ease(typist_ease.type, typist_ease.x, typist_ease.y, typist_ease.xscale, typist_ease.yscale, typist_ease.angle, typist_ease.alpha);
+		#endregion
 	#endregion
 	
 	#region Typist Events
@@ -129,6 +142,7 @@
 			});
 			scribble_typists_add_event("face_prev", function(_, param) { FACE_CURRENT = FACE_PREVIOUS; }); //Change the face back to the previous face
 			scribble_typists_add_event("face_auto", function(_, param) { dial_face_auto = bool(string_letters(param[0])); }); //Switch the automatic animation of the face
+			scribble_typists_add_event("gradient", function(_, param) { dial_gradient = bool(string_letters(param[0])); }); //Switch the gradient
 			scribble_typists_add_event("face_index", function(_, param) { FACE_INDEX = real(string_digits(param[0])); }); //Change the index of the face(if dial_face_auto is off), for sprites with more sprites and expressions
 			scribble_typists_add_event("face_anim", function(_, param) { dial_face_anim = real(string_digits(param[0])); }); //Changes how often the face should animate for every letter revealed
 			scribble_typists_add_event("face_speed", function(_, param) { var value_ = real_ext(param[0]); FACE_SPEED = value_ == "" ? 0 : value_; }); //Change the speed of the face(if dial_face_auto is off), for sprites with more sprites and expressions
@@ -172,6 +186,12 @@
 						var getclr = real_ext(len > 1 ? param[1] : "255"), getclr2 = real_ext(len > 2 ? param[2] : "255"), getclr3 = real_ext(len > 3 ? param[3] : "255"), time_ = real_ext(len > 4 ? param[4] : "15");
 						var myclr = make_color_rgb(getclr != "" ? getclr : 255, getclr2 != "" ? getclr2 : 255, getclr3 != "" ? getclr3 : 255);
 						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 15}", TPCol("bord_clr"), bord_clr, myclr); delayfunc();
+					} break;
+					case "colorgrad": case "blendgrad": case "colorgradient": case "blendgradient": { //Make the gradient blend to a different [effect,colorgrad,r,g,b,frames]
+						var getclr = real_ext(len > 1 ? param[1] : "255"), getclr2 = real_ext(len > 2 ? param[2] : "255"), getclr3 = real_ext(len > 3 ? param[3] : "255"), time_ = real_ext(len > 4 ? param[4] : "15");
+						var myclr = make_color_rgb(getclr != "" ? getclr : 255, getclr2 != "" ? getclr2 : 255, getclr3 != "" ? getclr3 : 255);
+						if ( !dial_gradient ) { dial_gradient = true; }
+						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 15}", TPCol("dial_gradient_clr"), dial_gradient_clr, myclr); delayfunc();
 					} break;
 					case "fade": case "ghost": case "opacity": { //Make the face fade out to the specified target number [effect,fade,#,frames]
 						var getamt = real_ext(len > 1 ? param[1] : "0"), time_ = real_ext(len > 2 ? param[2] : "30");
@@ -616,10 +636,19 @@
 				new LuiInput({ value: typist_spd, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.typist_spd); })
 				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value_ = real_ext(e_.get()), index_ = value_ == "" ? 0.5 : value_; SYSTEMUI.typist_spd = index_; SYSTEMUI.typist_spd_orig = SYSTEMUI.typist_spd; typist.in(SYSTEMUI.typist_spd, SYSTEMUI.typist_smooth); }),
 			]),
+			
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
-				new LuiText({ value: "Text Smoothing:", width: 140, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes how much text is visible while\ntyping out. Higher numbers will allow more\ntext to be visible as it fades in.", true, , true),
-				new LuiInput({ value: typist_smooth, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.typist_smooth); })
-				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value_ = real_ext(e_.get()), index_ = value_ == "" ? 0 : value_; SYSTEMUI.typist_smooth = index_; typist.in(SYSTEMUI.typist_spd, SYSTEMUI.typist_smooth); }),
+				new LuiText({ value: "Text HAlign:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the dialogue's horizontal alignment.\n[c_yellow]0[/] - Left, [c_yellow]1[/] - Center, [c_yellow]2[/] - Right\n[c_red]This will disable [c_yellow]auto-asterisk[/].", true, , true),
+				new LuiInput({ height: 40, placeholder: "0 - Left, 1 - Center, 2 - Right", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, max_length: 1, }).bindVariable(self, "dial_text_halign")
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { soup_checkout("dataalignh", false, true).setSubimg(real(e_.get() == "" ? "0" : e_.get())); dial_text_halign = real(e_.get() == "" ? "0" : e_.get()); }),
+				new LuiImage({ value: spr_gui_alignment_h, maintain_aspect: false }).setSize(32, 32).addEvent(LUI_EV_CREATE, function(e_) { soup_store("dataalignh", e_, , true); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Text VAlign:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the dialogue's vertical alignment.\n[c_yellow]0[/] - Top, [c_yellow]1[/] - Middle, [c_yellow]2[/] - Bottom\n[c_red]This will disable [c_yellow]auto-asterisk[/].", true, , true),
+				new LuiInput({ height: 40, placeholder: "0 - Top, 1 - Middle, 2 - Bottom", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, max_length: 1, }).bindVariable(self, "dial_text_valign")
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { soup_checkout("dataalignv", false, true).setSubimg(real(e_.get() == "" ? "0" : e_.get())); dial_text_valign = real(e_.get() == "" ? "0" : e_.get()); }),
+				new LuiImage({ value: spr_gui_alignment_v, maintain_aspect: false }).setSize(32, 32).addEvent(LUI_EV_CREATE, function(e_) { soup_store("dataalignv", e_, , true); }),
 			]),
 			
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
@@ -631,6 +660,16 @@
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
 				new LuiText({ value: "Auto Wrap:", width: 100, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether to automatically wrap text to a new line\nif the text width exceeds the dialogue box.\nTurning this off means [c_yellow]you'll have to manually\nadd newline literals(\\n or [[newl] yourself.", true, , true),
 				new LuiToggleSwitch({ value: dial_auto_wrap, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "dial_auto_wrap"),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Auto Page:", width: 100, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether to automatically add new pages when\nyour text overflows the dialogue box.\n[c_yellow]This [c_red]disables[c_yellow] vertical text alignments if it's off.[c_white]\nPage created this way will [c_yellow]not start with\nan asterisk if auto-asterisk is on.", true, , true),
+				new LuiToggleSwitch({ value: dial_auto_page, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "dial_auto_page"),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Right-To-Left:", width: 140, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether dialogue should be read right-to-left.", true, , true),
+				new LuiToggleSwitch({ value: dial_rtl, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "dial_rtl"),
 			]),
 			
 			new LuiHorizontalRule({ height: 5, }),
@@ -662,6 +701,26 @@
 				new LuiButton({ text: "Pick...", height: 40, }).addEvent(LUI_EV_CLICK, soupy_color_picker_shadow),
 				new LuiImage({ value: spr_pixel, maintain_aspect: false, color: dial_text_shdw_clr }).setSize(80, 40).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datashadow", e_, , true); }).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 0, 1, global.Ease.OutElastic, 10); element_.main_ui.animate(element_, "yscale", 0, 1, global.Ease.OutElastic, 5); sfx_play(snd_squish); })
 				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { e_.set(spr_pixel); SYSTEMUI.dial_text_shdw_clr = e_.color_blend; audio_stop_sound(snd_equip2); sfx_play(snd_equip2, , , 1.3); }).addEvent(LUI_EV_CLICK_R, function(e_) { if ( e_.color_blend == c_deltarune ) { exit; } e_.main_ui.animate(e_, "xscale", 0, 1, global.Ease.OutElastic, 10); e_.main_ui.animate(e_, "yscale", 0, 1, global.Ease.OutElastic, 5); e_.setColor(c_deltarune); SYSTEMUI.dial_text_shdw_clr = c_deltarune; sfx_play(snd_hurtpowerful); }),
+			]),
+			
+			new LuiHorizontalRule({ height: 5, }),
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Text Gradient:", width: 130, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether [c_yellow][wheel]all[/] text should have a gradient.", true, , true),
+				new LuiToggleSwitch({ value: dial_gradient, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "dial_gradient").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { dial_gradient_orig = e_.get(); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a color
+				new LuiText({ value: "Gradient Color:", width: 140, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the color of the gradient.\n[c_yellow]Only works if text gradients are enabled.", true, , true),
+				new LuiButton({ text: "Pick...", height: 40, }).addEvent(LUI_EV_CLICK, soupy_color_picker_gradient),
+				new LuiImage({ value: spr_pixel, maintain_aspect: false, color: dial_gradient_clr }).setSize(80, 40).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datagradient", e_, , true); }).addEvent(LUI_EV_SHOW, function(e_) { e_.color_blend = SYSTEMUI.dial_gradient_clr; }).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 0, 1, global.Ease.OutElastic, 10); element_.main_ui.animate(element_, "yscale", 0, 1, global.Ease.OutElastic, 5); sfx_play(snd_squish); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { e_.set(spr_pixel); SYSTEMUI.dial_gradient_clr = e_.color_blend; SYSTEMUI.dial_gradient_clr_orig = SYSTEMUI.dial_gradient_clr; audio_stop_sound(snd_equip2); sfx_play(snd_equip2, , , 1.3); }).addEvent(LUI_EV_CLICK_R, function(e_) { if ( e_.color_blend == c_white ) { exit; } e_.main_ui.animate(e_, "xscale", 0, 1, global.Ease.OutElastic, 10); e_.main_ui.animate(e_, "yscale", 0, 1, global.Ease.OutElastic, 5); e_.setColor(c_white); SYSTEMUI.dial_gradient_clr = c_white; SYSTEMUI.dial_gradient_clr_orig = SYSTEMUI.dial_gradient_clr; sfx_play(snd_hurtpowerful); }),
+			]),
+			
+			new LuiHorizontalRule({ height: 5, }),
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Text Smoothing:", width: 140, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes how much text is visible while\ntyping out. Higher numbers will allow more\ntext to be visible as it fades in.", true, , true),
+				new LuiInput({ value: typist_smooth, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.typist_smooth); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value_ = real_ext(e_.get()), index_ = value_ == "" ? 0 : value_; SYSTEMUI.typist_smooth = index_; typist.in(SYSTEMUI.typist_spd, SYSTEMUI.typist_smooth); }),
 			]),
 		]);
 		
