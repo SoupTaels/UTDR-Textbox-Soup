@@ -314,25 +314,32 @@ pref = {
 				var spr_ = get_face(name_);
 				if ( spr_ != -1 ) { return spr_; } else {
 					var imgnum = string_between(fname_, "_strip", ".png"); imgnum = imgnum == "" ? 1 : imgnum; //Get the image number if it's a strip file
-					if ( !struct_exists(global.faces_dict, name_) ) { global.faces_dict[$ name_] = {}; } //Create new struct face dictionary
-					with ( global.faces_dict[$ name_] ) {
-						var finalname = string_replace(string_replace(fname_, "_strip", ""), ".png", ""); finalname = string_exclude(finalname, "0123456789");
-
-						self[$ "NEW SPRITE"] = true; //Mark the sprite as new
-						self[$ name_] = { sprite: sprite_add_ext(fpath_, imgnum, 0, 0, true), expression: finalname, name: fpath_, } //Add sprite and data
-						if ( allowmultiple_ ) { TweenScript(SYSTEMUI, 0, 1, soup_store, "allowmultiple"); }
-						with ( self[$ name_] ) { 
-							self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External face \"{name}\" was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
+					if ( name_ != "" ) {
+						if ( !struct_exists(global.faces_dict, name_) ) { global.faces_dict[$ name_] = {}; } //Create new struct face dictionary
+						with ( global.faces_dict[$ name_] ) {
+							var finalname = string_replace(string_replace(fname_, "_strip", ""), ".png", ""); finalname = string_exclude(finalname, "0123456789");
+							self[$ "NEW SPRITE"] = true; //Mark the sprite as new
+							self[$ name_] = { sprite: sprite_add_ext(fpath_, imgnum, 0, 0, true), expression: finalname, name: fpath_, } //Add sprite and data
+							if ( allowmultiple_ ) { TweenScript(SYSTEMUI, 0, 1, soup_store, "allowmultiple"); }
+							with ( self[$ name_] ) { 
+								self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External face \"{name}\" was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
 							
-							var out_ = $"Added \"{expression}\"|You can now use|[{expression}] and [face,{expression}]|to reference the sprite!|The command was copied to your clipboard.";
-							TweenScript(SYSTEMUI, 0, 1, soup_store, "external face", { myname: name_, id_: name_, msg: out_}); 
-							if ( !scribble_external_sprite_exists(finalname) ) { scribble_external_sprite_add(sprite, finalname); } //Add sprite to Scribble
-							var altname = string_replace(finalname, "spr_", "");
-							if ( !scribble_external_sprite_exists(altname) ) { scribble_external_sprite_add(sprite, altname); } //Add alternative name
-							global.faces_dict_alt[$ name_] = { sprite, expression, name, destroy } //Create new struct face dictionary
-							clipboard_set_text($"[{expression}][face,{expression}]");
-							return sprite;
+								var out_ = $"Added \"{expression}\"|You can now use|[{expression}] and [face,{expression}]|to reference the sprite!|The command was copied to your clipboard.";
+								TweenScript(SYSTEMUI, 0, 1, soup_store, "external face", { myname: name_, id_: name_, msg: out_}); 
+								if ( !scribble_external_sprite_exists(finalname) ) { scribble_external_sprite_add(sprite, finalname); } //Add sprite to Scribble
+								var altname = string_replace(finalname, "spr_", "");
+								if ( !scribble_external_sprite_exists(altname) ) { scribble_external_sprite_add(sprite, altname); } //Add alternative name
+								global.faces_dict_alt[$ name_] = { sprite, expression, name, destroy } //Create new struct face dictionary
+								clipboard_set_text($"[{expression}][face,{expression}]");
+								return sprite;
+							}
 						}
+					}
+					else { 
+						TweenScript(SYSTEMUI, 0, 5, function (fpath_ = "") {
+							var out_ = $"Tried to load a sprite with an invalid filename|({fpath_})! Skipped...|Make sure you properly name your files! (No numbers besides _stripN.png)";
+							soupy_message(out_, "Oh no!", , 135, , snd_error, fnt_abaddon, function () { SYSTEMUI.file_dragging = false; }, SYSTEMUI.ui_paused);
+						}, fpath_); return -1;
 					}
 				}
 			} break;
@@ -340,23 +347,31 @@ pref = {
 			case 1: { //Border Sprites
 				var spr_ = get_border(name_);
 				if ( spr_ != -1 ) { return spr_; } else {
-					if ( !struct_exists(global.bords_dict, name_) ) { global.bords_dict[$ name_] = {}; } //Create new struct border dictionary
-					var imgnum = string_between(fname_, "_strip", ".png"); imgnum = imgnum == "" ? 1 : imgnum; //Get the image number if it's a strip file
-					with ( global.bords_dict[$ name_] ) {
-						var finalname = string_replace(string_replace(fname_, "_strip", ""), ".png", ""); finalname = string_exclude(finalname, "0123456789");
+					if ( name_ != "" ) {
+						if ( !struct_exists(global.bords_dict, name_) ) { global.bords_dict[$ name_] = {}; } //Create new struct border dictionary
+						var imgnum = string_between(fname_, "_strip", ".png"); imgnum = imgnum == "" ? 1 : imgnum; //Get the image number if it's a strip file
+						with ( global.bords_dict[$ name_] ) {
+							var finalname = string_replace(string_replace(fname_, "_strip", ""), ".png", ""); finalname = string_exclude(finalname, "0123456789");
 
-						self[$ "NEW SPRITE"] = true; //Mark the sprite as new
-						self[$ "sprite"] = sprite_add_ext(fpath_, imgnum, 0, 0, true); self[$ "name"] = name_; self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External border \"{name}\" was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
-						self[$ "size"] = { sprite, width: sprite_get_width(sprite), height: sprite_get_height(sprite), }
-						asset_add_tags(sprite, "borders", asset_sprite);
-						if ( allowmultiple_ ) { TweenScript(SYSTEMUI, 0, 1, soup_store, "allowmultiple"); }
+							self[$ "NEW SPRITE"] = true; //Mark the sprite as new
+							self[$ "sprite"] = sprite_add_ext(fpath_, imgnum, 0, 0, true); self[$ "name"] = name_; self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; show_debug_message($"External border \"{name}\" was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
+							self[$ "size"] = { sprite, width: sprite_get_width(sprite), height: sprite_get_height(sprite), }
+							asset_add_tags(sprite, "borders", asset_sprite);
+							if ( allowmultiple_ ) { TweenScript(SYSTEMUI, 0, 1, soup_store, "allowmultiple"); }
 							
-						var out_ = $"Added \"{finalname}\"|You can now use|[border,{finalname}]|to reference the sprite!|The command was copied to your clipboard.";
-						TweenScript(SYSTEMUI, 0, 1, soup_store, "external border", { myname: name_, msg: out_}); 
-						global.bords_dict_alt[$ name_] = { sprite, name, size, } //Add sprite index and expression name to the global border alt dictonary
-						global.bords_dict_raw[$ string(sprite)] = { sprite, name, size, } //Add sprite index and expression name to the global border raw dictonary
-						clipboard_set_text($"[border,{finalname}]");
-						return sprite;
+							var out_ = $"Added \"{finalname}\"|You can now use|[border,{finalname}]|to reference the sprite!|The command was copied to your clipboard.";
+							TweenScript(SYSTEMUI, 0, 1, soup_store, "external border", { myname: name_, msg: out_}); 
+							global.bords_dict_alt[$ name_] = { sprite, name, size, } //Add sprite index and expression name to the global border alt dictonary
+							global.bords_dict_raw[$ string(sprite)] = { sprite, name, size, } //Add sprite index and expression name to the global border raw dictonary
+							clipboard_set_text($"[border,{finalname}]");
+							return sprite;
+						}
+					}
+					else { 
+						TweenScript(SYSTEMUI, 0, 5, function (fpath_ = "") {
+							var out_ = $"Tried to load a sprite with an invalid filename|({fpath_})! Skipped...|Make sure you properly name your files! (No numbers besides _stripN.png)";
+							soupy_message(out_, "Oh no!", , 135, , snd_error, fnt_abaddon, function () { SYSTEMUI.file_dragging = false; }, SYSTEMUI.ui_paused);
+						}, fpath_); return -1;
 					}
 				}
 			} break;
@@ -364,28 +379,36 @@ pref = {
 			case 2: { //Font Sprites
 				var spr_ = get_font(name_);
 				if ( spr_ != -1 ) { return spr_; } else {
-					if ( !struct_exists(global.fonts_dict, name_) ) { global.fonts_dict[$ name_] = {}; } //Create new struct font dictionary
-					var imgnum = string_between(fname_, "_strip", ".png"); imgnum = imgnum == "" ? 1 : imgnum; //Get the image number if it's a strip file
-					global.fonts_dict[$ name_] = { sprite: sprite_add(fpath_, imgnum, false, false, 0, 0), name: name_, fname_: filename_name(fpath_), count: imgnum, }
-					with ( global.fonts_dict[$ name_] ) {
-						self[$ "NEW SPRITE"] = true; self[$ "NEW EXTERNALLY"] = true;//Mark the sprite as new and added externally
-						array_push(global.fonts_dict_list, name_); //Add custom font to array list
-						self[$ "font"] = font_add_sprite(sprite, ord("!"), false, 0); //Add as an actual font
-						self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; font_delete(font); delete font; font = -1; show_debug_message($"External font \"{fname_}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
-						self[$ "size"] = { sprite, width: sprite_get_width(sprite), height: sprite_get_height(sprite), }
+					if ( name_ != "" ) {
+						if ( !struct_exists(global.fonts_dict, name_) ) { global.fonts_dict[$ name_] = {}; } //Create new struct font dictionary
+						var imgnum = string_between(fname_, "_strip", ".png"); imgnum = imgnum == "" ? 1 : imgnum; //Get the image number if it's a strip file
+						global.fonts_dict[$ name_] = { sprite: sprite_add(fpath_, imgnum, false, false, 0, 0), name: name_, fname_: filename_name(fpath_), count: imgnum, }
+						with ( global.fonts_dict[$ name_] ) {
+							self[$ "NEW SPRITE"] = true; self[$ "NEW EXTERNALLY"] = true;//Mark the sprite as new and added externally
+							array_push(global.fonts_dict_list, name_); //Add custom font to array list
+							self[$ "font"] = font_add_sprite(sprite, ord("!"), false, 0); //Add as an actual font
+							self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; font_delete(font); delete font; font = -1; show_debug_message($"External font \"{fname_}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
+							self[$ "size"] = { sprite, width: sprite_get_width(sprite), height: sprite_get_height(sprite), }
 						
-						global.fonts_dict_alt[$ name] = { sprite, font, name, } //Add sprite index and expression name to the global icon alt dictonary
-						var getfont = asset_get_name(sprite);
+							global.fonts_dict_alt[$ name] = { sprite, font, name, } //Add sprite index and expression name to the global icon alt dictonary
+							var getfont = asset_get_name(sprite);
 						
-						scribble_font_rename(getfont, name); //Let us use the font's filename instead of whatever name gamemaker generated for us
-						scribble_font_bake_outline_and_shadow(name, $"{name}_s", global.pref.shadowoff, global.pref.shadowoff, SCRIBBLE_OUTLINE.NO_OUTLINE, 0, false);
-						scribble_font_bake_outline_and_shadow(name, $"{name}_outline", global.pref.shadowoff, global.pref.shadowoff, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
-						scribble_font_delete(name); scribble_font_rename($"{name}_s", name);
-						scribble_glyph_set($"{name}_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, scribble_glyph_get(name, "W", SCRIBBLE_GLYPH.FONT_HEIGHT));
-						var out_ = $"Added \"{name}\"|You can now use|[{name}]|to reference the font!|The command was copied to your clipboard.";
-						TweenScript(SYSTEMUI, 0, 2, soupy_message, out_, , , , , snd_sparkle2);
-						clipboard_set_text($"[{name}]");
-						return font;
+							scribble_font_rename(getfont, name); //Let us use the font's filename instead of whatever name gamemaker generated for us
+							scribble_font_bake_outline_and_shadow(name, $"{name}_s", global.pref.shadowoff, global.pref.shadowoff, SCRIBBLE_OUTLINE.NO_OUTLINE, 0, false);
+							scribble_font_bake_outline_and_shadow(name, $"{name}_outline", global.pref.shadowoff, global.pref.shadowoff, SCRIBBLE_OUTLINE.EIGHT_DIR, 0, false);
+							scribble_font_delete(name); scribble_font_rename($"{name}_s", name);
+							scribble_glyph_set($"{name}_outline", all, SCRIBBLE_GLYPH.FONT_HEIGHT, scribble_glyph_get(name, "W", SCRIBBLE_GLYPH.FONT_HEIGHT));
+							var out_ = $"Added \"{name}\"|You can now use|[{name}]|to reference the font!|The command was copied to your clipboard.";
+							TweenScript(SYSTEMUI, 0, 2, soupy_message, out_, , , , , snd_sparkle2);
+							clipboard_set_text($"[{name}]");
+							return font;
+						}
+					}
+					else { 
+						TweenScript(SYSTEMUI, 0, 5, function (fpath_ = "") {
+							var out_ = $"Tried to load a sprite with an invalid filename|({fpath_})! Skipped...|Make sure you properly name your files! (No numbers besides _stripN.png)";
+							soupy_message(out_, "Oh no!", , 135, , snd_error, fnt_abaddon, function () { SYSTEMUI.file_dragging = false; }, SYSTEMUI.ui_paused);
+						}, fpath_); return -1;
 					}
 				}
 			} break;
@@ -573,6 +596,7 @@ pref = {
 					sfx_play(snd_equip); 
 					var result = get_open_filename_ext("GameMaker Strip (_strip#.PNG Only)|*.png", "", directory_get_pictures_path(), "Select a spritefont to import."), myname_;
 					if ( result == -1 || result == "" ) { result = "fnt_determination"; myname_ = result; } else { myname_ = string_exclude(string_replace(string_replace(string_replace(filename_name(result), "spr_", ""), "_strip", ""), ".png", ""), "0123456789"); result = external_ensure(myname_, filename_name(result), result, 2, false); }
+					if ( result == -1 || result == "" ) { result = "fnt_determination"; myname_ = result; }
 					soup_checkout(SYSTEMUI.ui_tab != 4 ? "datainputS" : "datainputbox", false, true).set(myname_); soup_checkout(SYSTEMUI.ui_tab != 4 ? "datafont" : "datafontbox", false, true).font = myname_; soup_checkout("datafunc", false)(); sfx_play(snd_updated); 
 				})
 			);
