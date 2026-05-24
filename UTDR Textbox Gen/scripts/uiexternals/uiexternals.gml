@@ -658,7 +658,7 @@ pref = {
 	function external_choose_mini(face_ = -1, index_ = 0, text_ = "Text", font_ = "fnt_determination", smooth_ = false, x_ = -1, y_ = -1, id_ = -1, name_ = "") {
 		soup_store("minisprite", face_ != -1 ? name_ : face_); soup_store("miniindex", index_); soup_store("minitext", text_); soup_store("minianim", smooth_); soup_store("minifont", font_);
 		var miniarr = [
-			new LuiText({ value: id_ != -1 ? "Create a mini speech bubble!" : "Edit current mini speech bubble.", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+			new LuiText({ value: ( id_ == -1 ? "Create a mini speech bubble!" : "Edit current mini speech bubble." ), text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
 				new LuiText({ value: "Sprite:", width: 100, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
 				new LuiButton({ text: "Choose...", height: 40, width: 100, }).addEvent(LUI_EV_CLICK, function(element_) { external_choose_face(true, , false, , false, false); }),
