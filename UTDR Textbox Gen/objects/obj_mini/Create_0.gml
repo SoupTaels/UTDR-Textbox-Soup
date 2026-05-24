@@ -15,6 +15,7 @@ active = false;
 once = false;
 near = false;
 destroying = false;
+doublec = false;
 
 draw = method(self, function() {
 	if ( SYSTEMUI.dial_text_page != page || SYSTEMUI.ui_paused || SYSTEMUI.ui_tab > 0 || !SYSTEMUI.bord_visible ) { exit; }

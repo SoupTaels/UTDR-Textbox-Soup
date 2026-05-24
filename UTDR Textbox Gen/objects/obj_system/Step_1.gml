@@ -171,4 +171,15 @@
 		var maincan = soupy_popup(exportarr, function() { soup_store_clear(); }, "Nevermind", 300, , , snd_select);
 		soup_store("maincan", maincan);
 	}
+	
+	#region Quick Exports
+		if ( keyboard_check(vk_control) && !ui_paused ) {
+			var valid_ = false;
+			if ( keyboard_check_pressed(ord("Q")) ) { ui_export(); valid_ = true; } //Static
+			if ( keyboard_check_pressed(ord("W")) ) { ui_export(1); valid_ = true; } //Typewriter
+			if ( keyboard_check_pressed(ord("E")) ) { ui_export(3); valid_ = true; } //Stack
+			if ( keyboard_check_pressed(ord("R")) ) { ui_export(2); valid_ = true; } //Animated
+			if ( valid_ ) { bord_box_visible = true; bord_out = true; }
+		}
+	#endregion
 #endregion

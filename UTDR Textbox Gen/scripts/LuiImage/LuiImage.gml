@@ -19,6 +19,7 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 	self.xscale = _params[$ "xscale"] ?? 1;
 	self.yscale = _params[$ "yscale"] ?? 1;
 	self.color_default = self.color_blend;
+	self.blink = -1;
 
 	self.sprite_real_width = 0;
 	self.sprite_real_height = 0;
@@ -82,6 +83,8 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 			}
 			self.updateMainUiSurface();
 		};
+		
+		if ( self.blink != -1 ) { self.updateMainUiSurface(); }
 	}
 	
 	self.draw = function() {
@@ -102,16 +105,18 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 		}
 		//Draw sprite
 		if ( !is_undefined(self.value) && self.value != -1 && self.value != "" && sprite_exists(self.value) ) {
-			if ( !self.draw_normal ) {
-				var _sprite_render_function = self.style.sprite_render_function ?? draw_sprite_stretched_ext;
-					_sprite_render_function(self.value, self.subimg, 
-												floor(self.x + self.width/2 - _width/2) - self.xscale, 
-												floor(self.y + self.height/2 - _height/2) - self.yscale, 
-												_width + ( self.xscale * 2 ), _height + ( self.yscale * 2 ), 
-												_blend_color, self.alpha);
-			}
-			else {
-				draw_sprite_ext(self.value, self.subimg, self.x + self.width/2, self.y + self.height/2, self.xscale, self.yscale, self.angle ?? 0, _blend_color, self.alpha);
+			if ( self.blink == -1 || ( self.blink != -1 && blink(self.blink - 100, self.blink) ) ) {
+				if ( !self.draw_normal ) {
+					var _sprite_render_function = self.style.sprite_render_function ?? draw_sprite_stretched_ext;
+						_sprite_render_function(self.value, self.subimg, 
+													floor(self.x + self.width/2 - _width/2) - self.xscale, 
+													floor(self.y + self.height/2 - _height/2) - self.yscale, 
+													_width + ( self.xscale * 2 ), _height + ( self.yscale * 2 ), 
+													_blend_color, self.alpha);
+				}
+				else {
+					draw_sprite_ext(self.value, self.subimg, self.x + self.width/2, self.y + self.height/2, self.xscale, self.yscale, self.angle ?? 0, _blend_color, self.alpha);
+				}
 			}
 		}
 	}

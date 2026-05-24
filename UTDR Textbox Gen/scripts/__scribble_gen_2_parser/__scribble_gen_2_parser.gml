@@ -406,7 +406,7 @@ function __scribble_gen_2_parser()
                     //Reset command tag state
                     _tag_start = undefined;
                     
-                    _tag_command_name = _tag_parameters[0];
+                    _tag_command_name = string_lower(_tag_parameters[0]);
                     var _new_halign = undefined;
                     var _new_valign = undefined;
                     

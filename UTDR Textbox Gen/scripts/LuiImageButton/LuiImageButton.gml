@@ -17,7 +17,7 @@ function LuiImageButton(_params = {}) : LuiImage(_params) constructor {
 	self.yscale = _params[$ "yscale"] ?? 1;
 	self.color_default = self.color_blend;
 	self.bounce = false;
-	self.anim_track = false;
+	self.anim_track = false; self.blink = -1;
 	self.step = function () { 
 		if ( self.imgspd > 0 ) {
 			var amt = sprite_get_number(self.value);
@@ -28,6 +28,8 @@ function LuiImageButton(_params = {}) : LuiImage(_params) constructor {
 			}
 			self.updateMainUiSurface();
 		};
+		
+		if ( self.blink != -1 ) { self.updateMainUiSurface(); }
 	}
 	self.draw = function() {
 		//Calculate fit size
@@ -54,16 +56,18 @@ function LuiImageButton(_params = {}) : LuiImage(_params) constructor {
 		}
 		//Draw sprite button
 		if ( !is_undefined(self.value) && self.value != -1 && self.value != "" && sprite_exists(self.value) ) {
-			if ( !self.draw_normal ) {
-				var _sprite_render_function = self.style.sprite_render_function ?? draw_sprite_stretched_ext;
-					_sprite_render_function(self.value, self.subimg, 
-												floor(self.x + self.width/2 - _width/2) - self.xscale, 
-												floor(self.y + self.height/2 - _height/2) - self.yscale, 
-												_width + ( self.xscale * 2 ), _height + ( self.yscale * 2 ), 
-												_blend_color, self.alpha);
-			}
-			else {
-				draw_sprite_ext(self.value, self.subimg, self.x + self.width/2, self.y + self.height/2, self.xscale, self.yscale, self.angle ?? 0, _blend_color, self.alpha);
+			if ( self.blink == -1 || ( self.blink != -1 && blink(self.blink - 100, self.blink) ) ) {
+				if ( !self.draw_normal ) {
+					var _sprite_render_function = self.style.sprite_render_function ?? draw_sprite_stretched_ext;
+						_sprite_render_function(self.value, self.subimg, 
+													floor(self.x + self.width/2 - _width/2) - self.xscale, 
+													floor(self.y + self.height/2 - _height/2) - self.yscale, 
+													_width + ( self.xscale * 2 ), _height + ( self.yscale * 2 ), 
+													_blend_color, self.alpha);
+				}
+				else {
+					draw_sprite_ext(self.value, self.subimg, self.x + self.width/2, self.y + self.height/2, self.xscale, self.yscale, self.angle ?? 0, _blend_color, self.alpha);
+				}
 			}
 		}
 	}

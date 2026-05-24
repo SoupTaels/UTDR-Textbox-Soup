@@ -280,15 +280,24 @@ function LuiInput(_params = {}) : LuiBase(_params) constructor {
         var _new_input = _e._limit_value(_e._filter_input(keyboard_string));
         _e.set(_new_input);
         keyboard_string = _e.get();
-        if keyboard_check(vk_lcontrol) && keyboard_check_pressed(ord("V")) && clipboard_has_text() {
+        if ( clipboard_has_text() && keyboard_check(vk_control) && keyboard_check_pressed(ord("V")) ) { //Paste
             var _paste = _e._filter_input(clipboard_get_text());
             _e.set(_e._limit_value(_e.get() + _paste));
             keyboard_string = _e.get();
         }
+		
+		if ( clipboard_has_text() && keyboard_check(vk_control) && keyboard_check_pressed(ord("C")) ) { //Copy
+            clipboard_set_text(_e.get());
+        }
+		
+		if ( clipboard_has_text() && keyboard_check(vk_control) && keyboard_check_pressed(ord("X")) ) { //Cut
+            clipboard_set_text(_e.get());
+			_e.set("");
+        }
     });
 	
 	 self.addEvent(LUI_EV_KEYBOARD_RELEASE, function(_e) {
-		if ( window_has_focus() ) { sfx_play(_e.type_sfx); }
+		if ( window_has_focus() ) { sfx_play(_e.type_sfx, , , random_range(0.7, 1.3)); }
     });
     
     self.addEvent(LUI_EV_DESTROY, function(_e) {

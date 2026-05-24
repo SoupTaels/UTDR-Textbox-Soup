@@ -230,6 +230,7 @@ pref = {
 	fonts_dict = {};
 	fonts_dict_alt = {};
 	fonts_dict_list = [];
+	fonts_dict_list_custom = [];
 	
 	#region Add built-in fonts to a list
 		var fonts_ = tag_get_assets("fonts"), fonts_len = array_length(fonts_), fonts_i = 0;
@@ -253,9 +254,10 @@ pref = {
 				fonts_dict[$ temp_] = { sprite: sprite_add(fonts_cur, imgnum, false, false, 0, 0), name: temp_, fname_: fonts_cur, count: imgnum, }
 				with ( fonts_dict[$ temp_] ) {
 					array_push(global.fonts_dict_list, name); //Add custom font to array list
+					array_push(global.fonts_dict_list_custom, name); //Add custom font to custom array list
 					self[$ "font"] = font_add_sprite(sprite, ord("!"), false, 0); //Add as an actual font
 					self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; font_delete(font); delete font; font = -1; show_debug_message($"External font \"{fname_}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
-
+					
 					var temp_2 = string_replace(fonts_cur, $"fonts{PATHSEP}", ""); 
 					temp_2 = string_replace(string_replace(temp_2, $"_strip", ""), $".png", "");
 					temp_2 = string_exclude(temp_2, "0123456789");
@@ -386,6 +388,7 @@ pref = {
 						with ( global.fonts_dict[$ name_] ) {
 							self[$ "NEW SPRITE"] = true; self[$ "NEW EXTERNALLY"] = true;//Mark the sprite as new and added externally
 							array_push(global.fonts_dict_list, name_); //Add custom font to array list
+							array_push(global.fonts_dict_list_custom, name_); //Add custom font to array list
 							self[$ "font"] = font_add_sprite(sprite, ord("!"), false, 0); //Add as an actual font
 							self[$ "destroy"] = function () { sprite_delete(sprite); delete sprite; sprite = -1; font_delete(font); delete font; font = -1; show_debug_message($"External font \"{fname_}\"({name}) was destroyed and freed from memory successfully!"); } //Add a destroy func so we don't get memory leaks
 							self[$ "size"] = { sprite, width: sprite_get_width(sprite), height: sprite_get_height(sprite), }
@@ -561,16 +564,21 @@ pref = {
 	///@desc Function for choosing an externally added font
 	function external_choose_font() {
 		#region Add bundled fonts
-			var options_ = [], fonts_len = array_length(global.fonts_dict_list), fonts_i = 0;
+			var custom_ = is_undefined(soup_checkout("customfonts", false, true));
+			var options_ = [], fonts_len = array_length((!custom_ ? global.fonts_dict_list_custom : global.fonts_dict_list)), fonts_i = 0;
 			repeat ( fonts_len ) {
-				var cur_ = global.fonts_dict_list[fonts_i];
-				options_[fonts_i] = new LuiText({ value: $"{cur_} (AaBbCc)", id_: cur_, font: cur_, text_halign: fa_center, text_valign: fa_middle, color: c_white, isnew: false, scribbletext: true, })
+				var get_ = (!custom_ ? global.fonts_dict_list_custom : global.fonts_dict_list);
+				var cur_ = get_[fonts_i];
+				options_[fonts_i] = new LuiText({ value: $"{cur_} (AaBbCc)", id_: cur_, font: cur_, text_halign: fa_center, text_valign: fa_middle, color: c_white, isnew: false, scribbletext: true, }).setData("customs", custom_)
 					.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; element_.value = $"[wheel]{element_.value}"; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
 					.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = element_.color_o; element_.value = string_replace(element_.value, "[wheel]", ""); element_.main_ui.animate(element_, "xoff", 0, 0.15); })
 					.addEvent(LUI_EV_CLICK, function(e_) { 
 						var myname = e_.params.id_, fonts_ = global.fonts_dict[$ myname];
+						var custom_ = e_.getData("customs");
 						if ( !is_undefined(fonts_) ) { fonts_[$ "NEW SPRITE"] = false; } sfx_play(snd_select);
-						soup_checkout(SYSTEMUI.ui_tab != 4 ? "datainputS" : "datainputbox", false, true).set(myname); soup_checkout(SYSTEMUI.ui_tab != 4 ? "datafont" : "datafontbox", false, true).font = myname; soup_checkout("datafunc", false)();
+						if ( custom_ ) { soup_checkout(SYSTEMUI.ui_tab != 4 ? "datainputS" : "datainputbox", false, true).set(myname); soup_checkout(SYSTEMUI.ui_tab != 4 ? "datafont" : "datafontbox", false, true).font = myname; }
+						else { soup_checkout(soup_checkout("getfont", false, true), false, true).font = myname; }
+						soup_checkout("datafunc", false)();
 					})
 					.addEvent(LUI_EV_CREATE, function(e_) { 
 						var result = global.fonts_dict[$ e_.params.id_]; 
@@ -589,7 +597,7 @@ pref = {
 		#endregion
 		
 		#region Add Default Options
-			array_push(options_, new LuiText({ value: "Add From File... [->]", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, color: c_yellow, }).setPadding(5)
+			array_push(options_, new LuiText({ value: "Add From File... [->]", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, color: c_yellow, }).setPadding(5).setData("customs", custom_)
 				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_orange; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
 				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
 				.addEvent(LUI_EV_CLICK, function(element_) { 
@@ -597,7 +605,10 @@ pref = {
 					var result = get_open_filename_ext("GameMaker Strip (_strip#.PNG Only)|*.png", "", directory_get_pictures_path(), "Select a spritefont to import."), myname_;
 					if ( result == -1 || result == "" ) { result = "fnt_determination"; myname_ = result; } else { myname_ = string_exclude(string_replace(string_replace(string_replace(filename_name(result), "spr_", ""), "_strip", ""), ".png", ""), "0123456789"); result = external_ensure(myname_, filename_name(result), result, 2, false); }
 					if ( result == -1 || result == "" ) { result = "fnt_determination"; myname_ = result; }
-					soup_checkout(SYSTEMUI.ui_tab != 4 ? "datainputS" : "datainputbox", false, true).set(myname_); soup_checkout(SYSTEMUI.ui_tab != 4 ? "datafont" : "datafontbox", false, true).font = myname_; soup_checkout("datafunc", false)(); sfx_play(snd_updated); 
+					var custom_ = element_.getData("customs");
+					if ( custom_ ) { soup_checkout(SYSTEMUI.ui_tab != 4 ? "datainputS" : "datainputbox", false, true).set(myname_); soup_checkout(SYSTEMUI.ui_tab != 4 ? "datafont" : "datafontbox", false, true).font = myname_; sfx_play(snd_updated); }
+					else { soup_checkout(soup_checkout("getfont", false, true), false, true).font = myname_; }
+					soup_checkout("datafunc", false)();
 				})
 			);
 		#endregion
@@ -609,7 +620,93 @@ pref = {
 			]).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollmain", element_); }), //Stash panel so we can add another panel to this row
 		];
 		
-		soup_store("datafunc", function() { soup_checkout("choosemain", false).destroy(); soup_store_clear(); SYSTEMUI.ui_paused = false; });
-		var maincan = soupy_popup(dataarr, function() { soup_store_clear(); SYSTEMUI.ui_paused = false; }, "Nevermind", , , , snd_select, , , 2); soup_store("choosemain", maincan); 
+		soup_store("datafunc", function() { soup_checkout("choosemain", false).destroy(); soup_store_clear(); if ( is_undefined(soup_checkout("customfonts", false, true)) ) { SYSTEMUI.ui_paused = false; } });
+		var maincan = soupy_popup(dataarr, function() { soup_store_clear(); if ( is_undefined(soup_checkout("customfonts", false, true)) ) { SYSTEMUI.ui_paused = false; } }, "Nevermind", , , , snd_select, , !custom_, 2); soup_store("choosemain", maincan); 
+	}
+	
+	///@desc Function for editing the spacing between fonts
+	function external_edit_fonts() {
+		var dataarr = [
+			new LuiText({ value: $"Tweak the spacing between letters for your custom font.", y: -10, font: fnt_speech, text_halign: fa_center, text_valign: fa_center, }),
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
+				new LuiText({ value: "Font:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Custom fonts only.", true, , true),
+				new LuiButton({ text: "Choose...", height: 40, width: 100, }).addEvent(LUI_EV_CLICK, external_choose_font),
+				new LuiText({ value: "AaBbCc", width: 100, text_halign: fa_center, text_valign: fa_middle, font: "fnt_speech", scribbletext: true, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datafontcustom", e_, , true); })
+				.addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "yoff", 0, 1, global.Ease.OutElastic, 10); sfx_play(snd_squish); })
+			]),
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Separation:", width: 140, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+				new LuiInput({ value: "14", height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, max_length: 2, })
+				.addEvent(LUI_EV_CREATE, function(e_) { soup_store("sep", e_, , true); }),
+			]),
+			new LuiButton({ text: "Make changes!", height: 40, }).addEvent(LUI_EV_CLICK, function () { 
+				var font_ = soup_checkout("datafontcustom", false, true).font, result = soup_checkout("sep", , true).get(), value = result == "" ? 14 : real(result);
+				if ( font_ != "fnt_speech" ) {
+					scribble_glyph_set(font_, all, SCRIBBLE_GLYPH.SEPARATION, value);
+					scribble_glyph_set($"{font_}_outline", all, SCRIBBLE_GLYPH.SEPARATION, value);
+					scribble_refresh_everything();
+					soup_checkout("datafunccustomfonts", , true)(); sfx_play(snd_sparkle);
+				}
+				else { soupy_message("You haven't selected any|custom font for editing.", , 300, , , snd_error, , , true); }
+			}),
+		];
+		soup_store("customfonts", , , true); soup_store("getfont", "datafontcustom", , true);
+		soup_store("datafunccustomfonts", function() { soup_checkout("choosemaincustomfonts", false, true).destroy(); soup_store_clear(); soup_checkout("customfonts", , true); soup_checkout("getfont", , true); SYSTEMUI.ui_paused = false; }, , true);
+		var maincan = soupy_popup(dataarr, function() { soup_store_clear(); soup_checkout("customfonts", , true); soup_checkout("getfont", , true); SYSTEMUI.ui_paused = false; }, "Nevermind", , , , snd_select, , , 2); soup_store("choosemaincustomfonts", maincan, , true); 
+	}
+		
+	function external_choose_mini(face_ = -1, index_ = 0, text_ = "Text", font_ = "fnt_determination", smooth_ = false, x_ = -1, y_ = -1, id_ = -1, name_ = "") {
+		soup_store("minisprite", face_ != -1 ? name_ : face_); soup_store("miniindex", index_); soup_store("minitext", text_); soup_store("minianim", smooth_); soup_store("minifont", font_);
+		var miniarr = [
+			new LuiText({ value: id_ != -1 ? "Create a mini speech bubble!" : "Edit current mini speech bubble.", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Sprite:", width: 100, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+				new LuiButton({ text: "Choose...", height: 40, width: 100, }).addEvent(LUI_EV_CLICK, function(element_) { external_choose_face(true, , false, , false, false); }),
+				new LuiInput({ value: soup_checkout("minisprite", false), height: 40, placeholder: "spr_face_test", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "minisprite").addEvent(LUI_EV_CREATE, function(e_) { soup_store("datainput", e_); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+					var spr_ = soup_checkout("dataimage", false), getface = get_face(e_.get());
+					spr_.set(getface == -1 ? spr_gui_icons : getface); spr_.subimg = ( getface == -1 ? 3 : 0 );
+				}),
+				new LuiImage({ value: spr_gui_icons, subimg: 3, draw_normal: true, }).setSize(70, 70).addEvent(LUI_EV_CREATE, function(e_) { var mini_ = soup_checkout("minisprite", false); soup_store("dataimage", e_); e_.set(mini_ == -1 ? spr_gui_icons : get_face(mini_)); }),
+			]),
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Image Index:", width: 150, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+				new LuiInput({ value: soup_checkout("miniindex", false), width: 50, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, }).setPadding(20).bindVariable(global.soupstore, "miniindex").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+					var spr_ = soup_checkout("dataimage", false), value = e_.get(); if ( spr_.value != spr_gui_icons ) { spr_.subimg = real(value == "" ? 0 : value); }
+				}),
+			]),
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Text:", width: 50, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+				new LuiInput({ value: soup_checkout("minitext", false), placeholder: "Test text 1, 2, 3.", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).setPadding(20).bindVariable(global.soupstore, "minitext"),
+			]),
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Font:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+				new LuiInput({ value: soup_checkout("minifont", false), placeholder: "fnt_determination", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).setPadding(20).bindVariable(global.soupstore, "minifont").addEvent(LUI_EV_VALUE_UPDATE, function(e_) {
+					var prev_ = soup_checkout("minipreview", false), value = e_.get(); prev_.font = scribble_font_exists(value) ? value : "fnt_determination";
+				}),
+				new LuiText({ value: "AaBbCc", text_halign: fa_center, text_valign: fa_middle, font: soup_checkout("minifont", false), scribbletext: true, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("minipreview", e_); }),
+			]),
+			new LuiRow().setPosX(90).addContent([
+				new LuiText({ value: "Smooth Animation:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+				new LuiToggleSwitch({ value: soup_checkout("minianim", false), checkbox_spr: spr_gui_icons, checkbox_spr_index: 6, checkbox_clr: c_white, sound_click: snd_bump, sound_click_pitch: 1.3, ease: global.Ease.OutBack, }).bindVariable(global.soupstore, "minianim"),
+			]),
+			new LuiText({ value: "Left Click - Move mini | Right Click (Held) - Delete mini | Double Left Click - Edit mini", color: c_gray, text_halign: fa_center, text_valign: fa_middle, font: fnt_determination_nomono, }),
+			new LuiText({ value: "Note: Mini speeches only show up on the current highlighted page\nand within the dialogue box.", color: c_gray, text_halign: fa_center, text_valign: fa_middle, }),
+			new LuiText({ value: "You can drag a face sprite on here too, btw! New sprites are\nimmediately added.", color: c_gray, text_halign: fa_center, text_valign: fa_middle, }),
+			new LuiButton({ text: "Let's get soupy!!", height: 35, }).setData("xx", x_).setData("yy", y_).setData("id_", id_).addEvent(LUI_EV_CLICK, function(element_) {
+				var txt_ = soup_checkout("minitext", false), spr_ = get_face(soup_checkout("minisprite", false)), index_ = soup_checkout("miniindex", false), font_ = soup_checkout("minifont", false);
+				if ( string_lettersdigits(txt_) == "" ) { SYSTEMUI.ui_paused = false; soupy_message("You haven't even written any|dialogue yet!!", "Go Back", 300, , , snd_error, , , true); exit; }
+				if ( spr_ == -1 ) { SYSTEMUI.ui_paused = false; soupy_message("Make sure your face sprite|is a valid sprite.", "Go Back", 300, , , snd_error, , , true); exit; }
+				if ( string_lettersdigits(font_) == "" ) { font_ = "fnt_determination"; }
+									
+				var struct_ = { name: soup_checkout("datainput", false).get(), text: txt_, face: spr_, index: index_ == "" ? 0 : real(index_), alpha: 1, font: font_, smooth: soup_checkout("minianim", false), page: SYSTEMUI.dial_text_page, };
+				var x_ = element_.getData("xx"), y_ = element_.getData("yy"), id_ = element_.getData("id_");
+				if ( id_ != -1 ) { instance_destroy(id_); sfx_play(snd_updated); }
+				instance_create_depth(x_ == -1 ? random_range(30, 310) : x_, y_ == -1 ? random_range(310, 470) : y_, -1, obj_mini, struct_);
+				var maincan = soup_checkout("datamain", false);
+				soup_store_clear(); SYSTEMUI.ui_paused = false; maincan.destroy();
+			}),
+		];
+		var maincan = soupy_popup(miniarr, function() { soup_store_clear(); SYSTEMUI.ui_paused = false; }, "Nevermind", , , , snd_select, , , 2);
+		soup_store("datamain", maincan);
 	}
 #endregion

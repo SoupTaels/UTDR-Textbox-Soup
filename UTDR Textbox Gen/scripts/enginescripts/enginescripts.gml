@@ -420,3 +420,10 @@ function game_restart_alt() {
 		game_change(".", final);
 	}
 }
+
+///@desc Makes code run based on an on and off timer
+///@param {real} offTime When code doesn't run
+///@param {real} onTime When code runs
+///@param {real} phaseShift Timer offset
+///@param {real} clock Timer (default: current_time(milliseconds))
+function blink(offTime = 500, onTime = offTime, phaseShift = 0, clock = current_time) { return ( clock + phaseShift ) mod ( offTime + onTime ) >= offTime; }

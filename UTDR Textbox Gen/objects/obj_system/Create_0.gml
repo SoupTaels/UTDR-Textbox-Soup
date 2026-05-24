@@ -85,6 +85,11 @@
 	dial_gradient_orig = dial_gradient; //Text gradient original
 	dial_gradient_clr = c_white; //Text gradient color
 	dial_gradient_clr_orig = dial_gradient_clr; //Text original gradient color
+	dial_indicator = -1; //Dialogue ended indicator
+	dial_indicator_index = 0;
+	dial_indicator_spd = 0; 
+	dial_indicator_anim = 0; dial_indicator_anim_track = 0;
+	dial_indicator_visible = false; dial_indicator_scale = 1; dial_indicator_xoff = 0; dial_indicator_yoff = 0; dial_indicator_angle = 0; dial_indicator_blink = 300;
 	
 	#region Typist
 		typist = scribble_typist(); //Dialogue Engine
@@ -112,6 +117,7 @@
 			#endregion
 		});
 		typist.function_on_complete(function() { //Function to run once the dialogue is complete
+			dial_indicator_visible = true;
 			if ( dial_face_auto ) { FACE_INDEX = 0; }
 			if ( !dial_face_keep ) { FACE_CURRENT = FACE_ORIGINAL; } //Switch back to the original face
 			typist_spd = typist_spd_orig; //Switch back to the original typewriter speed
@@ -120,7 +126,7 @@
 			with ( obj_mini ) { if ( page == other.dial_text_page ) { active = true; TweenFire("$13", $"~{smooth ? "oquad" : "linear"}", "xoff", 30, 0, "alpha", 0, 1); } } 
 		});
 		
-		typist_reset = function () { dial_gradient = dial_gradient_orig; dial_gradient_clr = dial_gradient_clr_orig; dial_face_angle = dial_face_angle_orig; dial_face_alpha = dial_face_alpha_orig; dial_face_xoff = 0; dial_face_yoff = 0; dial_face_xscale_off = 0; dial_face_yscale_off = 0; } //Function to reset portrait modifications after dialogue finishes
+		typist_reset = function () { dial_indicator_visible = false; dial_gradient = dial_gradient_orig; dial_gradient_clr = dial_gradient_clr_orig; dial_face_angle = dial_face_angle_orig; dial_face_alpha = dial_face_alpha_orig; dial_face_xoff = 0; dial_face_yoff = 0; dial_face_xscale_off = 0; dial_face_yscale_off = 0; } //Function to reset portrait modifications after dialogue finishes
 		
 		#region Ease Builder
 			typist_ease = { type: SCRIBBLE_EASE.LINEAR, x: 0, y: 0, xscale: 1, yscale: 1, angle: 0, alpha: 1, };
@@ -145,11 +151,27 @@
 			scribble_typists_add_event("gradient", function(_, param) { dial_gradient = bool(string_letters(param[0])); }); //Switch the gradient
 			scribble_typists_add_event("face_index", function(_, param) { FACE_INDEX = real(string_digits(param[0])); }); //Change the index of the face(if dial_face_auto is off), for sprites with more sprites and expressions
 			scribble_typists_add_event("face_anim", function(_, param) { dial_face_anim = real(string_digits(param[0])); }); //Changes how often the face should animate for every letter revealed
-			scribble_typists_add_event("face_speed", function(_, param) { var value_ = real_ext(param[0]); FACE_SPEED = value_ == "" ? 0 : value_; }); //Change the speed of the face(if dial_face_auto is off), for sprites with more sprites and expressions
+			var func_ = function(_, param) { var value_ = real_ext(param[0]); FACE_SPEED = value_ == "" ? 0 : value_; }
+			scribble_typists_add_event("face_speed", func_); scribble_typists_add_event("face_spd", func_); //Change the speed of the face(if dial_face_auto is off), for sprites with more sprites and expressions
 			scribble_typists_add_event("border", function(_, param) { //Switch to a new border sprite
 				var bord_ = get_border(param[0]);
 				spr_bord = bord_ != -1 ? bord_ : spr_border_undertale;
 			});
+			scribble_typists_add_event("indicator", function(_, param) { //Switch to a new indicator sprite
+				var value_ = param[0], face_ = get_face(value_), bord_ = get_border(value_), icon_ = get_icon(value_);
+				
+				var index_ = ( array_length(param) > 1 && real_ext(param[1]) != "" ? real_ext(param[1]) : 0 );
+				var spd_ = ( array_length(param) > 2 && real_ext(param[2]) != "" ? real_ext(param[2]) : 0 );
+				var anim_ = ( array_length(param) > 3 && real_ext(param[3]) != "" ? real_ext(param[3]) : 0 );
+				if ( face_ == -1 && bord_ == -1 && icon_ == -1 ) { SYSTEMUI.dial_indicator = -1; SYSTEMUI.dial_indicator_index = 0; SYSTEMUI.dial_indicator_spd = 0; SYSTEMUI.dial_indicator_anim = 0; }
+				else {
+					if ( face_ != -1 ) { SYSTEMUI.dial_indicator = face_; SYSTEMUI.dial_indicator_index = index_; SYSTEMUI.dial_indicator_spd = spd_; SYSTEMUI.dial_indicator_anim = anim_; exit; } 
+					if ( bord_ != -1 ) { SYSTEMUI.dial_indicator = bord_; SYSTEMUI.dial_indicator_index = index_; SYSTEMUI.dial_indicator_spd = spd_; SYSTEMUI.dial_indicator_anim = anim_; exit; } 
+					if ( icon_ != -1 ) { SYSTEMUI.dial_indicator = icon_; SYSTEMUI.dial_indicator_index = index_; SYSTEMUI.dial_indicator_spd = spd_; SYSTEMUI.dial_indicator_anim = anim_; exit; } 
+				}
+			});
+			var func_ = function(_, param) { var value_ = real_ext(param[0]); bord_spd = value_ == "" ? 0 : value_; } 
+			scribble_typists_add_event("border_speed", func_); scribble_typists_add_event("border_spd", func_); //Change the animation speed of borders
 			scribble_typists_add_event("finish", function(_, param) { typist.skip(); }); //Finish all the text immediately
 			scribble_typists_add_event("skip", function(_, param) { //Skips to the next page, disregarding current dialogue 
 				if ( dial_text_page < dial_text_page_c - 1 ) {
@@ -182,6 +204,11 @@
 						var myclr = make_color_rgb(getclr != "" ? getclr : 255, getclr2 != "" ? getclr2 : 255, getclr3 != "" ? getclr3 : 255);
 						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 15}", TPCol("dial_face_clr"), dial_face_clr, myclr); delayfunc();
 					} break;
+					case "colorasterisk": case "blendasterisk": case "coloraster": case "blendaster": { //Make the asterisks blend to a different [effect,color,r,g,b,frames]
+						var getclr = real_ext(len > 1 ? param[1] : "255"), getclr2 = real_ext(len > 2 ? param[2] : "255"), getclr3 = real_ext(len > 3 ? param[3] : "255"), time_ = real_ext(len > 4 ? param[4] : "15");
+						var myclr = make_color_rgb(getclr != "" ? getclr : 255, getclr2 != "" ? getclr2 : 255, getclr3 != "" ? getclr3 : 255);
+						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 15}", TPCol("dial_point_clr"), dial_point_clr, myclr); delayfunc();
+					} break;
 					case "colorborder": case "blendborder": { //Make the border blend to a different [effect,colorblend,r,g,b,frames]
 						var getclr = real_ext(len > 1 ? param[1] : "255"), getclr2 = real_ext(len > 2 ? param[2] : "255"), getclr3 = real_ext(len > 3 ? param[3] : "255"), time_ = real_ext(len > 4 ? param[4] : "15");
 						var myclr = make_color_rgb(getclr != "" ? getclr : 255, getclr2 != "" ? getclr2 : 255, getclr3 != "" ? getclr3 : 255);
@@ -200,6 +227,10 @@
 					case "index": case "frame": case "img": { //Make the face's sprite index go to the specified target number [fx,index,#,frames]
 						var getamt = real_ext(len > 1 ? param[1] : sprite_get_number(FACE_CURRENT) - 1), time_ = real_ext(len > 2 ? param[2] : "30");
 						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", TPArray(SYSTEMUI.dial_face_index, SYSTEMUI.dial_text_page), FACE_INDEX, getamt == "" ? sprite_get_number(FACE_CURRENT) - 1 : getamt); delayfunc();
+					} break;
+					case "indexbord": case "framebord": case "imgbord": case "indexborder": case "frameborder": case "imgborder": { //Make the border's sprite index go to the specified target number [fx,indexbord,#,frames]
+						var getamt = real_ext(len > 1 ? param[1] : sprite_get_number(spr_bord) - 1), time_ = real_ext(len > 2 ? param[2] : "30");
+						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 30}", "bord_index>", getamt == "" ? sprite_get_number(spr_bord) - 1 : getamt); delayfunc();
 					} break;
 					case "rotate": case "rot": case "angle": { //Make the face rotate to the specified target number [effect,rotate,#,frames,issmooth]
 						var getamt = real_ext(len > 1 ? param[1] : "359"), time_ = real_ext(len > 2 ? param[2] : "30"), smooth_ = real_ext(len > 3 ? param[3] : "0"); smooth_ = smooth_ != "" ? bool(smooth_) : false;
@@ -722,6 +753,73 @@
 				new LuiInput({ value: typist_smooth, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.typist_smooth); })
 				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value_ = real_ext(e_.get()), index_ = value_ == "" ? 0 : value_; SYSTEMUI.typist_smooth = index_; typist.in(SYSTEMUI.typist_spd, SYSTEMUI.typist_smooth); }),
 			]),
+			
+			new LuiButton({ text: "Edit Font Separation", height: 40, }).addEvent(LUI_EV_CLICK, external_edit_fonts),
+
+			new LuiHorizontalRule({ height: 5, }),
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Indicator Sprite:", width: 160, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the indicator sprite used\nwhen dialogue has ended.\n[c_yellow]Leave blank or -1 for no indicator.", true, , true),
+				new LuiInput({ value: dial_indicator, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.dial_indicator); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) {
+					var value_ = e_.get(), face_ = get_face(value_), bord_ = get_border(value_), icon_ = get_icon(value_);
+					if ( face_ == -1 && bord_ == -1 && icon_ == -1 ) { SYSTEMUI.dial_indicator = -1; soup_checkout("dataindic", false, true).set(SYSTEMUI.dial_indicator); }
+					else {
+						if ( face_ != -1 ) { SYSTEMUI.dial_indicator = face_; soup_checkout("dataindic", false, true).set(SYSTEMUI.dial_indicator); exit; } 
+						if ( bord_ != -1 ) { SYSTEMUI.dial_indicator = bord_; soup_checkout("dataindic", false, true).set(SYSTEMUI.dial_indicator); exit; } 
+						if ( icon_ != -1 ) { SYSTEMUI.dial_indicator = icon_; soup_checkout("dataindic", false, true).set(SYSTEMUI.dial_indicator); exit; }
+					}
+				}),
+				new LuiImage({ value: dial_indicator, draw_normal: true, color: dial_text_c }).setSize(40, 40).addEvent(LUI_EV_CREATE, function(e_) { soup_store("dataindic", e_, , true); }).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 0, 1, global.Ease.OutElastic, 10); element_.main_ui.animate(element_, "yscale", 0, 1, global.Ease.OutElastic, 5); sfx_play(snd_squish); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { if ( SYSTEMUI.dial_indicator != -1 ) { e_.setSize(sprite_get_width(e_.get()), sprite_get_height(e_.get())); audio_stop_sound(snd_updated); sfx_play(snd_updated); } }).addEvent(LUI_EV_CLICK_R, function(e_) { if ( e_.value == -1 ) { exit; } e_.main_ui.animate(e_, "xscale", 0, 1, global.Ease.OutElastic, 10); e_.main_ui.animate(e_, "yscale", 0, 1, global.Ease.OutElastic, 5); e_.set(-1); SYSTEMUI.dial_indicator = -1; sfx_play(snd_hurtpowerful); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Image Index:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the indicator's image index.", true, , true),
+				new LuiInput({ value: dial_indicator_index, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.dial_indicator_index); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value_ = real_ext(e_.get()), index_ = value_ == "" ? 0 : value_; SYSTEMUI.dial_indicator_index = index_; soup_checkout("dataindic", false, true).setSubimg(index_); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Image Speed:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the indicator's image speed.", true, , true),
+				new LuiInput({ value: dial_indicator_index, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.dial_indicator_index); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value_ = real_ext(e_.get()), index_ = value_ == "" ? 0 : value_; SYSTEMUI.dial_indicator_spd = index_; soup_checkout("dataindic", false, true).imgspd = index_; }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Image Scale:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the indicator's image scale.", true, , true),
+				new LuiInput({ value: dial_indicator_scale, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.dial_indicator_scale); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value_ = real_ext(e_.get()), index_ = value_ == "" ? 1 : value_; SYSTEMUI.dial_indicator_scale = index_; }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Image XOff:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the indicator's x offset.", true, , true),
+				new LuiInput({ value: dial_indicator_xoff, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.dial_indicator_xoff); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value_ = real_ext(e_.get()), index_ = value_ == "" ? 0 : value_; SYSTEMUI.dial_indicator_xoff = index_; }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Image YOff:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the indicator's y offset.", true, , true),
+				new LuiInput({ value: dial_indicator_yoff, height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.dial_indicator_yoff); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value_ = real_ext(e_.get()), index_ = value_ == "" ? 0 : value_; SYSTEMUI.dial_indicator_yoff = index_; }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Blink Speed:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the indicator's blinking speed.\nMeasured in milliseconds.", true, , true),
+				new LuiInput({ height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.dial_indicator_blink); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value_ = real_ext(e_.get()), index_ = value_ == "" ? 300 : value_; SYSTEMUI.dial_indicator_blink = index_; soup_checkout("dataindic", false, true).blink = index_; }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image angle
+					new LuiText({ value: "Image Angle:", width: 120, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the indicator's angle.", true, , true),
+					new LuiSlider({ min_value: 0, color_text: c_black, color_text_drag: c_white, max_value: 360, rounding: true, display_value: true, bar_sprite: spr_border_header, bar_sprite_back: spr_border_header, }).addEvent(LUI_EV_CREATE, function(e_) { e_.set(SYSTEMUI.dial_indicator_angle); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+						var value_ = real(e_.get()); SYSTEMUI.dial_indicator_angle = value_; soup_checkout("dataindic", false, true).angle = value_;
+					}),
+				]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Animation bounce back
+				new LuiText({ value: "Bounce Back:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether the indicator sprite should reverse\nits animation once its animation ends.", true, , true),
+				new LuiToggleSwitch({ value: dial_indicator_anim, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "dial_indicator_anim").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { soup_checkout("dataindic", false, true).bounce = e_.get(); }),
+			]),
 		]);
 		
 		soupy_lui.addContent(soupy_panel_style); //Add everything to the main ui
@@ -731,8 +829,12 @@
 		var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
 		soupy_panel_extra = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, sound_right: snd_throw, }) //Start containter
 		.addContent([
-			new LuiText({ value: "Trying to export your dialogue?", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
-			new LuiText({ value: "Press either ESCAPE, F1, or END!", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+			new LuiText({ value: "Trying to export your dialogue?", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setPadding(3),
+			new LuiText({ value: "Press either ESCAPE, F1, or END for export options!", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setPadding(3),
+			new LuiHorizontalRule({ height: 5, }),
+			new LuiText({ value: "Quick Export Shortcuts:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setPadding(3),
+			new LuiText({ value: "Quick Static: CTRL+Q | Quick Typewriter: CTRL+W", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setPadding(3),
+			new LuiText({ value: "Quick Stack: CTRL+E | Quick Animated: CTRL+R", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setPadding(3),
 			
 			new LuiHorizontalRule({ height: 5, }),
 			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a color

@@ -26,5 +26,11 @@ if ( !SYSTEMUI.record.enabled && !SYSTEMUI.screenshot ) {
 		destroying = true;
 	}
 	else { soupy_alarm_set("destroy", "timer", 60); destroying = false; }
+	
+	
+	soupy_alarm("double", 15);
+	if ( mouse_pressed && near && !doublec ) { soupy_alarm_set("double", "timer", 15); doublec = true; } //Double click to edit
+	else if ( doublec && soupy_alarm_get("double", "timer", false) > 0 && mouse_pressed ) { external_choose_mini(face, index, text, font, smooth, x, y, id, name); doublec = false; drag = false; }
+	soupy_alarm_run("double", 0, function () { doublec = false; });
 }
 else { if ( !active ) { alpha = 0; once = false; } }

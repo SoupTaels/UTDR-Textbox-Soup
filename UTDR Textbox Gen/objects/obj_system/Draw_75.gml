@@ -8,7 +8,7 @@ if ( screenshot || record.enabled ) {
 	if ( global.pref.sizematters ) { offset_ = 0; offset_w = 0; offset_h = 0; x_ = 0; y_ = 0; w_ = 640; h_ = 480; }
 	
 	#region Draw Surface
-		screenshot_surf = surface_create(640, 480);
+		if ( !surface_exists( screenshot_surf ) ) { screenshot_surf = surface_create(640, 480); }
 		surface_set_target(screenshot_surf);
 			var myy = ( global.pref.sizematters && global.pref.sizematterstop ) ? ( -305 + ( global.pref.anyborder ? abs(bord_yoff) : 0 ) ) : ( global.pref.sizematters ? 5 : 0 );
 			if ( !record.enabled ) { draw_clear_alpha(c_black, 0); } else { draw_clear_alpha(screenshot_back, 0); }//For borders that aren't perfect rectangles
@@ -48,7 +48,7 @@ if ( screenshot || record.enabled ) {
 			} }
 			else { soup_checkout("export dialogue"); soupy_message("The export operation was canceled.", , 350, , , snd_cancel, , function(){ TweenScript(SYSTEMUI, 0, 2, function(){ soup_store_clear(); }); }); if ( record.enabled ) { record.id_ = gif_save(record.id_, $"{directory_get_temporary_path()}soupytemp.gif"); file_delete($"{directory_get_temporary_path()}soupytemp.gif"); } }
 			
-			surface_free(screenshot_surf); screenshot_surf = -1;
+			surface_free(screenshot_surf); screenshot_surf = -1; delete screenshot_surf; if ( buffer_exists(record.id_) ) { buffer_delete(record.id_); delete record.id_; }
 			with ( record ) { frames = 0; framesmax = 0; enabled = false; id_ = -1; }
 			with ( SYSTEMUI ) { typist_reset(); file_newname = ""; screenshot = false; screenshot_stacked = false; dial_text_gif = false; dial_wrap_count = 1; spr_bord = bord_prev; dial_text_page = 0; bord_box_visible = true; ui_tab = soup_checkout("tablast", , true); ui_visible = true; ui_reset(); }
 			exit;
