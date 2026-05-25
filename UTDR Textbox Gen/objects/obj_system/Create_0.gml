@@ -829,12 +829,12 @@
 		var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
 		soupy_panel_extra = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, sound_right: snd_throw, }) //Start containter
 		.addContent([
-			new LuiText({ value: "Trying to export your dialogue?", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setPadding(3),
-			new LuiText({ value: "Press either ESCAPE, F1, or END for export options!", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setPadding(3),
+			new LuiText({ value: "Trying to export your dialogue?", auto_width: false, auto_height: false, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setPadding(3),
+			new LuiText({ value: "Press either ESCAPE, F1, or END for export options!", auto_width: false, auto_height: false, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setPadding(3),
 			new LuiHorizontalRule({ height: 5, }),
-			new LuiText({ value: "Quick Export Shortcuts:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setPadding(3),
-			new LuiText({ value: "Quick Static: CTRL+Q | Quick Typewriter: CTRL+W", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setPadding(3),
-			new LuiText({ value: "Quick Stack: CTRL+E | Quick Animated: CTRL+R", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setPadding(3),
+			new LuiText({ value: "Quick Export Shortcuts:", auto_width: false, auto_height: false, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setPadding(10),
+			new LuiText({ value: "Quick Static: CTRL+Q | Quick Typewriter: CTRL+W", auto_width: false, auto_height: false, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setPadding(3),
+			new LuiText({ value: "Quick Stack: CTRL+E | Quick Animated: CTRL+R", auto_width: false, auto_height: false, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setPadding(3),
 			
 			new LuiHorizontalRule({ height: 5, }),
 			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a color
@@ -871,11 +871,11 @@
 				new LuiButton({ text: "Choose...", height: 40, width: 100, }).addEvent(LUI_EV_CLICK, external_choose_font),
 				new LuiInput({ value: font_get_name(ui_mainfont), height: 40, placeholder: "or type. (ex: fnt_determination)", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datainputbox", e_, , true); }).addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
 					var prev_ = soup_checkout("datafontbox", false, true), value = e_.get(); prev_.font = scribble_font_exists(value) ? value : "fnt_speech";
-					audio_stop_sound(snd_updated); sfx_play(snd_updated);
+					if ( scribble_font_exists(value) ) { audio_stop_sound(snd_updated); sfx_play(snd_updated); }
 					SYSTEMUI.ui_mainfont = asset_get_index(prev_.font);
 					SYSTEMUI.textinput.SetFont(SYSTEMUI.ui_mainfont);
 				}),
-				new LuiText({ value: "AaBbCc", width: 100, text_halign: fa_center, text_valign: fa_middle, font: dial_font, scribbletext: true, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datafontbox", e_, , true); })
+				new LuiText({ value: "AaBbCc", width: 100, text_halign: fa_center, text_valign: fa_middle, font: font_get_name(ui_mainfont), scribbletext: true, }).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datafontbox", e_, , true); })
 				.addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "yoff", 0, 1, global.Ease.OutElastic, 10); sfx_play(snd_squish); })
 				.addEvent(LUI_EV_CLICK_R, function(element_) {
 					var input_ = soup_checkout("datainputbox", false, true), spr_ = soup_checkout("datafontbox", false, true);

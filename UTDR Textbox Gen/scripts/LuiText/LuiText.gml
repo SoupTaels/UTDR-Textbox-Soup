@@ -22,6 +22,24 @@ function LuiText(_params = {}) : LuiBase(_params) constructor {
 	self.truncate = _params[$ "truncate"] ?? undefined;
 	self.auto_size = _params[$ "auto_size"] ?? false;
 	
+	self.auto_width = _params[$ "auto_width"] ?? true;
+	if ( self.auto_width ) {
+		var font__ = draw_get_font();
+		draw_set_font(asset_get_index(self.font));
+		self.width = string_width_scribble(self.value);
+		self.setFlexAlignSelf(flexpanel_align.center);
+		draw_set_font(font__);
+	}
+	
+	self.auto_height = _params[$ "auto_height"] ?? true;
+	if ( self.auto_height ) {
+		var font__ = draw_get_font();
+		draw_set_font(asset_get_index(self.font));
+		self.height = string_height_scribble(self.value);
+		self.setFlexAlignSelf(flexpanel_align.center);
+		draw_set_font(font__);
+	}
+	
 	///@desc Set text
 	///@arg {string} _text
 	static setText = function(_text) {
