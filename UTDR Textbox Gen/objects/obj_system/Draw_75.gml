@@ -4,6 +4,17 @@ if ( screenshot || record.enabled ) {
 	var dltrn = spr_bord == spr_border_deltarune; //Check if our border is Deltarune
 	var out_ = bord_out; //Whether to save with an outline
 	var folder = "UTDR-SoupGen-Export", fname = file_newname != "" ? string_exclude(file_newname, "\\/:*?\"<>|") : $"UTDR_SoupGen_-{current_month}.{current_day}.{current_year}-_{current_hour}.{current_minute}.{current_second}.{current_time}-";
+	
+	#region Custom File Name
+		if ( file_newname != "" ) {
+			var i = 0, fname_orig = fname;
+			do {
+				fname = $"{fname_orig}_{i}";
+				i += 1;
+			} until ( !file_exists($"{executable_get_directory()}{folder}{PATHSEP}{fname}_.{record.enabled ? "gif" : "png"}") )
+		}
+	#endregion
+	
 	var offset_ = dltrn ? 8 : 0, offset_w = dltrn ? 15 : 0, offset_h = dltrn ? 16 : 0, x_ = ( 32 - offset_ ) - ( out_ ? 2 : 0 ), y_ = ( 315 - offset_ ) - ( out_ ? 2 : 0 ), w_ = ( 578 + offset_w ) + ( out_ ? 4 : 0 ), h_ = ( 152 + offset_w ) + ( out_ ? 4 : 0 ); //Border coords
 	if ( global.pref.sizematters ) { offset_ = 0; offset_w = 0; offset_h = 0; x_ = 0; y_ = 0; w_ = 640; h_ = 480; }
 	
@@ -35,13 +46,14 @@ if ( screenshot || record.enabled ) {
 	#endregion
 	
 	#region Function for finishing recording
-		var finish_func = method({folder, fname, record, x_, y_, w_, h_, screenshot_surf }, function(gif_ = true, stack_ = false, cancel_ = false) { //Finished recording/ screenshotting
+		var finish_func = method({folder, fname, file_newname, record, x_, y_, w_, h_, screenshot_surf }, function(gif_ = true, stack_ = false, cancel_ = false) { //Finished recording/ screenshotting
 			var fpath_final = $"{executable_get_directory()}{folder}{PATHSEP}{fname}_.{gif_ ? "gif" : "png"}";
 			if ( !cancel_ ) { if ( !stack_ ) {
 				if ( gif_ ) { record.id_ = gif_save(record.id_, fpath_final); } //Save GIF
 				else { surface_save_part(screenshot_surf, fpath_final, x_, y_, w_, h_); } //Save screenshot
 				
-				soupy_message($"{fname}.{gif_ ? "gif" : "png"}[/] [rainbow][wave]saved at[/]| |[c_lime]{fpath_final}![/]| |Your [c_gold]good soup[/] is ready!|The file path was [c_yellow]copied to your clipboard[/] and|the result will open up in your [c_cyan]default image viewer[/].", "I'm so soupy!!", , , , snd_dumbvictory, fnt_abaddon, , , true, 590);
+				if ( !global.pref.hidemessages ) { soupy_message($"{fname}_.{gif_ ? "gif" : "png"}[/] [rainbow][wave]saved at[/]| |[c_lime]{fpath_final}![/]| |Your [c_gold]good soup[/] is ready!|The file path was [c_yellow]copied to your clipboard[/] and|the result will open up in your [c_cyan]default image viewer[/].", "I'm so soupy!!", , , , snd_dumbvictory, fnt_abaddon, , , true, 590); } 
+				else { sfx_play(snd_dumbvictory); instance_create_depth(0, 0, 0, obj_success); SYSTEMUI.ui_paused = false; } 
 				execute_shell_simple($"{executable_get_directory()}{folder}", , , 6); //Open the directory (Windows only)
 				execute_shell_simple(fpath_final, , , 6); //Open the image in the PC's default photo viewer (Windows only)
 				clipboard_set_text(fpath_final);

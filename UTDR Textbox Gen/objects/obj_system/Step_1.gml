@@ -36,8 +36,8 @@
 		soup_store("export dialogue func", function() { soup_store_clear(); SYSTEMUI.ui_paused = false; });
 		
 		var exportarr = [
-			new LuiText({ value: "Ready to export your dialogue?", text_halign: fa_center, text_valign: fa_middle }),
-			new LuiText({ value: "Select your export option!", text_halign: fa_center, text_valign: fa_middle }),
+			new LuiText({ value: "Ready to export your dialogue?", text_halign: fa_center, text_valign: fa_middle, auto_width: false, auto_height: false, }),
+			new LuiText({ value: "Select your export option!", text_halign: fa_center, text_valign: fa_middle, auto_width: false, auto_height: false, }),
 			
 			new LuiButton({ text: "Static", height: 35, }).setTooltip("Export your dialogue as a static, non-animated screenshot.", true).addEvent(LUI_EV_CLICK, function(element_) {
 				var maincan = soup_checkout("maincan"), mainfunc = soup_checkout("export dialogue func", false); maincan.destroy(); SYSTEMUI.ui_paused = false;
@@ -45,7 +45,7 @@
 				
 				#region Static Button Function
 					var exportarr = [
-						new LuiText({ value: "Select your static export type:", text_halign: fa_center, text_valign: fa_middle }),
+						new LuiText({ value: "Select your static export type:", text_halign: fa_center, text_valign: fa_middle, auto_width: false, auto_height: false, }),
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 							new LuiImageButton({ value: spr_export_icons, maintain_aspect: false, }).setSize(130, 130).setTooltip("Export just a standalone image of the chosen page.", true).addEvent(LUI_EV_CREATE, function(element_) { soup_store("export 1", element_); })
 								.addEvent(LUI_EV_CLICK, function(element_) { soup_store("stacked", false); var option_ = soup_checkout("export 2", false); option_.setColor(#524664); element_.setColor(c_white); }),
@@ -53,27 +53,27 @@
 								.addEvent(LUI_EV_CLICK, function(element_) { if ( global.pref.sizematters ) { sfx_play(snd_error); exit; } soup_store("stacked", true); var option_ = soup_checkout("export 1", false); option_.setColor(#524664); element_.setColor(c_white); }),
 						]),
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
-							new LuiText({ value: "Start at page:", text_halign: fa_center, text_valign: fa_middle }),
+							new LuiText({ value: "Start at page:", text_halign: fa_center, text_valign: fa_middle, auto_width: false, auto_height: false, }),
 							new LuiInput({ value: soup_checkout("pageat", false), placeholder: $"1 - {dial_text_page_c}", input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "pageat"),
 						]),
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
-							new LuiText({ value: "Stack Gap:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("The gap between stacks of dialogue pages.\nOnly affects the dialogue stack option.", true),
+							new LuiText({ value: "Stack Gap:", text_halign: fa_center, text_valign: fa_middle, auto_width: false, auto_height: false, }).setTooltip("The gap between stacks of dialogue pages.\nOnly affects the dialogue stack option.", true),
 							new LuiInput({ value: soup_checkout("yoff", false), placeholder: "0 - 10 Recommended", input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "yoff"),
 						]),
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
-							new LuiText({ value: "Stack Shift:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("Times to right shift the next dialogue stack by.\nOnly affects the dialogue stack option.", true),
+							new LuiText({ value: "Stack Shift:", text_halign: fa_center, text_valign: fa_middle, auto_width: false, auto_height: false, }).setTooltip("Times to right shift the next dialogue stack by.\nOnly affects the dialogue stack option.", true),
 							new LuiInput({ value: soup_checkout("xoff", false), placeholder: "0 - 10 Recommended", input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "xoff"),
 						]),
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
-							new LuiText({ value: "Border outline?", text_halign: fa_center, text_valign: fa_middle }).setTooltip("Should the dialogue box have an outline?\nBorder must be visible.", true),
+							new LuiText({ value: "Border outline?", text_halign: fa_center, text_valign: fa_middle, auto_width: false, auto_height: false, }).setTooltip("Should the dialogue box have an outline?\nBorder must be visible.", true),
 							new LuiToggleSwitch({ value: soup_checkout("bordout", false), ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordout"),
 						]),
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
-							new LuiText({ value: "Border visible?", text_halign: fa_center, text_valign: fa_middle }).setTooltip("Should the dialogue box be visible?", true),
+							new LuiText({ value: "Border visible?", text_halign: fa_center, text_valign: fa_middle, auto_width: false, auto_height: false, }).setTooltip("Should the dialogue box be visible?", true),
 							new LuiToggleSwitch({ value: soup_checkout("bordvisible", false), ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordvisible"),
 						]),
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
-							new LuiText({ value: "Filename:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("The name to save the result as.\nLeave blank to use a soupy filename.", true),
+							new LuiText({ value: "Filename:", text_halign: fa_center, text_valign: fa_middle, auto_width: false, auto_height: false, }).setTooltip("The name to save the result as.\nLeave blank to use a soupy filename.", true),
 							new LuiInput({ value: SYSTEMUI.file_newname, height: 35, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(SYSTEMUI, "file_newname"),
 						]),
 						new LuiButton({ text: "Let's get soupy!!", height: 35, }).addEvent(LUI_EV_CLICK, function(element_) {
@@ -99,7 +99,7 @@
 				
 				#region Animation Button Function
 					var exportarr = [
-						new LuiText({ value: "Select your animated export type:", text_halign: fa_center, text_valign: fa_middle }),
+						new LuiText({ value: "Select your animated export type:", text_halign: fa_center, text_valign: fa_middle, auto_width: false, auto_height: false, }),
 						new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
 							new LuiImageButton({ value: spr_export_icons, subimg: 2, maintain_aspect: false, }).setSize(130, 130).setTooltip("Leverage the power of Typewriter Mode, enable it,\nand watch as your dialogue plays out in sequence!", true).addEvent(LUI_EV_CREATE, function(element_) { soup_store("export 1", element_); })
 								.addEvent(LUI_EV_CLICK, function(element_) { soup_store("typewrite", true); var option_ = soup_checkout("export 2", false); option_.setColor(#524664); element_.setColor(c_white); }),
@@ -113,36 +113,36 @@
 							var exportarr = []; 
 							if ( !typewrite ) {
 								array_push(exportarr, new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
-									new LuiText({ value: "Record for:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("The amount of frames per seconds to record for.\n[c_yellow]60[/] = [c_lime]1 second[/], [c_yellow]30[/] = [c_lime]0.5 seconds[/], [c_yellow]120[/] = [c_lime]2 seconds[/], etc.", true, , true),
+									new LuiText({ value: "Record for:", text_halign: fa_center, text_valign: fa_middle, auto_width: false, auto_height: false, }).setTooltip("The amount of frames per seconds to record for.\n[c_yellow]60[/] = [c_lime]1 second[/], [c_yellow]30[/] = [c_lime]0.5 seconds[/], [c_yellow]120[/] = [c_lime]2 seconds[/], etc.", true, , true),
 									new LuiInput({ value: soup_checkout("timerfor", false), placeholder: "123456", input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "timerfor"),
 								]));
 							}
 							else {
 								array_push(exportarr, new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
-									new LuiText({ value: "Delay between pages:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("How long to wait until the next dialogue page plays out?\nThis is measured in frames per second.\n[c_yellow]60[/] = [c_lime]1 second[/], [c_yellow]30[/] = [c_lime]0.5 seconds[/], [c_yellow]120[/] = [c_lime]2 seconds[/], etc.", true, , true),
+									new LuiText({ value: "Delay between pages:", text_halign: fa_center, text_valign: fa_middle, auto_width: false, auto_height: false, }).setTooltip("How long to wait until the next dialogue page plays out?\nThis is measured in frames per second.\n[c_yellow]60[/] = [c_lime]1 second[/], [c_yellow]30[/] = [c_lime]0.5 seconds[/], [c_yellow]120[/] = [c_lime]2 seconds[/], etc.", true, , true),
 									new LuiInput({ value: soup_checkout("delayb", false), placeholder: "123456", input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "delayb"),
 								]));
 							}
 							
 							array_push(exportarr, 
 								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
-									new LuiText({ value: "Start at page:", text_halign: fa_center, text_valign: fa_middle }),
+									new LuiText({ value: "Start at page:", text_halign: fa_center, text_valign: fa_middle, auto_width: false, auto_height: false, }),
 									new LuiInput({ value: 0, placeholder: $"1 - {dial_text_page_c}", input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "pageat"),
 								]),
 								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
-									new LuiText({ value: "Border outline?", text_halign: fa_center, text_valign: fa_middle }).setTooltip("Should the dialogue box have an outline?\nBorder must be visible.", true),
+									new LuiText({ value: "Border outline?", text_halign: fa_center, text_valign: fa_middle, auto_width: false, auto_height: false, }).setTooltip("Should the dialogue box have an outline?\nBorder must be visible.", true),
 									new LuiToggleSwitch({ value: soup_checkout("bordout", false), ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordout"),
 								]),
 								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
-									new LuiText({ value: "Border visible?", text_halign: fa_center, text_valign: fa_middle }).setTooltip("Should the dialogue box be visible?", true),
+									new LuiText({ value: "Border visible?", text_halign: fa_center, text_valign: fa_middle, auto_width: false, auto_height: false, }).setTooltip("Should the dialogue box be visible?", true),
 									new LuiToggleSwitch({ value: soup_checkout("bordvisible", false), ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3, }).bindVariable(global.soupstore, "bordvisible"),
 								]),
 								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
-									new LuiText({ value: "Quantization:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("The amount of processing color quantization will have.\nA value between 0 - 3, full quant to low quant.\nThe lower the number, the smaller the GIF will be\nat the cost of quality and color count.", true),
+									new LuiText({ value: "Quantization:", text_halign: fa_center, text_valign: fa_middle, auto_width: false, auto_height: false, }).setTooltip("The amount of processing color quantization will have.\nA value between 0 - 3, full quant to low quant.\nThe lower the number, the smaller the GIF will be\nat the cost of quality and color count.", true),
 									new LuiInput({ value: soup_checkout("quant", false), placeholder: "0 - 3", input_mode: LUI_INPUT_MODE.numbers, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(global.soupstore, "quant"),
 								]),
 								new LuiRow().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.center).addContent([
-									new LuiText({ value: "Filename:", text_halign: fa_center, text_valign: fa_middle }).setTooltip("The name to save the result as.\nLeave blank to use a soupy filename.", true),
+									new LuiText({ value: "Filename:", text_halign: fa_center, text_valign: fa_middle, auto_width: false, auto_height: false, }).setTooltip("The name to save the result as.\nLeave blank to use a soupy filename.", true),
 									new LuiInput({ value: SYSTEMUI.file_newname, height: 35, offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(SYSTEMUI, "file_newname"),
 								]),
 								new LuiButton({ text: "Let's get soupy!!", height: 35, }).addEvent(LUI_EV_CLICK, function(element_) {

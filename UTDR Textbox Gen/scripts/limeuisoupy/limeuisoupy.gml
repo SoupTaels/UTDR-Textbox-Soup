@@ -20,7 +20,7 @@ function soupy_message(textarr_ = ["Test", "Test 2"], textbutt_ = "OK", width = 
 	var panel_ = new LuiPanel({ width, height }); //Container 
 	var arr_len =  array_length(textarr_), arr_i = 0, arr_arr = [];
 	repeat ( arr_len ) {
-		array_push(arr_arr, new LuiText({ value: textarr_[arr_i], text_halign: fa_center, text_valign: valign_, font: font_, scribbletext: scribble_, wraplimit: wrap_ }).setPadding(padd_));
+		array_push(arr_arr, new LuiText({ value: textarr_[arr_i], auto_width: false, auto_height: false, text_halign: fa_center, text_valign: valign_, font: font_, scribbletext: scribble_, wraplimit: wrap_ }).setPadding(padd_));
 	arr_i++; }
 	
 	array_push(arr_arr, new LuiButton({ text: textbutt_, "height": heightb, font: font_, }).setData("allowmultiple", allowmultiple_).setData("container", containter_).setData("func", func_).setPadding(padd_)
@@ -82,7 +82,7 @@ function soupy_color_picker(var_, soupyname_) {
 	});
 	
 	var elemarr = [
-		new LuiText({ value: "   <- Your chosen color", text_halign: fa_center, text_valign: fa_middle, scale_x: 2, }).addContent(clr),
+		new LuiText({ value: "   <- Your chosen color", auto_width: false, auto_height: false, text_halign: fa_center, text_valign: fa_middle, scale_x: 2, }).addContent(clr),
 	
 		new LuiSlider({ value: soup_checkout("rgb r", false), min_value: 0, max_value: 255, rounding: true, display_value: true, bar_sprite: spr_border_header, bar_sprite_back: spr_border_header, bar_color: c_maroon, bar_color_back: c_maroon, }).setData("clr", clr).addEvent(LUI_EV_VALUE_UPDATE, function(element_) { 
 			var getclr = element_.getData("clr"), rgbg = soup_checkout("rgb g", false), rgbb = soup_checkout("rgb b", false);

@@ -7,6 +7,7 @@ pref = {
 	sizematters: false, //Whether the tool should export dialogue with a resolution of 640x480
 	sizematterstop: false, //Whether to send the dialogue box to the top
 	anyborder: false, //Whether to allow any arbitrary border
+	hidemessages: false, //Whether to hide output sucess message
 }
 #region Add External Faces
 	faces_dict = {};
@@ -505,7 +506,7 @@ pref = {
 		var dataarr = [
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
 				new LuiScrollPanel({ height: 400, scroll_pin_edge_offset:10, sprite_panel: false, sound_right: snd_throw, }).addContent(options_),
-				new LuiText({ value: $"Select a character!\n\nFaces will show up once\nselected. Then scroll to\nfind the perfect sprite\nfor your dialogue!\n\nThis only adds a face for\nthe current dialogue page.", font: fnt_speech, text_halign: fa_center, text_valign: fa_center, }).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollsub", element_); }),
+				new LuiText({ value: $"Select a character!\n\nFaces will show up once\nselected. Then scroll to\nfind the perfect sprite\nfor your dialogue!\n\nThis only adds a face for\nthe current dialogue page.", auto_width: false, auto_height: false, font: fnt_speech, text_halign: fa_center, text_valign: fa_center, }).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollsub", element_); }),
 			]).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollmain", element_); }), //Stash panel so we can add another panel to this row
 		];
 
@@ -553,7 +554,7 @@ pref = {
 		var dataarr = [
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
 				new LuiScrollPanel({ height: 400, scroll_pin_edge_offset:10, sprite_panel: false, sound_right: snd_throw, }).addContent(options_),
-				new LuiText({ value: $"Select a dialogue border!\nThis is the box displayed\naround your text.\nSome are animated!\nScroll to find your perfect\nsprite for your dialogue!", font: fnt_speech, text_halign: fa_center, text_valign: fa_center, }).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollsub", element_); }),
+				new LuiText({ value: $"Select a dialogue border!\nThis is the box displayed\naround your text.\nSome are animated!\nScroll to find your perfect\nsprite for your dialogue!", auto_width: false, auto_height: false, font: fnt_speech, text_halign: fa_center, text_valign: fa_center, }).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollsub", element_); }),
 			]).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollmain", element_); }), //Stash panel so we can add another panel to this row
 		];
 		
@@ -616,7 +617,7 @@ pref = {
 		var dataarr = [
 			new LuiColumn().setFlexGrow(1).centerContent().addContent([
 				new LuiScrollPanel({ height: 360, sprite_panel: false, sound_right: snd_throw, }).addContent(options_),
-				new LuiText({ value: $"Select a dialogue font! This is the style your dialogue text\nwill be rendered with. Find your perfect font to use!", y: -10, font: fnt_speech, text_halign: fa_center, text_valign: fa_center, }).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollsub", element_); }),
+				new LuiText({ value: $"Select a dialogue font! This is the style your dialogue text\nwill be rendered with. Find your perfect font to use!", auto_width: false, auto_height: false, y: -10, font: fnt_speech, text_halign: fa_center, text_valign: fa_center, }).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollsub", element_); }),
 			]).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollmain", element_); }), //Stash panel so we can add another panel to this row
 		];
 		
@@ -690,8 +691,8 @@ pref = {
 				new LuiToggleSwitch({ value: soup_checkout("minianim", false), checkbox_spr: spr_gui_icons, checkbox_spr_index: 6, checkbox_clr: c_white, sound_click: snd_bump, sound_click_pitch: 1.3, ease: global.Ease.OutBack, }).bindVariable(global.soupstore, "minianim").setWidth(50),
 			]),
 			new LuiText({ value: "Left Click - Move mini | Right Click (Held) - Delete mini | Double Left Click - Edit mini", color: c_gray, text_halign: fa_center, text_valign: fa_middle, font: fnt_determination_nomono, }),
-			new LuiText({ value: "Note: Mini speeches only show up on the current highlighted page\nand within the dialogue box.", color: c_gray, text_halign: fa_center, text_valign: fa_middle, }),
-			new LuiText({ value: "You can drag a face sprite on here too, btw! New sprites are\nimmediately added.", color: c_gray, text_halign: fa_center, text_valign: fa_middle, }),
+			new LuiText({ value: "Note: Mini speeches only show up on the current highlighted page\nand within the dialogue box.", auto_width: false, auto_height: false, color: c_gray, text_halign: fa_center, text_valign: fa_middle, }),
+			new LuiText({ value: "You can drag a face sprite on here too, btw! New sprites are\nimmediately added.", auto_width: false, auto_height: false, color: c_gray, text_halign: fa_center, text_valign: fa_middle, }),
 			new LuiButton({ text: "Let's get soupy!!", height: 35, }).setData("xx", x_).setData("yy", y_).setData("id_", id_).addEvent(LUI_EV_CLICK, function(element_) {
 				var txt_ = soup_checkout("minitext", false), spr_ = get_face(soup_checkout("minisprite", false)), index_ = soup_checkout("miniindex", false), font_ = soup_checkout("minifont", false);
 				if ( string_lettersdigits(txt_) == "" ) { SYSTEMUI.ui_paused = false; soupy_message("You haven't even written any|dialogue yet!!", "Go Back", 300, , , snd_error, , , true); exit; }

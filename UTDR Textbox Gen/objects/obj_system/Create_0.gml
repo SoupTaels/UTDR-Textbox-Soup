@@ -13,6 +13,7 @@
 			var get_ = pref_[$ "killaudio"]; global.pref.killaudio = !is_undefined(get_) ? get_ : false;
 			var get_ = pref_[$ "sizematters"]; global.pref.sizematters = !is_undefined(get_) ? get_ : false;
 			var get_ = pref_[$ "sizematterstop"]; global.pref.sizematterstop = !is_undefined(get_) ? get_ : false;
+			var get_ = pref_[$ "hidemessages"]; global.pref.hidemessages = !is_undefined(get_) ? get_ : false;
 		}
 	}
 #endregion
@@ -321,10 +322,12 @@
 #region Engine UI
 	fader = 1; TweenFire("$10", "+10", "fader>", 0); //Black overlay
 	ui_tab = 0; //Current Tab (0 - Dialogue, 1 - Face, 2 - Border, 3 - About)
+	scrib_parse = { start_: "[", end_: "]", arg_: ",", } //Scribble tag parser 
 	screenshot = false; //Screenshot task
 	screenshot_stacked = false; //Whether dialogue exports are stacked
 	screenshot_surf = -1; //Screenshot surface
 	screenshot_back = c_lime; //Color for GIF background clearing
+	ui_shrink = false;
 	record = { enabled: false, type: 0, frames: 0, framesmax: 0, id_: -1, quant: 1, delay: 60, }; //Whether to record, the type of recording(0 - static, 1 - wait for dialogue to finish), and how long to record for
 	ui_visible = true; //Whether the UI should be visible
 	ui_effoff = 0; //Effects array offset 
@@ -844,18 +847,6 @@
 				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { e_.set(spr_pixel); SYSTEMUI.screenshot_back = e_.color_blend; audio_stop_sound(snd_equip2); sfx_play(snd_equip2, , , 1.3); }).addEvent(LUI_EV_CLICK_R, function(e_) { if ( e_.color_blend == c_lime ) { exit; } e_.main_ui.animate(e_, "xscale", 0, 1, global.Ease.OutElastic, 10); e_.main_ui.animate(e_, "yscale", 0, 1, global.Ease.OutElastic, 5); e_.setColor(c_lime); SYSTEMUI.screenshot_back = c_lime; sfx_play(snd_hurtpowerful); }),
 			]),
 				
-			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image scale
-				new LuiText({ value: "Update Delay:", width: 130, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("( - n# (45 recommended))\nChanges how long it takes for the generator\nto update your output text.\n[c_yellow]Lower values and frequent updating may cause\nlag or other unexpected issues.", true, , true),
-				new LuiInput({ value: dial_updatet_max, height: 40, placeholder: "1 - n# (45 recommended)", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, }).bindVariable(self, "dial_updatet_max").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
-					var get_ = e_.get(), value_ = real(get_ == "" ? 45 : get_); SYSTEMUI.dial_updatet_max = value_;
-				}),
-			]),
-				
-			new LuiRow().setFlexGrow(1).centerContent().addContent([
-				new LuiText({ value: "Mute Audio:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Disable all sound effects.", true, , true),
-				new LuiToggleSwitch({ value: global.pref.killaudio, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "killaudio").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
-			]),
-			
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
 				new LuiText({ value: "Bigger Resolution:", width: 170, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Export all dialogue in UTDR's native resolution of 640x480.\nHelpful for [c_yellow][slant]arbitrary borders[/] as your sprites may get\ncut off on export if you import a border of an unusual size.", true, , true),
 				new LuiToggleSwitch({ value: global.pref.sizematters, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "sizematters").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
@@ -864,6 +855,24 @@
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
 				new LuiText({ value: "To The Top:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("If [c_yellow]Bigger Resolution is true[/], then this will\nsend the dialogue box to the top.", true, , true),
 				new LuiToggleSwitch({ value: global.pref.sizematterstop, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "sizematterstop").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
+			]),
+			
+			new LuiHorizontalRule({ height: 5, }),
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image scale
+				new LuiText({ value: "Update Delay:", width: 130, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("( - n# (45 recommended))\nChanges how long it takes for the generator\nto update your output text.\n[c_yellow]Lower values and frequent updating may cause\nlag or other unexpected issues.", true, , true),
+				new LuiInput({ value: dial_updatet_max, height: 40, placeholder: "1 - n# (45 recommended)", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, }).bindVariable(self, "dial_updatet_max").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+					var get_ = e_.get(), value_ = real(get_ == "" ? 45 : get_); SYSTEMUI.dial_updatet_max = value_;
+				}),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Hide Success:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Hides the export success message.", true, , true),
+				new LuiToggleSwitch({ value: global.pref.hidemessages, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "hidemessages").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Mute Audio:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Disable all sound effects.", true, , true),
+				new LuiToggleSwitch({ value: global.pref.killaudio, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "killaudio").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
 			]),
 			
 			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite

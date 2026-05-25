@@ -7,7 +7,7 @@
 #macro SCRIBBLE_HASH_NEWLINE  false
 
 //Replaces newline literals ("\\n") with an actual newline ("\n").
-#macro SCRIBBLE_FIX_ESCAPED_NEWLINES  false
+#macro SCRIBBLE_FIX_ESCAPED_NEWLINES  true
 
 //Whether to use colourization for sprites. This includes [rainbow] and [cycle].
 #macro SCRIBBLE_COLORIZE_SPRITES  true

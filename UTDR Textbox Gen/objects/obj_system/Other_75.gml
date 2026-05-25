@@ -37,7 +37,7 @@ var errorfunc = function (txt_, w_ = undefined) { soupy_message(txt_, , w_, , , 
 								});
 							#endregion
 							panel_.addContent([
-								new LuiColumn().addContent(new LuiText({ value: "This sprite doesn't exist within our\nface dictionary. Would you like to\nadd this as a new face sprite?", text_halign: fa_center, y: 10 })),
+								new LuiColumn().addContent(new LuiText({ value: "This sprite doesn't exist within our\nface dictionary. Would you like to\nadd this as a new face sprite?", text_halign: fa_center, auto_width: false, auto_height: false, y: 10 })),
 								new LuiColumn().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.flex_end).addContent([ panel_yes_, panel_no_, ]),
 							]);
 							soupy_lui.addContent(panel_bg_.addContent(panel_));
@@ -87,7 +87,7 @@ var errorfunc = function (txt_, w_ = undefined) { soupy_message(txt_, , w_, , , 
 								});
 							#endregion
 							panel_.addContent([
-								new LuiColumn().addContent(new LuiText({ value: "This sprite doesn't exist within\nour borders dictionary. Would you\n like to add this as a\nnew dialogue border sprite?", text_halign: fa_center, y: 10 })),
+								new LuiColumn().addContent(new LuiText({ value: "This sprite doesn't exist within\nour borders dictionary. Would you\n like to add this as a\nnew dialogue border sprite?", text_halign: fa_center, auto_width: false, auto_height: false, y: 10 })),
 								new LuiColumn().setFlexGrow(1).setFlexJustifyContent(flexpanel_justify.flex_end).addContent([ panel_yes_, panel_no_, ]),
 							]);
 							soupy_lui.addContent(panel_bg_.addContent(panel_));

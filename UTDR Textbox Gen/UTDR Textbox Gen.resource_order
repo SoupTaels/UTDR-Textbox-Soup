@@ -85,6 +85,7 @@
     {"name":"obj_particle","order":4,"path":"objects/obj_particle/obj_particle.yy",},
     {"name":"obj_quill_core","order":2,"path":"objects/obj_quill_core/obj_quill_core.yy",},
     {"name":"obj_stacker","order":1,"path":"objects/obj_stacker/obj_stacker.yy",},
+    {"name":"obj_success","order":5,"path":"objects/obj_success/obj_success.yy",},
     {"name":"oSteadyDeltaTime","order":2,"path":"objects/oSteadyDeltaTime/oSteadyDeltaTime.yy",},
     {"name":"__CleanConfig","order":5,"path":"scripts/__CleanConfig/__CleanConfig.yy",},
     {"name":"__CleanConstants","order":6,"path":"scripts/__CleanConstants/__CleanConstants.yy",},
