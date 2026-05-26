@@ -80,16 +80,21 @@ if ( dial_text_page > dial_text_page_c - 1 && screenshot_stacked ) { exit; } //P
 
 					#region Dialogue Auto Point
 						if ( AUTO_ASTERISK ) {
-							var linec = dial_text_gif ? dial_wrap_count : scrib_dial.get_line_count(dial_text_page);
+							var lineamt = scrib_dial.get_line_count(dial_text_page);
+							var linec = dial_text_gif ? dial_wrap_count : lineamt;
+							if ( array_length(dial_miniface) < lineamt ) { dial_miniface[lineamt + 1] = -1; dial_miniface_index[lineamt + 1] = 0; } 
 							var i = 0; repeat ( linec ) {
 								var lined = scrib_dial.get_line_data(i, dial_text_page), chr_ = chr(scrib_dial.get_glyph_data(lined.glyph_start, dial_text_page).unicode);
 								if ( lined.forced_break && ( chr_ != chr(10) && chr_ != chr(0) && chr_ != "" && chr_ != " " ) && ( !dial_text_gif || point_visible ) ) { //Don't show anything if the line only contains an newline literal
 									#region Actual Asterisk
 										var p_x = xx_ - 4, p_y = yy_ + lined.y;
-										var scrib_point = scribble(dial_point_chr) //Dialogue Point
-											.starting_format(dial_font, dial_point_clr).scale(dial_text_scale).outline(dial_text_outline).shadow(dial_text_shdw_clr, dial_text_shdw).gradient(dial_gradient_clr, dial_gradient)
-											.allow_line_data_getter()
-											scrib_point.draw(p_x + dial_text_xoff, p_y + dial_text_yoff);
+										if ( dial_text_gif && dial_miniface[i] > 0 ) { draw_sprite_ensure(dial_miniface[i], dial_miniface_index[i], xx_ + dial_text_xoff, ( p_y + 12 ) + dial_text_yoff, dial_text_scale, dial_text_scale, 0, dial_point_clr, 1); }
+										else {
+											var scrib_point = scribble(dial_point_chr) //Dialogue Point
+												.starting_format(dial_font, dial_point_clr).scale(dial_text_scale).outline(dial_text_outline).shadow(dial_text_shdw_clr, dial_text_shdw).gradient(dial_gradient_clr, dial_gradient)
+												.allow_line_data_getter()
+												scrib_point.draw(p_x + dial_text_xoff, p_y + dial_text_yoff);
+										}
 									#endregion
 								}
 							i++; }

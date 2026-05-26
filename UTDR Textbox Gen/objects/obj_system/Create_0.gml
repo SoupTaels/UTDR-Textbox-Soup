@@ -98,6 +98,9 @@
 	dial_indicator_anim = 0; dial_indicator_anim_track = 0;
 	dial_indicator_visible = false; dial_indicator_scale = 1; dial_indicator_xoff = 0; dial_indicator_yoff = 0; dial_indicator_angle = 0; dial_indicator_blink = 300;
 	
+	dial_miniface = [];
+	dial_miniface_index = [];
+	
 	#region Typist
 		typist = scribble_typist(); //Dialogue Engine
 		typist_spd = 0.5; //Typewriter speed
@@ -121,6 +124,11 @@
 					static anim_timer = 0; anim_timer++;
 					if ( anim_timer > dial_face_anim ) { anim_timer = 0; FACE_INDEX++; }
 				}
+				
+				if ( AUTO_ASTERISK && ( dial_miniface[dial_wrap_count - 1] > 0 && dial_face_auto ) && string_lettersdigits(mychr) != "" ) { //Animate the mini face while dialogue is typing out. Only animate if there's letters and numbers being said
+					static anim_timer = 0; anim_timer++;
+					if ( anim_timer > dial_face_anim ) { anim_timer = 0; dial_miniface_index[dial_wrap_count - 1]++; }
+				}
 			#endregion
 		});
 		typist.function_on_complete(function() { //Function to run once the dialogue is complete
@@ -133,7 +141,7 @@
 			with ( obj_mini ) { if ( page == other.dial_text_page ) { active = true; TweenFire("$13", $"~{smooth ? "oquad" : "linear"}", "xoff", 30, 0, "alpha", 0, 1); } } 
 		});
 		
-		typist_reset = function () { dial_indicator_visible = false; dial_gradient = dial_gradient_orig; dial_gradient_clr = dial_gradient_clr_orig; dial_face_angle = dial_face_angle_orig; dial_face_alpha = dial_face_alpha_orig; dial_face_xoff = 0; dial_face_yoff = 0; dial_face_xscale_off = 0; dial_face_yscale_off = 0; } //Function to reset portrait modifications after dialogue finishes
+		typist_reset = function () { dial_wrap_count = 1; dial_miniface = [-1]; dial_miniface_index = [0]; dial_indicator_visible = false; dial_gradient = dial_gradient_orig; dial_gradient_clr = dial_gradient_clr_orig; dial_face_angle = dial_face_angle_orig; dial_face_alpha = dial_face_alpha_orig; dial_face_xoff = 0; dial_face_yoff = 0; dial_face_xscale_off = 0; dial_face_yscale_off = 0; } //Function to reset portrait modifications after dialogue finishes
 		
 		#region Ease Builder
 			typist_ease = { type: SCRIBBLE_EASE.LINEAR, x: 0, y: 0, xscale: 1, yscale: 1, angle: 0, alpha: 1, };
@@ -163,6 +171,14 @@
 			scribble_typists_add_event("border", function(_, param) { //Switch to a new border sprite
 				var bord_ = get_border(param[0]);
 				spr_bord = bord_ != -1 ? bord_ : spr_border_undertale;
+			});
+			scribble_typists_add_event("mini", function(_, param) { //Dedicate the current line to a mini portrait
+				if ( array_length(param) == 0 ) { exit; }
+				var face_ = get_face(param[0], array_length(param) > 1 ? param[1] : -1);
+				if ( face_ != -1 ) { SYSTEMUI.dial_miniface[SYSTEMUI.dial_wrap_count - 1] = face_; exit; }
+				
+				var icon_ = get_icon(param[0]);
+				if ( icon_ != -1 ) { SYSTEMUI.dial_miniface[SYSTEMUI.dial_wrap_count - 1] = icon_; }
 			});
 			scribble_typists_add_event("indicator", function(_, param) { //Switch to a new indicator sprite
 				var value_ = param[0], face_ = get_face(value_), bord_ = get_border(value_), icon_ = get_icon(value_);
