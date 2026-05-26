@@ -185,6 +185,7 @@ function soupy_ui_credits() {
 	credits_add("LimeUI: [slant][c_gold]Limekys", "https://github.com/Limekys", true);
 	credits_add("Quill: [slant][c_gold]RefresherTowelGames", "https://github.com/RefresherTowel", true);
 	credits_add("DialogModule, FileManager: [slant][c_gold]Samuel Venable", "https://itch.io/profile/samuel-venable", true);
+	credits_add("HTTP.gml: [slant][c_gold]Sidorakh", "https://github.com/Sidorakh", true);
 	credits_add("Accurate Determination, Sans, and Papyrus fonts: [slant][c_gold]emihead", "https://twitter.com/emihead", true);
 	credits_add("Undertale, Deltarune: [slant][c_gold]Toby Fox[/] [annoyingdog,0,0.15], [slant][c_gold]Temmie Chang[/] [annoyingtem,0,0.15]", "https://undertale.com/about/", true);
 	credits_add("Made in [slant][c_gold]GameMaker[/] [scale,0.15][gamemaker][/]", "https://gamemaker.io/", true);

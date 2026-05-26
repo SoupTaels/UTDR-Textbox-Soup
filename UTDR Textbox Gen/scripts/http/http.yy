@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"http",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"http",
+  "parent":{
+    "name":"http.gml",
+    "path":"folders/Extensions/http.gml.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

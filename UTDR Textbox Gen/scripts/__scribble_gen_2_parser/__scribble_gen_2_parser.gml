@@ -159,7 +159,7 @@ function __scribble_gen_2_parser()
         _command_tag_lookup_accelerator_map[? "indent"            ] = 36;
         _command_tag_lookup_accelerator_map[? "/indent"           ] = 37;
         _command_tag_lookup_accelerator_map[? "offset"            ] = 38;
-        _command_tag_lookup_accelerator_map[? "offsetPop"         ] = 39;
+        _command_tag_lookup_accelerator_map[? "offsetpop"         ] = 39;
         _command_tag_lookup_accelerator_map[? "texture"           ] = 40;
         _command_tag_lookup_accelerator_map[? "pin_top"           ] = 41;
         _command_tag_lookup_accelerator_map[? "pin_middle"        ] = 42;

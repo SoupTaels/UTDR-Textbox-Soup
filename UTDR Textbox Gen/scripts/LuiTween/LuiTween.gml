@@ -5,6 +5,7 @@
 ///@arg {Real} duration The duration of the animation in seconds.
 function LuiTween(target_element, property, end_value, duration, easing_func, start_value) constructor {
 	self.target = target_element;
+	if ( self.target == undefined ) { exit; }
 	self.property = property;
 	self.start_value = start_value ?? target_element[$ property];
 	self.end_value = end_value;

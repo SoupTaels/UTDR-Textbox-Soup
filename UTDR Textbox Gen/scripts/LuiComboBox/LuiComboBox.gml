@@ -10,6 +10,9 @@ function LuiComboBox(_params = {}) : LuiButton(_params) constructor {
 	self.is_open = false;
 	self.combobox_panel = undefined;
 	self.text_width = self.width;
+	self.noborder = _params[$ "noborder"] ?? false;
+	self.height_items = _params[$ "height_items"] ?? 5;
+	self.padding_items = _params[$ "padding_items"] ?? 5;
 	
 	///@desc Set placeholder text
 	///@arg {string} _placeholder
@@ -34,7 +37,17 @@ function LuiComboBox(_params = {}) : LuiButton(_params) constructor {
 		var _width = self.width;
 		var _height = (self.height + self.style.padding) * _item_count + self.style.padding;
 		// Create panel
-		self.combobox_panel = new LuiPanel({x: 0, y: 0, width: _width}).hide().setVisibilitySwitching(false).setPositionAbsolute();
+		self.combobox_panel = new LuiPanel({x: 0, y: 0, width: _width}).hide().setVisibilitySwitching(false).setPositionAbsolute()
+		self.main_ui.addContent([self.combobox_panel]);
+	}
+	
+	static _initComboBoxPanel_no = function() {
+		var _item_count = array_length(self.items);
+		// Calculate panel sizes
+		var _width = self.width;
+		var _height = (self.height + self.style.padding) * _item_count + self.style.padding;
+		// Create panel
+		self.combobox_panel = new LuiPanel({x: 0, y: 0, width: _width}).hide().setVisibilitySwitching(false).setPositionAbsolute().setHeight(self.height_items)
 		self.main_ui.addContent([self.combobox_panel]);
 	}
 	
@@ -46,7 +59,8 @@ function LuiComboBox(_params = {}) : LuiButton(_params) constructor {
 		for (var i = 0; i < _item_count; ++i) {
 			var _item = self.items[i];
 			_item.combobox_parent = self;
-			_item.height = self.height;
+			if ( !self.noborder ) { _item.height = self.height; _item.height_auto = false; }
+			else { _item.setPadding(self.padding_items); _item.setGap(0); }
 			_item.auto_height = false;
 		}
 		self.combobox_panel.addContent(self.items);
@@ -55,7 +69,7 @@ function LuiComboBox(_params = {}) : LuiButton(_params) constructor {
 	///@desc Toggle combobox open/close
 	static toggle = function() {
 		if is_undefined(self.combobox_panel) {
-			self._initComboBoxPanel();
+			if ( !self.noborder ) { self._initComboBoxPanel(); } else { self._initComboBoxPanel_no(); }
 			self._initItems();
 		}
 		// Change state
@@ -152,7 +166,7 @@ function LuiComboBox(_params = {}) : LuiButton(_params) constructor {
 	self.addEvent(LUI_EV_CREATE, function(_element) {
 		_element._calculateTextWidth();
 		if is_undefined(_element.combobox_panel) {
-			_element._initComboBoxPanel();
+			if ( !_element.noborder ) { _element._initComboBoxPanel(); } else { _element._initComboBoxPanel_no(); }
 			_element._initItems();
 		}
 	});
@@ -193,7 +207,9 @@ function LuiComboBox(_params = {}) : LuiButton(_params) constructor {
 function LuiComboBoxItem(_params = {}) : LuiButton(_params) constructor {
 	
 	self.combobox_parent = undefined;
-	
+	self.xoff = _params[$ "xoff"] ?? 0;
+	self.yoff = _params[$ "yoff"] ?? 0;
+	self.color = _params[$ "color"] ?? undefined;
 	///@desc Set new combobox text and close combobox
 	static chooseItem = function() {
 		self.combobox_parent.setText(self.text);
@@ -201,13 +217,13 @@ function LuiComboBoxItem(_params = {}) : LuiButton(_params) constructor {
 	}
 	
 	self.draw = function() {
-		
+
 		// Calculate positions
 		var _center_x = self.x + self.width / 2;
 		var _center_y = self.y + self.height / 2;
 		
 		//Base
-		if !is_undefined(self.style.sprite_combobox_item) {
+		if ( !is_undefined(self.style.sprite_combobox_item) && !self.combobox_parent.noborder ) {
 			var _blend_color = self.style.color_secondary;
 			if !self.deactivated && self.isMouseHovered() {
 				_blend_color = merge_color(self.style.color_secondary, self.style.color_hover, 0.5);
@@ -219,10 +235,10 @@ function LuiComboBoxItem(_params = {}) : LuiButton(_params) constructor {
 		}
 		
 		// Icon and text
-		_drawIconAndText(_center_x, _center_y, self.width, self.style.color_text);
+		_drawIconAndText(_center_x + self.xoff, _center_y + self.yoff, self.width, self.color ?? self.style.color_text);
 		
 		//Border
-		if !is_undefined(self.style.sprite_combobox_item_border) {
+		if ( !is_undefined(self.style.sprite_combobox_item_border) && !self.combobox_parent.noborder ) {
 			draw_sprite_stretched_ext(self.style.sprite_combobox_item_border, 0, self.x, self.y, self.width, self.height, self.style.color_border, 1);
 		}
 	}

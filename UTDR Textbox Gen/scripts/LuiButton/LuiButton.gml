@@ -8,6 +8,8 @@ function LuiButton(_params = {}) : LuiBase(_params) constructor {
 	self.text = _params[$ "text"] ?? "";
 	self.button_color = _params[$ "color"] ?? undefined;
 	self.params = _params;
+	self.xoff = _params[$ "xoff"] ?? 0;
+	self.yoff = _params[$ "yoff"] ?? 0;
 	self.icon = {
 		sprite: -1,
 		width: -1,
@@ -102,7 +104,7 @@ function LuiButton(_params = {}) : LuiBase(_params) constructor {
 				_drawTruncatedText(_text_x, _center_y, self.text, _available_width - self.icon.width - _space_width);
 			} else {
 				draw_set_halign(fa_center);
-				_drawTruncatedText(_center_x, _center_y, self.text, _available_width);
+				_drawTruncatedText(_center_x + self.xoff, _center_y + self.yoff, self.text, _available_width);
 			}
 		}
 	}

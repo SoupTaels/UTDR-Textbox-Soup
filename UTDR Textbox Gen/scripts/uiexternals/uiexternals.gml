@@ -334,6 +334,7 @@ pref = {
 								if ( !scribble_external_sprite_exists(altname) ) { scribble_external_sprite_add(sprite, altname); } //Add alternative name
 								global.faces_dict_alt[$ name_] = { sprite, expression, name, destroy } //Create new struct face dictionary
 								clipboard_set_text($"[{expression}][face,{expression}]");
+								
 								return sprite;
 							}
 						}
@@ -481,7 +482,7 @@ pref = {
 				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
 				.addEvent(LUI_EV_CLICK, function(element_) { sfx_play(snd_updated); if ( element_.getData("clear_") ) { FACE_CURRENT = spr_face_blank; FACE_ORIGINAL = FACE_CURRENT; } soup_checkout(element_.getData("inputsoup_"), false, element_.getData("inputglobal_")).set("spr_face_blank"); soup_checkout(element_.getData("imagesoup_"), false, element_.getData("imageglobal_")).set(element_.getData("face")); soup_checkout("datafunc", false)(); })
 			);
-			array_push(options_, new LuiText({ value: "Add From File... [->]", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, color: c_yellow, }).setPadding(5)
+			array_push(options_, new LuiText({ value: "Add From File... [[->]", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, color: c_yellow, }).setPadding(5)
 				.setData("inputsoup_", inputsoup_).setData("inputglobal_", inputglobal_).setData("imagesoup_", imagesoup_).setData("imageglobal_", imageglobal_).setData("clear_", clear_)
 				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_orange; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
 				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
@@ -491,7 +492,7 @@ pref = {
 					if ( result == -1 || result == "" ) { result = -1; myname_ = ""; } else { myname_ = string_exclude(string_replace(string_replace(filename_name(result), "_strip", ""), ".png", ""), "0123456789"); result = external_ensure(myname_, filename_name(result), result, , SYSTEMUI.ui_tab == 0 ? true : false); }
 					if ( element_.getData("clear_") ) { FACE_CURRENT = result; FACE_ORIGINAL = FACE_CURRENT; } 
 					soup_checkout(element_.getData("inputsoup_"), false, element_.getData("inputglobal_")).set(myname_); 
-					soup_checkout(element_.getData("imagesoup_"), false, element_.getData("imageglobal_")).set(result); 
+					soup_checkout(element_.getData("imagesoup_"), false, element_.getData("imageglobal_")).set(result);
 					soup_checkout("datafunc", false)();
 				})
 			);
@@ -510,8 +511,8 @@ pref = {
 			]).addEvent(LUI_EV_CREATE, function(element_) { soup_store("scrollmain", element_); }), //Stash panel so we can add another panel to this row
 		];
 
-		soup_store("datafunc", method({ clear_, }, function() { soup_checkout("choosemain", false).destroy(); if ( clear_ ) { soup_store_clear(); SYSTEMUI.ui_paused = false; } }));
-		var maincan = soupy_popup(dataarr, method({ clear_ }, function() { if ( clear_ ) { soup_store_clear();  SYSTEMUI.ui_paused = false; } }), "Nevermind", , , , snd_select, , multiple_, 2); soup_store("choosemain", maincan); 
+		soup_store("datafunc", method({ clear_, }, function() { soup_checkout("choosemain", false).destroy(); FACE_INDEX = clamp(FACE_INDEX, 0, sprite_get_number(FACE_CURRENT) - 1); if ( clear_ ) { soup_store_clear(); SYSTEMUI.ui_paused = false; } }));
+		var maincan = soupy_popup(dataarr, method({ clear_ }, function() { if ( clear_ ) { soup_store_clear(); FACE_INDEX = clamp(FACE_INDEX, 0, sprite_get_number(FACE_CURRENT) - 1); SYSTEMUI.ui_paused = false; } }), "Nevermind", , , , , , multiple_, 2); soup_store("choosemain", maincan); 
 	}
 	
 	///@desc Function for choosing an externally added border
@@ -538,7 +539,7 @@ pref = {
 		#endregion
 		
 		#region Add Default Options
-			array_push(options_, new LuiText({ value: "Add From File... [->]", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, color: c_yellow, }).setPadding(5)
+			array_push(options_, new LuiText({ value: "Add From File... [[->]", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, color: c_yellow, }).setPadding(5)
 				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_orange; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
 				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
 				.addEvent(LUI_EV_CLICK, function(element_) { 
@@ -559,7 +560,7 @@ pref = {
 		];
 		
 		soup_store("datafunc", function() { soup_checkout("choosemain", false).destroy(); soup_store_clear(); SYSTEMUI.ui_paused = false; });
-		var maincan = soupy_popup(dataarr, function() { soup_store_clear(); SYSTEMUI.ui_paused = false; }, "Nevermind", , , , snd_select, , , 2); soup_store("choosemain", maincan); 
+		var maincan = soupy_popup(dataarr, function() { soup_store_clear(); SYSTEMUI.ui_paused = false; }, "Nevermind", , , , , , , 2); soup_store("choosemain", maincan); 
 	}
 	
 	///@desc Function for choosing an externally added font
@@ -598,7 +599,7 @@ pref = {
 		#endregion
 		
 		#region Add Default Options
-			array_push(options_, new LuiText({ value: "Add From File... [->]", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, color: c_yellow, }).setPadding(5).setData("customs", custom_)
+			array_push(options_, new LuiText({ value: "Add From File... [[->]", font: fnt_speech, text_halign: fa_center, text_valign: fa_middle, color: c_yellow, }).setPadding(5).setData("customs", custom_)
 				.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_orange; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
 				.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
 				.addEvent(LUI_EV_CLICK, function(element_) { 
@@ -622,7 +623,7 @@ pref = {
 		];
 		
 		soup_store("datafunc", function() { soup_checkout("choosemain", false).destroy(); soup_store_clear(); if ( is_undefined(soup_checkout("customfonts", false, true)) ) { SYSTEMUI.ui_paused = false; } });
-		var maincan = soupy_popup(dataarr, function() { soup_store_clear(); if ( is_undefined(soup_checkout("customfonts", false, true)) ) { SYSTEMUI.ui_paused = false; } }, "Nevermind", , , , snd_select, , !custom_, 2); soup_store("choosemain", maincan); 
+		var maincan = soupy_popup(dataarr, function() { soup_store_clear(); if ( is_undefined(soup_checkout("customfonts", false, true)) ) { SYSTEMUI.ui_paused = false; } }, "Nevermind", , , , , , !custom_, 2); soup_store("choosemain", maincan); 
 	}
 	
 	///@desc Function for editing the spacing between fonts
@@ -653,7 +654,7 @@ pref = {
 		];
 		soup_store("customfonts", , , true); soup_store("getfont", "datafontcustom", , true);
 		soup_store("datafunccustomfonts", function() { soup_checkout("choosemaincustomfonts", false, true).destroy(); soup_store_clear(); soup_checkout("customfonts", , true); soup_checkout("getfont", , true); SYSTEMUI.ui_paused = false; }, , true);
-		var maincan = soupy_popup(dataarr, function() { soup_store_clear(); soup_checkout("customfonts", , true); soup_checkout("getfont", , true); SYSTEMUI.ui_paused = false; }, "Nevermind", , , , snd_select, , , 2); soup_store("choosemaincustomfonts", maincan, , true); 
+		var maincan = soupy_popup(dataarr, function() { soup_store_clear(); soup_checkout("customfonts", , true); soup_checkout("getfont", , true); SYSTEMUI.ui_paused = false; }, "Nevermind", , , , , , , 2); soup_store("choosemaincustomfonts", maincan, , true); 
 	}
 		
 	function external_choose_mini(face_ = -1, index_ = 0, text_ = "Text", font_ = "fnt_determination", smooth_ = false, x_ = -1, y_ = -1, id_ = -1, name_ = "") {
@@ -707,7 +708,136 @@ pref = {
 				soup_store_clear(); SYSTEMUI.ui_paused = false; maincan.destroy();
 			}),
 		];
-		var maincan = soupy_popup(miniarr, function() { soup_store_clear(); SYSTEMUI.ui_paused = false; }, "Nevermind", , , , snd_select, , , 2);
+		var maincan = soupy_popup(miniarr, function() { soup_store_clear(); SYSTEMUI.ui_paused = false; }, "Nevermind", , , , , , , 2);
 		soup_store("datamain", maincan);
 	}
+	
+	///@desc Function for editing the Scribble typewriter animation
+	function external_edit_typew() {
+		var easeExample = function (stop_ = false) {
+			var gettween = soup_checkout("dataease_tween"); if ( gettween != undefined ) { TweenStop(gettween); TweenDestroy(gettween); TweenDestroy(SYSTEMUI); show_debug_message("Tween destroyed"); }
+			if ( stop_ ) { SYSTEMUI.soupy_lui.animate(soup_checkout("dataease_soul", false), "yoff", 0, 0, , -80); exit; }
+			var func_ = function() { SYSTEMUI.soupy_lui.animate(soup_checkout("dataease_soul", false), "yoff", 0, 1, soup_checkout("dataease_tweenease", false), -80); }
+			var tween = TweenFire("?", SYSTEMUI, "$90", "#3", "@continue", func_);
+			soup_store("dataease_tween", tween); func_();
+		}
+		var dataarr = [
+			new LuiText({ value: "Edit how the typewriter makes text appear!", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }),
+			new LuiText({ value: "Instead of characters appearing instantly, you can give characters\nan easing animation to truly customize dialogue to your liking!", text_halign: fa_center, text_valign: fa_middle, color: c_gray, font: fnt_determination, }),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Easing Type:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Sets the easing out algorithm\nthe typewriter will use.\nFor more info, visit:\n[c_yellow]https://easings.net/ (right click me)", true, , true).addEvent(LUI_EV_CLICK_R, function() { execute_shell_simple("https://easings.net/", , , 0); }),
+				new LuiComboBox({ height: 35, placeholder: "Select easing type...", noborder: true, height_items: 260, }).addItems([
+					new LuiComboBoxItem({ text: "NONE" }).setData("easeExample", easeExample).addEvent(LUI_EV_CLICK, function(e_) { 
+						soup_store("dataeasetype", SCRIBBLE_EASE.NONE); 
+						var func_ = e_.getData("easeExample"); func_(true); 
+					}).addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 5, 0.30, global.Ease.OutBack, 0); }).addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); }),
+					new LuiComboBoxItem({ text: "LINEAR" }).setData("easeExample", easeExample).addEvent(LUI_EV_CLICK, function(e_) { 
+						soup_store("dataeasetype", SCRIBBLE_EASE.LINEAR); 
+						var func_ = e_.getData("easeExample"); func_(true); 
+					}).addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 5, 0.30, global.Ease.OutBack, 0); }).addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); }),
+					new LuiComboBoxItem({ text: "QUAD" }).setData("easeExample", easeExample).addEvent(LUI_EV_CLICK, function(e_) { 
+						soup_store("dataeasetype", SCRIBBLE_EASE.QUAD); 
+						var func_ = e_.getData("easeExample"); soup_store("dataease_tweenease", global.Ease.OutQuad); func_(); 
+					}).addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 5, 0.30, global.Ease.OutBack, 0); }).addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); }),
+					new LuiComboBoxItem({ text: "CUBIC" }).setData("easeExample", easeExample).addEvent(LUI_EV_CLICK, function(e_) { 
+						soup_store("dataeasetype", SCRIBBLE_EASE.CUBIC); 
+						var func_ = e_.getData("easeExample"); soup_store("dataease_tweenease", global.Ease.OutCubic); func_(); 
+					}).addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 5, 0.30, global.Ease.OutBack, 0); }).addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); }),
+					new LuiComboBoxItem({ text: "QUART" }).setData("easeExample", easeExample).addEvent(LUI_EV_CLICK, function(e_) { 
+						soup_store("dataeasetype", SCRIBBLE_EASE.QUART); 
+						var func_ = e_.getData("easeExample"); soup_store("dataease_tweenease", global.Ease.OutQuart); func_(); 
+					}).addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 5, 0.30, global.Ease.OutBack, 0); }).addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); }),
+					new LuiComboBoxItem({ text: "QUINT" }).setData("easeExample", easeExample).addEvent(LUI_EV_CLICK, function(e_) { 
+						soup_store("dataeasetype", SCRIBBLE_EASE.QUINT); 
+						var func_ = e_.getData("easeExample"); soup_store("dataease_tweenease", global.Ease.OutQuint); func_(); 
+					}).addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 5, 0.30, global.Ease.OutBack, 0); }).addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); }),
+					new LuiComboBoxItem({ text: "SINE" }).setData("easeExample", easeExample).addEvent(LUI_EV_CLICK, function(e_) { 
+						soup_store("dataeasetype", SCRIBBLE_EASE.SINE); 
+						var func_ = e_.getData("easeExample"); soup_store("dataease_tweenease", global.Ease.OutSine); func_(); 
+					}).addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 5, 0.30, global.Ease.OutBack, 0); }).addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); }),
+					new LuiComboBoxItem({ text: "EXPO" }).setData("easeExample", easeExample).addEvent(LUI_EV_CLICK, function(e_) { 
+						soup_store("dataeasetype", SCRIBBLE_EASE.EXPO); 
+						var func_ = e_.getData("easeExample"); soup_store("dataease_tweenease", global.Ease.OutExpo); func_(); 
+					}).addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 5, 0.30, global.Ease.OutBack, 0); }).addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); }),
+					new LuiComboBoxItem({ text: "CIRC" }).setData("easeExample", easeExample).addEvent(LUI_EV_CLICK, function(e_) { 
+						soup_store("dataeasetype", SCRIBBLE_EASE.CIRC); 
+						var func_ = e_.getData("easeExample"); soup_store("dataease_tweenease", global.Ease.OutCirc); func_(); 
+					}).addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 5, 0.30, global.Ease.OutBack, 0); }).addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); }),
+					new LuiComboBoxItem({ text: "BACK" }).setData("easeExample", easeExample).addEvent(LUI_EV_CLICK, function(e_) { 
+						soup_store("dataeasetype", SCRIBBLE_EASE.BACK); 
+						var func_ = e_.getData("easeExample"); soup_store("dataease_tweenease", global.Ease.OutBack); func_(); 
+					}).addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 5, 0.30, global.Ease.OutBack, 0); }).addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); }),
+					new LuiComboBoxItem({ text: "ELASTIC" }).setData("easeExample", easeExample).addEvent(LUI_EV_CLICK, function(e_) { 
+						soup_store("dataeasetype", SCRIBBLE_EASE.ELASTIC); 
+						var func_ = e_.getData("easeExample"); soup_store("dataease_tweenease", global.Ease.OutElastic); func_(); 
+					}).addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 5, 0.30, global.Ease.OutBack, 0); }).addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); }),
+					new LuiComboBoxItem({ text: "BOUNCE" }).setData("easeExample", easeExample).addEvent(LUI_EV_CLICK, function(e_) { 
+						soup_store("dataeasetype", SCRIBBLE_EASE.BOUNCE); 
+						var func_ = e_.getData("easeExample"); soup_store("dataease_tweenease", global.Ease.OutBounce); func_(); 
+					}).addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_yellow; element_.main_ui.animate(element_, "xoff", 5, 0.30, global.Ease.OutBack, 0); }).addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); }),
+				]),
+				new LuiImage({ value: spr_soul, draw_normal: true }).setSize(20, 20).addEvent(LUI_EV_CREATE, function(e_) { soup_store("dataease_soul", e_); }),
+			]),
+
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Start X Offset:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes where in the x position a\ntypewriter character starts at.", true),
+				new LuiInput({ value: SYSTEMUI.typist_ease.x, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).setPadding(20)
+				.addEvent(LUI_EV_CREATE, function() { soup_store("dataease_x", SYSTEMUI.typist_ease.x); }).bindVariable(SYSTEMUI.typist_ease, "x")
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value = real_ext(e_.get()), result = value == "" ? 0 : value; soup_store("dataease_x", result); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Start Y Offset:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes where in the y position a\ntypewriter character starts at.", true),
+				new LuiInput({ value: SYSTEMUI.typist_ease.y, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).setPadding(20)
+				.addEvent(LUI_EV_CREATE, function() { soup_store("dataease_y", SYSTEMUI.typist_ease.y); }).bindVariable(SYSTEMUI.typist_ease, "y")
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value = real_ext(e_.get()), result = value == "" ? 0 : value; soup_store("dataease_y", result); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Start X Scale:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the starting xscale\nof a typewriter character.", true),
+				new LuiInput({ value: SYSTEMUI.typist_ease.xscale, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).setPadding(20)
+				.addEvent(LUI_EV_CREATE, function() { soup_store("dataease_xs", SYSTEMUI.typist_ease.xscale); }).bindVariable(SYSTEMUI.typist_ease, "xscale")
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value = real_ext(e_.get()), result = value == "" ? 0 : value; soup_store("dataease_xs", result); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Start Y Scale:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the starting yscale\nof a typewriter character.", true),
+				new LuiInput({ value: SYSTEMUI.typist_ease.yscale, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).setPadding(20)
+				.addEvent(LUI_EV_CREATE, function() { soup_store("dataease_ys", SYSTEMUI.typist_ease.yscale); }).bindVariable(SYSTEMUI.typist_ease, "yscale")
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { var value = real_ext(e_.get()), result = value == "" ? 0 : value; soup_store("dataease_ys", result); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Smooth Alpha:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the starting alpha\nof a typewriter character.\n0 - Characters will show up instantly\n1 - Characters will smoothly show up", true),
+				new LuiSlider({ value: SYSTEMUI.typist_ease.alpha, min_value: 0, color_text: c_black, color_text_drag: c_white, max_value: 1, rounding: false, display_value: true, bar_sprite: spr_border_header, bar_sprite_back: spr_border_header, })
+				.addEvent(LUI_EV_CREATE, function() { soup_store("dataease_alpha", SYSTEMUI.typist_ease.alpha); }).bindVariable(SYSTEMUI.typist_ease, "alpha")
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { soup_store("dataease_alpha", real(e_.get())); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Start Angle:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the starting rotation\nof a typewriter character.", true),
+				new LuiSlider({ value: SYSTEMUI.typist_ease.angle, min_value: 0, color_text: c_black, color_text_drag: c_white, max_value: 360, rounding: true, display_value: true, bar_sprite: spr_border_header, bar_sprite_back: spr_border_header, })
+				.addEvent(LUI_EV_CREATE, function() { soup_store("dataease_angle", SYSTEMUI.typist_ease.angle); }).bindVariable(SYSTEMUI.typist_ease, "angle")
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { soup_store("dataease_angle", real(e_.get())); soup_checkout("dataease_soul", false).angle = real(e_.get()); }),
+			]),
+			
+			new LuiButton({ text: "Let's get soupy!!", height: 35, }).setData("tween", easeExample).addEvent(LUI_EV_CLICK, function(e_) {
+				if ( soup_checkout("dataeasetype", false) == -1 ) { soupy_message("You must select an|easing type.", , 200, , , snd_error, , , true); exit; }
+				
+				var tween = e_.getData("tween"); tween(true);
+				SYSTEMUI.typist_ease = { type: soup_checkout("dataeasetype"), x: soup_checkout("dataease_x"), y: soup_checkout("dataease_y"), xscale: soup_checkout("dataease_xs"), yscale: soup_checkout("dataease_ys"), angle: soup_checkout("dataease_angle"), alpha: soup_checkout("dataease_alpha"), };
+				with ( SYSTEMUI ) { typist.ease(typist_ease.type, typist_ease.x, typist_ease.y, typist_ease.xscale, typist_ease.yscale, typist_ease.angle, typist_ease.alpha); }
+				sfx_play(snd_chest); soup_checkout("datatypewriteredit_func")();
+			}),
+		];
+		
+		//typist_ease = { type: SCRIBBLE_EASE.LINEAR, x: 0, y: 0, xscale: 1, yscale: 1, angle: 0, alpha: 1, };
+		//typist.ease(typist_ease.type, typist_ease.x, typist_ease.y, typist_ease.xscale, typist_ease.yscale, typist_ease.angle, typist_ease.alpha);
+		
+		soup_store("dataeasetype", -1); 
+		soup_store("datatypewriteredit_func", function() { soup_checkout("datatypewriteredit").destroy(); soup_store_clear(); SYSTEMUI.ui_paused = false; });
+		var maincan = soupy_popup(dataarr, function() { soup_store_clear(); SYSTEMUI.ui_paused = false; }, "Nevermind", , , , , , , 2); soup_store("datatypewriteredit", maincan); 
+	}
 #endregion
+

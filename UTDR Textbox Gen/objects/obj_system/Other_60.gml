@@ -3,8 +3,9 @@ var result = soup_checkout("external face");
 if ( result != undefined ) {
 	var curface = global.faces_dict[$ result.myname], spr_ = curface[$ result.id_].sprite, extra_ = soup_store_undefined("allowmultiple");
 	sprite_set_offset(spr_, sprite_get_width(spr_)/ 2, sprite_get_height(spr_)/ 2); //Center sprite
+	if ( sprite_get_height(spr_) > 70 && sprite_get_width(spr_) > 70 ) { dial_face_xscale = 0.1; dial_face_yscale = 0.1; } 
 	if ( !extra_ ) { FACE_CURRENT = spr_; FACE_ORIGINAL = FACE_CURRENT; FACE_INTERNAL = result.myname; }
-	
+
 	soupy_message(result.msg, , , , , snd_sparkle2, , , extra_ ? true : false);
 	file_dragging = false;
 }

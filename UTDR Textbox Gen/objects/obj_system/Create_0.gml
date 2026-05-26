@@ -327,7 +327,6 @@
 	screenshot_stacked = false; //Whether dialogue exports are stacked
 	screenshot_surf = -1; //Screenshot surface
 	screenshot_back = c_lime; //Color for GIF background clearing
-	ui_shrink = false;
 	record = { enabled: false, type: 0, frames: 0, framesmax: 0, id_: -1, quant: 1, delay: 60, }; //Whether to record, the type of recording(0 - static, 1 - wait for dialogue to finish), and how long to record for
 	ui_visible = true; //Whether the UI should be visible
 	ui_effoff = 0; //Effects array offset 
@@ -414,7 +413,7 @@
 		var soupy_style = new LuiStyle({ padding: 15, gap: 10, color_text: c_white, color_hover: c_yellow, sound_click: snd_select, sound_hover: snd_sel_switch, }) //Main Style
 			.setRenderRegionOffset([10, 10, 10, 10])
 			.setFonts(fnt_determination, fnt_determination, fnt_determination).setColors(, c_orange, #f43e83, #15ee97)
-			.setSprites(spr_border_undertale_outlined, spr_border_undertale_outlined).setSpriteCheckbox(spr_border_undertale_outlined, spr_pixel)
+			.setSprites(spr_border_undertale_outlined, spr_border_undertale_outlined).setSpriteCheckbox(spr_border_undertale_outlined, spr_pixel).setSpriteComboBoxArrow(spr_soul_tiny)
 		soupy_lui = new LuiMain().setStyle(soupy_style);
 	#endregion
 		
@@ -533,7 +532,7 @@
 					e_.set(SYSTEMUI.spr_bord).setSubimg(SYSTEMUI.bord_index).setColor(SYSTEMUI.bord_clr);
 					input_.set(bord_name); 
 				}).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 0, 0.15, , 5); element_.main_ui.animate(element_, "yscale", 0, 0.15, , 5); sfx_play(snd_squish); })
-				   .addEvent(LUI_EV_VALUE_UPDATE, function(e_) { sfx_play(snd_equip2, , , 1.3); TweenScript(SYSTEMUI, 0, 2, function() { var e_ = soup_checkout("dataimageB", false, true); e_.set(SYSTEMUI.spr_bord); }); SYSTEMUI.bord_clr = e_.color_blend; }).addEvent(LUI_EV_CLICK_R, function(e_) {
+				   .addEvent(LUI_EV_VALUE_UPDATE, function(e_) { audio_stop_sound(snd_equip2); sfx_play(snd_equip2, , , 1.3); TweenScript(SYSTEMUI, 0, 2, function() { var e_ = soup_checkout("dataimageB", false, true); e_.set(SYSTEMUI.spr_bord); }); SYSTEMUI.bord_clr = e_.color_blend; }).addEvent(LUI_EV_CLICK_R, function(e_) {
 					var input_ = soup_checkout("datainputB", false, true); SYSTEMUI.spr_bord = spr_border_undertale; SYSTEMUI.bord_prev = SYSTEMUI.spr_bord;
 					input_.set("spr_border_undertale"); audio_stop_sound(snd_updated); sfx_play(snd_hurtpowerful); e_.main_ui.animate(e_, "xscale", 0, 0.15, , 5); e_.main_ui.animate(e_, "yscale", 0, 0.15, , 5); e_.setColor(c_white); SYSTEMUI.bord_clr = c_white;
 				}),
@@ -758,6 +757,7 @@
 			]),
 			
 			new LuiButton({ text: "Edit Font Separation", height: 40, }).addEvent(LUI_EV_CLICK, external_edit_fonts),
+			new LuiButton({ text: "Typewriter Animation Builder", height: 40, }).addEvent(LUI_EV_CLICK, external_edit_typew).setTooltip("Edit how the typewriter types out characters.\nBefore editing, set [c_yellow]text smoothing[/] to\na value [c_cyan]greater than 0[/]. Experiment with the\ntext smoothing value while editing this.", true, , true),
 
 			new LuiHorizontalRule({ height: 5, }),
 			new LuiRow().setFlexGrow(1).centerContent().addContent([

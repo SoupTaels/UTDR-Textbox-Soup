@@ -15,6 +15,8 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 	self.maintain_aspect = _params[$ "maintain_aspect"] ?? true;
 	self.draw_normal = _params[$ "draw_normal"] ?? false;
 	self.angle = _params[$ "angle"] ?? 0;
+	self.xoff = _params[$ "xoff"] ?? 0;
+	self.yoff = _params[$ "yoff"] ?? 0;
 	self.imgspd = _params[$ "imgspd"] ?? 0;
 	self.xscale = _params[$ "xscale"] ?? 1;
 	self.yscale = _params[$ "yscale"] ?? 1;
@@ -109,13 +111,13 @@ function LuiImage(_params = {}) : LuiBase(_params) constructor {
 				if ( !self.draw_normal ) {
 					var _sprite_render_function = self.style.sprite_render_function ?? draw_sprite_stretched_ext;
 						_sprite_render_function(self.value, self.subimg, 
-													floor(self.x + self.width/2 - _width/2) - self.xscale, 
-													floor(self.y + self.height/2 - _height/2) - self.yscale, 
+													floor(( ( self.x + ( self.width/ 2 ) ) - ( _width/ 2 )) - self.xscale ) + self.xoff, 
+													floor(( ( self.y + ( self.height/ 2 ) ) - ( _height/ 2 )) - self.yscale ) + self.yoff, 
 													_width + ( self.xscale * 2 ), _height + ( self.yscale * 2 ), 
 													_blend_color, self.alpha);
 				}
 				else {
-					draw_sprite_ext(self.value, self.subimg, self.x + self.width/2, self.y + self.height/2, self.xscale, self.yscale, self.angle ?? 0, _blend_color, self.alpha);
+					draw_sprite_ext(self.value, self.subimg, ( self.x + ( self.width/ 2 ) ) + self.xoff, ( self.y + ( self.height/ 2 ) ) + self.yoff, self.xscale, self.yscale, self.angle ?? 0, _blend_color, self.alpha);
 				}
 			}
 		}
