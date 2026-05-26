@@ -3,7 +3,7 @@ var tinysoup = "icons\\tinysoupy.png"; if ( file_exists(tinysoup) ) { widget_set
 undo_stack_create(); //History of undo changes
 file_dropper_init(); //Handle file dropping
 scribble_font_set_default("fnt_determination_nomono");
-
+instance_create_depth(0, 0, -2, obj_updatechecker);
 #region Error Handling
 	if ( file_exists(errname) ) {
 		var buff = buffer_load(errname); //Load file

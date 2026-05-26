@@ -5,6 +5,7 @@ global.ADD_FILE_OPTIONS_DEFAULT = {
 	keep_buffer: false,
 	filename: "",
 	mimetype: "",
+	file_is_buffer : false,
 }
 global.ADD_FILE_OPTIONS_KEYS = variable_struct_get_names(global.ADD_FILE_OPTIONS_DEFAULT);
 global.bound_char_set = [
@@ -30,7 +31,7 @@ function FormData() constructor {
 	function add_file(name,file,options={}) {
 		var buffer = buffer_load(file);
 		options.keep_buffer = false;
-		self.add_buffer(name,buffer,fname,options);
+		self.add_buffer(name,buffer,file,options);
 	}
 	/// @description Add a buffer to the FormData instance
 	/// @param {string} name Field name in FormData body

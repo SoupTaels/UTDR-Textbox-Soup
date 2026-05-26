@@ -8,6 +8,7 @@ pref = {
 	sizematterstop: false, //Whether to send the dialogue box to the top
 	anyborder: false, //Whether to allow any arbitrary border
 	hidemessages: false, //Whether to hide output sucess message
+	checkupdates: true, //Check for updates?
 }
 #region Add External Faces
 	faces_dict = {};

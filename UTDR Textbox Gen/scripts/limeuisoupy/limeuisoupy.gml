@@ -173,7 +173,7 @@ function soupy_ui_credits() {
 	});
 	
 	var ico_ = get_icon("gameico", "size"); array_push(arr_, new LuiImage({ value: ico_.sprite, }).setFlexAlignSelf(flexpanel_align.center).setSize(ico_.width * 3, ico_.height * 3)); 
-	credits_add("[scale,2]UTDR [c_gold]SoupGen[/c] [c_red]BETA[/c] v0.0.2", , true);
+	credits_add($"[scale,2]UTDR [c_gold]SoupGen[/c] [c_red]BETA[/c] v{GAME_VERSION}", , true);
 	credits_add();
 	credits_add("[c_yellow][wobble]Credits:", , true);
 	credits_add(".+\\/\\/\\_______________________________________________/\\/\\/+.");

@@ -807,6 +807,7 @@
     {"id":{"name":"obj_stacker","path":"objects/obj_stacker/obj_stacker.yy",},},
     {"id":{"name":"obj_success","path":"objects/obj_success/obj_success.yy",},},
     {"id":{"name":"obj_system","path":"objects/obj_system/obj_system.yy",},},
+    {"id":{"name":"obj_updatechecker","path":"objects/obj_updatechecker/obj_updatechecker.yy",},},
     {"id":{"name":"oSteadyDeltaTime","path":"objects/oSteadyDeltaTime/oSteadyDeltaTime.yy",},},
     {"id":{"name":"rm_soupy","path":"rooms/rm_soupy/rm_soupy.yy",},},
     {"id":{"name":"__CleanConfig","path":"scripts/__CleanConfig/__CleanConfig.yy",},},

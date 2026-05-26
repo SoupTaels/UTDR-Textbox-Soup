@@ -14,8 +14,14 @@
 			var get_ = pref_[$ "sizematters"]; global.pref.sizematters = !is_undefined(get_) ? get_ : false;
 			var get_ = pref_[$ "sizematterstop"]; global.pref.sizematterstop = !is_undefined(get_) ? get_ : false;
 			var get_ = pref_[$ "hidemessages"]; global.pref.hidemessages = !is_undefined(get_) ? get_ : false;
+			var get_ = pref_[$ "checkupdates"]; global.pref.checkupdates = !is_undefined(get_) ? get_ : true;
 		}
 	}
+	
+	#region Http.gml
+		http_active = false;
+		http_requests = ds_map_create();
+	#endregion
 #endregion
 
 #region Dialogue Box
@@ -868,6 +874,11 @@
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
 				new LuiText({ value: "Hide Success:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Hides the export success message.", true, , true),
 				new LuiToggleSwitch({ value: global.pref.hidemessages, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "hidemessages").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Update Check:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Check for updates upon startup?", true, , true),
+				new LuiToggleSwitch({ value: global.pref.checkupdates, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "checkupdates").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
 			]),
 			
 			new LuiRow().setFlexGrow(1).centerContent().addContent([

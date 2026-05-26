@@ -13,16 +13,15 @@ global.HTTP_DEFAULT_OPTIONS = {
 global.HTTP_DEFAULT_VARIABLE_LIST = variable_struct_get_names(global.HTTP_DEFAULT_OPTIONS);
 
 
-/// @function http
+/// feather ignore once GM1062
 /// @param {string} url request URL
 /// @param {string} _method request method (GET/POST/PUT/PATCH/DELETE/etc.)
-/// @param {string | buffer | struct.FormData} body Body for the HTTP request
+/// @param {string,Id.Buffer,Struct.FormData} body Body for the HTTP request
 /// @param {struct} options Struct containing one or more options that can modify the request
-/// @param {function} cb
-/// @param {function} cb_error
-/// @param {function} cb_progress
-/// feather ignore once GM1062
-function http(url,_method,body,options={},cb=undefined,cb_error=undefined,cb_progress=undefined){
+/// @param {function} cb Success function
+/// @param {function} cb_error Error function
+/// @param {function} cb_progress Download in-progress function
+function http(url, _method = "GET", body = "", options={}, cb=undefined, cb_error=undefined, cb_progress=undefined){
 	if (!is_string(url)) {
 		throw "url must be a string"
 	}
@@ -32,9 +31,6 @@ function http(url,_method,body,options={},cb=undefined,cb_error=undefined,cb_pro
 		if (options[$ key] == undefined) {
 			options[$ key] = global.HTTP_DEFAULT_OPTIONS[$ key];	
 		}
-	}
-	if (!instance_exists(obj_http)) {
-		instance_create_depth(0,0,0,obj_http);
 	}
 	if (options.headers == undefined) {
 		options.headers = ds_map_create();
@@ -62,7 +58,7 @@ function http(url,_method,body,options={},cb=undefined,cb_error=undefined,cb_pro
 		var buffer = buffer_create(0,buffer_grow,1);
 		var request = http_request(url,_method,options.headers,buffer);
 		options.buffer = buffer;
-		obj_http.requests[? request] = {
+		SYSTEMUI.http_requests[? request] = {
 		    callback: cb,
 			error: cb_error,
 			progress: cb_progress,
@@ -72,13 +68,13 @@ function http(url,_method,body,options={},cb=undefined,cb_error=undefined,cb_pro
 		return request;
 	}
 	var request = http_request(url,_method,options.headers,body);
-	obj_http.requests[? request] = {
+	SYSTEMUI.http_requests[? request] = {
 		callback: cb,
 		error: cb_error,
 		progress: cb_progress,
 		options: options,
 	}
-	obj_http.active = true;
+	SYSTEMUI.http_active = true;
 	
 	// cleanup if needed
 	
