@@ -17,6 +17,7 @@
 			var get_ = pref_[$ "parsestart"]; global.pref.parsestart = !is_undefined(get_) ? get_ : "<"; global.altchar.start_ = global.pref.parsestart;
 			var get_ = pref_[$ "parseend"]; global.pref.parseend = !is_undefined(get_) ? get_ : ">"; global.altchar.end_ = global.pref.parseend;
 			var get_ = pref_[$ "showref"]; global.pref.showref = !is_undefined(get_) ? get_ : true;
+			var get_ = pref_[$ "openresult"]; global.pref.openresult = !is_undefined(get_) ? get_ : true;
 		}
 	}
 	
@@ -907,6 +908,11 @@
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
 				new LuiText({ value: "Hide Success:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Hides the export success message.", true, , true),
 				new LuiToggleSwitch({ value: global.pref.hidemessages, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "hidemessages").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Show Result:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Show your generated dialogue\nonce export is done?", true, , true),
+				new LuiToggleSwitch({ value: global.pref.openresult, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "openresult").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
 			]),
 			
 			new LuiRow().setFlexGrow(1).centerContent().addContent([

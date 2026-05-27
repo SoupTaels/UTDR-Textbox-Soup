@@ -76,6 +76,27 @@ if ( dial_text_page > dial_text_page_c - 1 && dial_text_page_c > 1 ) { exit; } /
 							scrib_dial.starting_format(dial_font, dial_text_c).scale(dial_text_scale).outline(dial_text_outline).shadow(dial_text_shdw_clr, dial_text_shdw)
 							.allow_line_data_getter().allow_glyph_data_getter().right_to_left(dial_rtl).gradient(dial_gradient_clr, dial_gradient)
 							.line_spacing(line_sp).page(dial_text_page).wrap(wrapcalc, dial_auto_page ? 110 : -1).align(align_.h, align_.v)
+							
+							#region Effects with Regions
+								var regions_ = scrib_dial.region_get_bboxes(), regions_len = array_length(regions_), regions_i = 0;
+								if ( regions_len > 0 ) { //Found some regions?
+									if ( mouse_pressed_right ) { show_debug_message(regions_); }
+									repeat ( regions_len ) { //Loop through all regions
+										var cur_ = regions_[regions_i]; //Get current region
+										switch ( cur_.name ) {
+											case "highlight": {
+												var chr_ = scrib_dial.get_glyph_data(cur_.start_glyph, dial_text_page), myx_ = ( tx_x + dial_text_xoff ) + chr_.left, myy_ = ( yy_ + dial_text_yoff ) + chr_.top; //First, get the starting position of what started the region
+												var bbox_ = cur_.bbox_array[0], x_ = bbox_.x1, x_ = bbox_.y1, w_ = ( bbox_.x2 - bbox_.x1 ), h_ = ( bbox_.y2 - bbox_.y1 ); //Then, calculate bbox
+											
+												draw_sprite_stretched_ext(spr_pixel, 0, myx_, myy_, w_, h_, c_red, 1);
+												//if ( mouse_pressed_right ) { show_debug_message(cur_.bbox_array[0].x1); }
+											} break;
+										}
+										//if ( mouse_pressed_right ) { show_debug_message(cur_.name); }
+									regions_i++; }
+								}
+							#endregion
+							
 							scrib_dial.draw(tx_x + dial_text_xoff, yy_ + dial_text_yoff, dial_text_gif ? typist : undefined);
 					#endregion
 

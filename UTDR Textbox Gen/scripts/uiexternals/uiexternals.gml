@@ -12,6 +12,7 @@ pref = {
 	parsestart: global.altchar.start_, //Start alt command 
 	parseend: global.altchar.end_, //End alt command 
 	showref: true, //Whether to show the reference image on export
+	openresult: true, //Whether to show your generated result
 }
 #region Add External Faces
 	faces_dict = {};
