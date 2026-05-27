@@ -9,10 +9,12 @@
 <hr />
 &nbsp;
 &nbsp;
+<p align="center">Have you always wanted to make really cool UTDR animations, but found making a typewriter to be exhausting work? Or perhaps you're a comic maker that finds making panels to be time-consuming due to needing to line up sprites perfectly? Are old, bulky servers slowly you down from making your AUs? Well that's where SoupGen comes in! SoupGen is a lot more powerful than the leading dialogue generator, especially with the introduction of <i><b>Typewriter Mode!</b></i></p>
 <h1 align="center">Features:</h1>
 <p align="center"><img src="https://i.imgur.com/rV4BRqt.gif" style="display:block; margin:auto;"></p>
 <p align="center">Lots of exporting options, including...:</p>
 <p align="center"><img src="https://i.imgur.com/c6C5R6f.gif" style="display:block; margin:auto;"></p> <p align="center"><img src="https://i.imgur.com/VPgFsud.gif"></p>
+<p align="center">Just export and watch as your dialogue plays out in front of you! Don't like what you see, or you found an error somewhere? Quickly cancel and make changes as you see fit, then try again!</p>
 <hr />
 <p align="center"><img src="https://i.imgur.com/46RVcPN.gif" style="display:block; margin:auto;"></p>
 <p align="center">Tons of colors and effect presets! Want more effects? How about effects that affect the dialogue portrait? Typewriter mode gotchu covered. Typewriter mode is where the real power of my dialogue generator comes into play!</p>
@@ -27,4 +29,4 @@
 <p align="center"><img src="https://i.imgur.com/fKVKiyF.png" style="display:block; margin:auto;"></p>
 <p align="center">Live-updating text. Icons within dialogue! You can even add your own custom icons too. For example, the tool includes Tenna's funnytext.</p>
 <p align="center"><img src="https://github.com/user-attachments/assets/f1e7a6bd-4b67-4d74-899d-aa2f4ceb1ff9" style="display:block; margin:auto;"></p>
-<p align="center">And that only scratches the surface. Play around with the settings to tune your dialogue scenes to your liking! </p>
+<p align="center">And that only scratches the surface. Play around with the settings to tune your dialogue scenes to your liking! Don't like any of this? Well fork this repo and make your own changes! The world is your oyster. The beauty of open-source projects is community.</p>
