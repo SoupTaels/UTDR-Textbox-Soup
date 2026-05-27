@@ -360,7 +360,7 @@
 	file_dragging = false; //Whether a file is being dragged on screen.
 	file_newname = ""; //New name for the file
 	ui_mainfont = fnt_speech;
-	ui_refclr = c_dkgray; //Reference image color
+	ui_refclr = $15101c; //Reference image color
 	ui_viewing = false; //Whether we're looking at the reference image
 	
 	#region Main Menu Buttons
@@ -1007,12 +1007,17 @@
 		ui_updateref = function() {
 			if ( sprite_exists(global.refimg) ) { sprite_delete(global.refimg); }
 			var fname = $"reference{PATHSEP}reference_image.png", fnamedebug = string_replace(fname, $"reference{PATHSEP}", "");
-			global.refimg = -1; if ( file_exists(fname) ) { global.refimg = sprite_add_ext(fname, 1, 0, 0, true); show_debug_message($"Added \"{fnamedebug}\" from {fname}!"); } else { sfx_play(snd_error); exit; }
-			sfx_play(snd_updated); ui_refclr = c_white; TweenFire("$30", "+60", TPCol("ui_refclr>"), c_dkgray);
+			global.refimg = -1; if ( file_exists(fname) ) { global.refimg = sprite_add_ext(fname, 1, 0, 0, true); show_debug_message($"Added \"{fnamedebug}\" from {fname}!"); }
+			else {
+				var result = get_open_filename_ext("Image File (.png, .jpg, .gif)|*.png;*.jpg;*.jpeg;*.gif", "", directory_get_pictures_path(), "Select a sprite to import.");
+				if ( result == -1 || result == "" ) { sfx_play(snd_error); exit; }
+				else { global.refimg = sprite_add_ext(result, 1, 0, 0, true); show_debug_message($"Added \"{filename_name(result)}\" from {result}!"); }
+			}
+			sfx_play(snd_updated); ui_refclr = c_white; TweenFire("?", SYSTEMUI, "$30", "+60", TPCol("ui_refclr>"), $15101c);
 		}
 		
-		ui_viewref = function() { SYSTEMUI.ui_visible = false; SYSTEMUI.soupy_lui.hide(); SYSTEMUI.ui_viewing = true; soup_store("bordvis", SYSTEMUI.bord_visible, , true); SYSTEMUI.bord_visible = true; }
-		ui_unviewref = function() { SYSTEMUI.ui_visible = true; SYSTEMUI.ui_viewing = false; SYSTEMUI.bord_visible = soup_checkout("bordvis", , true); mouse_clear(mb_left); SYSTEMUI.soupy_lui.show(); sfx_play(snd_enc1); }
+		ui_viewref = function() { TweenDestroy(SYSTEMUI); TweenFire("?", SYSTEMUI, "$15", TPCol("ui_refclr>"), c_white); SYSTEMUI.ui_visible = false; SYSTEMUI.soupy_lui.hide(); SYSTEMUI.ui_viewing = true; soup_store("bordvis", SYSTEMUI.bord_visible, , true); SYSTEMUI.bord_visible = true; }
+		ui_unviewref = function() { TweenDestroy(SYSTEMUI); TweenFire("?", SYSTEMUI, "$15", TPCol("ui_refclr>"), $15101c); SYSTEMUI.ui_visible = true; SYSTEMUI.ui_viewing = false; SYSTEMUI.bord_visible = soup_checkout("bordvis", , true); mouse_clear(mb_left); SYSTEMUI.soupy_lui.show(); sfx_play(snd_enc1); }
 	#endregion
 #endregion
 
