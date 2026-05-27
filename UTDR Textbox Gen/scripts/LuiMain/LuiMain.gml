@@ -404,7 +404,7 @@ function LuiMain() : LuiBase() constructor {
 		
 		// Draw tooltip text
 		if !is_undefined(_element) {
-			if _element.tooltip != "" {
+			if ( _element.tooltip != "" && self.visible ) {
 				var _padding = self.style.padding; //Screen border indentation
 				var _padding_text = self.style.padding; //Text border indentation inside tooltip box
 				

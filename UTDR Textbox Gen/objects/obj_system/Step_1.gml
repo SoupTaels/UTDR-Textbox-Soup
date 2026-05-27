@@ -31,7 +31,7 @@
 
 #region Export Dialogue
 	var endkey = keyboard_check_pressed(vk_escape) || keyboard_check_pressed(vk_end) || keyboard_check_pressed(vk_f1);
-	if ( ( !screenshot && !record.enabled ) && ( endkey ) && is_undefined(soup_checkout("export dialogue", false)) ) {
+	if ( ( !screenshot && !record.enabled ) && ( endkey ) && is_undefined(soup_checkout("export dialogue", false)) && !ui_viewing ) {
 		soup_store("export dialogue", true);
 		soup_store("export dialogue func", function() { soup_store_clear(); SYSTEMUI.ui_paused = false; });
 		
@@ -179,6 +179,8 @@
 			if ( keyboard_check_pressed(ord("W")) ) { ui_export(1); valid_ = true; } //Typewriter
 			if ( keyboard_check_pressed(ord("E")) ) { ui_export(3); valid_ = true; } //Stack
 			if ( keyboard_check_pressed(ord("R")) ) { ui_export(2); valid_ = true; } //Animated
+			if ( keyboard_check_pressed(ord("1")) ) { ui_updateref(); } //Update Ref
+			if ( keyboard_check_pressed(ord("2")) ) { var func_ = ui_viewing ? ui_unviewref : ui_viewref; func_(); if ( ui_viewing ) { sfx_play(snd_enc1); } } //View Ref
 			if ( valid_ ) { bord_box_visible = true; bord_out = true; }
 		}
 	#endregion

@@ -874,9 +874,6 @@
 				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { e_.set(spr_pixel); SYSTEMUI.screenshot_back = e_.color_blend; audio_stop_sound(snd_equip2); sfx_play(snd_equip2, , , 1.3); }).addEvent(LUI_EV_CLICK_R, function(e_) { if ( e_.color_blend == c_lime ) { exit; } e_.main_ui.animate(e_, "xscale", 0, 1, global.Ease.OutElastic, 10); e_.main_ui.animate(e_, "yscale", 0, 1, global.Ease.OutElastic, 5); e_.setColor(c_lime); SYSTEMUI.screenshot_back = c_lime; sfx_play(snd_hurtpowerful); }),
 			]),
 			
-			new LuiButton({ text: "Update Reference Image", height: 40, }).addEvent(LUI_EV_CLICK, function () { SYSTEMUI.ui_updateref(); }),
-			new LuiButton({ text: "View Reference Image", height: 40, }).addEvent(LUI_EV_CLICK, function () { SYSTEMUI.ui_visible = false; SYSTEMUI.soupy_panel_extra.hide(); SYSTEMUI.ui_viewing = true; SYSTEMUI.bord_visible = true; }),
-			
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
 				new LuiText({ value: "Show Ref:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Should the reference image\nbe visible on export?", true, , true),
 				new LuiToggleSwitch({ value: global.pref.showref, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "showref").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
@@ -891,6 +888,12 @@
 				new LuiText({ value: "To The Top:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("If [c_yellow]Bigger Resolution is true[/], then this will\nsend the dialogue box to the top.", true, , true),
 				new LuiToggleSwitch({ value: global.pref.sizematterstop, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "sizematterstop").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
 			]),
+			
+			new LuiHorizontalRule({ height: 5, }),
+			new LuiText({ value: "Quick Ref Shortcuts:", auto_width: false, auto_height: false, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setPadding(10),
+			new LuiText({ value: "Update Ref: CTRL+1 | View Ref: CTRL+2", auto_width: false, auto_height: false, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setPadding(3),
+			new LuiButton({ text: "Update Reference Image", height: 40, }).addEvent(LUI_EV_CLICK, function () { SYSTEMUI.ui_updateref(); }),
+			new LuiButton({ text: "View Reference Image", height: 40, }).addEvent(LUI_EV_CLICK, function () { SYSTEMUI.ui_viewref(); }),
 			
 			new LuiHorizontalRule({ height: 5, }),
 			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image scale
@@ -1007,6 +1010,9 @@
 			global.refimg = -1; if ( file_exists(fname) ) { global.refimg = sprite_add_ext(fname, 1, 0, 0, true); show_debug_message($"Added \"{fnamedebug}\" from {fname}!"); } else { sfx_play(snd_error); exit; }
 			sfx_play(snd_updated); ui_refclr = c_white; TweenFire("$30", "+60", TPCol("ui_refclr>"), c_dkgray);
 		}
+		
+		ui_viewref = function() { SYSTEMUI.ui_visible = false; SYSTEMUI.soupy_lui.hide(); SYSTEMUI.ui_viewing = true; soup_store("bordvis", SYSTEMUI.bord_visible, , true); SYSTEMUI.bord_visible = true; }
+		ui_unviewref = function() { SYSTEMUI.ui_visible = true; SYSTEMUI.ui_viewing = false; SYSTEMUI.bord_visible = soup_checkout("bordvis", , true); mouse_clear(mb_left); SYSTEMUI.soupy_lui.show(); sfx_play(snd_enc1); }
 	#endregion
 #endregion
 

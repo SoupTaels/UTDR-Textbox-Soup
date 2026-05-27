@@ -127,7 +127,7 @@ function Button(datastruct_ = undefined) constructor {
 ///@desc Manages state for UI tabs.
 function ui_manage() {
 	//live_auto_call 
-	if ( ui_tab != 0 ) { exit; }
+	if ( ui_tab != 0 || !ui_visible ) { exit; }
 	#region Update Text
 		var update_text = function() { //Update text function
 			undo_stack_begin_move(); 
