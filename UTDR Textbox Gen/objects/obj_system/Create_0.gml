@@ -982,20 +982,6 @@
 				}),
 			]),
 			
-			new LuiRow().setFlexGrow(1).centerContent().addContent([ 
-				new LuiText({ value: "Parse Open Alt:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the alt character used to\ndetect and start parsing commands.", true, , true),
-				new LuiInput({ value: global.altchar.start_, height: 40, placeholder: "[, ], <, >, etc.", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, max_length: 1, excluded_chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 " }).bindVariable(global.altchar, "start_").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
-					var get_ = e_.get(); if ( get_ == "" || get_ == " " ) { get_ = "<" } global.altchar.start_ = get_; global.pref.parsestart = get_; SYSTEMUI.save_pref();
-				}),
-			]),
-			
-			new LuiRow().setFlexGrow(1).centerContent().addContent([ 
-				new LuiText({ value: "Parse End Alt:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the alt character used\nto end parsing commands.", true, , true),
-				new LuiInput({ value: global.altchar.end_, height: 40, placeholder: "[, ], <, >, etc.", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, max_length: 1, excluded_chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 " }).bindVariable(global.altchar, "end_").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
-					var get_ = e_.get(); if ( get_ == "" || get_ == " " ) { get_ = ">" } global.altchar.end_ = get_; global.pref.parseend = get_; SYSTEMUI.save_pref();
-				}),
-			]),
-			
 			new LuiHorizontalRule({ height: 5, }),
 			new LuiButton({ text: "Help Guide", height: 40, }).addEvent(LUI_EV_CLICK, function() { execute_shell_simple("https://rentry.co/utdrsoupguides", , , 0); }),
 			new LuiButton({ text: "So Soupy!!", height: 40, }).addEvent(LUI_EV_CLICK, function() { execute_shell_simple("https://www.youtube.com/watch?v=zbClYRnQQJ0", , , 0); }),

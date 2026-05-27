@@ -256,9 +256,9 @@ function __scribble_gen_2_parser()
                 continue;
             }
             
-            if (( _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN || _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN_ALT ) && !_ignore_commands)
+            if (( _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN  ) && !_ignore_commands)
             {
-                if ( __scribble_buffer_peek_unicode(_string_buffer, buffer_tell(_string_buffer)) == SCRIBBLE_COMMAND_TAG_OPEN ) || ( __scribble_buffer_peek_unicode(_string_buffer, buffer_tell(_string_buffer)) == SCRIBBLE_COMMAND_TAG_OPEN_ALT )
+                if ( __scribble_buffer_peek_unicode(_string_buffer, buffer_tell(_string_buffer)) == SCRIBBLE_COMMAND_TAG_OPEN )
                 {
                     _state_command_tag_flipflop = true;
                 }
@@ -1383,7 +1383,7 @@ function __scribble_gen_2_parser()
                     buffer_poke(_string_buffer, buffer_tell(_string_buffer)-1, buffer_u8, 0);
                 }
             }
-            else if ( _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN ) || ( _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN_ALT )
+            else if ( _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN )
             {
                 _tag_open_count++;
             }
@@ -1392,7 +1392,7 @@ function __scribble_gen_2_parser()
         }
         else
         {
-            if ((( _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN ) || ( _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN_ALT )) && !_ignore_commands && (_state_command_tag_flipflop || (__scribble_buffer_peek_unicode(_string_buffer, buffer_tell(_string_buffer)) != SCRIBBLE_COMMAND_TAG_OPEN || __scribble_buffer_peek_unicode(_string_buffer, buffer_tell(_string_buffer)) != SCRIBBLE_COMMAND_TAG_OPEN_ALT)))
+            if (( _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN )) && !_ignore_commands && (_state_command_tag_flipflop || (__scribble_buffer_peek_unicode(_string_buffer, buffer_tell(_string_buffer)) != SCRIBBLE_COMMAND_TAG_OPEN))
             {
                 if (_state_command_tag_flipflop)
                 {
@@ -1767,7 +1767,7 @@ function __scribble_gen_2_parser()
                     }
                 }
                 
-                if (( _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN ) || ( _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN_ALT )) _state_command_tag_flipflop = true;
+                if (( _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN )) _state_command_tag_flipflop = true;
                 
                 #endregion
             }

@@ -126,7 +126,7 @@ function Button(datastruct_ = undefined) constructor {
 
 ///@desc Manages state for UI tabs.
 function ui_manage() {
-	//live_auto_call 
+	live_auto_call 
 	if ( ui_tab != 0 || !ui_visible ) { exit; }
 	#region Update Text
 		var update_text = function() { //Update text function
@@ -222,7 +222,7 @@ function ui_manage() {
 			#endregion
 			#region Page Indicator Text
 				if ( dial_text_page_c > 1 && bord_visible ) {
-					var pageind = scribble($"[offset,0,3]< Page {dial_text_page + 1}/ {dial_text_page_c} >[offsetpop] [spr_effects_icons,16]")
+					var pageind = scribble($"< Page {dial_text_page + 1}/ {dial_text_page_c} > [spr_effects_icons,16]")
 											.starting_format("fnt_abaddon", c_gray)
 											.align(fa_center, fa_middle)
 											.draw(320, 333)
