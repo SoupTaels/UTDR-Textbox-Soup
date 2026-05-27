@@ -15,6 +15,9 @@
 			var get_ = pref_[$ "sizematterstop"]; global.pref.sizematterstop = !is_undefined(get_) ? get_ : false;
 			var get_ = pref_[$ "hidemessages"]; global.pref.hidemessages = !is_undefined(get_) ? get_ : false;
 			var get_ = pref_[$ "checkupdates"]; global.pref.checkupdates = !is_undefined(get_) ? get_ : true;
+			var get_ = pref_[$ "parsestart"]; global.pref.parsestart = !is_undefined(get_) ? get_ : "<"; global.altchar.start_ = global.pref.parsestart;
+			var get_ = pref_[$ "parseend"]; global.pref.parseend = !is_undefined(get_) ? get_ : ">"; global.altchar.end_ = global.pref.parseend;
+			var get_ = pref_[$ "showref"]; global.pref.showref = !is_undefined(get_) ? get_ : true;
 		}
 	}
 	
@@ -213,7 +216,7 @@
 		#region Face & Border Effects
 			var efxfunc = function(_, param) { //Play an effect
 				var len = array_length(param);
-				var delayfunc = function () { SYSTEMUI.typist.pause(); TweenScript(SYSTEMUI, 0, 1.01, function () { SYSTEMUI.typist.unpause(); }); }
+				var delayfunc = function () { SYSTEMUI.typist.pause(); TweenScript(SYSTEMUI, 0, 1.001, function () { SYSTEMUI.typist.unpause(); }); }
 				switch ( string_lower(string_trim(param[0])) ) {
 					case "squash": case "squish": { TweenFire("$15", "~oquad", "dial_face_xscale_off", 0.3, 0, "dial_face_yscale_off", -0.3, 0); delayfunc(); } break; //Squish the face 
 					case "squeeze": case "stretch": { TweenFire("$15", "~oquad", "dial_face_xscale_off", -0.3, 0, "dial_face_yscale_off", 0.3, 0); delayfunc(); } break; //Squeeze the face
@@ -357,6 +360,8 @@
 	file_dragging = false; //Whether a file is being dragged on screen.
 	file_newname = ""; //New name for the file
 	ui_mainfont = fnt_speech;
+	ui_refclr = c_dkgray; //Reference image color
+	ui_viewing = false; //Whether we're looking at the reference image
 	
 	#region Main Menu Buttons
 		var i = 0, spr_ = spr_border_octagon, x_ = 320, y_ = 12, clr_ = c_orange, padd_ = 14;
@@ -868,6 +873,14 @@
 				new LuiImage({ value: spr_pixel, maintain_aspect: false, color: screenshot_back }).setSize(80, 40).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datagifcolor", e_, , true); }).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 0, 1, global.Ease.OutElastic, 10); element_.main_ui.animate(element_, "yscale", 0, 1, global.Ease.OutElastic, 5); sfx_play(snd_squish); })
 				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { e_.set(spr_pixel); SYSTEMUI.screenshot_back = e_.color_blend; audio_stop_sound(snd_equip2); sfx_play(snd_equip2, , , 1.3); }).addEvent(LUI_EV_CLICK_R, function(e_) { if ( e_.color_blend == c_lime ) { exit; } e_.main_ui.animate(e_, "xscale", 0, 1, global.Ease.OutElastic, 10); e_.main_ui.animate(e_, "yscale", 0, 1, global.Ease.OutElastic, 5); e_.setColor(c_lime); SYSTEMUI.screenshot_back = c_lime; sfx_play(snd_hurtpowerful); }),
 			]),
+			
+			new LuiButton({ text: "Update Reference Image", height: 40, }).addEvent(LUI_EV_CLICK, function () { SYSTEMUI.ui_updateref(); }),
+			new LuiButton({ text: "View Reference Image", height: 40, }).addEvent(LUI_EV_CLICK, function () { SYSTEMUI.ui_visible = false; SYSTEMUI.soupy_panel_extra.hide(); SYSTEMUI.ui_viewing = true; SYSTEMUI.bord_visible = true; }),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Show Ref:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Should the reference image\nbe visible on export?", true, , true),
+				new LuiToggleSwitch({ value: global.pref.showref, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "showref").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
+			]),
 				
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
 				new LuiText({ value: "Bigger Resolution:", width: 170, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Export all dialogue in UTDR's native resolution of 640x480.\nHelpful for [c_yellow][slant]arbitrary borders[/] as your sprites may get\ncut off on export if you import a border of an unusual size.", true, , true),
@@ -916,6 +929,20 @@
 				.addEvent(LUI_EV_CLICK_R, function(element_) {
 					var input_ = soup_checkout("datainputbox", false, true), spr_ = soup_checkout("datafontbox", false, true);
 					if ( spr_.font != "fnt_speech" && input_.get() != "" ) { spr_.font = "fnt_speech"; input_.set(""); sfx_play(snd_hurtpowerful); audio_stop_sound(snd_updated); }
+				}),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ 
+				new LuiText({ value: "Parse Open Alt:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the alt character used to\ndetect and start parsing commands.", true, , true),
+				new LuiInput({ value: global.altchar.start_, height: 40, placeholder: "[, ], <, >, etc.", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, max_length: 1, excluded_chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 " }).bindVariable(global.altchar, "start_").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+					var get_ = e_.get(); if ( get_ == "" || get_ == " " ) { get_ = "<" } global.altchar.start_ = get_; global.pref.parsestart = get_; SYSTEMUI.save_pref();
+				}),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ 
+				new LuiText({ value: "Parse End Alt:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the alt character used\nto end parsing commands.", true, , true),
+				new LuiInput({ value: global.altchar.end_, height: 40, placeholder: "[, ], <, >, etc.", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, max_length: 1, excluded_chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 " }).bindVariable(global.altchar, "end_").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+					var get_ = e_.get(); if ( get_ == "" || get_ == " " ) { get_ = ">" } global.altchar.end_ = get_; global.pref.parseend = get_; SYSTEMUI.save_pref();
 				}),
 			]),
 			
@@ -972,6 +999,13 @@
 					screenshot = true; screenshot_stacked = true; instance_create_depth(0, 0, 0, obj_stacker, offstruct); 
 				} break;
 			}
+		}
+		
+		ui_updateref = function() {
+			if ( sprite_exists(global.refimg) ) { sprite_delete(global.refimg); }
+			var fname = $"reference{PATHSEP}reference_image.png", fnamedebug = string_replace(fname, $"reference{PATHSEP}", "");
+			global.refimg = -1; if ( file_exists(fname) ) { global.refimg = sprite_add_ext(fname, 1, 0, 0, true); show_debug_message($"Added \"{fnamedebug}\" from {fname}!"); } else { sfx_play(snd_error); exit; }
+			sfx_play(snd_updated); ui_refclr = c_white; TweenFire("$30", "+60", TPCol("ui_refclr>"), c_dkgray);
 		}
 	#endregion
 #endregion

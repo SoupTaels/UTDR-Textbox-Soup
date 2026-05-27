@@ -252,13 +252,13 @@ function __scribble_gen_2_parser()
             
             if (_in_tag)
             {
-                if (_glyph_ord == SCRIBBLE_COMMAND_TAG_CLOSE) _in_tag = false;
+                if (_glyph_ord == SCRIBBLE_COMMAND_TAG_CLOSE) || (_glyph_ord == SCRIBBLE_COMMAND_TAG_CLOSE_ALT)_in_tag = false;
                 continue;
             }
             
-            if ((_glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN) && !_ignore_commands)
+            if (( _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN || _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN_ALT ) && !_ignore_commands)
             {
-                if (__scribble_buffer_peek_unicode(_string_buffer, buffer_tell(_string_buffer)) == SCRIBBLE_COMMAND_TAG_OPEN)
+                if ( __scribble_buffer_peek_unicode(_string_buffer, buffer_tell(_string_buffer)) == SCRIBBLE_COMMAND_TAG_OPEN ) || ( __scribble_buffer_peek_unicode(_string_buffer, buffer_tell(_string_buffer)) == SCRIBBLE_COMMAND_TAG_OPEN_ALT )
                 {
                     _state_command_tag_flipflop = true;
                 }
@@ -386,7 +386,7 @@ function __scribble_gen_2_parser()
         {
             #region Command tag handling
             
-            if (_glyph_ord == SCRIBBLE_COMMAND_TAG_CLOSE) //If we've hit a command tag close character (usually ])
+            if (_glyph_ord == SCRIBBLE_COMMAND_TAG_CLOSE) || (_glyph_ord == SCRIBBLE_COMMAND_TAG_CLOSE_ALT)//If we've hit a command tag close character (usually ])
             {
                 _tag_open_count--;
                 
@@ -1383,7 +1383,7 @@ function __scribble_gen_2_parser()
                     buffer_poke(_string_buffer, buffer_tell(_string_buffer)-1, buffer_u8, 0);
                 }
             }
-            else if (_glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN)
+            else if ( _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN ) || ( _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN_ALT )
             {
                 _tag_open_count++;
             }
@@ -1392,7 +1392,7 @@ function __scribble_gen_2_parser()
         }
         else
         {
-            if ((_glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN) && !_ignore_commands && (_state_command_tag_flipflop || (__scribble_buffer_peek_unicode(_string_buffer, buffer_tell(_string_buffer)) != SCRIBBLE_COMMAND_TAG_OPEN)))
+            if ((( _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN ) || ( _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN_ALT )) && !_ignore_commands && (_state_command_tag_flipflop || (__scribble_buffer_peek_unicode(_string_buffer, buffer_tell(_string_buffer)) != SCRIBBLE_COMMAND_TAG_OPEN || __scribble_buffer_peek_unicode(_string_buffer, buffer_tell(_string_buffer)) != SCRIBBLE_COMMAND_TAG_OPEN_ALT)))
             {
                 if (_state_command_tag_flipflop)
                 {
@@ -1767,7 +1767,7 @@ function __scribble_gen_2_parser()
                     }
                 }
                 
-                if (_glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN) _state_command_tag_flipflop = true;
+                if (( _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN ) || ( _glyph_ord == SCRIBBLE_COMMAND_TAG_OPEN_ALT )) _state_command_tag_flipflop = true;
                 
                 #endregion
             }

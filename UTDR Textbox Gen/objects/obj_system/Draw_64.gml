@@ -14,7 +14,7 @@ if ( dial_text_page > dial_text_page_c - 1 && screenshot_stacked ) { exit; } //P
 		#endregion
 		
 		#region Menu Buttons
-			if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , 0, 0); } //Reference image
+			if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , 0, 0, , , , ui_refclr); } //Reference image
 			var i = 0, count_ = array_length(butt);
 			repeat ( count_ ) { 
 				butt[i].update();
@@ -38,12 +38,13 @@ if ( dial_text_page > dial_text_page_c - 1 && screenshot_stacked ) { exit; } //P
 			textinput.Draw(x_, y_, w_, h_); 
 		}
 	}
+	else if ( !ui_visible && ( ui_viewing || record.enabled ) ) { if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , 0, 0, , , , ui_refclr); } } //Reference image 
 #endregion
 
 #region Dialogue Box, Text, Face, etc.
 	if ( bord_visible ) {
 		var dltrn = spr_bord == spr_border_deltarune; //Check if our border is Deltarune
-		var offset_ = dltrn ? 8 : 0, offset_w = dltrn ? 15 : 0, offset_h = dltrn ? 16 : 0, bordx = 32 - offset_, bordy = 315 - offset_, bordw = 578 + offset_w, bordh = 152 + offset_w; //Border coords
+		var offset_ = dltrn ? 8 : 0, offset_w = dltrn ? 15 : 0, offset_h = dltrn ? 16 : 0, bordx = 32 - offset_, bordy = ( 315 - offset_ ) - ( ui_viewing && global.pref.sizematters && global.pref.sizematterstop ? 305 + ( global.pref.anyborder ? abs(bord_yoff) : 0 ) : 0 ), bordw = 578 + offset_w, bordh = 152 + offset_w; //Border coords
 		var xx_ = ( bordx + ( ( FACE_USING ? ( dial_text_halign == 0 ? 144 : 28 ) : 28 ) + ( AUTO_ASTERISK ? 4 : 0 ) ) ) + ( offset_ + dltrn ? 6 : 0 ), yy_ = ( bordy + 24 ) + offset_; //Text X Y
 
 		var ninesl_ = sprite_get_nineslice(spr_bord); 
@@ -104,10 +105,10 @@ if ( dial_text_page > dial_text_page_c - 1 && screenshot_stacked ) { exit; } //P
 				else { //Draw placeholders
 					if ( FACE_CURRENT == -1 ) {
 						var emptytxt = scribble("[c_dkgray][wheel][scale,3](But nobody came.)")
-						.align(fa_center, fa_middle)
-						.draw(390, 390);
+						.align(fa_left, fa_top)
+						.draw(bordx + 200, bordy + 50);
 					
-						draw_sprite(spr_face_placeholder, 0, 40, 323);  //Portrait placeholder
+						draw_sprite(spr_face_placeholder, 0, bordx + 9, bordy + 8);  //Portrait placeholder
 					}
 				}
 			#endregion
@@ -146,14 +147,19 @@ draw_sprite_ext(spr_pixel, 0, 0, 0, 640, 480, 0, c_black, fader); //Black fade o
 
 #region Generating Text
 	if ( !ui_visible ) { 
-		var gen_ = scribble("[rainbow][wave]Generating...!").scale(4).align(fa_center, fa_middle).draw(320, 210); 
-		draw_format("center", "center", fnt_determination, c_yellow);
-		if ( record.enabled && record.type == 0 ) {
-			draw_text(320, 260, $"(Page: {dial_text_page} | Timer: {record.frames}/ {record.framesmax})"); //Show current page and timer
-		}
-		else { draw_text_transformed(320, 260, $"(Page: {dial_text_page + 1}/ {dial_text_page_c})", 2, 2, 0); } //Show current page and total page count
+		if ( !ui_viewing ) {
+			var gen_ = scribble("[rainbow][wave]Generating...!").scale(4).align(fa_center, fa_middle).draw(320, 210); 
+			draw_format("center", "center", fnt_determination, c_yellow);
+			if ( record.enabled && record.type == 0 ) {
+				draw_text(320, 260, $"(Page: {dial_text_page} | Timer: {record.frames}/ {record.framesmax})"); //Show current page and timer
+			}
+			else { draw_text_transformed(320, 260, $"(Page: {dial_text_page + 1}/ {dial_text_page_c})", 2, 2, 0); } //Show current page and total page count
 		
-		draw_format("right", , fnt_determination); draw_text(635, 5, $"(Double-press ESC to cancel)"); //Cancel text
+			draw_format("right", , fnt_determination); draw_text(635, 5, $"(Double-press ESC to cancel)"); //Cancel text
+		}
+		else { 
+			if ( blink() ) { var y_ = ( global.pref.sizematters && global.pref.sizematterstop ) ? 430 : 0; draw_sprite_stretched(spr_border_undertale_outlined, 0, 470, 5 + y_, 165, 35); draw_format("right", , fnt_determination); draw_text(625, 15 + y_, $"(Click to go back)"); }
+		}
 	}
 #endregion
 

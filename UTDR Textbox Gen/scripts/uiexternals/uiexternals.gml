@@ -9,6 +9,9 @@ pref = {
 	anyborder: false, //Whether to allow any arbitrary border
 	hidemessages: false, //Whether to hide output sucess message
 	checkupdates: true, //Check for updates?
+	parsestart: global.altchar.start_, //Start alt command 
+	parseend: global.altchar.end_, //End alt command 
+	showref: true, //Whether to show the reference image on export
 }
 #region Add External Faces
 	faces_dict = {};

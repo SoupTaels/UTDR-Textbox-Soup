@@ -69,6 +69,8 @@ if ( dial_text_outline != -1 && !string_search(dial_font, "outline", true) ) { d
 		layer_set_fx("bg3d",_fx);
 	}
 	else { if ( layer_exists("bg3d") ) { layer_destroy("bg3d"); } }
+	
+	if ( mouse_pressed && ui_viewing ) { ui_visible = true; ui_viewing = false; bord_visible = false; io_clear(); soupy_panel_extra.show(); sfx_play(snd_enc1); }
 #endregion
 
 #region Broadcast Signal

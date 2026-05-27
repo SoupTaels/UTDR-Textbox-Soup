@@ -23,6 +23,7 @@ if ( screenshot || record.enabled ) {
 		surface_set_target(screenshot_surf);
 			var myy = ( global.pref.sizematters && global.pref.sizematterstop ) ? ( -305 + ( global.pref.anyborder ? abs(bord_yoff) : 0 ) ) : ( global.pref.sizematters ? 5 : 0 );
 			if ( !record.enabled ) { draw_clear_alpha(c_black, 0); } else { draw_clear_alpha(screenshot_back, 0); }//For borders that aren't perfect rectangles
+			if ( global.pref.sizematters && global.pref.showref && sprite_exists(global.refimg) && !screenshot_stacked ) { draw_sprite_ensure(global.refimg, , 0, 0); } //Reference image
 		
 			#region Dialogue Box Outline
 				if ( out_ && bord_box_visible ) {
