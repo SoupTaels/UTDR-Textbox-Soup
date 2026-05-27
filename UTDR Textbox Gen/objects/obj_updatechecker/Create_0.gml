@@ -15,7 +15,7 @@ failedfunc = function() { //Failed connection, abort...
 }
 
 if ( os_is_network_connected(true) ) {
-	var updateurl = "https://pastebin.com/raw/0ELkgSXF"; //Link to check for updates
+	var updateurl = "https://raw.githubusercontent.com/SoupTaels/UTDR-Textbox-Soup/refs/heads/main/SOUP"; //Link to check for updates
 
 	http(updateurl, , , , function(status, result) { //We got connected!
 		if ( real(status) >= 400 ) { failedfunc(); exit; } //If there's internet, but maybe the content wasn't found, the website is down, or whatever else, let's just assume a connection fail anyways.
