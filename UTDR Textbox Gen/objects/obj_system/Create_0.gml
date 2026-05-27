@@ -1,6 +1,5 @@
 ///@desc Init
 //if ( live_call() ) { return live_result; } 
-
 #region Loading Preferences
 	if ( file_exists(PREF_SOUP) ) {
 		var buff_ = buffer_load(PREF_SOUP), data_ = buffer_read(buff_, buffer_text), pref_ = undefined;

@@ -1,6 +1,6 @@
 ///@desc Draw Dialogue Things
 if ( live_call() ) { return live_result; } 
-if ( dial_text_page > dial_text_page_c - 1 && screenshot_stacked ) { exit; } //Prevents the stack export from going out of bounds
+if ( dial_text_page > dial_text_page_c - 1 && dial_text_page_c > 1 ) { exit; } //Prevents the stack export from going out of bounds
 #region UI Borders and Buttons
 	if ( ui_visible ) {
 		#region Orange and White Border
