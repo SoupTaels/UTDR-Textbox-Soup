@@ -103,6 +103,9 @@
 	
 	dial_miniface = [];
 	dial_miniface_index = [];
+	dial_highlight = c_gold; dial_highlight_orig = dial_highlight;
+	dial_underline = c_gray; dial_underline_orig = dial_underline;
+	dial_striket = c_white; dial_striket_orig = dial_striket;
 	
 	#region Typist
 		typist = scribble_typist(); //Dialogue Engine
@@ -146,7 +149,7 @@
 			with ( obj_mini ) { if ( page == other.dial_text_page ) { active = true; TweenFire("$13", $"~{smooth ? "oquad" : "linear"}", "xoff", 30, 0, "alpha", 0, 1); } } 
 		});
 		
-		typist_reset = function () { dial_wrap_count = 1; dial_miniface = [-1]; dial_miniface_index = [0]; dial_indicator_visible = false; dial_gradient = dial_gradient_orig; dial_gradient_clr = dial_gradient_clr_orig; dial_face_angle = dial_face_angle_orig; dial_face_alpha = dial_face_alpha_orig; dial_face_xoff = 0; dial_face_yoff = 0; dial_face_xscale_off = 0; dial_face_yscale_off = 0; } //Function to reset portrait modifications after dialogue finishes
+		typist_reset = function () { dial_striket = dial_striket_orig; dial_underline = dial_underline_orig; dial_highlight = dial_highlight_orig; dial_wrap_count = 1; dial_miniface = [-1]; dial_miniface_index = [0]; dial_indicator_visible = false; dial_gradient = dial_gradient_orig; dial_gradient_clr = dial_gradient_clr_orig; dial_face_angle = dial_face_angle_orig; dial_face_alpha = dial_face_alpha_orig; dial_face_xoff = 0; dial_face_yoff = 0; dial_face_xscale_off = 0; dial_face_yscale_off = 0; } //Function to reset portrait modifications after dialogue finishes
 		
 		#region Ease Builder
 			typist_ease = { type: SCRIBBLE_EASE.LINEAR, x: 0, y: 0, xscale: 1, yscale: 1, angle: 0, alpha: 1, };
@@ -241,6 +244,21 @@
 						var getclr = real_ext(len > 1 ? param[1] : "255"), getclr2 = real_ext(len > 2 ? param[2] : "255"), getclr3 = real_ext(len > 3 ? param[3] : "255"), time_ = real_ext(len > 4 ? param[4] : "15");
 						var myclr = make_color_rgb(getclr != "" ? getclr : 255, getclr2 != "" ? getclr2 : 255, getclr3 != "" ? getclr3 : 255);
 						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 15}", TPCol("bord_clr"), bord_clr, myclr); delayfunc();
+					} break;
+					case "colorhigh": case "blendhigh": { //Make the highlight blend to a different [effect,colorhigh,r,g,b,frames]
+						var getclr = real_ext(len > 1 ? param[1] : "255"), getclr2 = real_ext(len > 2 ? param[2] : "255"), getclr3 = real_ext(len > 3 ? param[3] : "255"), time_ = real_ext(len > 4 ? param[4] : "15");
+						var myclr = make_color_rgb(getclr != "" ? getclr : 255, getclr2 != "" ? getclr2 : 255, getclr3 != "" ? getclr3 : 255);
+						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 15}", TPCol("dial_highlight"), dial_highlight, myclr); delayfunc();
+					} break;
+					case "colorunder": case "blendunder": { //Make the underline blend to a different [effect,colorunder,r,g,b,frames]
+						var getclr = real_ext(len > 1 ? param[1] : "255"), getclr2 = real_ext(len > 2 ? param[2] : "255"), getclr3 = real_ext(len > 3 ? param[3] : "255"), time_ = real_ext(len > 4 ? param[4] : "15");
+						var myclr = make_color_rgb(getclr != "" ? getclr : 255, getclr2 != "" ? getclr2 : 255, getclr3 != "" ? getclr3 : 255);
+						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 15}", TPCol("dial_underline"), dial_underline, myclr); delayfunc();
+					} break;
+					case "colorstrike": case "blendstrike": { //Make the strikethrough blend to a different [effect,colorstrike,r,g,b,frames]
+						var getclr = real_ext(len > 1 ? param[1] : "255"), getclr2 = real_ext(len > 2 ? param[2] : "255"), getclr3 = real_ext(len > 3 ? param[3] : "255"), time_ = real_ext(len > 4 ? param[4] : "15");
+						var myclr = make_color_rgb(getclr != "" ? getclr : 255, getclr2 != "" ? getclr2 : 255, getclr3 != "" ? getclr3 : 255);
+						TweenFire("?", obj_system, $"${time_ != "" ? time_ : 15}", TPCol("dial_striket"), dial_striket, myclr); delayfunc();
 					} break;
 					case "colorgrad": case "blendgrad": case "colorgradient": case "blendgradient": { //Make the gradient blend to a different [effect,colorgrad,r,g,b,frames]
 						var getclr = real_ext(len > 1 ? param[1] : "255"), getclr2 = real_ext(len > 2 ? param[2] : "255"), getclr3 = real_ext(len > 3 ? param[3] : "255"), time_ = real_ext(len > 4 ? param[4] : "15");
@@ -776,6 +794,28 @@
 				new LuiButton({ text: "Pick...", height: 40, }).addEvent(LUI_EV_CLICK, soupy_color_picker_gradient),
 				new LuiImage({ value: spr_pixel, maintain_aspect: false, color: dial_gradient_clr }).setSize(80, 40).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datagradient", e_, , true); }).addEvent(LUI_EV_SHOW, function(e_) { e_.color_blend = SYSTEMUI.dial_gradient_clr; }).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 0, 1, global.Ease.OutElastic, 10); element_.main_ui.animate(element_, "yscale", 0, 1, global.Ease.OutElastic, 5); sfx_play(snd_squish); })
 				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { e_.set(spr_pixel); SYSTEMUI.dial_gradient_clr = e_.color_blend; SYSTEMUI.dial_gradient_clr_orig = SYSTEMUI.dial_gradient_clr; audio_stop_sound(snd_equip2); sfx_play(snd_equip2, , , 1.3); }).addEvent(LUI_EV_CLICK_R, function(e_) { if ( e_.color_blend == c_white ) { exit; } e_.main_ui.animate(e_, "xscale", 0, 1, global.Ease.OutElastic, 10); e_.main_ui.animate(e_, "yscale", 0, 1, global.Ease.OutElastic, 5); e_.setColor(c_white); SYSTEMUI.dial_gradient_clr = c_white; SYSTEMUI.dial_gradient_clr_orig = SYSTEMUI.dial_gradient_clr; sfx_play(snd_hurtpowerful); }),
+			]),
+			
+			new LuiHorizontalRule({ height: 5, }),
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a color
+				new LuiText({ value: "Highlight Color:", width: 140, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the color of the highlight.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[fx,colorhigh,r,g,b,frames][/].", true, , true),
+				new LuiButton({ text: "Pick...", height: 40, }).addEvent(LUI_EV_CLICK, soupy_color_picker_highlight),
+				new LuiImage({ value: spr_pixel, maintain_aspect: false, color: dial_highlight }).setSize(80, 40).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datahighlight", e_, , true); }).addEvent(LUI_EV_SHOW, function(e_) { e_.color_blend = SYSTEMUI.dial_highlight; }).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 0, 1, global.Ease.OutElastic, 10); element_.main_ui.animate(element_, "yscale", 0, 1, global.Ease.OutElastic, 5); sfx_play(snd_squish); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { e_.set(spr_pixel); SYSTEMUI.dial_highlight = e_.color_blend; SYSTEMUI.dial_highlight_orig = SYSTEMUI.dial_highlight; audio_stop_sound(snd_equip2); sfx_play(snd_equip2, , , 1.3); }).addEvent(LUI_EV_CLICK_R, function(e_) { if ( e_.color_blend == c_gold ) { exit; } e_.main_ui.animate(e_, "xscale", 0, 1, global.Ease.OutElastic, 10); e_.main_ui.animate(e_, "yscale", 0, 1, global.Ease.OutElastic, 5); e_.setColor(c_gold); SYSTEMUI.dial_highlight = c_gold; SYSTEMUI.dial_highlight_orig = SYSTEMUI.dial_highlight; sfx_play(snd_hurtpowerful); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a color
+				new LuiText({ value: "Underline Color:", width: 140, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the color of the underline.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[fx,colorunder,r,g,b,frames][/].", true, , true),
+				new LuiButton({ text: "Pick...", height: 40, }).addEvent(LUI_EV_CLICK, soupy_color_picker_underline),
+				new LuiImage({ value: spr_pixel, maintain_aspect: false, color: dial_underline }).setSize(80, 40).addEvent(LUI_EV_CREATE, function(e_) { soup_store("dataunderline", e_, , true); }).addEvent(LUI_EV_SHOW, function(e_) { e_.color_blend = SYSTEMUI.dial_underline; }).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 0, 1, global.Ease.OutElastic, 10); element_.main_ui.animate(element_, "yscale", 0, 1, global.Ease.OutElastic, 5); sfx_play(snd_squish); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { e_.set(spr_pixel); SYSTEMUI.dial_underline = e_.color_blend; SYSTEMUI.dial_underline_orig = SYSTEMUI.dial_underline; audio_stop_sound(snd_equip2); sfx_play(snd_equip2, , , 1.3); }).addEvent(LUI_EV_CLICK_R, function(e_) { if ( e_.color_blend == c_gray ) { exit; } e_.main_ui.animate(e_, "xscale", 0, 1, global.Ease.OutElastic, 10); e_.main_ui.animate(e_, "yscale", 0, 1, global.Ease.OutElastic, 5); e_.setColor(c_gray); SYSTEMUI.dial_underline = c_gray; SYSTEMUI.dial_underline_orig = SYSTEMUI.dial_underline; sfx_play(snd_hurtpowerful); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a color
+				new LuiText({ value: "Strikethrough Color:", width: 140, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the color of the strikethrough.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[fx,colorstrike,r,g,b,frames][/].", true, , true),
+				new LuiButton({ text: "Pick...", height: 40, }).addEvent(LUI_EV_CLICK, soupy_color_picker_striket),
+				new LuiImage({ value: spr_pixel, maintain_aspect: false, color: dial_striket }).setSize(80, 40).addEvent(LUI_EV_CREATE, function(e_) { soup_store("datastriket", e_, , true); }).addEvent(LUI_EV_SHOW, function(e_) { e_.color_blend = SYSTEMUI.dial_striket; }).addEvent(LUI_EV_MOUSE_LEFT_PRESSED, function(element_) { element_.main_ui.animate(element_, "xscale", 0, 1, global.Ease.OutElastic, 10); element_.main_ui.animate(element_, "yscale", 0, 1, global.Ease.OutElastic, 5); sfx_play(snd_squish); })
+				.addEvent(LUI_EV_VALUE_UPDATE, function(e_) { e_.set(spr_pixel); SYSTEMUI.dial_striket = e_.color_blend; SYSTEMUI.dial_striket_orig = SYSTEMUI.dial_striket; audio_stop_sound(snd_equip2); sfx_play(snd_equip2, , , 1.3); }).addEvent(LUI_EV_CLICK_R, function(e_) { if ( e_.color_blend == c_white ) { exit; } e_.main_ui.animate(e_, "xscale", 0, 1, global.Ease.OutElastic, 10); e_.main_ui.animate(e_, "yscale", 0, 1, global.Ease.OutElastic, 5); e_.setColor(c_white); SYSTEMUI.dial_striket = c_white; SYSTEMUI.dial_striket_orig = SYSTEMUI.dial_striket; sfx_play(snd_hurtpowerful); }),
 			]),
 			
 			new LuiHorizontalRule({ height: 5, }),

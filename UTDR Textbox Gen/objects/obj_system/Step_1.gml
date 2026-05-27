@@ -79,6 +79,7 @@
 						new LuiButton({ text: "Let's get soupy!!", height: 35, }).addEvent(LUI_EV_CLICK, function(element_) {
 							var stacked_ = soup_checkout("stacked", false), page_ = soup_checkout("pageat", false), out_ = soup_checkout("bordout", false), vis_ = soup_checkout("bordvisible", false), xx_ = soup_checkout("xoff", false), yy_ = soup_checkout("yoff", false);
 							var mainfunc = soup_checkout("export dialogue func", false), maincan = soup_checkout("maincan", false);
+							if ( stacked_ && SYSTEMUI.dial_text_page_c <= 1 ) { SYSTEMUI.ui_paused = false; soupy_message("You must have more than one page.", "Go Back", 300, , , snd_error, , , true); exit; }
 							if ( string_lettersdigits(dial_text) == "" ) { SYSTEMUI.ui_paused = false; soupy_message("You haven't even written any|dialogue yet!!", "Go Back", 300, , , snd_error, , , true); exit; }
 							if ( string_lettersdigits(page_) == "" ) { page_ = 0; } if ( string_lettersdigits(xx_) == "" ) { xx_ = 0; } if ( string_lettersdigits(yy_) == "" ) { yy_ = 0; }
 							if ( page_ > SYSTEMUI.dial_text_page_c ) { SYSTEMUI.ui_paused = false; soupy_message("Starting page can't be greater|than your page count.", "Go Back", 300, , , snd_error, , , true); exit; } else if ( page_ == "" || page_ == 0 ) { page_ = 1; } 

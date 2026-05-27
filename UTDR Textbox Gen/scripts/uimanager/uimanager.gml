@@ -12,7 +12,7 @@
 	#macro AUTO_ASTERISK ( ( obj_system.dial_text_halign == 0 && obj_system.dial_text_valign == 0 ) && obj_system.dial_point_auto && string_trim(obj_system.dial_point_chr) != "" ) //Whether to enable auto-asterisk
 	#macro PATHSEP (( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ) ? "\\"  :  "/") //Get platform-dependant path
 	#macro PREF_SOUP $"{executable_get_directory()}soupy_preferences.soupy" //Settings to save
-	#macro GAME_VERSION "0.0.4" //Current game version
+	#macro GAME_VERSION "0.0.5" //Current game version
 #endregion
 ///@desc Help Scribble with how to align the text
 function scribble_alignment(halign_ = 0, valign_ = 0) {

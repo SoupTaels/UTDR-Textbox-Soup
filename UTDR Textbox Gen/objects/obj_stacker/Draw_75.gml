@@ -9,8 +9,9 @@ if ( !surface_exists(soupstack_surf) ) { soupstack_surf = surface_create(sprW, s
 	try { surface_resize(soupstack_surf, soupstack_width, soupstack_height); }
 	catch ( err_ ) {
 		//Guestimating the numbers here based on my testing
-		if ( soupstack_width >= 3000 ) { soupy_message($"Sorry, but the stack has shifted to an|amount that is too big for this tool to handle!|Shift amount: [c_yellow]{soupstack_xoff}[/] / Surface Width: [c_red]{soupstack_width}[/]|Try a smaller shift amount.", "Damn... That's fine.", 400, , , snd_error, fnt_abaddon, , , true, 590); abort = true; instance_destroy(); exit; }
-		if ( soupstack_height >= 5000 ) { soupy_message($"Sorry, but the amount of dialogue pages([c_yellow]{soupstack_count}[/])|you have is too much for this tool to handle!|You'll need to split up your dialogue|into smaller exports.|You may also want to try lowering|the stack gap amount.([c_yellow]{soupstack_yoff}[/])", "Damn... That's fine.", 400, , , snd_error, fnt_abaddon, , , true, 590); abort = true; instance_destroy(); exit; }
+		if ( soupstack_width >= 3000 ) { soupy_message($"Sorry, but the stack has shifted to an|amount that is too big for this tool to handle!|Shift amount: [c_yellow]{soupstack_xoff}[/] / Surface Width: [c_red]{soupstack_width}[/]|Try a smaller shift amount.", "Damn... That's fine.", 400, , , snd_error, fnt_abaddon, , , true, 590); abort = true; }
+		else if ( soupstack_height >= 5000 ) { soupy_message($"Sorry, but the amount of dialogue pages([c_yellow]{soupstack_count}[/])|you have is too much for this tool to handle!|You'll need to split up your dialogue|into smaller exports.|You may also want to try lowering|the stack gap amount.([c_yellow]{soupstack_yoff}[/])", "Damn... That's fine.", 400, , , snd_error, fnt_abaddon, , , true, 590); abort = true; }
+		SYSTEMUI.screenshot = false; soup_checkout("finishfunc", , true)(false, true, false); instance_destroy(); exit;
 	}
 }
 surface_set_target(soupstack_surf);

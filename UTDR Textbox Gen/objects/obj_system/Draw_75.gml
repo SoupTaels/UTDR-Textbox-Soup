@@ -68,6 +68,7 @@ if ( screenshot || record.enabled ) {
 			with ( SYSTEMUI ) { typist_reset(); file_newname = ""; screenshot = false; screenshot_stacked = false; dial_text_gif = false; dial_wrap_count = 1; spr_bord = bord_prev; dial_text_page = 0; bord_box_visible = true; ui_tab = soup_checkout("tablast", , true); ui_visible = true; ui_reset(); }
 			exit;
 		});
+		soup_store("finishfunc", finish_func, true, true);
 	#endregion
 	
 	#region Cancel Early

@@ -3,7 +3,7 @@ var soupstack_count = array_length(soupstack_spr), soupstack_i = 0;
 if ( soupstack_count == 0 ) { exit; } //Cancel early if there's nothing to draw
 
 if ( !abort ) { surface_save(soupstack_surf, soupstack_path); } //Save everything drawn to this surface, aka our stack of sprites
-else { with ( SYSTEMUI ) { dial_text_page = dial_text_page_c + 1; } }
+with ( SYSTEMUI ) { dial_text_page = 0; }
 
 repeat ( soupstack_count ) { 
 	sprite_delete(soupstack_spr[soupstack_i]); show_debug_message("Deleted sprite stack {0}/ {1}", soupstack_i, soupstack_count - 1);

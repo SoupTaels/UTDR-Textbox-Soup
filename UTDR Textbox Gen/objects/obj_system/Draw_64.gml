@@ -84,15 +84,29 @@ if ( dial_text_page > dial_text_page_c - 1 && dial_text_page_c > 1 ) { exit; } /
 									repeat ( regions_len ) { //Loop through all regions
 										var cur_ = regions_[regions_i]; //Get current region
 										switch ( cur_.name ) {
-											case "highlight": {
+											case "highlight": case "hl": {
 												var chr_ = scrib_dial.get_glyph_data(cur_.start_glyph, dial_text_page), myx_ = ( tx_x + dial_text_xoff ) + chr_.left, myy_ = ( yy_ + dial_text_yoff ) + chr_.top; //First, get the starting position of what started the region
 												var bbox_ = cur_.bbox_array[0], x_ = bbox_.x1, x_ = bbox_.y1, w_ = ( bbox_.x2 - bbox_.x1 ), h_ = ( bbox_.y2 - bbox_.y1 ); //Then, calculate bbox
-											
-												draw_sprite_stretched_ext(spr_pixel, 0, myx_, myy_, w_, h_, c_red, 1);
+												
+												if ( !record.enabled || ( record.enabled && typist.get_position() > cur_.start_glyph ) ) { draw_sprite_stretched_ext(spr_pixel, 0, myx_, myy_, w_, h_, dial_highlight, 1); }
 												//if ( mouse_pressed_right ) { show_debug_message(cur_.bbox_array[0].x1); }
 											} break;
+											
+											case "underline": case "ul": {
+												var chr_ = scrib_dial.get_glyph_data(cur_.start_glyph, dial_text_page), myx_ = ( tx_x + dial_text_xoff ) + chr_.left, myy_ = ( yy_ + dial_text_yoff ) + chr_.bottom; //First, get the starting position of what started the region
+												var bbox_ = cur_.bbox_array[0], x_ = bbox_.x1, x_ = bbox_.y1, w_ = ( bbox_.x2 - bbox_.x1 ), h_ = 2; //Then, calculate bbox
+											
+												if ( !record.enabled || ( record.enabled && typist.get_position() > cur_.start_glyph ) ) { draw_sprite_stretched_ext(spr_pixel, 0, myx_, myy_, w_, h_, dial_underline, 1); }
+											} break;
+											
+											case "strike": case "stk": {
+												var chr_ = scrib_dial.get_glyph_data(cur_.start_glyph, dial_text_page), myx_ = ( tx_x + dial_text_xoff ) + chr_.left, myy_ = ( ( ( yy_ + dial_text_yoff ) + chr_.bottom ) + ( ( yy_ + dial_text_yoff ) + chr_.top ) )/ 2; //First, get the starting position of what started the region
+												var bbox_ = cur_.bbox_array[0], x_ = bbox_.x1, x_ = bbox_.y1, w_ = ( bbox_.x2 - bbox_.x1 ), h_ = 2; //Then, calculate bbox
+											
+												if ( !record.enabled || ( record.enabled && typist.get_position() > cur_.start_glyph ) ) { draw_sprite_stretched_ext(spr_pixel, 0, myx_, myy_, w_, h_, dial_striket, 1); }
+											} break;
 										}
-										//if ( mouse_pressed_right ) { show_debug_message(cur_.name); }
+										//if ( mouse_pressed_right ) { show_debug_message(); }
 									regions_i++; }
 								}
 							#endregion
