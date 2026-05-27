@@ -412,7 +412,7 @@ function ui_manage() {
 				else { variable_instance_set(obj_system, "within_hoverindex2", false); }
 			#endregion
 			#region Switch Sprite
-				if ( keyboard_check(vk_control) && FACE_CURRENT != -1 ) { if ( mouse_pressed ) { external_choose_face(); } else if ( mouse_pressed_right ) { soupy_color_picker_portrait(); } }
+				if ( keyboard_check(vk_control) ) { if ( mouse_pressed ) { external_choose_face(); } else if ( mouse_pressed_right ) { soupy_color_picker_portrait(); } }
 			#endregion
 		}
 		
