@@ -110,6 +110,7 @@
 		typist_smooth = 0; //Typewriter smooth
 		typist.in(typist_spd, typist_smooth);
 		typist.function_per_char(function(_element, _position, _typist) { //Function to run per character
+			if ( dial_text_page > dial_text_page_c - 1 && dial_text_page_c > 1 ) { exit; } //Prevents the stack export from going out of bounds
 			#region Auto Asterisks
 				var mychr = chr(_element.get_glyph_data(_position - 1).unicode); //Get the currently revealed character
 				var mychr2 = chr(_element.get_glyph_data(_position).unicode); //Get the next character
@@ -134,6 +135,7 @@
 			#endregion
 		});
 		typist.function_on_complete(function() { //Function to run once the dialogue is complete
+			if ( dial_text_page > dial_text_page_c - 1 && dial_text_page_c > 1 ) { exit; } //Prevents the stack export from going out of bounds
 			dial_indicator_visible = true;
 			if ( dial_face_auto ) { FACE_INDEX = 0; }
 			if ( !dial_face_keep ) { FACE_CURRENT = FACE_ORIGINAL; } //Switch back to the original face
