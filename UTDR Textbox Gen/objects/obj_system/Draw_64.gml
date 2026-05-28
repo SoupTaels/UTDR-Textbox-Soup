@@ -67,6 +67,16 @@ if ( dial_text_page > dial_text_page_c - 1 && dial_text_page_c > 1 ) { exit; } /
 					else { if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, 1); } else { draw_9slice(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, bord_scale, bord_stretch); } }
 					if ( dial_indicator != -1 && dial_indicator_visible && blink(dial_indicator_blink - 100, dial_indicator_blink) ) { draw_sprite_ensure(dial_indicator, dial_indicator_index, ( 600 - ( sprite_get_width(dial_indicator) )/ 2 ) + dial_indicator_xoff, ( ( 455 - ( sprite_get_height(dial_indicator) )/ 2 ) + dial_text_yoff ) + dial_indicator_yoff, dial_indicator_scale, dial_indicator_scale, dial_indicator_angle, dial_text_c, 1); }
 				}
+				
+				#region Name Tag
+					if ( string_lettersdigits(dial_nametag) != "" ) { 
+						var nametag_ = scribble(dial_nametag).starting_format("fnt_tiny", dial_text_c).scale(2), x_ = bordx + 20, y_ = bordy - 2;
+						var bbox_ = nametag_.get_bbox(x_, y_);
+						draw_sprite_ext(spr_pixel, 0, x_ - 2, y_, bbox_.width + 2, bbox_.height - 3, 0, c_black, 1);
+						nametag_.draw(x_, y_);
+					}
+				#endregion
+				
 				if ( FACE_USING && ( !dial_text_gif || ( dial_text_gif && typist.get_state() >= 0.01 * typist_spd ) ) ) { draw_sprite_ensure(FACE_CURRENT, FACE_INDEX, bordx + ( 74 + offset_ ) + dial_face_xoff, bordy + ( 76 + offset_ ) + dial_face_yoff, dial_face_xscale + dial_face_xscale_off, dial_face_yscale + dial_face_yscale_off, dial_face_angle, dial_face_clr, dial_face_alpha); } //Dialogue Face
 				if ( ( FACE_USING && ( !dial_text_gif || ( dial_text_gif && typist.get_state() >= 0.01 * typist_spd ) ) ) && dial_point_clr_anim_alpha > 0 ) { gpu_set_fog(true, dial_point_clr_anim, -16000, 16000); draw_sprite_ensure(FACE_CURRENT, FACE_INDEX, bordx + ( 74 + offset_ ) + dial_face_xoff, bordy + ( 76 + offset_ ) + dial_face_yoff, dial_face_xscale + dial_face_xscale_off, dial_face_yscale + dial_face_yscale_off, dial_face_angle, c_white, dial_point_clr_anim_alpha); gpu_set_fog(false, 0, 0, 0); } //Dialogue Face Flashing
 			#endregion

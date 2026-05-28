@@ -103,11 +103,11 @@
 	dial_indicator_anim = 0; dial_indicator_anim_track = 0;
 	dial_indicator_visible = false; dial_indicator_scale = 1; dial_indicator_xoff = 0; dial_indicator_yoff = 0; dial_indicator_angle = 0; dial_indicator_blink = 300;
 	
-	dial_miniface = [];
-	dial_miniface_index = [];
-	dial_highlight = c_gold; dial_highlight_orig = dial_highlight;
-	dial_underline = c_gray; dial_underline_orig = dial_underline;
-	dial_striket = c_white; dial_striket_orig = dial_striket;
+	dial_miniface = []; dial_miniface_index = []; //Mini face and image index per line
+	dial_highlight = c_gold; dial_highlight_orig = dial_highlight; //Highlight text
+	dial_underline = c_gray; dial_underline_orig = dial_underline; //Underline text
+	dial_striket = c_white; dial_striket_orig = dial_striket; //Strikethrough text
+	dial_nametag = ""; //Character speaking
 	
 	#region Typist
 		typist = scribble_typist(); //Dialogue Engine
@@ -218,6 +218,7 @@
 				repeat ( ( dial_text_page_c ) - i ) { dial_face[i] = face_spr; dial_face_prev[i] = face_spr; dial_face_original[i] = face_spr; dial_face_name[i] = FACE_INTERNAL; i++; }
 			});
 			scribble_typists_add_event("speed_pop", function(_, param) { typist_spd = typist_spd_orig; }); //Changes the typist speed back to the default
+			scribble_typists_add_event("nametag", function(_, param) { dial_nametag = ( array_length(param) > 0 ? param[0] : "" ); }); //Change name tag
 		#endregion
 		
 		#region Face & Border Effects
@@ -557,6 +558,11 @@
 				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Keep original dialogue face
 					new LuiText({ value: "Keep previous face:", width: 185, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Whether to always keep the last dialogue face\nor reset back to the original face.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[face_orig,character,expression]", true, , true),
 					new LuiToggleSwitch({ value: dial_face_keep, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(self, "dial_face_keep"),
+				]),
+				
+				new LuiRow().setFlexGrow(1).centerContent().addContent([
+					new LuiText({ value: "Name Tag:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Adds a tiny name tag onto the border.\nLeave blank for no name tag.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[nametag,string]", true, , true),
+					new LuiInput({ value: dial_nametag, height: 40, placeholder: "Toriel, Susie, etc.(accepts effect & color commands)", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(self, "dial_nametag")
 				]),
 			]);
 			var panel_header_ = new LuiButton(panel_base_).setText("Global Face Settings").setTooltip("These settings affect [wave][c_red]all[/] dialogue portraits.", true, , true).setData("header", panel_).setIcon(spr_gui_icons,,, c_black,, 5).addEvent(LUI_EV_CLICK, function(e_) { var header = e_.getData("header"); header.toggleVisible(); }); soupy_panel_portrait.addContent([panel_header_, panel_, ]); //End container
