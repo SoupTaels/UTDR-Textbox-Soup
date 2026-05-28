@@ -7,9 +7,9 @@ if ( dial_text_page > dial_text_page_c - 1 && dial_text_page_c > 1 ) { exit; } /
 			outlinesoup_start();
 				var yoff = ui_tab_yoff;
 				draw_sprite_stretched_ext(spr_border_octagon, 0, 10, 20, room_width - 20, ( room_height - 90 ) + yoff, c_white, 0.6); //Back opacity
-				draw_sprite_stretched_ext(spr_border_tabs, 2, 10, 280, room_width - 20, ( room_height - 350 ) + yoff, merge_color(c_orange, c_white, 0.5), 1); //Fading Part
+				draw_sprite_stretched_ext(spr_border_tabs, 2, 10, 280, room_width - 20, ( room_height - 350 ) + yoff, merge_color(ui_accentcolor, c_white, 0.5), 1); //Fading Part
 				draw_sprite_stretched_ext(spr_border_tabs, 2, 10, 300, room_width - 20, ( room_height - 370 ) + yoff, c_white, 1); //Bottom
-				draw_sprite_stretched_ext(spr_border_tabs, 1, 10, 20, room_width - 20, ( room_height - 220 ), c_orange, 1); //Top
+				draw_sprite_stretched_ext(spr_border_tabs, 1, 10, 20, room_width - 20, ( room_height - 220 ), ui_accentcolor, 1); //Top
 			outlinesoup_end();
 		#endregion
 		

@@ -10,6 +10,7 @@
 			var get_ = pref_[$ "firsttime"]; global.pref.firsttime = !is_undefined(get_) ? get_ : true;
 			var get_ = pref_[$ "shadowoff"]; global.pref.shadowoff = !is_undefined(get_) ? abs(round(get_)) : 1;
 			var get_ = pref_[$ "killaudio"]; global.pref.killaudio = !is_undefined(get_) ? get_ : false;
+			var get_ = pref_[$ "randomclr"]; global.pref.randomclr = !is_undefined(get_) ? get_ : true;
 			var get_ = pref_[$ "sizematters"]; global.pref.sizematters = !is_undefined(get_) ? get_ : false;
 			var get_ = pref_[$ "sizematterstop"]; global.pref.sizematterstop = !is_undefined(get_) ? get_ : false;
 			var get_ = pref_[$ "hidemessages"]; global.pref.hidemessages = !is_undefined(get_) ? get_ : false;
@@ -366,8 +367,8 @@
 
 #region Engine UI
 	fader = 1; TweenFire("$10", "+10", "fader>", 0); //Black overlay
+	ui_accentcolor = global.pref.randomclr ? make_color_hsv(irandom(255), irandom_range(150, 230), 255) : c_orange;
 	ui_tab = 0; //Current Tab (0 - Dialogue, 1 - Face, 2 - Border, 3 - About)
-	scrib_parse = { start_: "[", end_: "]", arg_: ",", } //Scribble tag parser 
 	screenshot = false; //Screenshot task
 	screenshot_stacked = false; //Whether dialogue exports are stacked
 	screenshot_surf = -1; //Screenshot surface
@@ -384,7 +385,7 @@
 	ui_viewing = false; //Whether we're looking at the reference image
 	
 	#region Main Menu Buttons
-		var i = 0, spr_ = spr_border_octagon, x_ = 320, y_ = 12, clr_ = c_orange, padd_ = 14;
+		var i = 0, spr_ = spr_border_octagon, x_ = 320, y_ = 12, clr_ = ui_accentcolor, padd_ = 14;
 		butt[i] = new Button({ id_: i, text: "Dialogue [spr_gui_icons,0]", x: x_, y: y_, yoff: 0, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: -1, on_enter: -1, on_leave: -1, on_click: -1, centered: false, });
 		with ( butt[i++].data ) { self[$ "on_hover"] = method(self, on_hover_); self[$ "on_enter"] = method(self, on_enter_); self[$ "on_leave"] = method(self, on_leave_); self[$ "on_click"] = method(self, on_click_); }
 		butt[i] = new Button({ id_: i, text: "Style        [spr_gui_icons,4]", x: x_, y: y_, yoff: 0, padd_multi: padd_, sprite: spr_, color_butt: clr_, color: clr_, on_hover: -1, on_enter: -1, on_leave: -1, on_click: -1, centered: false, });
@@ -459,7 +460,7 @@
 	#region Init Style
 		var soupy_style = new LuiStyle({ padding: 15, gap: 10, color_text: c_white, color_hover: c_yellow, sound_click: snd_select, sound_hover: snd_sel_switch, }) //Main Style
 			.setRenderRegionOffset([10, 10, 10, 10])
-			.setFonts(fnt_determination, fnt_determination, fnt_determination).setColors(, c_orange, #f43e83, #15ee97)
+			.setFonts(fnt_determination, fnt_determination, fnt_determination).setColors(, ui_accentcolor, #f43e83, #15ee97)
 			.setSprites(spr_border_undertale_outlined, spr_border_undertale_outlined).setSpriteCheckbox(spr_border_undertale_outlined, spr_pixel).setSpriteComboBoxArrow(spr_soul_tiny)
 		soupy_lui = new LuiMain().setStyle(soupy_style);
 	#endregion
@@ -468,7 +469,7 @@
 		var x1_ = 10, y1_ = 45, x2_ = 600, y2_ = 385, w_ = x2_ - x1_, h_ = y2_ - y1_;
 		soupy_panel_portrait = new LuiScrollPanel({ x: 10, y: 45, width: w_, height: h_, scroll_pin_edge_offset:10, sprite_panel: false, sound_right: snd_throw, }); //Start containter
 		
-			var panel_base_ = { text: "", color: c_orange, sprite_button: spr_border_header, height: 40, font: fnt_speech, text_color: c_black, sound_click: snd_enc1, sound_click_pitch: 1.3, };
+			var panel_base_ = { text: "", color: ui_accentcolor, sprite_button: spr_border_header, height: 40, font: fnt_speech, text_color: c_black, sound_click: snd_enc1, sound_click_pitch: 1.3, };
 			var panel_ = new LuiContainer().setPadding(0).addContent([
 				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite
 					new LuiText({ value: "Sprite:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the portrait sprite.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[face,character,expression][/]\nor [c_yellow][[face,filename][/]. Set to [c_red]-1[/] for no\ndialogue portrait.", true, , true),
@@ -963,6 +964,11 @@
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
 				new LuiText({ value: "Mute Audio:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Disable all sound effects.", true, , true),
 				new LuiToggleSwitch({ value: global.pref.killaudio, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "killaudio").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Random Theme:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("[wave][rainbow]Let's have a little fun!\n[/]Randomizes the UI theme on startup.", true, , true),
+				new LuiToggleSwitch({ value: global.pref.randomclr, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "randomclr").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
 			]),
 			
 			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite

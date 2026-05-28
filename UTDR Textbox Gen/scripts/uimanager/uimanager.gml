@@ -36,7 +36,7 @@ function scribble_alignment(halign_ = 0, valign_ = 0) {
 
 #region Default functions for the menu buttons
 	function on_enter_() { if ( SYSTEMUI.ui_tab != id_ ) { sfx_play(snd_sel_switch); TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } }
-	function on_leave_() { if ( SYSTEMUI.ui_tab != id_ ) { TweenFire("~ocirc", "$15", "yoff>", 0); text = text_static; color_butt = c_orange; } window_set_cursor(cr_default); }
+	function on_leave_() { if ( SYSTEMUI.ui_tab != id_ ) { TweenFire("~ocirc", "$15", "yoff>", 0); text = text_static; color_butt = SYSTEMUI.ui_accentcolor; } window_set_cursor(cr_default); }
 	function on_click_() { if ( SYSTEMUI.ui_tab != id_ ) { sfx_play(snd_select); SYSTEMUI.ui_tab = id_; on_reset_(); } else { sfx_play(snd_bump, , , random_range(0.8, 1.2)); } }
 	function on_hover_() { window_set_cursor(cr_drag); }
 	function on_reset_() { 
@@ -44,7 +44,7 @@ function scribble_alignment(halign_ = 0, valign_ = 0) {
 		SYSTEMUI.ui_reset();
 		
 		var i = 0;
-		repeat ( array_length(SYSTEMUI.butt) ) { with ( SYSTEMUI.butt[i].data ) { if ( SYSTEMUI.ui_tab != id_ ) { TweenFire("~ocirc", "$15", "yoff>", 0); text = text_static; color_butt = c_orange; } else { TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } } i++; }
+		repeat ( array_length(SYSTEMUI.butt) ) { with ( SYSTEMUI.butt[i].data ) { if ( SYSTEMUI.ui_tab != id_ ) { TweenFire("~ocirc", "$15", "yoff>", 0); text = text_static; color_butt = SYSTEMUI.ui_accentcolor; } else { TweenFire("~ocirc", "$15", "yoff>", 5); text = $"[c_yellow][wheel]{text_static}"; color_butt = c_yellow; } } i++; }
 	}
 #endregion
 
@@ -291,7 +291,7 @@ function ui_manage() {
 			if ( effects_i > 5 ) { continue; }
 			var effects_true = effects_i + ui_effoff;
 			var effects_cur = effects_[effects_true]; //Current effect
-			var butt_data = { x: 180 + ( 75 * effects_i ), y: 95, color_butt: c_orange, color_butt_hover: c_yellow, color: c_black, text: $"{effects_cur} [spr_effects_icons,{effects_true}]", padd_multi: 4, on_hover: undefined, on_click: method({ effects_cur }, function () { SYSTEMUI.butt_func(string_letters(string_lower(effects_cur))); }) } 
+			var butt_data = { x: 180 + ( 75 * effects_i ), y: 95, color_butt: ui_accentcolor, color_butt_hover: c_yellow, color: c_black, text: $"{effects_cur} [spr_effects_icons,{effects_true}]", padd_multi: 4, on_hover: undefined, on_click: method({ effects_cur }, function () { SYSTEMUI.butt_func(string_letters(string_lower(effects_cur))); }) } 
 			var butt_ = new Button(butt_data); butt_.update(); //Create button
 		effects_i++; }
 				
