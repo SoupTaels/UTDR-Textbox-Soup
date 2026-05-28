@@ -70,7 +70,7 @@ if ( dial_text_page > dial_text_page_c - 1 && dial_text_page_c > 1 ) { exit; } /
 				
 				#region Name Tag
 					if ( string_lettersdigits(dial_nametag) != "" ) { 
-						var nametag_ = scribble(dial_nametag).starting_format("fnt_tiny", dial_text_c).scale(2), x_ = bordx + 20, y_ = bordy - 2;
+						var nametag_ = scribble(dial_nametag).starting_format("fnt_tiny", dial_text_c).scale(2), x_ = bordx + 30, y_ = bordy - ( dltrn ? -5 : 2 );
 						var bbox_ = nametag_.get_bbox(x_, y_);
 						draw_sprite_ext(spr_pixel, 0, x_ - 2, y_, bbox_.width + 2, bbox_.height - 3, 0, c_black, 1);
 						nametag_.draw(x_, y_);
