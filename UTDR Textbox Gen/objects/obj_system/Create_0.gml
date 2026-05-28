@@ -19,6 +19,7 @@
 			var get_ = pref_[$ "parseend"]; global.pref.parseend = !is_undefined(get_) ? get_ : ">"; global.altchar.end_ = global.pref.parseend;
 			var get_ = pref_[$ "showref"]; global.pref.showref = !is_undefined(get_) ? get_ : true;
 			var get_ = pref_[$ "openresult"]; global.pref.openresult = !is_undefined(get_) ? get_ : true;
+			var get_ = pref_[$ "bg3d"]; global.pref.bg3d = !is_undefined(get_) ? get_ : true;
 		}
 	}
 	
@@ -969,6 +970,11 @@
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
 				new LuiText({ value: "Random Theme:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("[wave][rainbow]Let's have a little fun!\n[/]Randomizes the UI theme on startup.", true, , true),
 				new LuiToggleSwitch({ value: global.pref.randomclr, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "randomclr").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "3D BG:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Enable the 3D background?", true, , true),
+				new LuiToggleSwitch({ value: global.pref.bg3d, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "bg3d").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
 			]),
 			
 			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite

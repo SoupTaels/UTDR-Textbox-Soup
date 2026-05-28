@@ -49,6 +49,7 @@ function __Quill(_kind, _label, _placeholder) constructor {
 	label_offset = 4;
 	label_width = -1;
 	placeholder = string(_placeholder);
+	scrollbar_padding = 20;
 
 	bind_struct = undefined;
 	bind_key = "";

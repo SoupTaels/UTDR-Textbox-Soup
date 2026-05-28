@@ -14,6 +14,7 @@ pref = {
 	showref: true, //Whether to show the reference image on export
 	openresult: true, //Whether to show your generated result
 	randomclr: true, //Whether the UI should randomize its color on startup
+	bg3d: true, //Whether to enable the 3D background
 }
 #region Add External Faces
 	faces_dict = {};

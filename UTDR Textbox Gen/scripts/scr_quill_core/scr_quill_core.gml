@@ -1334,8 +1334,8 @@ function __QuillCore() constructor {
 			if (is_struct(_tb_hd) && is_struct(_tb_hd.config) && _tb_hd.config[$ "multiline"] == true) {
 				var _st3 = _tb_hd.config[$ "scroll_state"];
 				if (is_struct(_st3) && is_struct(_tb_hd.last_scroll_thumb_rect) && is_struct(_tb_hd.last_scroll_track_rect)) {
-					var _th = _tb_hd.last_scroll_thumb_rect;
-					var _in_thumb = (_mx >= _th.x1 && _mx <= _th.x2 && _my >= _th.y1 && _my <= _th.y2);
+					var _th = _tb_hd.last_scroll_thumb_rect, _th_padd = _tb_hd.scrollbar_padding;
+					var _in_thumb = (_mx >= _th.x1 - _th_padd && _mx <= _th.x2 + _th_padd && _my >= _th.y1 - _th_padd && _my <= _th.y2 + _th_padd);
 					if (_in_thumb) {
 						_st3.dragging = true;
 						_st3.drag_axis = "v";
@@ -1347,8 +1347,8 @@ function __QuillCore() constructor {
 					}
 				}
 				if (is_struct(_st3) && is_struct(_tb_hd.last_scroll_h_thumb_rect) && is_struct(_tb_hd.last_scroll_h_track_rect)) {
-					var _th_h = _tb_hd.last_scroll_h_thumb_rect;
-					var _in_thumb_h = (_mx >= _th_h.x1 && _mx <= _th_h.x2 && _my >= _th_h.y1 && _my <= _th_h.y2);
+					var _th_h = _tb_hd.last_scroll_h_thumb_rect, _th_padd = _tb_hd.scrollbar_padding;;
+					var _in_thumb_h = (_mx >= _th_h.x1 - _th_padd && _mx <= _th_h.x2 + _th_padd && _my >= _th_h.y1 - _th_padd && _my <= _th_h.y2 + _th_padd);
 					if (_in_thumb_h) {
 						_st3.dragging = true;
 						_st3.drag_axis = "h";

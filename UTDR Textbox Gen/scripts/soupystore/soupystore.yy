@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"soupysignals",
+  "%Name":"soupystore",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"soupysignals",
+  "name":"soupystore",
   "parent":{
     "name":"Soupy Things",
     "path":"folders/Extensions/Soupy Things.yy",

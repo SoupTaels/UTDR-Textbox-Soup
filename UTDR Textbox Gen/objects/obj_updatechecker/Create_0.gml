@@ -5,12 +5,14 @@ if ( !global.pref.checkupdates ) { instance_destroy(); exit; }
 updateversion = {}; //The new update's info
 text = "[c_yellow]Checking for update... [spr_effects_icons,14]";
 text_y = 15;
+active = false;
 
 failedfunc = function() { //Failed connection, abort...
 	text = $"[#f73e7e][shake]Can't check for updates.";
 	var tween = TweenFire("$15", "~ocirc", "text_y", 25, 15);
 	TweenMore(tween, "$60", "+75", "~iback", "text_y>", -50, "@", instance_destroy);
 	sfx_play(snd_error);
+	active = true;
 	exit;
 }
 
@@ -45,7 +47,7 @@ if ( os_is_network_connected(true) ) {
 			text = $"[tinysoupy] [rainbow][wheel]You have the latest version([/][c_yellow]{updateversion.game_version}[/][rainbow][wheel])! [/][tinysoupy]";
 			var tween = TweenFire("$15", "~ocirc", "text_y", 25, 15);
 			TweenMore(tween, "$60", "+75", "~iback", "text_y>", -50, "@", instance_destroy);
-			sfx_play(snd_updated);
+			sfx_play(snd_updated); active = true;
 		#endregion
 	}, function() { failedfunc(); }); //If the OS is connected, but something failed along the way, assume a failed connection.
 }

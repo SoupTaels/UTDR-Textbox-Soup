@@ -3,6 +3,13 @@ if ( live_call() ) { return live_result; }
 if ( dial_text_page > dial_text_page_c - 1 && dial_text_page_c > 1 ) { exit; } //Prevents the stack export from going out of bounds
 #region UI Borders and Buttons
 	if ( ui_visible ) {
+		#region No 3D BG
+			if ( !global.pref.bg3d ) {
+				draw_sprite_tiled_ext(spr_testbg_1, 0, -current_time/50, -current_time/50, 1, 1, merge_color(ui_accentcolor, c_black, 0.9), 1);
+				draw_sprite_tiled_ext(spr_testbg_1, 0, current_time/50, current_time/50, 1, 1, merge_color(ui_accentcolor, c_black, 0.6), 1);
+			}
+		#endregion
+		
 		#region Orange and White Border
 			outlinesoup_start();
 				var yoff = ui_tab_yoff;
@@ -152,10 +159,10 @@ if ( dial_text_page > dial_text_page_c - 1 && dial_text_page_c > 1 ) { exit; } /
 	}
 #endregion
 
-ui_manage(); //Menu handler
+if ( ui_tab == 0 && ui_visible ) { ui_manage(); } //Menu handler
 
 #region File Dragging
-	if ( file_dragging && UI_MESSAGE ) { //Receive signal for file dragging
+	if ( ui_visible && file_dragging && UI_MESSAGE ) { //Receive signal for file dragging
 		//Portrait
 		if ( bord_visible ) {
 			draw_sprite_stretched_ext(spr_border_dashed, 0, 40, 323, 134, 136, c_yellow, 0.5 + abs(sin(current_time/300)) * 0.5);
@@ -177,7 +184,7 @@ ui_manage(); //Menu handler
 	}
 #endregion
 
-soupy_lui.render(); //LimeUI
+if ( ui_visible ) { soupy_lui.render(); } //LimeUI
 draw_sprite_ext(spr_pixel, 0, 0, 0, 640, 480, 0, c_black, fader); //Black fade overlay
 
 #region Generating Text

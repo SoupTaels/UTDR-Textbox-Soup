@@ -70,9 +70,7 @@
     {"$GMFolder":"","%Name":"GUI","folderPath":"folders/Sprites/GUI.yy","name":"GUI","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Misc.","folderPath":"folders/Sprites/Misc..yy","name":"Misc.","resourceType":"GMFolder","resourceVersion":"2.0",},
   ],
-  "ForcedPrefabProjectReferences":[
-    {"link":"io.gamemaker.gm_filter_heathaze-1.0.0","name":"io.gamemaker.gm_filter_heathaze-1.0.0","path":"io.gamemaker.gm_filter_heathaze-1.0.0.yyp",},
-  ],
+  "ForcedPrefabProjectReferences":[],
   "IncludedFiles":[
     {"$GMIncludedFile":"","%Name":"spr_border_custom_animated_strip4.png","CopyToMask":-1,"filePath":"datafiles/borders","name":"spr_border_custom_animated_strip4.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
     {"$GMIncludedFile":"","%Name":"spr_border_custom_example_three.png","CopyToMask":-1,"filePath":"datafiles/borders","name":"spr_border_custom_example_three.png","resourceType":"GMIncludedFile","resourceVersion":"2.0",},
@@ -1012,7 +1010,7 @@
     {"id":{"name":"soupyalarms","path":"scripts/soupyalarms/soupyalarms.yy",},},
     {"id":{"name":"soupyclip","path":"scripts/soupyclip/soupyclip.yy",},},
     {"id":{"name":"soupyoutlines","path":"scripts/soupyoutlines/soupyoutlines.yy",},},
-    {"id":{"name":"soupysignals","path":"scripts/soupysignals/soupysignals.yy",},},
+    {"id":{"name":"soupystore","path":"scripts/soupystore/soupystore.yy",},},
     {"id":{"name":"string_height_scribble_ext","path":"scripts/string_height_scribble_ext/string_height_scribble_ext.yy",},},
     {"id":{"name":"string_height_scribble","path":"scripts/string_height_scribble/string_height_scribble.yy",},},
     {"id":{"name":"string_length_scribble","path":"scripts/string_length_scribble/string_length_scribble.yy",},},
@@ -1096,6 +1094,7 @@
     {"id":{"name":"spr_soul_tiny","path":"sprites/spr_soul_tiny/spr_soul_tiny.yy",},},
     {"id":{"name":"spr_soul","path":"sprites/spr_soul/spr_soul.yy",},},
     {"id":{"name":"spr_spark","path":"sprites/spr_spark/spr_spark.yy",},},
+    {"id":{"name":"spr_testbg_1","path":"sprites/spr_testbg_1/spr_testbg_1.yy",},},
     {"id":{"name":"spr_testbg","path":"sprites/spr_testbg/spr_testbg.yy",},},
   ],
   "resourceType":"GMProject",

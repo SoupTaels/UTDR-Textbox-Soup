@@ -7,3 +7,5 @@ upd_.starting_format("fnt_speech", c_white).align(fa_center, fa_middle).padding(
 bbox_ = upd_.get_bbox(x_, text_y);
 draw_sprite_stretched(spr_border_undertale_outlined, 0, bbox_.left, bbox_.top, bbox_.width, bbox_.height);
 upd_.draw(x_, text_y);
+
+if ( mouse_pressed || mouse_pressed_right ) && ( active ) { instance_destroy(); }
