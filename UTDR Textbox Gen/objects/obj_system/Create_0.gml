@@ -20,6 +20,7 @@
 			var get_ = pref_[$ "showref"]; global.pref.showref = !is_undefined(get_) ? get_ : true;
 			var get_ = pref_[$ "openresult"]; global.pref.openresult = !is_undefined(get_) ? get_ : true;
 			var get_ = pref_[$ "bg3d"]; global.pref.bg3d = !is_undefined(get_) ? get_ : true;
+			var get_ = pref_[$ "showfps"]; global.pref.showfps = !is_undefined(get_) ? get_ : false;
 		}
 	}
 	
@@ -151,7 +152,7 @@
 			with ( obj_mini ) { if ( page == other.dial_text_page ) { active = true; TweenFire("$13", $"~{smooth ? "oquad" : "linear"}", "xoff", 30, 0, "alpha", 0, 1); } } 
 		});
 		
-		typist_reset = function () { dial_striket = dial_striket_orig; dial_underline = dial_underline_orig; dial_highlight = dial_highlight_orig; dial_wrap_count = 1; dial_miniface = [-1]; dial_miniface_index = [0]; dial_indicator_visible = false; dial_gradient = dial_gradient_orig; dial_gradient_clr = dial_gradient_clr_orig; dial_face_angle = dial_face_angle_orig; dial_face_alpha = dial_face_alpha_orig; dial_face_xoff = 0; dial_face_yoff = 0; dial_face_xscale_off = 0; dial_face_yscale_off = 0; } //Function to reset portrait modifications after dialogue finishes
+		typist_reset = function () { dial_choices = ["", "", "", ""]; dial_choices_scaleoff = 0; dial_striket = dial_striket_orig; dial_underline = dial_underline_orig; dial_highlight = dial_highlight_orig; dial_wrap_count = 1; dial_miniface = [-1]; dial_miniface_index = [0]; dial_indicator_visible = false; dial_gradient = dial_gradient_orig; dial_gradient_clr = dial_gradient_clr_orig; dial_face_angle = dial_face_angle_orig; dial_face_alpha = dial_face_alpha_orig; dial_face_xoff = 0; dial_face_yoff = 0; dial_face_xscale_off = 0; dial_face_yscale_off = 0; } //Function to reset portrait modifications after dialogue finishes
 		
 		#region Ease Builder
 			typist_ease = { type: SCRIBBLE_EASE.LINEAR, x: 0, y: 0, xscale: 1, yscale: 1, angle: 0, alpha: 1, };
@@ -219,6 +220,30 @@
 			});
 			scribble_typists_add_event("speed_pop", function(_, param) { typist_spd = typist_spd_orig; }); //Changes the typist speed back to the default
 			scribble_typists_add_event("nametag", function(_, param) { dial_nametag = ( array_length(param) > 0 ? param[0] : "" ); }); //Change name tag
+			scribble_typists_add_event("choicer", function(_, param) { //Open a choice menu [choicer,option1,option2,option3,option4,startat,sprite,index,scale,angle,r,g,b]
+				FACE_CURRENT = -1; FACE_ORIGINAL = -1;
+				TweenFire("$30", "~oback", "dial_choices_scaleoff", 0, 1);
+				var choice1 = ( array_length(param) > 0 ? param[0] : "" ), choice2 = ( array_length(param) > 1 ? param[1] : "" )
+				, choice3 = ( array_length(param) > 2 ? param[2] : "" ), choice4 = ( array_length(param) > 3 ? param[3] : "" );
+				dial_choices = [choice1, choice2, choice3, choice4]; //Available dialogue choices
+				
+				var value_ = real_ext(( array_length(param) > 4 ? param[4] : "0" )); dial_choices_menu = value_ == "" ? 0 : value_;
+				
+				var value_ = ( array_length(param) > 5 ? param[5] : "spr_soul" ), face_ = get_face(value_), bord_ = get_border(value_), icon_ = get_icon(value_);
+				if ( face_ == -1 && bord_ == -1 && icon_ == -1 ) { dial_choices_ico = spr_soul; }
+				else {
+					if ( face_ != -1 ) { dial_choices_ico = face_; } else if ( bord_ != -1 ) { dial_choices_ico = bord_; } else if ( icon_ != -1 ) { dial_choices_ico = icon_; }
+				}
+				
+				var value_ = real_ext(( array_length(param) > 6 ? param[6] : "0" )); dial_choices_ico_index = value_ == "" ? 0 : value_;
+				var value_ = real_ext(( array_length(param) > 7 ? param[7] : "1" )); dial_choices_ico_xs = value_ == "" ? 1 : value_; dial_choices_ico_ys = dial_choices_ico_xs;
+				var value_ = real_ext(( array_length(param) > 8 ? param[8] : "0" )); dial_choices_ico_angle = value_ == "" ? 0 : value_;
+				
+				var getclr = real_ext(array_length(param) > 9 ? param[9] : "255"), getclr2 = real_ext(array_length(param) > 10 ? param[10] : "0"), getclr3 = real_ext(array_length(param) > 11 ? param[11] : "0");
+				dial_choices_ico_clr = make_color_rgb(getclr != "" ? getclr : 255, getclr2 != "" ? getclr2 : 255, getclr3 != "" ? getclr3 : 255);
+			});
+			var func_ = function(_, param) { var value_ = real_ext(( array_length(param) > 0 ? param[0] : "0" )); dial_choices_menu = value_ == "" ? 0 : value_; }
+			scribble_typists_add_event("choicer_select", func_); scribble_typists_add_event("choicer_option", func_); scribble_typists_add_event("choicer_on", func_);//Select a choice
 		#endregion
 		
 		#region Face & Border Effects
@@ -337,8 +362,24 @@
 					default: { return "Testing suite ID not found."; }
 				}
 			});
+			scribble_add_macro("choicer", function() { //Bring up choices
+				
+				return "";
+			}); 
 		#endregion
 	#endregion
+#endregion
+
+#region Dialogue Choice
+	dial_choices = ["", "", "", ""]; //Available dialogue choices
+	dial_choices_ico = spr_soul; //Chooser indicator
+	dial_choices_ico_index = 0; //Image index
+	dial_choices_ico_xs = 1; //Image xscale
+	dial_choices_ico_ys = 1; //Image yscale
+	dial_choices_ico_angle = 0; //Image angle
+	dial_choices_ico_clr = c_white; //Image blend
+	dial_choices_menu = 0; //Current selected option
+	dial_choices_scaleoff = 0; //Scaling animation
 #endregion
 
 #region Dialogue Shadow
@@ -981,6 +1022,11 @@
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
 				new LuiText({ value: "3D BG:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Enable the 3D background?", true, , true),
 				new LuiToggleSwitch({ value: global.pref.bg3d, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "bg3d").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
+			]),
+			
+			new LuiRow().setFlexGrow(1).centerContent().addContent([
+				new LuiText({ value: "Show FPS:", width: 110, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Show the tool's frames\nper second(FPS)?", true, , true),
+				new LuiToggleSwitch({ value: global.pref.showfps, ease: global.Ease.OutBack, sound_click: snd_bump, sound_click_pitch: 1.3,  }).bindVariable(global.pref, "showfps").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { SYSTEMUI.save_pref(); }),
 			]),
 			
 			new LuiRow().setFlexGrow(1).centerContent().addContent([ //Choosing a sprite

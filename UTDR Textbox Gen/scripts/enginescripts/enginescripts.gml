@@ -198,7 +198,8 @@ function filename_dir_name(_file) {
 
 ///@desc Same as draw_sprite_ext(), but will make sure if the sprite exists. Otherwise, draw nothing. Useful for external sprites
 function draw_sprite_ensure(sprite, subimg = 0, xx = x, yy = y, xscale = 1, yscale = xscale, rot = 0, color = c_white, alpha = 1) {
-	var spr_ = is_string(sprite) ? asset_get_index(sprite) : sprite;
+	var face_ = get_face(sprite), bord_ = get_border(sprite), icon_ = get_icon(sprite), spr_;
+	if ( face_ != -1 ) { spr_ = face_; } else if ( bord_ != -1 ) { spr_ = bord_; } else if ( icon_ != -1 ) { spr_ = icon_; } else { spr_ = is_string(sprite) ? asset_get_index(sprite) : sprite; }
 	if ( spr_ != -1 ) { draw_sprite_ext(spr_, subimg, xx, yy, xscale, yscale, rot, color, alpha); } else { show_debug_message($"\"{sprite}\" doesn't exist!"); }
 }
 

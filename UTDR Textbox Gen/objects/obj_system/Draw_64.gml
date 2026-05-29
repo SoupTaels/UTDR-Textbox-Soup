@@ -46,6 +46,8 @@ if ( dial_text_page > dial_text_page_c - 1 && dial_text_page_c > 1 ) { exit; } /
 		}
 	}
 	else if ( !ui_visible && ( ui_viewing || record.enabled ) ) { if ( sprite_exists(global.refimg) ) { draw_sprite_ensure(global.refimg, , 0, 0, , , , ui_refclr); } } //Reference image 
+	
+	if ( global.pref.showfps ) { draw_format(, , fnt_pixel); draw_text(0, 0, $"FPS: {fps}"); draw_format("right", , fnt_pixel); draw_text(640, 0, $"{round(fps_real)}:STEP"); } //FPS
 #endregion
 
 #region Dialogue Box, Text, Face, etc.
@@ -60,7 +62,6 @@ if ( dial_text_page > dial_text_page_c - 1 && dial_text_page_c > 1 ) { exit; } /
 			else { if ( ninesl_.enabled ) { draw_sprite_stretched_ext(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, 1); } else { draw_9slice(spr_bord, bord_index, bordx, bordy, bordw, bordh, bord_clr, bord_scale, bord_stretch); } }
 		}
 		outlinesoup_start();
-		
 			#region Dialogue Box
 				if ( bord_box_visible ) { //Dialogue Box
 					if ( global.pref.anyborder ) { draw_sprite_ensure(spr_bord, bord_index, bordx + bord_xoff, bordy + bord_yoff, bord_scale, bord_scale, bord_angle, bord_clr, 1); }
@@ -91,7 +92,7 @@ if ( dial_text_page > dial_text_page_c - 1 && dial_text_page_c > 1 ) { exit; } /
 							dial_text_page_c = scrib_dial.get_page_count();
 							dial_text_page = clamp(dial_text_page, 0, dial_text_page_c - 1);
 							scrib_dial.starting_format(dial_font, dial_text_c).scale(dial_text_scale).outline(dial_text_outline).shadow(dial_text_shdw_clr, dial_text_shdw)
-							.allow_line_data_getter().allow_glyph_data_getter().right_to_left(dial_rtl).gradient(dial_gradient_clr, dial_gradient)
+							.allow_line_data_getter().allow_glyph_data_getter().right_to_left(dial_rtl).gradient(dial_gradient_clr, dial_gradient).allow_text_getter()
 							.line_spacing(line_sp).page(dial_text_page).wrap(wrapcalc, dial_auto_page ? 110 : -1).align(align_.h, align_.v)
 							
 							#region Effects with Regions
@@ -129,6 +130,32 @@ if ( dial_text_page > dial_text_page_c - 1 && dial_text_page_c > 1 ) { exit; } /
 							#endregion
 							
 							scrib_dial.draw(tx_x + dial_text_xoff, yy_ + dial_text_yoff, dial_text_gif ? typist : undefined);
+							
+							#region Show Events
+								var result_ = scrib_dial.get_text(dial_text_page), empty_ = string_trim(result_) == "";
+								if ( !record.enabled && !screenshot && empty_ ) {
+									var event_ = scrib_dial.get_events(0, dial_text_page), beginevent_ = event_[0].name;
+									switch ( beginevent_ ) {
+										case "choicer": { //[option1,option2,option3,option4,startat,sprite,index,scale,angle]
+											var data_ = event_[0].data;
+											var data0_ = ( array_length(data_) > 0 && string_trim(data_[0]) != "" ) ? data_[0] : "----------";
+											var data1_ = ( array_length(data_) > 1 && string_trim(data_[1]) != "" ) ? data_[1] : "----------";
+											var data2_ = ( array_length(data_) > 2 && string_trim(data_[2]) != "" ) ? data_[2] : "----------";
+											var data3_ = ( array_length(data_) > 3 && string_trim(data_[3]) != "" ) ? data_[3] : "----------";
+											var data4_ = ( array_length(data_) > 4 && real_ext(data_[4]) != "" ) ? real_ext(data_[4]) : dial_choices_menu;
+											var txt_ = scribble($"Choices:\n[scale,0.5]1. {data0_}\n2. {data1_}\n3. {data2_}\n4. {data3_}\nSelected: {data4_}").starting_format("fnt_determination_nomono", c_gray).align(fa_left, fa_top).scale(2).draw(xx_, yy_ - 10);
+											
+											var data5_ = ( array_length(data_) > 5 && string_trim(data_[5]) != "" ) ? data_[5] : dial_choices_ico;
+											var data6_ = ( array_length(data_) > 6 && real_ext(data_[6]) != "" ) ? real_ext(data_[6]) : dial_choices_ico_index;
+											var data7_ = ( array_length(data_) > 7 && real_ext(data_[7]) != "" ) ? real_ext(data_[7]) : dial_choices_ico_xs;
+											var data8_ = ( array_length(data_) > 8 && real_ext(data_[8]) != "" ) ? real_ext(data_[8]) : dial_choices_ico_angle;
+											draw_format("center", "center", fnt_determination_nomono, c_gray);
+											draw_text_transformed(xx_ + 400, yy_ + 5, "Icon:", 2, 2, 0);
+											draw_sprite_ensure(data5_, data6_, xx_ + 400, yy_ + 60, data7_, data7_, data8_, c_gray, 1);
+										} break; 
+									}
+								}
+							#endregion
 					#endregion
 
 					#region Dialogue Auto Point
@@ -165,6 +192,43 @@ if ( dial_text_page > dial_text_page_c - 1 && dial_text_page_c > 1 ) { exit; } /
 				}
 			#endregion
 
+			#region Dialogue Choices
+				if ( dial_choices[0] != "" || dial_choices[1] != "" || dial_choices[2] != "" || dial_choices[3] != "" ) {
+					#region Available Choices
+						var x1_ = xx_ + 270, y1_ = yy_ + 10;
+						if ( dial_choices[0] != "" ) { //Top
+							var choice1 = scribble(dial_choices[0])
+							.align(fa_center, fa_center).scale(2).outline(dial_text_outline).shadow(dial_text_shdw_clr, dial_text_shdw).starting_format(dial_font, dial_choices_menu == 1 ? c_yellow : dial_text_c).gradient(dial_gradient_clr, dial_gradient).draw(x1_, y1_);
+						}
+					
+						var x2_ = xx_ + 130, y2_ = yy_ + 50;
+						if ( dial_choices[1] != "" ) { //Left
+							var choice1 = scribble(dial_choices[1])
+							.align(fa_center, fa_center).scale(2).outline(dial_text_outline).shadow(dial_text_shdw_clr, dial_text_shdw).starting_format(dial_font, dial_choices_menu == 2 ? c_yellow : dial_text_c).gradient(dial_gradient_clr, dial_gradient).draw(x2_, y2_);
+						}
+					
+						var x3_ = xx_ + 400, y3_ = yy_ + 50;
+						if ( dial_choices[2] != "" ) { //Right
+							var choice1 = scribble(dial_choices[2])
+							.align(fa_center, fa_center).scale(2).outline(dial_text_outline).shadow(dial_text_shdw_clr, dial_text_shdw).starting_format(dial_font, dial_choices_menu == 3 ? c_yellow : dial_text_c).gradient(dial_gradient_clr, dial_gradient).draw(x3_, y3_);
+						}
+					
+						var x4_ = xx_ + 270, y4_ = yy_ + 90;
+						if ( dial_choices[3] != "" ) { //Top
+							var choice1 = scribble(dial_choices[3])
+							.align(fa_center, fa_center).scale(2).outline(dial_text_outline).shadow(dial_text_shdw_clr, dial_text_shdw).starting_format(dial_font, dial_choices_menu == 4 ? c_yellow : dial_text_c).gradient(dial_gradient_clr, dial_gradient).draw(x4_, y4_);
+						}
+					#endregion
+					#region Chooser Icon
+						var myx_, myy_;
+						switch ( dial_choices_menu ) {
+							case 0: { myx_ = xx_ + 270; myy_ = yy_ + 50; } break; case 1: { myx_ = x1_; myy_ = y1_; } break; case 2: { myx_ = x2_; myy_ = y2_; } break; case 3: { myx_ = x3_; myy_ = y3_; } break; case 4: { myx_ = x4_; myy_ = y4_; } break;
+						}
+						draw_sprite_ensure(dial_choices_ico, dial_choices_ico_index, myx_, myy_, ( dial_choices_ico_xs + 0.3 ) * dial_choices_scaleoff, ( dial_choices_ico_ys + 0.3 ) * dial_choices_scaleoff, dial_choices_ico_angle, c_black, 1);
+						draw_sprite_ensure(dial_choices_ico, dial_choices_ico_index, myx_, myy_, dial_choices_ico_xs * dial_choices_scaleoff, dial_choices_ico_ys * dial_choices_scaleoff, dial_choices_ico_angle, dial_choices_ico_clr, 1);
+					#endregion
+				}
+			#endregion
 		outlinesoup_end();
 	}
 #endregion

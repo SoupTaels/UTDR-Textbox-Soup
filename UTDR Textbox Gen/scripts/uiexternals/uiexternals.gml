@@ -15,6 +15,7 @@ pref = {
 	openresult: true, //Whether to show your generated result
 	randomclr: true, //Whether the UI should randomize its color on startup
 	bg3d: true, //Whether to enable the 3D background
+	showfps: false, //Whether to show an FPS counter
 }
 #region Add External Faces
 	faces_dict = {};

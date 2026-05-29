@@ -12,7 +12,7 @@
 	#macro AUTO_ASTERISK ( ( obj_system.dial_text_halign == 0 && obj_system.dial_text_valign == 0 ) && obj_system.dial_point_auto && string_trim(obj_system.dial_point_chr) != "" ) //Whether to enable auto-asterisk
 	#macro PATHSEP (( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ) ? "\\"  :  "/") //Get platform-dependant path
 	#macro PREF_SOUP $"{executable_get_directory()}soupy_preferences.soupy" //Settings to save
-	#macro GAME_VERSION "0.0.7" //Current game version
+	#macro GAME_VERSION "1.0.0" //Current game version
 #endregion
 ///@desc Help Scribble with how to align the text
 function scribble_alignment(halign_ = 0, valign_ = 0) {
@@ -69,7 +69,7 @@ function TextChange(txt, point) : UndoableChange() constructor { //Handle undo/ 
 
 	static can_apply = function() { return ( SYSTEMUI.dial_text != mytxt ); } //Don't push the same unchanged text to the undo stack
 	static apply = function() { with ( obj_system ) { //Apply recent changes
-		dial_text = other.mytxt; 
+		dial_text = other.mytxt; dial_text_page_c = scribble(dial_text).get_page_count();
 		textinput.SetValue(dial_text);
 		
 		var lasttyped = file_text_open_write(LAST_SAVED);
@@ -79,7 +79,7 @@ function TextChange(txt, point) : UndoableChange() constructor { //Handle undo/ 
 		textinput.SetCaret(other.point_); } 
 		sfx_play(snd_updated); 
 	}
-    static undo = function() { with ( obj_system ) { dial_text = other.prev_txt; textinput.SetValue(dial_text); textinput.SetCaret(other.point_prev); } sfx_play(snd_throw); }
+    static undo = function() { with ( obj_system ) { dial_text = other.prev_txt; dial_text_page_c = scribble(dial_text).get_page_count(); textinput.SetValue(dial_text); textinput.SetCaret(other.point_prev); } sfx_play(snd_throw); }
 }
 
 ///@desc Create a GUI button. Accepts { x, y, text, padd_(x1, y1, x2, y2, multi), leeway, x2, y2, sprite, draw_nine, index, (x)(y)scale, angle, font, color, color_butt, halign, and valign, and functions for on_enter(runs once), on_hover, on_leave(once), on_click(once), on_held, on_released(once) }
@@ -221,7 +221,7 @@ function ui_manage() {
 			#endregion
 			#region Page Indicator Text
 				if ( dial_text_page_c > 1 && bord_visible ) {
-					var pageind = scribble($"< Page {dial_text_page + 1}/ {dial_text_page_c} > [spr_effects_icons,16]")
+					var pageind = scribble($"< Page {dial_text_page + 1}/ {dial_text_page_c} > [offset,0,-2][spr_effects_icons,16][offsetpop]")
 											.starting_format("fnt_abaddon", c_gray)
 											.align(fa_center, fa_middle)
 											.draw(320, 333)

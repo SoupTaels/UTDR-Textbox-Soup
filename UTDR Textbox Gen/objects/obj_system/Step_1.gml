@@ -3,7 +3,6 @@
 #region Page Count and Ensure Face
 	//if ( !record.enabled && !screenshot ) { var count_ = string_count("[/page]", dial_text), count_2 = string_count("[pg]", dial_text), finalcount_ = count_ + count_2; 
 	//	dial_text_page_c = finalcount_ + 1; dial_text_page = clamp(dial_text_page, 0, dial_text_page_c); }
-	
 	if ( dial_text_page_c > 1 ) { //Prevents out of bounds array reads
 		var result = array_length(dial_face);
 		if ( result < dial_text_page_c ) { 
