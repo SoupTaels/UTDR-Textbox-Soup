@@ -157,7 +157,7 @@ function __CleanClassSpline(_controlArray, _segments) constructor
     /// @param alpha2
     static Blend2 = function(_c1, _a1, _c2, _a2)
     {
-        var _points = array_length(__pointArray) div 2;
+        var _points = floor(array_length(__pointArray) / 2);
         
         var _blendArray = array_create(2*_points, 0);
         
@@ -186,8 +186,8 @@ function __CleanClassSpline(_controlArray, _segments) constructor
         if (!is_array(_inputArray)) __CleanError("Invalid datatype given for argument0 (", typeof(_inputArray), "), was expecting an array");
         if ((array_length(_inputArray) mod 2) != 0) __CleanError("Blend array must have an even number of elements (RGB/alpha pairs)");
         
-        var _colours    = array_length(_inputArray) div 2;
-        var _points     = array_length(__pointArray) div 2;
+        var _colours    = floor(array_length( _inputArray) / 2);
+        var _points     = floor(array_length(__pointArray) / 2);
         var _blendArray = array_create(2*_points, 0);
         
         var _incr = (_colours - 1) / (_points - 1);
@@ -287,7 +287,7 @@ function __CleanSplineInterpolate(_array, _time)
     array_resize(_result, _length);
     array_copy(_result, 0, _array, 0, _length);
     
-    var _count = _length div 2;
+    var _count = floor(_length / 2);
     repeat(_count)
     {
         --_count;

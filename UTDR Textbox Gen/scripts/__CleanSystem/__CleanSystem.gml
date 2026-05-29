@@ -191,7 +191,7 @@ function __CleanBuildPolyline(_vbuff)
         
         //Points along the line
         var _arraySize = array_length(_pointArray);
-        var _count = _arraySize div 2;
+        var _count = floor(_arraySize / 2);
         if (_capStart != undefined) _count -= 2;
         
         var _i = 4;
@@ -352,7 +352,7 @@ function __CleanBuildPolyline(_vbuff)
         
         //Points along the line
         var _arraySize = array_length(_pointArray);
-        var _count = _arraySize div 2;
+        var _count = floor(_arraySize / 2);
         if (_capStart != undefined) _count -= 2;
         
         var _i = 4;

@@ -1,11 +1,11 @@
 {
   "FolderOrderSettings":[
-    {"name":"Extensions","order":8,"path":"folders/Extensions.yy",},
-    {"name":"Clean Shapes","order":4,"path":"folders/Extensions/Clean Shapes.yy",},
+    {"name":"Clean Shapes","order":3,"path":"folders/Extensions/Clean Shapes.yy",},
     {"name":"(System)","order":1,"path":"folders/Extensions/Clean Shapes/(System).yy",},
     {"name":"Batches","order":2,"path":"folders/Extensions/Clean Shapes/Batches.yy",},
     {"name":"Shapes","order":3,"path":"folders/Extensions/Clean Shapes/Shapes.yy",},
     {"name":"Transform","order":4,"path":"folders/Extensions/Clean Shapes/Transform.yy",},
+    {"name":"Extensions","order":8,"path":"folders/Extensions.yy",},
     {"name":"ExecuteShellSimple","order":6,"path":"folders/Extensions/ExecuteShellSimple.yy",},
     {"name":"File Dropper","order":10,"path":"folders/Extensions/File Dropper.yy",},
     {"name":"GMLive","order":1,"path":"folders/Extensions/GMLive.yy",},
@@ -15,7 +15,7 @@
     {"name":"LimeUI","order":1,"path":"folders/Extensions/Limekys/LimeUI.yy",},
     {"name":"Components","order":1,"path":"folders/Extensions/Limekys/LimeUI/Components.yy",},
     {"name":"UsefulTools","order":2,"path":"folders/Extensions/Limekys/UsefulTools.yy",},
-    {"name":"Outlines","order":3,"path":"folders/Extensions/Outlines.yy",},
+    {"name":"Outlines","order":4,"path":"folders/Extensions/Outlines.yy",},
     {"name":"RefresherTowelGames","order":9,"path":"folders/Extensions/RefresherTowelGames.yy",},
     {"name":"Quill","order":1,"path":"folders/Extensions/RefresherTowelGames/Quill.yy",},
     {"name":"Samuel Venable","order":12,"path":"folders/Extensions/Samuel Venable.yy",},

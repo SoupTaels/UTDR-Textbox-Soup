@@ -94,7 +94,7 @@ function __CleanClassConvex(_array) constructor
         var _borderIsArray = is_array(_borderArray);
         
         var _size  = array_length(_pointArray);
-        var _count = _size div 2;
+        var _count = floor(_size / 2);
         
         #region Detect and fix clockwise definitions
         
