@@ -10,12 +10,12 @@
   },
   "defaultScriptType":1,
   "Folders":[
+    {"$GMFolder":"","%Name":"Extensions","folderPath":"folders/Extensions.yy","name":"Extensions","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Clean Shapes","folderPath":"folders/Extensions/Clean Shapes.yy","name":"Clean Shapes","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"(System)","folderPath":"folders/Extensions/Clean Shapes/(System).yy","name":"(System)","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Batches","folderPath":"folders/Extensions/Clean Shapes/Batches.yy","name":"Batches","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Shapes","folderPath":"folders/Extensions/Clean Shapes/Shapes.yy","name":"Shapes","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"Transform","folderPath":"folders/Extensions/Clean Shapes/Transform.yy","name":"Transform","resourceType":"GMFolder","resourceVersion":"2.0",},
-    {"$GMFolder":"","%Name":"Extensions","folderPath":"folders/Extensions.yy","name":"Extensions","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"ExecuteShellSimple","folderPath":"folders/Extensions/ExecuteShellSimple.yy","name":"ExecuteShellSimple","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"File Dropper","folderPath":"folders/Extensions/File Dropper.yy","name":"File Dropper","resourceType":"GMFolder","resourceVersion":"2.0",},
     {"$GMFolder":"","%Name":"GMLive","folderPath":"folders/Extensions/GMLive.yy","name":"GMLive","resourceType":"GMFolder","resourceVersion":"2.0",},

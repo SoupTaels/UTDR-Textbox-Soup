@@ -134,7 +134,8 @@ if ( dial_text_page > dial_text_page_c - 1 && dial_text_page_c > 1 ) { exit; } /
 							#region Show Events
 								var result_ = scrib_dial.get_text(dial_text_page), empty_ = string_trim(result_) == "";
 								if ( !record.enabled && !screenshot && empty_ ) {
-									var event_ = scrib_dial.get_events(0, dial_text_page), beginevent_ = event_[0].name;
+									var event_ = scrib_dial.get_events(0, dial_text_page), beginevent_ = undefined;
+									if ( array_length(event_) > 0 ) { beginevent_ = event_[0].name; }
 									switch ( beginevent_ ) {
 										case "choicer": { //[option1,option2,option3,option4,startat,sprite,index,scale,angle]
 											var data_ = event_[0].data;
