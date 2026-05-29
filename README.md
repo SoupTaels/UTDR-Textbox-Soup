@@ -7,6 +7,8 @@
 <p align="center"><a href="https://github.com/SoupTaels/UTDR-Textbox-Soup/releases">Get the latest release/ download here!</a></p>
 <p align="center"><a href="https://rentry.co/utdrsoupguides">Help guide is hosted here!</a></p>
 <hr />
+<p align="center">This project could use your help in order to make it cross-platform! If you know Javascript and GameMaker and isn't utilizing AI, then <a href="https://rentry.co/utdrsoupguides#wasnt-there-gonna-be-an-online-version-what-happened-to-that">see this!</a></p>
+<hr />
 &nbsp;
 &nbsp;
 <p align="center">Have you always wanted to make really cool UTDR animations, but found making a typewriter to be exhausting work? Or perhaps you're a comic maker that finds making panels to be time-consuming due to needing to line up sprites perfectly? Are old, bulky servers slowing you down from making your AUs? Well that's where SoupGen comes in! SoupGen is a lot more powerful than the leading dialogue generator, especially with the introduction of <i><b>Typewriter Mode!</b></i></p>
