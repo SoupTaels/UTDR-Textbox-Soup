@@ -571,8 +571,8 @@
 					
 				new LuiRow().setFlexGrow(1).centerContent().addContent([ //Sprite image scale
 					new LuiText({ value: "Scale:", width: 65, text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Changes the scale of every dialogue portrait.\nThis value can be [rainbow]changed dynamically[/]\nif using [c_yellow][[effect,scale,X,Y,frames,issmooth]", true, , true),
-					new LuiInput({ value: "2", height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, input_mode: LUI_INPUT_MODE.numbers, }).bindVariable(self, "dial_face_xscale").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
-						var get_ = e_.get(), value_ = real(get_ == "" ? 2 : get_); SYSTEMUI.dial_face_xscale = value_; SYSTEMUI.dial_face_yscale = value_;
+					new LuiInput({ value: "2", height: 40, placeholder: "123456", offset: 12, type_sfx: snd_txttype, color_normal: c_white, color_hover: c_gray, }).bindVariable(self, "dial_face_xscale").addEvent(LUI_EV_VALUE_UPDATE, function(e_) { 
+						var get_ = e_.get(), value_ = real_ext(get_ == "" ? 2 : get_), index_ = value_ == "" ? 2 : value_; SYSTEMUI.dial_face_xscale = index_; SYSTEMUI.dial_face_yscale = index_;
 					}),
 				]),
 					
