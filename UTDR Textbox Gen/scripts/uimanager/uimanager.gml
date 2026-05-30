@@ -149,6 +149,11 @@ function ui_manage() {
 				}
 				if ( upd_ ) { dial_updatet = dial_updatet_max; } //Start timer
 			}
+			
+			if ( is_android() ) { 
+				if ( !keyboard_virtual_status() ) { keyboard_virtual_show(kbv_type_default, kbv_returnkey_default, kbv_autocapitalize_none, false); }
+				textinput.SetValue(keyboard_string); if ( keyboard_check(vk_anykey) ) { dial_updatet = dial_updatet_max; upd_ = true; }
+			}
 					
 			if ( keyboard_check_pressed(vk_anykey) ) { //Typing sounds
 				if ( upd_ ) { sfx_play(snd_txttype, , , random_range(0.7, 1.3)); } //Play typing sounds for unbanned keys

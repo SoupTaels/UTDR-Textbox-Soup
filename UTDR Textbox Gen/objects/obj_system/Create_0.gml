@@ -1071,7 +1071,7 @@
 				case 3: { soupy_panel_border.show(true); } break;
 				case 4: { soupy_panel_extra.show(true); } break;
 			}
-			if ( fx && bord_visible ) { sfx_play(snd_enc1, 0, , 0.7); bord_visible = false; }
+			if ( fx && bord_visible ) { sfx_play(snd_enc1, 0, , 0.7); bord_visible = false; if ( is_android() && keyboard_virtual_status() ) { keyboard_virtual_hide(); } }
 			else if ( !fx && !bord_visible ) { sfx_play(snd_enc1, 0, , 1.3); bord_visible = true; }
 			if ( updatelime_ ) { soupy_lui.update(); }
 		}

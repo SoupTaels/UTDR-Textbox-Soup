@@ -21,7 +21,23 @@ pref = {
 	faces_dict = {};
 	faces_dict_alt = {};
 	
-	var findfaces = gumshoe("faces", ".png"), faces_i = 0, faces_count = 0, faces_len = array_length(findfaces);
+	///@desc Because for some reason, Android doesn't have subfolder included files.
+	var find_faces_func = function () {
+	var folder_arr = [], folder = file_find_first($"faces{PATHSEP}*", fa_directory); //First, get all the folders
+		while ( folder != "" ) {
+			if ( folder != "desktop.ini" ) {
+				var dir_ = string_between(folder, "spr_", "_");
+				if ( !directory_exists($"faces{PATHSEP}{dir_}") ) { directory_create($"faces{PATHSEP}{dir_}"); }
+				file_copy(folder, $"faces{PATHSEP}{dir_}{PATHSEP}{folder}");
+				file_delete(folder);
+				array_push(folder_arr, $"faces{PATHSEP}{dir_}{PATHSEP}{folder}");
+			}
+			folder = file_find_next();
+		}
+		return folder_arr;
+	}
+	
+	var findfaces = !is_android() ? gumshoe("faces", ".png") : find_faces_func(), faces_i = 0, faces_count = 0, faces_len = array_length(findfaces);
 	repeat ( faces_len ) {
 		var faces_cur = findfaces[faces_i]; //Current face path we're looking at
 		var faces_dir = filename_dir_name(faces_cur); //Get directory name
@@ -65,11 +81,13 @@ pref = {
 			}
 		}
 		else { 
-			var out_ = $"Tried to load a sprite outside of a folder({faces_cur})! Skipping..."; 
-			show_debug_message(out_); global.outputLog += $"{out_}\n"; 
+			if ( !is_android() ) {
+				var out_ = $"Tried to load a sprite outside of a folder({faces_cur})! Skipping..."; 
+				show_debug_message(out_); global.outputLog += $"{out_}\n"; 
 				
-			var out_ = $"|Tried to load a sprite outside of a folder|({faces_cur})! Skipped...|Face sprites for auto-loading should have all their faces in their own folders!|"; 
-			global.outputLogSkipped += out_; 
+				var out_ = $"|Tried to load a sprite outside of a folder|({faces_cur})! Skipped...|Face sprites for auto-loading should have all their faces in their own folders!|"; 
+				global.outputLogSkipped += out_; 
+			}
 		}
 	faces_i++; }
 	var out_ = $"Over {faces_count} external faces were loaded!";
