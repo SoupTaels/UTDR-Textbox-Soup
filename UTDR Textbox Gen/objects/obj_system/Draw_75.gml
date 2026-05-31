@@ -73,7 +73,7 @@ if ( screenshot || record.enabled ) {
 	
 	#region Cancel Early
 		if ( soup_store_undefined("doublepress") ) { soup_store("doublepress", 0, , true); }
-		if ( keyboard_check_pressed(vk_escape) ) {
+		if ( keyboard_check_pressed(vk_escape) || mouse_pressed_right ) {
 			if ( soup_checkout("doublepress", false, true) < 1 ) { global.soupstore_global[$ "doublepress"]++; soupy_alarm_set("doublepress", "timer", 15); sfx_play(snd_bump); } else { if ( instance_exists(obj_stacker) ) { obj_stacker.abort = true; instance_destroy(obj_stacker); } finish_func(, , true); soup_store("doublepress", 0, , true); exit; }
 		}
 		soupy_alarm("doublepress", 15);

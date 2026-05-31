@@ -272,7 +272,7 @@ draw_sprite_ext(spr_pixel, 0, 0, 0, 640, 480, 0, c_black, fader); //Black fade o
 			}
 			else { draw_text_transformed(320, 260, $"(Page: {dial_text_page + 1}/ {dial_text_page_c})", 2, 2, 0); } //Show current page and total page count
 		
-			draw_format("right", , fnt_determination); draw_text(635, 5, $"(Double-press ESC to cancel)"); //Cancel text
+			draw_format("right", , fnt_determination); draw_text(635, 5, $"(Right-Click or Double-press ESC to cancel)"); //Cancel text
 		}
 		else { 
 			if ( blink() ) { var y_ = ( global.pref.sizematters && global.pref.sizematterstop ) ? 430 : 0; draw_sprite_stretched(spr_border_undertale_outlined, 0, 470, 5 + y_, 165, 35); draw_format("right", , fnt_determination); draw_text(625, 15 + y_, $"(Click to go back)"); }

@@ -1107,15 +1107,18 @@ if ( is_android() ) { instance_create_depth(0, 0, -2, obj_exportandroid); }
 		}
 		
 		ui_updateref = function() {
-			if ( sprite_exists(global.refimg) ) { sprite_delete(global.refimg); }
-			var fname = $"reference{PATHSEP}reference_image.png", fnamedebug = string_replace(fname, $"reference{PATHSEP}", "");
-			global.refimg = -1; if ( file_exists(fname) ) { global.refimg = sprite_add_ext(fname, 1, 0, 0, true); show_debug_message($"Added \"{fnamedebug}\" from {fname}!"); }
-			else {
-				var result = get_open_filename_ext("Image File (.png, .jpg, .gif)|*.png;*.jpg;*.jpeg;*.gif", "", directory_get_pictures_path(), "Select a sprite to import.");
-				if ( result == -1 || result == "" ) { sfx_play(snd_error); exit; }
-				else { global.refimg = sprite_add_ext(result, 1, 0, 0, true); show_debug_message($"Added \"{filename_name(result)}\" from {result}!"); }
+			if ( sprite_exists(global.refimg) ) { sprite_delete(global.refimg); global.refimg = -1; }
+			if ( !is_android() ) {
+				var fname = $"reference{PATHSEP}reference_image.png", fnamedebug = string_replace(fname, $"reference{PATHSEP}", "");
+				 if ( file_exists(fname) ) { global.refimg = sprite_add_ext(fname, 1, 0, 0, true); show_debug_message($"Added \"{fnamedebug}\" from {fname}!"); }
+				else {
+					var result = get_open_filename_ext("Image File (.png, .jpg, .gif)|*.png;*.jpg;*.jpeg;*.gif", "", directory_get_pictures_path(), "Select a sprite to import.");
+					if ( result == -1 || result == "" ) { sfx_play(snd_error); exit; }
+					else { global.refimg = sprite_add_ext(result, 1, 0, 0, true); show_debug_message($"Added \"{filename_name(result)}\" from {result}!"); }
+				}
+				sfx_play(snd_updated); ui_refclr = c_white; TweenFire("?", SYSTEMUI, "$30", "+60", TPCol("ui_refclr>"), $15101c);
 			}
-			sfx_play(snd_updated); ui_refclr = c_white; TweenFire("?", SYSTEMUI, "$30", "+60", TPCol("ui_refclr>"), $15101c);
+			else { soup_store("android file", "reference", , true); TweenScript(id, 0, 30, function () { intent_saf_request(SAF_REQUEST_SEARCH_FILE); }); }
 		}
 		
 		ui_viewref = function() { TweenDestroy(SYSTEMUI); TweenFire("?", SYSTEMUI, "$15", TPCol("ui_refclr>"), c_white); SYSTEMUI.ui_visible = false; SYSTEMUI.soupy_lui.hide(); SYSTEMUI.ui_viewing = true; soup_store("bordvis", SYSTEMUI.bord_visible, , true); SYSTEMUI.bord_visible = true; }
