@@ -1118,7 +1118,7 @@ if ( is_android() ) { instance_create_depth(0, 0, -2, obj_exportandroid); }
 				}
 				sfx_play(snd_updated); ui_refclr = c_white; TweenFire("?", SYSTEMUI, "$30", "+60", TPCol("ui_refclr>"), $15101c);
 			}
-			else { soup_store("android file", "reference", , true); TweenScript(id, 0, 30, function () { intent_saf_request(SAF_REQUEST_SEARCH_FILE); }); }
+			else { soup_store("asynctype", "reference", , true); TweenScript(id, 0, 30, function () { MobileUtils_Gallery_Open_PNG(); }); }
 		}
 		
 		ui_viewref = function() { TweenDestroy(SYSTEMUI); TweenFire("?", SYSTEMUI, "$15", TPCol("ui_refclr>"), c_white); SYSTEMUI.ui_visible = false; SYSTEMUI.soupy_lui.hide(); SYSTEMUI.ui_viewing = true; soup_store("bordvis", SYSTEMUI.bord_visible, , true); SYSTEMUI.bord_visible = true; }
@@ -1144,7 +1144,7 @@ if ( is_android() ) { instance_create_depth(0, 0, -2, obj_exportandroid); }
 #endregion
 
 #region First Time
-	var txt_ = $"Ayy! Welcome to [wheel][c_gold]UTDR SoupGen![/]|I see that it's your first time booting this up.|I would recommend [c_yellow]reading the|[c_yellow]help guide before you continue[/].|SoupGen got a [slant]lot[/] of power to it compared|to your average UTDR textbox generator,|so do familarize yourself with what all you can do!| |With that being said, [wave][c_lime]I hope you enjoy|this beta release!| |Once you're done, just press ESC for export options!{is_android() ? "| |You're using a [c_red][shake]highly experimental test[/] Android build.|Known Issues:|\"Add From File...\" and \"Update Reference\" will crash the app." : ""}";
+	var txt_ = $"Ayy! Welcome to [wheel][c_gold]UTDR SoupGen![/]|I see that it's your first time booting this up.|I would recommend [c_yellow]reading the|[c_yellow]help guide before you continue[/].|SoupGen got a [slant]lot[/] of power to it compared|to your average UTDR textbox generator,|so do familarize yourself with what all you can do!| |With that being said, [wave][c_lime]I hope you enjoy|this beta release!| |Once you're done, just press ESC for export options!{is_android() ? "| |You're using a [c_red][shake]highly experimental test[/] Android build.|Known Issues:|\"Add From File...\" will crash the app.|No custom sprites(besides reference image) for now..." : ""}";
 	
 	save_pref = function () {
 		var data_ = json_stringify(global.pref);

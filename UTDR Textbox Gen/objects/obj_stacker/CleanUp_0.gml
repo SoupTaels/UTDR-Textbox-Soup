@@ -10,12 +10,15 @@ repeat ( soupstack_count ) {
 soupstack_i++; } //Delete all the sprites
 
 surface_free(soupstack_surf); //Free surface to prevent memory leaks
-
+MobileUtils_Vibrate_Shot(100);
 if ( !abort ) { 
-	soupy_message($"{soupstack_fname}.png[/] [rainbow][wave]saved at[/]| |[c_lime]{soupstack_path}![/]| |Your [c_gold]good soup[/] is ready!|The file path was [c_yellow]copied to your clipboard[/]{ global.pref.openresult ? " and|the result will open up in your [c_cyan]default image viewer[/]" : ""}.| |Please share your dialogue with [c_gold]#soupgen[/] for easier find!", "I'm so soupy!!", , , , snd_dumbvictory, fnt_abaddon, , , true, 590);
-	if ( global.pref.openresult && !is_android() ) {
-		soupy_url($"{executable_get_directory()}{soupstack_folder}", , , 6); //Open the directory (Windows only)
-		soupy_url(soupstack_path, , , 6); //Open the image in the PC's default photo viewer (Windows only)
+	soupy_message($"{soupstack_fname}_.png[/] [rainbow][wave]saved at[/]| |[c_lime]{soupstack_path}![/]| |Your [c_gold]good soup[/] is ready!|The file path was [c_yellow]copied to your clipboard[/]{ global.pref.openresult ? " and|the result will open up in your [c_cyan]default image viewer[/]" : ""}.| |Please share your dialogue with [c_gold]#soupgen[/] for easier find!", "I'm so soupy!!", , , , snd_dumbvictory, fnt_abaddon, , , true, 590);
+	if ( global.pref.openresult ) {
+		if ( !is_android() ) { 
+			soupy_url($"{executable_get_directory()}{soupstack_folder}", , , 6); //Open the directory (Windows only)
+			soupy_url(soupstack_path, , , 6); //Open the image in the PC's default photo viewer (Windows only)
+		}
+		else { file_copy(soupstack_path, $"{soupstack_fname}_.png"); MobileUtils_Share_Open("Here's your good soup!", "image/png", $"{soupstack_fname}_.png"); }
 	}
 	clipboard_set_text(soupstack_path);
 }

@@ -52,12 +52,15 @@ if ( screenshot || record.enabled ) {
 			if ( !cancel_ ) { if ( !stack_ ) {
 				if ( gif_ ) { record.id_ = gif_save(record.id_, fpath_final); } //Save GIF
 				else { surface_save_part(screenshot_surf, fpath_final, x_, y_, w_, h_); } //Save screenshot
-				
+				MobileUtils_Vibrate_Shot(100);
 				if ( !global.pref.hidemessages ) { soupy_message($"{fname}_.{gif_ ? "gif" : "png"}[/] [rainbow][wave]saved at[/]| |[c_lime]{fpath_final}![/]| |Your [c_gold]good soup[/] is ready!|The file path was [c_yellow]copied to your clipboard[/]{ global.pref.openresult ? " and|the result will open up in your [c_cyan]default image viewer[/]" : ""}.| |Please share your dialogue with [c_gold]#soupgen[/] for easier find!", "I'm so soupy!!", , , , snd_dumbvictory, fnt_abaddon, , , true, 590); } 
 				else { sfx_play(snd_dumbvictory); instance_create_depth(0, 0, 0, obj_success); SYSTEMUI.ui_paused = false; } 
-				if ( global.pref.openresult && !is_android() ) {
-					soupy_url($"{executable_get_directory()}{folder}", , , 6); //Open the directory (Windows only)
-					soupy_url(fpath_final, , , 6); //Open the image in the PC's default photo viewer (Windows only)
+				if ( global.pref.openresult ) {
+					if ( !is_android() ) {
+						soupy_url($"{executable_get_directory()}{folder}", , , 6); //Open the directory (Windows only)
+						soupy_url(fpath_final, , , 6); //Open the image in the PC's default photo viewer (Windows only)
+					}
+					else { file_copy(fpath_final, $"{fname}_.{gif_ ? "gif" : "png"}"); MobileUtils_Share_Open("Here's your good soup!", gif_ ? "image/gif" : "image/png", $"{fname}_.{gif_ ? "gif" : "png"}"); }
 				}
 				clipboard_set_text(fpath_final);
 			} }
