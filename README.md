@@ -4,7 +4,7 @@
 <p align="center"><i><b>An insanely customizable, flexible, and soupy OFFLINE Undertale & Deltarune dialogue textbox generator! Made in <a href="https://gamemaker.io/en">GameMaker</a> and powered by <a href="https://www.jujuadams.com/Scribble/#/latest/">Scribble</a>.</b></i></p>
 <p align="center"><img src="https://i.imgur.com/450FvnA.gif" style="display:block; margin:auto;"></p>
 <p align="center"><img src="https://i.imgur.com/vqK1SvA.png" style="display:block; margin:auto;"></p>
-<p align="center">Available for Windows natively, but also runs just fine on Linux and Mac through Wine and Whisky</p>
+<p align="center">Available for Windows natively, but also runs just fine on Linux and Mac through Wine and Whisky, and an Android build WIP.</p>
 <p align="center"><a href="https://github.com/SoupTaels/UTDR-Textbox-Soup/releases">Get the latest release/ download here!</a></p>
 <p align="center"><a href="https://rentry.co/utdrsoupguides">Help guide is hosted here!</a></p>
 <hr />
