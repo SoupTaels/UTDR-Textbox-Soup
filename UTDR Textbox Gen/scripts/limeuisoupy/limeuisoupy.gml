@@ -170,7 +170,7 @@ function soupy_ui_credits() {
 	var arr_ = [];
 	var credits_add = method({ arr_ }, function(text_ = "", link_ = "", scribble_ = false) {
 		array_push(arr_, new LuiText({ scribbletext: scribble_, value: text_, text_halign: fa_center, text_valign: fa_middle, font: fnt_abaddon, color: c_white, xoff: 0, y: 10 }).setData("link", link_).setTooltip(link_, true, fnt_abaddon).setPadding(5)
-		.addEvent(LUI_EV_CLICK, function(element_) { var link_ = element_.getData("link"); if ( link_ != "" ) { sfx_play(snd_select); execute_shell_simple(link_, , , 0); } })
+		.addEvent(LUI_EV_CLICK, function(element_) { var link_ = element_.getData("link"); if ( link_ != "" ) { sfx_play(snd_select); soupy_url(link_, , , 0); } })
 		.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { var link_ = element_.getData("link"); if ( link_ != "" ) { element_.color = c_cyan; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); } })
 		.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); }));
 	});

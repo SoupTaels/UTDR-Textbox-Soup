@@ -1,6 +1,7 @@
 ///@desc 
 ///@desc Update Check
 //if ( live_call() ) { return live_result; }
+TweenScript(SYSTEMUI, 0, 15, function() { intent_saf_request(SAF_REQUEST_GET_DIRECTORY); });
 if ( !global.pref.checkupdates ) { instance_destroy(); exit; }
 updateversion = {}; //The new update's info
 text = "[c_yellow]Checking for update... [spr_effects_icons,14]";
@@ -35,7 +36,7 @@ if ( os_is_network_connected(true) ) {
 					new LuiText({ value: "There's a [rainbow]new update available![/] [tinysoupy]", font: fnt_abaddon, scribbletext: true, }),
 					new LuiText({ value: $"Current Version: [c_yellow]{GAME_VERSION}[/] | New Version: [c_lime]{updateversion.game_version}", font: fnt_abaddon, scribbletext: true, }),
 					new LuiText({ value: "Would you like to update now?", font: fnt_abaddon, }),
-					new LuiButton({ text: "Time for some new soup!", height: 35, font: fnt_abaddon, }).setData("link", updateversion.game_page).addEvent(LUI_EV_CLICK, function(e_) { execute_shell_simple(e_.getData("link"), , , 0); }),
+					new LuiButton({ text: "Time for some new soup!", height: 35, font: fnt_abaddon, }).setData("link", updateversion.game_page).addEvent(LUI_EV_CLICK, function(e_) { soupy_url(e_.getData("link"), , , 0); }),
 				];
 				soupy_popup(arr_, , "Gotta generate smth rq.", , , , snd_dimbox, fnt_abaddon, SYSTEMUI.ui_paused);
 				instance_destroy();

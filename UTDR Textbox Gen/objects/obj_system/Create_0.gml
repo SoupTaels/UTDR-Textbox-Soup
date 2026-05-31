@@ -1,28 +1,31 @@
 ///@desc Init
 //if ( live_call() ) { return live_result; } 
+android_path = ""; //Safe path to save stuff in
+if ( is_android() ) { instance_create_depth(0, 0, -2, obj_exportandroid); }
 #region Loading Preferences
-	if ( file_exists(PREF_SOUP) ) {
-		var buff_ = buffer_load(PREF_SOUP), data_ = buffer_read(buff_, buffer_text), pref_ = undefined;
-		buffer_delete(buff_);
-		try { pref_ = json_parse(data_); } catch(err_) { show_debug_message(err_.message); }
+	ui_loadprefs = function () { 
+			if ( file_exists(PREF_SOUP) ) {
+			var buff_ = buffer_load(PREF_SOUP), data_ = buffer_read(buff_, buffer_text), pref_ = undefined;
+			buffer_delete(buff_);
+			try { pref_ = json_parse(data_); } catch(err_) { show_debug_message(err_.message); }
 	
-		if ( is_struct(pref_) ) {
-			var get_ = pref_[$ "firsttime"]; global.pref.firsttime = !is_undefined(get_) ? get_ : true;
-			var get_ = pref_[$ "shadowoff"]; global.pref.shadowoff = !is_undefined(get_) ? abs(round(get_)) : 1;
-			var get_ = pref_[$ "killaudio"]; global.pref.killaudio = !is_undefined(get_) ? get_ : false;
-			var get_ = pref_[$ "randomclr"]; global.pref.randomclr = !is_undefined(get_) ? get_ : true;
-			var get_ = pref_[$ "sizematters"]; global.pref.sizematters = !is_undefined(get_) ? get_ : false;
-			var get_ = pref_[$ "sizematterstop"]; global.pref.sizematterstop = !is_undefined(get_) ? get_ : false;
-			var get_ = pref_[$ "hidemessages"]; global.pref.hidemessages = !is_undefined(get_) ? get_ : false;
-			var get_ = pref_[$ "checkupdates"]; global.pref.checkupdates = !is_undefined(get_) ? get_ : true;
-			var get_ = pref_[$ "parsestart"]; global.pref.parsestart = !is_undefined(get_) ? get_ : "<"; global.altchar.start_ = global.pref.parsestart;
-			var get_ = pref_[$ "parseend"]; global.pref.parseend = !is_undefined(get_) ? get_ : ">"; global.altchar.end_ = global.pref.parseend;
-			var get_ = pref_[$ "showref"]; global.pref.showref = !is_undefined(get_) ? get_ : true;
-			var get_ = pref_[$ "openresult"]; global.pref.openresult = !is_undefined(get_) ? get_ : true;
-			var get_ = pref_[$ "bg3d"]; global.pref.bg3d = !is_undefined(get_) ? get_ : true;
-			var get_ = pref_[$ "showfps"]; global.pref.showfps = !is_undefined(get_) ? get_ : false;
+			if ( is_struct(pref_) ) {
+				var get_ = pref_[$ "firsttime"]; global.pref.firsttime = !is_undefined(get_) ? get_ : true;
+				var get_ = pref_[$ "shadowoff"]; global.pref.shadowoff = !is_undefined(get_) ? abs(round(get_)) : 1;
+				var get_ = pref_[$ "killaudio"]; global.pref.killaudio = !is_undefined(get_) ? get_ : false;
+				var get_ = pref_[$ "randomclr"]; global.pref.randomclr = !is_undefined(get_) ? get_ : true;
+				var get_ = pref_[$ "sizematters"]; global.pref.sizematters = !is_undefined(get_) ? get_ : false;
+				var get_ = pref_[$ "sizematterstop"]; global.pref.sizematterstop = !is_undefined(get_) ? get_ : false;
+				var get_ = pref_[$ "hidemessages"]; global.pref.hidemessages = !is_undefined(get_) ? get_ : false;
+				var get_ = pref_[$ "checkupdates"]; global.pref.checkupdates = !is_undefined(get_) ? get_ : true;
+				var get_ = pref_[$ "showref"]; global.pref.showref = !is_undefined(get_) ? get_ : true;
+				var get_ = pref_[$ "openresult"]; global.pref.openresult = !is_undefined(get_) ? get_ : true;
+				var get_ = pref_[$ "bg3d"]; global.pref.bg3d = !is_undefined(get_) ? get_ : true;
+				var get_ = pref_[$ "showfps"]; global.pref.showfps = !is_undefined(get_) ? get_ : false;
+			}
 		}
 	}
+	if ( !is_android() ) { ui_loadprefs(); }
 	
 	#region Http.gml
 		http_active = false;
@@ -455,6 +458,7 @@
 				quill_soup_inactive.scrollbar.border_col = #9d8cbb; quill_soup_inactive.scrollbar.border_a = 1; quill_soup_inactive.scrollbar.track_col = #9d8cbb; quill_soup_inactive.scrollbar.track_a = 1; quill_soup_inactive.scrollbar.thumb_idle_col = #d6b5dd; quill_soup_inactive.scrollbar.thumb_idle_a = 1;
 				quill_soup_inactive.fonts.mainfont = SYSTEMUI.ui_mainfont;
 				QuillSetTheme(quill_soup_inactive);
+				keyboard_virtual_hide();
 			})
 			.OnFocus(function() { //Theme for activity
 				var quill_soup_active = new QuillTheme();
@@ -465,6 +469,7 @@
 				quill_soup_active.menu.item_hover_col = #9d8cbb; quill_soup_active.menu.bg_spr = spr_border_undertale; quill_soup_active.menu.prim_bg_col = c_white; quill_soup_active.menu.prim_bg_a = 1; quill_soup_active.menu.prim_border_col = c_black; quill_soup_active.menu.text_col = c_white; quill_soup_active.menu.sep_col = #9d8cbb; quill_soup_active.menu.disabled_text_col = #625279; quill_soup_active.menu.sep_h = 3; quill_soup_active.menu.pad_x = 10; quill_soup_active.menu.pad_y = 20; quill_soup_active.menu.item_hover_a = 1; quill_soup_active.menu.prim_padd = 2; quill_soup_active.menu.min_w = 200;
 				quill_soup_active.fonts.mainfont = SYSTEMUI.ui_mainfont;
 				QuillSetTheme(quill_soup_active);
+				keyboard_virtual_show(kbv_type_default, kbv_returnkey_default, kbv_autocapitalize_none, false);
 			})
 			
 			#region Context Menu
@@ -1047,8 +1052,8 @@
 			]),
 			
 			new LuiHorizontalRule({ height: 5, }),
-			new LuiButton({ text: "Help Guide", height: 40, }).addEvent(LUI_EV_CLICK, function() { execute_shell_simple("https://rentry.co/utdrsoupguides", , , 0); }),
-			new LuiButton({ text: "So Soupy!!", height: 40, }).addEvent(LUI_EV_CLICK, function() { execute_shell_simple("https://www.youtube.com/watch?v=zbClYRnQQJ0", , , 0); }),
+			new LuiButton({ text: "Help Guide", height: 40, }).addEvent(LUI_EV_CLICK, function() { soupy_url("https://rentry.co/utdrsoupguides", , , 0); }),
+			new LuiButton({ text: "So Soupy!!", height: 40, }).addEvent(LUI_EV_CLICK, function() { soupy_url("https://www.youtube.com/watch?v=zbClYRnQQJ0", , , 0); }),
 			new LuiButton({ text: "Credits", height: 40, }).addEvent(LUI_EV_CLICK, soupy_ui_credits),
 		]);
 		
@@ -1136,7 +1141,7 @@
 #endregion
 
 #region First Time
-	var txt_ = "Ayy! Welcome to [wheel][c_gold]UTDR SoupGen![/]|I see that it's your first time booting this up.|I would recommend [c_yellow]reading the|[c_yellow]help guide before you continue[/].|SoupGen got a [slant]lot[/] of power to it compared|to your average UTDR textbox generator,|so do familarize yourself with what all you can do!| |With that being said, [wave][c_lime]I hope you enjoy|this beta release!| |Once you're done, just press ESC for export options!";
+	var txt_ = $"Ayy! Welcome to [wheel][c_gold]UTDR SoupGen![/]|I see that it's your first time booting this up.|I would recommend [c_yellow]reading the|[c_yellow]help guide before you continue[/].|SoupGen got a [slant]lot[/] of power to it compared|to your average UTDR textbox generator,|so do familarize yourself with what all you can do!| |With that being said, [wave][c_lime]I hope you enjoy|this beta release!| |Once you're done, just press ESC for export options!{is_android() ? "| |You're using a [c_red][shake]highly experimental test[/] Android build.|Known Issues:|\"Add From File...\" and \"Update Reference\" will crash the app." : ""}";
 	
 	save_pref = function () {
 		var data_ = json_stringify(global.pref);
@@ -1147,10 +1152,11 @@
 	var save_ = function () {
 		global.pref.firsttime = false;
 		SYSTEMUI.save_pref();
-		execute_shell_simple("https://rentry.co/utdrsoupguides", , , 0);
+		soupy_url("https://rentry.co/utdrsoupguides", , , 0);
+		if ( is_android() ) { android_path = intent_saf_request(SAF_REQUEST_SEARCH_DIRECTORY); }
 	}
 	
-	if ( global.pref.firsttime ) { soupy_message(txt_, "Let's get soupy!", 480, , , snd_dimbox, fnt_abaddon, save_, , true, , , fa_top); }
+	if ( global.pref.firsttime ) { var id_ = soupy_message(txt_, "Let's get soupy!", 480, , , snd_dimbox, fnt_abaddon, save_, , true, , , fa_top); soup_store("firsttime", id_, , true); }
 #endregion
 
 #region Errors with Auto-loading
@@ -1163,7 +1169,7 @@
 	
 		array_push(arr_,  new LuiText({ value: "These sprites were not loaded due to\neither incorrect filenames or file structure.", text_halign: fa_center, text_valign: fa_middle, font: fnt_abaddon, color: c_white, xoff: 0, y: 10 }));
 		array_push(arr_,  new LuiText({ value: "If you need help, please refer to the SoupGen guide. (Click me!)", text_halign: fa_center, text_valign: fa_middle, font: fnt_abaddon, color: c_white, xoff: 0, y: 10 })
-			.addEvent(LUI_EV_CLICK, function(element_) { sfx_play(snd_select); execute_shell_simple("https://rentry.co/utdrsoupguides", , , 0); })
+			.addEvent(LUI_EV_CLICK, function(element_) { sfx_play(snd_select); soupy_url("https://rentry.co/utdrsoupguides", , , 0); })
 			.addEvent(LUI_EV_MOUSE_ENTER, function(element_) { element_.color = c_gold; sfx_play(snd_sel_switch); element_.main_ui.animate(element_, "xoff", 10, 0.30, global.Ease.OutBack, 0); })
 			.addEvent(LUI_EV_MOUSE_LEAVE, function(element_) { element_.color = c_white; element_.main_ui.animate(element_, "xoff", 0, 0.15); })
 		);

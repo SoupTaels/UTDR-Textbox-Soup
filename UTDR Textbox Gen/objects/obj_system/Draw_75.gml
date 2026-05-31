@@ -1,5 +1,5 @@
 ///@desc Screenshot task
-//if ( live_call() ) { return live_result; } 
+if ( live_call() ) { return live_result; } 
 if ( screenshot || record.enabled ) { 
 	var dltrn = spr_bord == spr_border_deltarune; //Check if our border is Deltarune
 	var out_ = bord_out; //Whether to save with an outline
@@ -11,7 +11,7 @@ if ( screenshot || record.enabled ) {
 			do {
 				fname = $"{fname_orig}_{i}";
 				i += 1;
-			} until ( !file_exists($"{executable_get_directory()}{folder}{PATHSEP}{fname}_.{record.enabled ? "gif" : "png"}") )
+			} until ( !file_exists($"{!is_android() ? executable_get_directory() : soup_checkout("android", false, true)}{folder}{PATHSEP}{fname}_.{record.enabled ? "gif" : "png"}") )
 		}
 	#endregion
 	
@@ -48,16 +48,16 @@ if ( screenshot || record.enabled ) {
 	
 	#region Function for finishing recording
 		var finish_func = method({folder, fname, file_newname, record, x_, y_, w_, h_, screenshot_surf }, function(gif_ = true, stack_ = false, cancel_ = false) { //Finished recording/ screenshotting
-			var fpath_final = $"{executable_get_directory()}{folder}{PATHSEP}{fname}_.{gif_ ? "gif" : "png"}";
+			var fpath_final = $"{!is_android() ? executable_get_directory() : soup_checkout("android", false, true)}{folder}{PATHSEP}{fname}_.{gif_ ? "gif" : "png"}";
 			if ( !cancel_ ) { if ( !stack_ ) {
 				if ( gif_ ) { record.id_ = gif_save(record.id_, fpath_final); } //Save GIF
 				else { surface_save_part(screenshot_surf, fpath_final, x_, y_, w_, h_); } //Save screenshot
 				
 				if ( !global.pref.hidemessages ) { soupy_message($"{fname}_.{gif_ ? "gif" : "png"}[/] [rainbow][wave]saved at[/]| |[c_lime]{fpath_final}![/]| |Your [c_gold]good soup[/] is ready!|The file path was [c_yellow]copied to your clipboard[/]{ global.pref.openresult ? " and|the result will open up in your [c_cyan]default image viewer[/]" : ""}.| |Please share your dialogue with [c_gold]#soupgen[/] for easier find!", "I'm so soupy!!", , , , snd_dumbvictory, fnt_abaddon, , , true, 590); } 
 				else { sfx_play(snd_dumbvictory); instance_create_depth(0, 0, 0, obj_success); SYSTEMUI.ui_paused = false; } 
-				if ( global.pref.openresult ) {
-					execute_shell_simple($"{executable_get_directory()}{folder}", , , 6); //Open the directory (Windows only)
-					execute_shell_simple(fpath_final, , , 6); //Open the image in the PC's default photo viewer (Windows only)
+				if ( global.pref.openresult && !is_android() ) {
+					soupy_url($"{executable_get_directory()}{folder}", , , 6); //Open the directory (Windows only)
+					soupy_url(fpath_final, , , 6); //Open the image in the PC's default photo viewer (Windows only)
 				}
 				clipboard_set_text(fpath_final);
 			} }
@@ -85,7 +85,7 @@ if ( screenshot || record.enabled ) {
 		else {
 			if ( dial_text_page < dial_text_page_c ) { //Create sprite from surface, then push them to the stack
 				with ( obj_stacker ) {
-					if ( soupstack_path == "" ) { var fpath_final = $"{executable_get_directory()}{folder}{PATHSEP}{fname}_.png"; soupstack_path = fpath_final; soupstack_fname = fname; soupstack_folder = folder; }
+					if ( soupstack_path == "" ) { var fpath_final = $"{!is_android() ? executable_get_directory() : soup_checkout("android", false, true)}{folder}{PATHSEP}{fname}_.png"; soupstack_path = fpath_final; soupstack_fname = fname; soupstack_folder = folder; }
 					array_push(soupstack_spr, sprite_create_from_surface(other.screenshot_surf, x_, y_, w_, h_, false, false, 0, 0));
 				}
 				dial_text_page++; sfx_play(snd_equip2); 

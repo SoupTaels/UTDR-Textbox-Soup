@@ -1,5 +1,6 @@
 ///@desc 3D BG
 #region BG
+
 	if ( ui_visible && global.pref.bg3d && !sprite_exists(global.refimg) ) {
 		var bg = layer_exists("bg3d") ? layer_get_id("bg3d") : layer_create(99, "bg3d"), _fx = layer_get_fx("bg3d"), _params; //Doesn't exist? Create it! Else, get the id.
 		if ( _fx == -1 ) { //Doesn't exist? Create it with default values

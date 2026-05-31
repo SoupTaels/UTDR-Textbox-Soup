@@ -8,10 +8,11 @@
 	#macro FACE_PREVIOUS obj_system.dial_face_prev[obj_system.dial_text_page] //Get the previous dialogue face
 	#macro FACE_INTERNAL obj_system.dial_face_name[obj_system.dial_text_page] //Get the internal name for the current dialogue face
 	#macro FACE_USING FACE_CURRENT != -1 && FACE_CURRENT != 0 //If the dialogue box will contain a face
-	#macro LAST_SAVED $"{executable_get_directory()}latest_soupy_last_typed.soupy" //Last text we typed
+	soup_store("android", $"{""}{PATHSEP}", , true);
+	#macro LAST_SAVED $"{!is_android() ? executable_get_directory() : soup_checkout("android", false, true)}latest_soupy_last_typed.soupy" //Last text we typed
 	#macro AUTO_ASTERISK ( ( obj_system.dial_text_halign == 0 && obj_system.dial_text_valign == 0 ) && obj_system.dial_point_auto && string_trim(obj_system.dial_point_chr) != "" ) //Whether to enable auto-asterisk
 	#macro PATHSEP (( os_type == os_windows || os_type == os_xboxseriesxs || os_type == os_gdk ) ? "\\"  :  "/") //Get platform-dependant path
-	#macro PREF_SOUP $"{executable_get_directory()}soupy_preferences.soupy" //Settings to save
+	#macro PREF_SOUP $"{!is_android() ? executable_get_directory() : soup_checkout("android", false, true)}soupy_preferences.soupy" //Settings to save
 	#macro GAME_VERSION "1.0.0" //Current game version
 #endregion
 ///@desc Help Scribble with how to align the text
@@ -124,6 +125,11 @@ function Button(datastruct_ = undefined) constructor {
 	}
 }
 
+///@desc Platform-based url opening
+function soupy_url(path_, args_ = "", act_ = "", cmd_ = 5) {
+	if ( !is_android() ) { execute_shell_simple(path_, args_, act_, cmd_); } else { url_open(path_); }
+}
+
 ///@desc Manages state for UI tabs.
 function ui_manage() {
 	live_auto_call 
@@ -151,8 +157,12 @@ function ui_manage() {
 			}
 			
 			if ( is_android() ) { 
-				if ( !keyboard_virtual_status() ) { keyboard_virtual_show(kbv_type_default, kbv_returnkey_default, kbv_autocapitalize_none, false); }
-				textinput.SetValue(keyboard_string); if ( keyboard_check(vk_anykey) ) { dial_updatet = dial_updatet_max; upd_ = true; }
+				if ( keyboard_string != "" ) { 
+					var str_ = string_insert(keyboard_string, textinput.GetValue(), textinput.GetCaret() + 1); textinput.SetValue(str_);
+					keyboard_string = "";
+				}
+				if ( keyboard_check_pressed(vk_backspace) ) { var c_ = textinput.GetCaret(), str_ = string_delete(textinput.GetValue(), c_, 1); textinput.SetValue(str_); textinput.SetCaret(c_ - 1); keyboard_string = ""; }
+				if ( keyboard_check(vk_anykey) ) { dial_updatet = dial_updatet_max; upd_ = true; }
 			}
 					
 			if ( keyboard_check_pressed(vk_anykey) ) { //Typing sounds

@@ -59,6 +59,7 @@
   "ResourceOrderSettings":[
     {"name":"EaseHeartbeat","order":1,"path":"animcurves/EaseHeartbeat/EaseHeartbeat.yy",},
     {"name":"EaseMidSlow","order":2,"path":"animcurves/EaseMidSlow/EaseMidSlow.yy",},
+    {"name":"AndroidExternalFile","order":14,"path":"extensions/AndroidExternalFile/AndroidExternalFile.yy",},
     {"name":"GMLive_fallback","order":1,"path":"extensions/GMLive_fallback/GMLive_fallback.yy",},
     {"name":"libfilesystem","order":1,"path":"extensions/libfilesystem/libfilesystem.yy",},
     {"name":"fnt_abaddon","order":7,"path":"fonts/fnt_abaddon/fnt_abaddon.yy",},
@@ -81,6 +82,7 @@
     {"name":"TGMX_Update_Log","order":2,"path":"notes/TGMX_Update_Log/TGMX_Update_Log.yy",},
     {"name":"ctrl_UndoStack","order":2,"path":"objects/ctrl_UndoStack/ctrl_UndoStack.yy",},
     {"name":"obj_errhandler","order":3,"path":"objects/obj_errhandler/obj_errhandler.yy",},
+    {"name":"obj_exportandroid","order":7,"path":"objects/obj_exportandroid/obj_exportandroid.yy",},
     {"name":"obj_gmlive","order":6,"path":"objects/obj_gmlive/obj_gmlive.yy",},
     {"name":"obj_http","order":4,"path":"objects/obj_http/obj_http.yy",},
     {"name":"obj_mini","order":2,"path":"objects/obj_mini/obj_mini.yy",},

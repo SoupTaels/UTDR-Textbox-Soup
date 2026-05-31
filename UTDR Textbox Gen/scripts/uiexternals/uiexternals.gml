@@ -328,9 +328,11 @@ pref = {
 #endregion
 
 #region Log
-	var oLog = file_text_open_write($"{executable_get_directory()}latest_soupy_run.soupy");
-	file_text_write_string(oLog, global.outputLog);
-	file_text_close(oLog);
+	if ( !is_android() ) { 
+		var oLog = file_text_open_write($"{executable_get_directory()}latest_soupy_run.soupy");
+		file_text_write_string(oLog, global.outputLog);
+		file_text_close(oLog);
+	}
 #endregion
 
 #region Functions
@@ -752,7 +754,7 @@ pref = {
 			new LuiText({ value: "Instead of characters appearing instantly, you can give characters\nan easing animation to truly customize dialogue to your liking!", text_halign: fa_center, text_valign: fa_middle, color: c_gray, font: fnt_determination, }),
 			
 			new LuiRow().setFlexGrow(1).centerContent().addContent([
-				new LuiText({ value: "Easing Type:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Sets the easing out algorithm\nthe typewriter will use.\nFor more info, visit:\n[c_yellow]https://easings.net/ (right click me)", true, , true).addEvent(LUI_EV_CLICK_R, function() { execute_shell_simple("https://easings.net/", , , 0); }),
+				new LuiText({ value: "Easing Type:", text_halign: fa_center, text_valign: fa_middle, font: fnt_speech, }).setTooltip("Sets the easing out algorithm\nthe typewriter will use.\nFor more info, visit:\n[c_yellow]https://easings.net/ (right click me)", true, , true).addEvent(LUI_EV_CLICK_R, function() { soupy_url("https://easings.net/", , , 0); }),
 				new LuiComboBox({ height: 35, placeholder: "Select easing type...", noborder: true, height_items: 260, }).addItems([
 					new LuiComboBoxItem({ text: "NONE" }).setData("easeExample", easeExample).addEvent(LUI_EV_CLICK, function(e_) { 
 						soup_store("dataeasetype", SCRIBBLE_EASE.NONE); 

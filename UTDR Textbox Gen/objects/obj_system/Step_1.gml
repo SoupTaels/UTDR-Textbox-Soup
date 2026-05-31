@@ -32,7 +32,7 @@
 
 #region Export Dialogue
 	if ( ui_visible ) {
-		var endkey = keyboard_check_pressed(vk_escape) || keyboard_check_pressed(vk_end) || keyboard_check_pressed(vk_f1);
+		var endkey = keyboard_check_pressed(vk_escape) || keyboard_check_pressed(vk_end) || keyboard_check_pressed(vk_f1) || !is_undefined(soup_checkout("androidexport", , true));
 		if ( ( !screenshot && !record.enabled ) && ( endkey ) && is_undefined(soup_checkout("export dialogue", false)) && !ui_viewing ) {
 			soup_store("export dialogue", true);
 			soup_store("export dialogue func", function() { soup_store_clear(); SYSTEMUI.ui_paused = false; });
