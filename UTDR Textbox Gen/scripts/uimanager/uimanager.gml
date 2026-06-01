@@ -157,11 +157,11 @@ function ui_manage() {
 			}
 			
 			if ( is_android() ) { 
+				if ( keyboard_check_pressed(vk_backspace) ) { var c_ = textinput.GetCaret(), str_ = string_delete(textinput.GetValue(), c_, 1); textinput.SetValue(str_); textinput.SetCaret(c_ - 1); keyboard_string = ""; }
 				if ( keyboard_string != "" ) { 
-					var str_ = string_insert(keyboard_string, textinput.GetValue(), textinput.GetCaret() + 1); textinput.SetValue(str_);
+					var c_ = textinput.GetCaret(), str_ = string_insert(keyboard_string, textinput.GetValue(), c_ + 1); textinput.SetValue(str_); textinput.SetCaret(c_ + 1);
 					keyboard_string = "";
 				}
-				if ( keyboard_check_pressed(vk_backspace) ) { var c_ = textinput.GetCaret(), str_ = string_delete(textinput.GetValue(), c_, 1); textinput.SetValue(str_); textinput.SetCaret(c_ - 1); keyboard_string = ""; }
 				if ( keyboard_check(vk_anykey) ) { dial_updatet = dial_updatet_max; upd_ = true; }
 			}
 					
@@ -440,7 +440,7 @@ function ui_manage() {
 			if ( variable_instance_get(obj_system, "within_hover3") == undefined ) { variable_instance_set(obj_system, "within_hover3", false); }
 			if ( variable_instance_get(obj_system, "yscale_3") == undefined ) { variable_instance_set(obj_system, "yscale_3", 1); }
 		
-			var x_ = 320, y_ = 473, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 20) && range_within(mouse_y_gui, y_ - 30, y_ + 5);
+			var x_ = 320, y_ = 473, within_ = range_within(mouse_x_gui, x_ - 20, x_ + 20) && range_within(mouse_y_gui, y_ - 30, y_ + 25);
 			if ( within_ ) {
 				if ( !within_hover3 ) { within_hover3 = true; sfx_play(snd_sel_switch); } //Hover
 				if ( mouse_pressed ) {  sfx_play(snd_enc1, 0, , bord_visible ? 0.7 : 1.3); bord_visible = !bord_visible; yscale_3 = 0.5; } //Pressed

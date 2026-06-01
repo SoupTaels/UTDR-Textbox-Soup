@@ -1751,7 +1751,7 @@ function __QuillCore() constructor {
 				}
 			}
 
-			if (__TextInputKeyRepeat(_tb, vk_backspace)) {
+			if (__TextInputKeyRepeat(_tb, vk_backspace) && _cfg[$ "backspace_enabled"] == true) {
 				if (__TextInputHasSelection(_tb)) {
 					__TextInputDeleteSelection(_tb, _cfg);
 				}

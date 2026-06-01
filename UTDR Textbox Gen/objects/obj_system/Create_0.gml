@@ -20,7 +20,7 @@ if ( is_android() ) { instance_create_depth(0, 0, -2, obj_exportandroid); }
 				var get_ = pref_[$ "checkupdates"]; global.pref.checkupdates = !is_undefined(get_) ? get_ : true;
 				var get_ = pref_[$ "showref"]; global.pref.showref = !is_undefined(get_) ? get_ : true;
 				var get_ = pref_[$ "openresult"]; global.pref.openresult = !is_undefined(get_) ? get_ : true;
-				var get_ = pref_[$ "bg3d"]; global.pref.bg3d = !is_undefined(get_) ? get_ : true;
+				var get_ = pref_[$ "bg3d"]; global.pref.bg3d = !is_undefined(get_) ? get_ : ( is_android() ? false : true );
 				var get_ = pref_[$ "showfps"]; global.pref.showfps = !is_undefined(get_) ? get_ : false;
 			}
 		}
@@ -469,7 +469,8 @@ if ( is_android() ) { instance_create_depth(0, 0, -2, obj_exportandroid); }
 				quill_soup_active.menu.item_hover_col = #9d8cbb; quill_soup_active.menu.bg_spr = spr_border_undertale; quill_soup_active.menu.prim_bg_col = c_white; quill_soup_active.menu.prim_bg_a = 1; quill_soup_active.menu.prim_border_col = c_black; quill_soup_active.menu.text_col = c_white; quill_soup_active.menu.sep_col = #9d8cbb; quill_soup_active.menu.disabled_text_col = #625279; quill_soup_active.menu.sep_h = 3; quill_soup_active.menu.pad_x = 10; quill_soup_active.menu.pad_y = 20; quill_soup_active.menu.item_hover_a = 1; quill_soup_active.menu.prim_padd = 2; quill_soup_active.menu.min_w = 200;
 				quill_soup_active.fonts.mainfont = SYSTEMUI.ui_mainfont;
 				QuillSetTheme(quill_soup_active);
-				keyboard_virtual_show(kbv_type_default, kbv_returnkey_default, kbv_autocapitalize_none, false);
+				keyboard_string = "";
+				keyboard_virtual_show(kbv_type_default, kbv_returnkey_next, kbv_autocapitalize_none, false);
 			})
 			
 			#region Context Menu
@@ -1144,7 +1145,7 @@ if ( is_android() ) { instance_create_depth(0, 0, -2, obj_exportandroid); }
 #endregion
 
 #region First Time
-	var txt_ = $"Ayy! Welcome to [wheel][c_gold]UTDR SoupGen![/]|I see that it's your first time booting this up.|I would recommend [c_yellow]reading the|[c_yellow]help guide before you continue[/].|SoupGen got a [slant]lot[/] of power to it compared|to your average UTDR textbox generator,|so do familarize yourself with what all you can do!| |With that being said, [wave][c_lime]I hope you enjoy|this beta release!| |Once you're done, just press ESC for export options!{is_android() ? "| |You're using a [c_red][shake]highly experimental test[/] Android build.|Known Issues:|\"Add From File...\" will crash the app.|No custom sprites(besides reference image) for now..." : ""}";
+	var txt_ = $"Ayy! Welcome to [wheel][c_gold]UTDR SoupGen![/]|I see that it's your first time booting this up.|I would recommend [c_yellow]reading the|[c_yellow]help guide before you continue[/].|SoupGen got a [slant]lot[/] of power to it compared|to your average UTDR textbox generator,|so do familarize yourself with what all you can do!| |With that being said, [wave][c_lime]I hope you enjoy|this beta release!| |Once you're done, just press ESC for export options!{is_android() ? "| |You're using the Android version!|SoupGen was not optimized for phones,|but plenty of work has gone into making the experience similar to|PCs. You may still struggle in some places tho, sorry!" : ""}";
 	
 	save_pref = function () {
 		var data_ = json_stringify(global.pref);

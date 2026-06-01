@@ -94,7 +94,8 @@ function __Quill(_kind, _label, _placeholder) constructor {
 		view_h: 0,
 		font: -1,
 		text_align: eQuillTextAlign.Left,
-		scroll_state: undefined
+		scroll_state: undefined,
+		backspace_enabled: true,
 	};
 
 	// Per-box editor state.
@@ -713,6 +714,14 @@ function __Quill(_kind, _label, _placeholder) constructor {
 	/// @return {Struct.__Quill}
 	static SetReadOnly = function(_flag) {
 		config[$ "read_only"] = (_flag == true);
+		return self;
+	};
+	
+	/// @desc Set whether this box is read-only.
+	/// @param {Bool} _flag
+	/// @return {Struct.__Quill}
+	static BackspaceEnabled = function(_flag) {
+		config[$ "backspace_enabled"] = (_flag == true);
 		return self;
 	};
 	
